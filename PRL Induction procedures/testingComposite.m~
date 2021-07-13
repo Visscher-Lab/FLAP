@@ -39,39 +39,35 @@ trials= 5;
 angles= [-60 -45 -30 30 45 60];
 
 rotationAngle=angles(randi(length(angles)));
+%nrw=906;
 
-    theFolder = [cd '/letter/'];
 
-trials=1;
+
+
 for i=1:trials
    pos_one(i)=angles(randi(length(angles)));
    pos_two(i)=angles(randi(length(angles))) ;
    pos_three(i)= angles(randi(length(angles)));
    pos_four(i)= angles(randi(length(angles)));
    
+   
    set_dist{i}=[pos_one(i) pos_two(i) pos_three(i) pos_four(i)];
    whichLoc(i)=randi(4);
    
-   theset=set_dist{i};
-newangles=angles;
-newangles(find(theset(whichLoc(i)))) = [];
+   theset=set_dist{i}
+  angles(find(dio(4)))
    
-   theset(whichLoc)=newangles(randi(length(newangles)));
-   set_tgt{i}=theset;
-   %clear theset newangles
-%end
-
-%set_tgt{i}
-%set_dist{i}
+   
+end
+    theFolder = [cd '/letter/'];
 
 
 theLetter=imread([theFolder 'newletterc22.tiff']);
 theLetter=theLetter(:,:,1);
 theLetter=imresize(theLetter,[nrw nrw],'bicubic');
 
-
 theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
-rotLetterone=imrotate(theLetter,rotationAngle);
+rotLetter=imrotate(theLetter,rotationAngle);
 rotLetter(rotLetter==0)=127;
 [rotrw, rotcl]=size(rotLetter);
 
@@ -138,10 +134,6 @@ largerimaj2(:,:,4)=largerblankimage3;
 
 theLetter=Screen('MakeTexture', window, largerout);
 theRegular=Screen('MakeTexture', window, largerout2);
-
-
-
-end
 r=[0 0 totalstimulussize]; 
 rr=CenterRect(r, screenRect); 
 
