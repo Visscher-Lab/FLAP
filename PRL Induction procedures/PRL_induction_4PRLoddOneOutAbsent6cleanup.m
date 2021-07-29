@@ -1,6 +1,5 @@
-% PRL induction procedure with simulated scotoma, single target
+% PRL induction procedure with simulated scotoma, multiple targets
 %written by Marcello A. Maniglia 2017-2021
-
 
 close all; clear all; clc;
 commandwindow
@@ -20,10 +19,10 @@ try
         return;
     end;
     
-    %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
-    
+    %    addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities');
     
     addpath([cd '/utilities']);
+    
     eyeOrtrack=1; %0=mouse, 1=eyetracker
     
     if eyeOrtrack==1
@@ -63,7 +62,7 @@ try
         TYPE = 'Annulus';
     end
     
-    baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_4PRLsingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_4PRLOddOneOutAbsentnew_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
     
     
@@ -73,12 +72,13 @@ try
     
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
+    max_distractors=15;
     
     stimulussize=3; %size of the stimulus
     separationdeg=2; % distance among elements within each stimulus
     triangleformation= 1; % three stimuli
     randomfix = 1; %initial fixation in a random location
-    distancedeg=9; % distance among stimuli
+    distancedeg=2.5; % distance among stimuli
     PRLecc=7.5; %eccentricity of PRLs
     
     randomizzato=1;
@@ -371,6 +371,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
+    Distlist=[0:1:max_distractors]';
     
     %stepsizes=[4 4 3 2 1];
     
@@ -432,17 +433,37 @@ try
     totalelements = 4-triangleformation; % number of stimuli on screen
     
     visibleCircle = 1; % 1= visible, 2 = invisible
+    OtherFolder='/Users/sll/Desktop/Flap/stimuli_inductionii/'; %to be updated! AS now updated.
+    
+    thetargets=dir([OtherFolder '*TGT*']);
+    theothers=dir([OtherFolder '*OT*']);
+    
     
     %%
     
     separation=round(separationdeg*pix_deg);
     %     distances=round(distancedeg*pix_deg);
-    %     theta = [3*pi/2  0  pi ];
+    %     jitterAngle= [-35 35];
+    %     jitterDistanceDeg= [-1.5 1.5];
+    %     jitterDistance=jitterDistanceDeg*pix_deg;
     %
-    %     rho = [distances distances distances];
+    %
+    %
+    %    % anglearray=[3*pi/2  0  pi 3/4*pi];
+    %     angle1= randi(360); %anglearray(randi(length(anglearray)))
+    %     angle2= angle1+120+(jitterAngle(2)-jitterAngle(1).*rand(1,1)+jitterAngle(1));
+    %     angle3= angle1-120+(jitterAngle(2)-jitterAngle(1).*rand(1,1)+jitterAngle(1));
+    %     %theta = [3*pi/2  0  pi ];
+    %      %   theta = [270  0  180 ];
+    %
+    %         theta = [angle1  angle2  angle3 ];
+    %         theta= deg2rad(theta);
+    %         distanceArray= [distances+(jitterDistance(2)-jitterDistance(1).*rand(1,1)+jitterDistance(1)) distances+(jitterDistance(2)-jitterDistance(1).*rand(1,1)+jitterDistance(1)) distances+(jitterDistance(2)-jitterDistance(1).*rand(1,1)+jitterDistance(1))];
+    %       %  theta = [3*pi/2  0  pi ]
+    %     rho = [distanceArray];
     %
     %     [elementcoordx,elementcoordy] = pol2cart(theta,rho);
-    %
+    
     
     imsize=stimulussize*pix_deg;
     
@@ -453,14 +474,8 @@ try
     circle = x.^2 + y.^2 <= xylim^2;
     [nrw, ncl]=size(x);
     
-    % angles= [-60 -45 -30 30 45 60 90 -90];
-    
-    %   angles= [0 45 90 135 180 225 270 315 ];
-    %angles= [25 50 75 125 150 175 -25 -50 -75 -125 -150 -175];%205-360 230-360 255-360 280-360 305-360 330-360 ];
-    angles= [15 75 105 165 195 255 285 345];
-    
-    %negative= right;
-    %positive= left;
+    angles= [-60 -45 -30 30 45 60 90 -90];
+    angles = [15 75 1-5 165 195 255 285 345];
     % i=1;
     %  angles= [50 80 10 30 20 40 90 70 60];
     
@@ -469,91 +484,24 @@ try
     
     theFolder = [cd '/letter/'];
     
-    %trials=10;
-    % trials=10;
-    theTargets_left={};
-    theTargets_right={};
-    a=size(theTargets_left);
-    a=a(:,1);
-    b=size(theTargets_right);
-    b=b(:,1);
+    trials=10;
     i=1;
-    lefty=0;
-    righty=0;
-    diocane=0;
-    while a<=trials || b<=trials
-        
-        a=size(theTargets_left);
-        a=a(:,2);
-        b=size(theTargets_right);
-        b=b(:,2);
+    for i=1:trials
         
         pos_one(i)=angles(randi(length(angles)));
-        if pos_one(i)>180
-            computepos_one(i)=180-pos_one(i);
-        else
-            computepos_one(i)=pos_one(i);
-            
-        end
+        
         if constrain == 1
             
             newangles=angles;
             %   newangles(newangles==pos_one(i))=[];
             newangles(find(newangles==pos_one(i)))=[];
-            pos_two(i)=newangles(randi(length(newangles)));
-            if pos_two(i)>180
-                computepos_two(i)=180-pos_two(i);
-            else
-                computepos_two(i)=pos_two(i);
-            end
+            pos_two(i)=newangles(randi(length(newangles))) ;
             newangles(find(newangles==pos_two(i)))=[];
             pos_three(i)= newangles(randi(length(newangles)));
-            if pos_three(i)>180
-                computepos_three(i)=180-pos_three(i);
-            else
-                computepos_three(i)=pos_three(i);
-            end
             newangles(find(newangles==pos_three(i)))=[];
             pos_four(i)= newangles(randi(length(newangles)));
-            if pos_four(i)>180
-                computepos_four(i)=180-pos_four(i);
-            else
-                computepos_four(i)=pos_four(i);
-            end
             newangles(find(newangles==pos_four(i)))=[];
             
-            
-            if (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i)) == 0
-                diocane=diocane+1
-                while (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i)) == 0
-                    newangles=angles;
-                    %   newangles(newangles==pos_one(i))=[];
-                    newangles(find(newangles==pos_one(i)))=[];
-                    pos_two(i)=newangles(randi(length(newangles)));
-                    if pos_two(i)>180
-                        computepos_two(i)=180-pos_two(i);
-                    else
-                        computepos_two(i)=pos_two(i);
-                    end
-                    newangles(find(newangles==pos_two(i)))=[];
-                    pos_three(i)= newangles(randi(length(newangles)));
-                    if pos_three(i)>180
-                        computepos_three(i)=180-pos_three(i);
-                    else
-                        computepos_three(i)=pos_three(i);
-                    end
-                    newangles(find(newangles==pos_three(i)))=[];
-                    pos_four(i)= newangles(randi(length(newangles)));
-                    if pos_four(i)>180
-                        computepos_four(i)=180-pos_four(i);
-                    else
-                        computepos_four(i)=pos_four(i);
-                    end
-                    newangles(find(newangles==pos_four(i)))=[];
-                    
-                end
-                
-            end
             
         elseif constrain == 0
             pos_two(i)=angles(randi(length(angles))) ;
@@ -562,17 +510,31 @@ try
             newangles=angles;
         end
         set_dist{i}=[pos_one(i) pos_two(i) pos_three(i) pos_four(i)];
-        lesangles=[computepos_one(i) computepos_two(i) computepos_three(i) computepos_four(i)];
+        whichLoc(i)=randi(4);
         thesetDist=set_dist{i};
         %newangles=angles;
-        %  newangles(find(thesetDist(whichLoc(i)))) = [];
+        %   newangles(find(thesetDist(whichLoc(i)))) = [];
+        %  newangles(find(thesetDist==whichLoc(i))) = [];
         
+        thesetTgt=thesetDist;
+        %  thesetTgt2=thesetTgt;
+        oui(i)=newangles(randi(length(newangles)));
+        thesetTgt(whichLoc(i))=newangles(randi(length(newangles)));
+        %   set_tgt2{i}=thesetTgt2;
+        set_tgt{i}=thesetTgt;
+        
+        %clear theset newangles
+        %end
+        
+        
+        %    -45   -30    45    60    90
+        %set_tgt{i}
+        %set_dist{i}
         
         
         theLetter=imread([theFolder 'newletterc22.tiff']);
         theLetter=theLetter(:,:,1);
         theLetter=imresize(theLetter,[nrw nrw],'bicubic');
-        theLetter=imrotate(theLetter,90);
         
         
         theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
@@ -667,7 +629,6 @@ try
         
         try
             largerrotLetterfour(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterfour(1:end,1:end);
-            
         end
         
         try
@@ -683,21 +644,139 @@ try
         largerimaj(:,:,4)=largerrotLetterfour;
         largerout = imtile(largerimaj,'Frames', 1:4, 'GridSize', [2 2]);
         
-        if (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i))> 0
-            lefty=lefty+1;
-            theTargets_left{lefty}=Screen('MakeTexture', w, largerout);
-            %  theTargets_left{lefty}=largerout;
-            coordleft{lefty}=thesetDist;
-            lesanglesleft{lefty}=lesangles;
-        elseif (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i))< 0
-            righty=righty+1;
-            theTargets_right{righty}=Screen('MakeTexture', w, largerout);
-            %    theTargets_right{righty}=largerout;
-            coordright{righty}=thesetDist;
-            lesanglesrighty{righty}=lesangles;
+        
+        
+        theLetter=imread([theFolder 'newletterc22.tiff']);
+        theLetter=theLetter(:,:,1);
+        theLetter=imresize(theLetter,[nrw nrw],'bicubic');
+        
+        
+        theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
+        rotLetterone=imrotate(theLetter,thesetTgt(1));
+        rotLetterone(rotLetterone==0)=127;
+        [rotrwi, rotcli]=size(rotLetterone);
+        
+        rotLettertwo=imrotate(theLetter,thesetTgt(2));
+        rotLettertwo(rotLettertwo==0)=127;
+        [rotrwii, rotclii]=size(rotLettertwo);
+        
+        rotLetterthree=imrotate(theLetter,thesetTgt(3));
+        rotLetterthree(rotLetterthree==0)=127;
+        [rotrwiii, rotcliii]=size(rotLetterthree);
+        
+        rotLetterfour=imrotate(theLetter,thesetTgt(4));
+        rotLetterfour(rotLetterfour==0)=127;
+        [rotrwiv, rotcliv]=size(rotLetterfour);
+        
+        thesizes= [rotrwi rotrwii rotrwiii rotrwiv];
+        
+        thisize=max(thesizes);
+        
+        blankimage = ones(thisize,thisize)*bg_index;
+        largerBlankimage=ones(thisize+separation,thisize+separation)*bg_index;
+        
+        border_two=round(((thisize+separation)-nrw)/2);
+        border_one=border_two+1;
+        
+        [largrotrw, largrotcl]=size(largerBlankimage);
+        
+        TlargerrotLetterone=largerBlankimage;
+        
+        border_two_rot =round(largrotrw-rotrwi)/2;
+        border_one_rot=border_two_rot+1;
+        
+        try
+            TlargerrotLetterone(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
         end
-        i=i+1;
+        
+        try
+            TlargerrotLetterone(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterone(1:end,1:end);
+        end
+        
+        try
+            TlargerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
+        end
+        
+        TlargerrotLettertwo=largerBlankimage;
+        
+        border_two_rot =round(largrotrw-rotrwii)/2;
+        border_one_rot=border_two_rot+1;
+        
+        try
+            TlargerrotLettertwo(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLettertwo(1:end,1:end);
+        end
+        
+        try
+            TlargerrotLettertwo(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLettertwo(1:end,1:end);
+            
+        end
+        
+        try
+            TlargerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
+        end
+        
+        
+        TlargerrotLetterthree=largerBlankimage;
+        
+        border_two_rot =round(largrotrw-rotrwiii)/2;
+        border_one_rot=border_two_rot+1;
+        
+        try
+            TlargerrotLetterthree(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
+        end
+        
+        try
+            TlargerrotLetterthree(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterthree(1:end,1:end);
+        end
+        
+        try
+            TlargerrotLetterthree(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
+        end
+        
+        
+        TlargerrotLetterfour=largerBlankimage;
+        
+        border_two_rot =round(largrotrw-rotrwiv)/2;
+        border_one_rot=border_two_rot+1;
+        
+        try
+            TlargerrotLetterfour(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
+        end
+        
+        try
+            TlargerrotLetterfour(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterfour(1:end,1:end);
+            
+        end
+        
+        try
+            TlargerrotLetterfour(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
+        end
+        
+        
+        clear largerimaj2
+        
+        largerimaj2(:,:,1)=TlargerrotLetterone;
+        largerimaj2(:,:,2)=TlargerrotLettertwo;
+        largerimaj2(:,:,3)=TlargerrotLetterthree;
+        largerimaj2(:,:,4)=TlargerrotLetterfour;
+        largerout2 = imtile(largerimaj2,'Frames', 1:4, 'GridSize', [2 2]);
+        %  theTargets{i}=largerout2;
+        %  theOthers{i}=largerout;
+        theTargets{i}=Screen('MakeTexture', w, largerout2);
+        theOthers{i}=Screen('MakeTexture', w, largerout);
+        
+        
     end
+    
+    
+    matrixtarget=[];
+    for ui=1:trials
+        
+        matrixtarget=[ matrixtarget; set_tgt{ui}];
+        
+    end
+    
+    matrix=[pos_one' pos_two' pos_three' pos_four'];
     
     %       matrixtarget
     %%
@@ -715,8 +794,12 @@ try
     colorfixation = white;
     
     
-    RespType(1) = KbName('leftArrow');
-    RespType(2) = KbName('rightArrow');
+    RespType(1) = KbName('p');
+    RespType(2) = KbName('a');
+    
+    
+    
+    
     
     %ims=17.5*pix_deg;
     ims=radius*pix_deg;
@@ -739,7 +822,7 @@ try
     
     %%
     
-    DrawFormattedText(w, 'report whether the overall direction of the stimuli is left (left key) or rght (right key) \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'report whether the odd element is (p)resent or (a)bsent \n \n by pressing the corresponding key \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
     %  Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
@@ -755,6 +838,8 @@ try
     %
     %
     %
+    
+    
     
     %     Screen('Flip', w);
     %     WaitSecs(1.5);
@@ -794,11 +879,12 @@ try
     fixat=1;
     fixationlength = 40; % pixels
     
+    
     if inductionType ==1
         PRLxx=[0 PRLecc 0 -PRLecc];
         PRLyy=[-PRLecc 0 PRLecc 0 ];
         %    PRLxx=[0 2 0 -2];
-        %    PRLyy=[-2 0 2 0 ];
+        %   PRLyy=[-2 0 2 0 ];
     else
         PRLxx=0;
         PRLyy=0;
@@ -859,20 +945,18 @@ try
         
     end
     
-    counterleft=0;
-    counterright=0;
+    
     counteremojisize=0;
-    for trial=1:trials %length(mixtr)
+    for trial=1:length(mixtr)
         
         
         TrialNum = strcat('Trial',num2str(trial));
         
         
         
-        
         distances=round(distancedeg*pix_deg);
         jitterAngle= [-35 35];
-        jitterDistanceDeg= [-9 1.5];
+        jitterDistanceDeg= [-1.5 1.5];
         jitterDistance=jitterDistanceDeg*pix_deg;
         
         
@@ -891,7 +975,6 @@ try
         rho = [distanceArray];
         
         [elementcoordx,elementcoordy] = pol2cart(theta,rho);
-        
         
         
         
@@ -940,9 +1023,10 @@ try
             end
         end
         
-        if trial==1
+        if trial==1;
             eyetime2=0;
         end;
+        
         
         
         if randomfix ==1
@@ -969,22 +1053,15 @@ try
         else
             if totalelements==4
                 tgtpos=randi(length(posmatrix));
-                %   eccentricity_X=positionmatrix(posmatrix(tgtpos,1));
-                %  eccentricity_Y=positionmatrix(posmatrix(tgtpos,2));
-                
             elseif totalelements==3
                 posmatrix=[elementcoordx' elementcoordy'];
                 tgtpos=randi(length(posmatrix));
-                %  ecc_x=posmatrix(tgtpos,1);
-                %  ecc_y=posmatrix(tgtpos,2);
-                %           eccentricity_X=ecc_x*pix_deg;
-                %  eccentricity_Y=ecc_y*pix_deg_vert;
+                
             end
         end
         
         newpos=posmatrix;
         newpos(tgtpos,:)=[];
-        
         
         
         %generate visual cue
@@ -1041,13 +1118,12 @@ try
                     newnewpos(newdistpos(gg),:)=[];
                 end
                 
-                neweccentricity_X=elementcoordx(1);
-                neweccentricity_Y=elementcoordy(1);
+                neweccentricity_X=target_ecc_x;
+                neweccentricity_Y=target_ecc_y;
             end
         end
         
-        neweccentricity_X=target_ecc_x;
-        neweccentricity_Y=target_ecc_y;
+        
         imageRect = CenterRect([0, 0, [poknrw poknrw]], wRect);
         imageRect_offs =[imageRect(1)+neweccentricity_X, imageRect(2)+neweccentricity_Y,...
             imageRect(3)+neweccentricity_X, imageRect(4)+neweccentricity_Y];
@@ -1064,7 +1140,7 @@ try
                 neweccentricity_Yd(gg)=round(relementcoordy(gg));
                 imageRect_offsDist{gg}= [imageRect(1)+round(relementcoordx(gg)), imageRect(2)+round(relementcoordy(gg)),...
                     imageRect(3)+round(relementcoordx(gg)), imageRect(4)+round(relementcoordy(gg))];
-                circlefix2(gg)=0;
+                %     circlefix2(gg)=0;
             end
         elseif totalelements == 4
             for gg = 1:totalelements-1
@@ -1072,41 +1148,42 @@ try
                 neweccentricity_Yd(gg)=newecc_yd(gg)*pix_deg_vert;
                 imageRect_offsDist{gg}= [imageRect(1)+neweccentricity_Xd(gg), imageRect(2)+neweccentricity_Yd(gg),...
                     imageRect(3)+neweccentricity_Xd(gg), imageRect(4)+neweccentricity_Yd(gg)];
-                circlefix2(gg)=0;
+                %         circlefix2(gg)=0;
             end
             
             
         end
-        
+        for aux=1:length(PRLx)
+            for gg = 1:totalelements-1
+                circlefix2(aux,gg)=0;
+            end
+        end
         audiocue2 %generates audio cue
         
         
         %type of target
-        %         theTarget(trial) = randi(length(theTargets));
-        %         texture(trial)=theTargets{theTarget(trial)};
-        %
+        theTarget(trial) = randi(length(theTargets));
+        texture(trial)=theTargets{theTarget(trial)};
+        
+        
         theans(trial)=randi(2); %generates answer for this trial
         if theans(trial)==1 %present
-            counterleft=counterleft+1;
-            texture(trial)=theTargets_left{counterleft};
+            disTexture(trial)=theOthers{theTarget(trial)};
         else % absent
-            counterright=counterright+1;
-            texture(trial)=theTargets_right{counterright};
+            disTexture(trial)=texture(trial);
         end
         
         
         Priority(1);
         eyechecked=0;
         KbQueueFlush();
-        %        trial_time = GetSecs;
         stopchecking=-100;
-        %  EyeData=9999;
         trial_time=100000;
         
         
         pretrial_time=GetSecs;
         stimpresent=0;
-        circlefix=0;
+        nn=0;
         while eyechecked<1
             
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*75 && fixating<fixTime/ifi && stopchecking>1
@@ -1161,7 +1238,6 @@ try
                 %here i present the stimuli+acoustic cue
             elseif (eyetime2-trial_time)>waittime+ifi*4 && (eyetime2-trial_time)<waittime+ifi*6 && fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
                 
-                %  cueonset=GetSecs
                 
                 vbl=GetSecs
                 cueontime=vbl + (ifi * 0.5);
@@ -1171,13 +1247,9 @@ try
                 
                 %Draw Target
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
-                
-                %                 for ui = 1:totalelements-1
-                %                     Screen('DrawTexture', w, disTexture(trial), [], imageRect_offsDist{ui} );
-                %                 end
-                
-                
-                
+                for ui = 1:totalelements-1
+                    Screen('DrawTexture', w, disTexture(trial), [], imageRect_offsDist{ui} );
+                end
                 stim_start=GetSecs;
                 stimpresent=1111;
                 for iu=1:length(PRLx)
@@ -1195,7 +1267,9 @@ try
                 stimpresent=1111;
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
                 
-                
+                for ui = 1:totalelements-1
+                    Screen('DrawTexture', w, disTexture(trial), [], imageRect_offsDist{ui} );
+                end
                 
             elseif (eyetime2-trial_time)>=waittime+ifi*7 && fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2))  + keyCode(escapeKey)~= 0 && mostratarget>10 % wait for response
                 
@@ -1236,7 +1310,6 @@ try
                                 codey(aup)= 1; %round(1025/2); %
                                 codex(aup)= 1; %round(1281/2);%
                                 activePRLT(aup) = 0;
-                                activePRLT(aup) = 0;
                                 
                             end
                         end
@@ -1246,10 +1319,7 @@ try
                             if   circlePixels(codey(1), codex(1))<0.81 && circlePixels(codey(2), codex(2))<0.81 && circlePixels(codey(3), codex(3))<0.81 ...
                                     && circlePixels(codey(4), codex(4))<0.81
                                 
-                                
-                                %
                                 Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                                %  Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
                                 
                                 for iu=1:length(PRLx)
                                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1258,17 +1328,12 @@ try
                                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                     end
                                 end
-                                %                            Screen('FillOval', w, [255 0 0], imageRect_offs);
                                 
-                                circlefix=0;
                                 
                             else
                                 if  exist('EyeCode','var')
-                                    if length(EyeCode)>6 %&& circlefix>6
-                                        circlefix=circlefix+1;
-                                        % if  EyeCode(end-1)~=0 && EyeCode(end)~=0
+                                    if length(EyeCode)>6
                                         if sum(EyeCode(end-6:end))~=0
-                                            
                                             Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                                             for iu=1:length(PRLx)
                                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1277,20 +1342,35 @@ try
                                                     Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                                 end
                                             end
-                                            %     elseif EyeCode(end-1)==0 && EyeCode(end)==0
                                         elseif sum(EyeCode(end-5:end))==0
                                             %mostra target
+                                            countertarget=countertarget+1;
+                                            for suis=1:length(PRLxpix)
+                                                if round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(suis))<=size(circlePixels,1) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(suis))<=size(circlePixels,2) ...
+                                                        &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(suis))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(suis))> 0;
+                                                    if circlePixels(codey(suis), codex(suis))>0.781
+                                                        countertargettt(suis,nn)=1;
+                                                    else
+                                                        countertargettt(suis,nn)=88;
+                                                    end
+                                                else
+                                                    countertargettt(suis,nn)=99;
+                                                end
+                                            end
+                                            %           countertargettt(aux,nn)=1;
+                                            %line below is TO TEST UNCOVERING OF TARGET
+                                            %    Screen('DrawTexture', w, Distractorface, [], imageRect_offs);
+                                            %          Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                                             
-                                            countertarget=countertarget+1
                                             framefix(countertarget)=length(EyeData(:,1));
                                             if exist('FixIndex','var')
                                                 fixind(countertarget)=FixIndex(end,1);
                                             end
                                             mostratarget=100;
                                             timeprevioustarget(countertarget)=GetSecs;
-                                            % circlefix=circlefix+1;
                                         end
-                                    elseif length(EyeCode)<=5 %&& circlefix<=6
+                                    elseif length(EyeCode)<=5
+                                        
                                         Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                                         for iu=1:length(PRLx)
                                             imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1299,8 +1379,7 @@ try
                                                 Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                             end
                                         end
-                                        circlefix=circlefix+1;
-                                    elseif length(EyeCode)>5 %&& circlefix<=6
+                                    elseif length(EyeCode)>5
                                         Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                                         for iu=1:length(PRLx)
                                             imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1309,7 +1388,6 @@ try
                                                 Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                             end
                                         end
-                                        circlefix=circlefix+1;
                                     end
                                 end
                             end
@@ -1318,7 +1396,6 @@ try
                         elseif stimpresent>0 && round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aux))>wRect(4) || round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aux))<0 || round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X)+PRLxpix(aux)))>wRect(3) || round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X)+PRLxpix(aux)))<0 %...
                             
                             
-                            circlefix=0;
                             Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                             for iu=1:length(PRLx)
                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1355,6 +1432,8 @@ try
                                 if   circlePixels(coodey(gg,1), coodex(gg,1))<0.81 && circlePixels(coodey(gg,2), coodex(gg,2))<0.81 && circlePixels(coodey(gg,3), coodex(gg,3))<0.81 ...
                                         && circlePixels(coodey(gg,4), coodex(gg,4))<0.81
                                     
+                                    Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});  %eccentricity_Xd(gh)
+                                    
                                     for iu=1:length(PRLx)
                                         imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
                                             imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1362,16 +1441,16 @@ try
                                             Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                         end
                                     end
-                                    circlefix2(gg)=0;
+                                    circlefix2(aux,gg)=0;
                                 else
                                     if  exist('EyeCode','var')
                                         %     circlefix2(gg)=0;
-                                        if length(EyeCode)>5 && circlefix2(gg)>5
-                                            circlefix2(gg)=circlefix2(gg)+1;
+                                        if length(EyeCode)>5 && circlefix2(aux,gg)>5
+                                            circlefix2(aux,gg)=circlefix2(aux,gg)+1;
                                             % if  EyeCode(end-1)~=0 && EyeCode(end)~=0
                                             if sum(EyeCode(end-5:end))~=0
-                                                circlefix2(gg)=circlefix2(gg)+1;
-                                                %           Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
+                                                circlefix2(aux,gg)=circlefix2(aux,gg)+1;
+                                                Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
                                                 for iu=1:length(PRLx)
                                                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
                                                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1382,9 +1461,40 @@ try
                                                 % elseif EyeCode(end-1)==0 && EyeCode(end)==0
                                             elseif   sum(EyeCode(end-5:end))==0
                                                 %mostra target
+                                                %      countertargetdist(gg,aux,nn)=1;
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                countertarget=countertarget+1;
+                                                
+                                                
+                                                for gei = 1:totalelements-1
+                                                    for suis=1:length(PRLxpix)
+                                                        if round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gei)))+PRLypix(suis))<=size(circlePixels,1) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gei)))+PRLxpix(suis))<=size(circlePixels,2) ...
+                                                                &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gei)))+PRLypix(suis))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gei)))+PRLxpix(suis))> 0;
+                                                            %  if circlePixels(codey(suis), codex(suis))>0.781
+                                                            
+                                                            if     circlePixels(coodey(gei,suis), coodex(gei,suis))>0.781
+                                                                
+                                                                countertargetdist(gei, suis,nn)=1;
+                                                            else
+                                                                countertargetdist(gei, suis,nn)=88;
+                                                                
+                                                            end
+                                                            
+                                                        else
+                                                            countertargetdist(gei, suis,nn)=99;
+                                                            
+                                                        end
+                                                    end
+                                                    
+                                                end
+                                                
                                             end
-                                        elseif length(EyeCode)<5 && circlefix2(gg)<=5
-                                            %           Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
+                                        elseif length(EyeCode)<5 && circlefix2(aux,gg)<=5
+                                            Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
                                             for iu=1:length(PRLx)
                                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
                                                     imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1392,10 +1502,10 @@ try
                                                     Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
                                                 end
                                             end
-                                            circlefix2(gg)=circlefix2(gg)+1;
-                                        elseif length(EyeCode)>5 && circlefix2(gg)<=5
-                                            %        Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
-                                            circlefix2(gg)=circlefix2(gg)+1;
+                                            circlefix2(aux,gg)=circlefix2(aux,gg)+1;
+                                        elseif length(EyeCode)>5 && circlefix2(aux,gg)<=5
+                                            Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
+                                            circlefix2(aux,gg)=circlefix2(aux,gg)+1;
                                             for iu=1:length(PRLx)
                                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
                                                     imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1410,7 +1520,8 @@ try
                                 %    round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gg)))+PRLypix(aux2))>wRect(4) || round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gg)))+PRLypix(aux2))<0 || round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gg))+PRLxpix(aux2)))>wRect(3) || round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gg))+PRLxpix(aux2)))<0
                                 
                                 
-                                circlefix2(gg)=0;
+                                Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});  %eccentricity_Xd(gh)
+                                circlefix2(aux,gg)=0;
                                 for iu=1:length(PRLx)
                                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
                                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1449,7 +1560,7 @@ try
                 
                 if EyeData(1)<8000 && stopchecking<0
                     trial_time = GetSecs;
-                    stopchecking=10
+                    stopchecking=10;
                 end
                 
                 if CheckCount > 1
@@ -1474,13 +1585,15 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
             %  toc
             %    disp('fine')
+            
+            nn=nn+1;
         end
         
         
         foo=(RespType==thekeys);
         
-        %   staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
-        %   Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=distnum;
+        %  staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
+        %  Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=distnum;
         
         if foo(theans(trial))
             resp = 1;
@@ -1488,27 +1601,28 @@ try
             
             if stim_stop - stim_start<5
                 respTime=1;
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                
-                if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                    corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    if isreversals(mixtr(trial,1),mixtr(trial,2))==1
-                        reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                        isreversals(mixtr(trial,1),mixtr(trial,2))=0;
-                    end
-                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                    if thestep>5
-                        thestep=5;
-                    end;
-                    
-                end
-                
+                %                 corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
+                %
+                %                 if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                %                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                %                     if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                %                         reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                %                         isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                %                     end
+                %                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                %                     if thestep>5
+                %                         thestep=5;
+                %                     end;
+                %                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                %                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Distlist));
+                %
+                %                 end
                 
                 
                 
             else
                 respTime=0;
-                counteremojisize=0;
+                %       counteremojisize=0;
                 
             end
             
@@ -1521,53 +1635,43 @@ try
             respTime=0;
             PsychPortAudio('Start', pahandle2);
             
-            if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-            end
-            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-            
-            thestep=max(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-            if thestep>5
-                thestep=5;
-            end;
-            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-            thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+            %             if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+            %                 isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            %             end
+            %             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+            %
+            %             thestep=max(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+            %             if thestep>5
+            %                 thestep=5;
+            %             end;
+            %             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+            %             thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
         end
         
         
-        %  stim_stop=secs;
         time_stim(kk) = stim_stop - stim_start;
         totale_trials(kk)=trial;
-        %     coordinate(trial).x=ecc_x;
-        %    coordinate(trial).y=ecc_y;
+        
         rispoTotal(kk)=resp;
         rispoInTime(kk)=respTime;
-        %  distraktor(trial)=distnum;
+        %     distraktor(trial)=distnum;
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
-        % answer(trial)=theans %1 = present
         TGT_loc(trial)=targetlocation(trial);
         TGT_x(trial)=target_ecc_x;
         TGT_y(trial)=target_ecc_y;
-        
         tutti{trial} =imageRect_offs;
         
         
-        %   flipptime(trial).ix=[fliptime];
         if eyeOrtrack==1
-            %        ppupils(trial).xx=[pupils];
-            %     ttrackertime(trial).xx=[tracktime];
-            %           EyeSummary.(trial).Trial = trial;
-            
             
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
             clear EyeCode
-            
-            
-            
+            %        EyeSummary.(TrialNum).showstim = showstim;
+            %        EyeSummary.(TrialNum).showother = showother;
             if exist('FixIndex')==0
                 FixIndex=0;
             end;
@@ -1580,38 +1684,36 @@ try
             EyeSummary.(TrialNum).TargetX = target_ecc_x;
             EyeSummary.(TrialNum).TargetY = target_ecc_y;
             
-            
+            %             if exist('ecc_xd')==1
+            %                 EyeSummary.(TrialNum).DistX=ecc_xd;
+            %                 EyeSummary.(TrialNum).DistY=ecc_yd;
+            %                 EyeSummary.(TrialNum).Distnum=gh;
+            %             end;
+            EyeSummary.(TrialNum).Elements=imageRect_offsDist;
             EyeSummary.(TrialNum).EventData = EvtInfo;
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
-            %  EyeSummary(trial).GetFixationInfo.DriftCorrIndices = DriftCorrIndices;
             EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            %FixStamp(TrialCounter,1);
             EyeSummary.(TrialNum).TimeStamps.Stimulus = stim_start;
             EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             EyeSummary.(TrialNum).StimulusSize=poknrw;
             EyeSummary.(TrialNum).Target.App = mostratarget;
             EyeSummary.(TrialNum).Target.counter=countertarget;
+            EyeSummary.(TrialNum).Target.visible=countertargettt;
+            EyeSummary.(TrialNum).Target.Disvisible=countertargetdist;
             EyeSummary.(TrialNum).Target.FixInd=fixind;
             EyeSummary.(TrialNum).Target.Fixframe=framefix;
             EyeSummary.(TrialNum).PRL.x=PRLx;
             EyeSummary.(TrialNum).PRL.y=PRLy;
             EyeSummary.(TrialNum).targetlocation =targetlocation;
-            %StimStamp(TrialCounter,1);
             clear ErrorInfo
-            %    fliptime(trial)=[VBL_Timestamp];
-            %thresharray(kk)=tresh;
+            
         end
         
         kk=kk+1;
-        
-        %
-        %             if trial==100 | 200 | 300 | 400 | 500 | 600 | 700
-        %             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|ax|ay|xxx|yyyy|circle|azimuths|corrS|errorS|Allimg)$).');
-        %             end;
         
         if (mod(trial,100))==1
             if trial==1
