@@ -24,7 +24,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
 if exist('data')==0
     mkdir('data')
 end;
-baseName=['./data/' SUBJECT '_FLAPcrowdingacuity3' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+baseName=['./data/' SUBJECT '_FLAPcrowdingacuity3practice' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
 
 
     eyeOrtrack=1; %0=mouse, 1=eyetracker
@@ -453,14 +453,14 @@ eccentricity_Y=ylocs*pix_deg;
 %mixtr=randi(2,10,2);
     PRLlocations=4;
    
-tr=40;  %50
+tr=4;  %50
     
 % mixtr=[repmat(1:lr,1,cc*tr)' repmat(ceil((1:(cc*lr))/lr),1, tr)'];
 %  mixtr =mixtr(randperm(length(mixtr)),:)
 
  
  
-blocks=4; %12;
+blocks=1; %12;
 n_blocks=round(tr/blocks);   %number of trials per miniblock
     
 
@@ -498,7 +498,7 @@ mixtrCW=[];
 
         cueloc=5;
         targetloc=4;
-        rep=5;
+        rep=2;
         
         
         mixtrAtt=repmat(fullfact([cueloc targetloc]), rep,1);
@@ -522,7 +522,7 @@ mixtrCW=[];
         mixtrAtt= [firstPartMat; secondPartMat];
         
         
-        
+        mixtrAtt=mixtrAtt(1:20,:);
         %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
 
     totalmixtr=length(mixtrVA)+length(mixtrCW)+length(mixtrAtt);
@@ -599,7 +599,7 @@ for totaltrial=1:totalmixtr
 %          interblock_instruction
 %      end
      
-  %   whichTask=3
+   %  whichTask=3
      
 TrialNum = strcat('Trial',num2str(totaltrial));
 
