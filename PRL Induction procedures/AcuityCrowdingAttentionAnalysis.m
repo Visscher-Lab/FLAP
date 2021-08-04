@@ -51,7 +51,41 @@ end
 
 
 
-thresho=permute(ThreshlistCW, [3 1 2])
+thresho=permute(ThreshlistCW, [3 1 2]);
 
 %position 1 (up), radial
-uprad=thresho(:,1,1)
+uprad=thresho(:,1,1);
+%position 2 (right), radial
+rightrad=thresho(:,2,1);
+%position 3 (down), radial
+downrad=thresho(:,3,1);
+%position 4 (left), radial
+lefttrad=thresho(:,4,1);
+
+
+%position 1 (up), tangential
+uptan=thresho(:,1,2);
+%position 2 (right), tangential
+righttan=thresho(:,2,2);
+%position 3 (down), tangential
+downtan=thresho(:,3,2);
+%position 4 (left), tangential
+lefttan=thresho(:,4,2);
+
+
+
+%% Attention
+
+
+
+Attmax= [mixtrAtt correx time_stim];
+
+for ui=1:length(eccentricity_X)
+    hold on
+    PRL_cued_acc{ui} = Attmax(Attmax(:,1)==ui & Attmax(:,2)==1,3);
+        PRL_uncued_acc{ui} = Attmax(Attmax(:,1)==ui & Attmax(:,2)==1,3);
+
+    PRL_cued_RT{ui} = Attmax(Attmax(:,1)==ui & Attmax(:,2)==1,4);
+        PRL_uncued_RT{ui} = Attmax(Attmax(:,1)==ui & Attmax(:,2)==1,4);
+Scores{ui} = text(PRLLoc{ui}(1)*0.9,PRLLoc{ui}(2),num2str(PRL_thresh{ui}));
+end
