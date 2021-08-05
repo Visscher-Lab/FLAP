@@ -18,7 +18,10 @@ try
     if isempty(answer)
         return;
     end;
-           
+    
+    %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
+    
+    
     addpath([cd '/utilities']);
     eyeOrtrack=1; %0=mouse, 1=eyetracker
     
@@ -34,21 +37,23 @@ try
     expdayeye = answer{2,:};
     
     BITS=0; % (1=Bits++; 2=Display++; 0=no bits)
-%     if BITS==1
-%         % cd '/Users/visionlab/Desktop/AMD assessment 2017/CAT food';    
-%         cd '/Users/visionlab/Desktop/AMD assessment 2017/CAT food (2 to 13)'
-%     elseif BITS==2
-%         cd 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training'
-%     elseif BITS==0
-%         cd;
-%     end
+    if BITS==1
+        % cd '/Users/visionlab/Desktop/AMD assessment 2017/CAT food';
+        
+        cd '/Users/visionlab/Desktop/AMD assessment 2017/CAT food (2 to 13)'
+    elseif BITS==2
+        cd 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training'
+    elseif BITS==0
+        cd;
+    end;
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
-    end
-       
+    end;
+    
+    
     inductionType = 1; % 1 = assigned, 2 = annulus
     if inductionType ==1
         TYPE = 'Assigned';
@@ -70,15 +75,22 @@ try
     PRLecc=8.5; %eccentricity of PRLs
 PRLsize =5; % diameter PRL
       scotomadeg=str2num(answer{3,:});
-    baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_4PRLsingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
 
-    randomizzato=1;    
+    randomizzato=1;
+    CircConts=[0.51,1]; %low/high contrast circular cue
+    fixat=0;
+    SOA=0;
+    
     theseed=sum(100*clock);
     rand('twister',theseed);
   
     %   trials=500;
     trials=50;
-
+    
+    randomposition = 0;
+    assignedpositionmatrix=[-8 -8; 8 -8; -8 8; 8 8];
+    
     mixtr=ones(trials,2);
     KbQueueCreate;
     
@@ -112,16 +124,20 @@ PRLsize =5; % diameter PRL
         
         %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
         %eyeTrackerBaseName = 's00';
-        eyeTrackerBaseName =[SUBJECT expdayeye];        
-      
+        eyeTrackerBaseName =[SUBJECT expdayeye];
+        
+        %     save_dir='C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
+        
+        
         if exist('dataeyet')==0
             mkdir('dataeyet');
         end
         save_dir=[cd './dataeyet/'];
     end
-   
-    if BITS==1  
-        %UCR
+    
+    
+    
+    if BITS==1  %UCR
         %% psychtoobox settings
         screencm=[40.6, 30];%[UAB:69.8x35.5; UCR: 40.6x30 ]
         load gamma197sec;
@@ -148,35 +164,8 @@ PRLsize =5; % diameter PRL
         %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
         Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-     elseif BITS==2 %UAB
+    elseif BITS==0  %no Bits, 256 RGB
         
-        s1=serial('com3');
-        fopen(s1);
-        fprintf(s1, ['$monoPlusPlus' 13]);
-        fclose(s1);
-        clear s1
-        screencm=[69.8, 35.5];
-        v_d=57;
-        AssertOpenGL;
-    %    radius=17.5;   %radius of the circle in which the target can appear
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-        %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        
-        
-        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    elseif BITS==0  
-        %no Bits, 256 RGB
         %% psychtoobox settings
         v_d=57;
      %   radius=12.5;   %radius of the circle in which the target can appear
@@ -200,13 +189,43 @@ PRLsize =5; % diameter PRL
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
         Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                       
-    end 
-    
+        
+        
+        
+    elseif BITS==2 %UAB
+        
+        s1=serial('com3')
+        fopen(s1)
+        fprintf(s1, ['$monoPlusPlus' 13])
+        fclose(s1)
+        clear s1
+        screencm=[69.8, 35.5];
+        v_d=57;
+        AssertOpenGL;
+    %    radius=17.5;   %radius of the circle in which the target can appear
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        
+        
+        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+    end    
     %struct.res=[1280 960];    
     struct.sz=[screencm(1), screencm(2)];
+    %pix_deg = pi * wRect(3) / atan(screencm(1)/v_d/2) / 360; %pixperdegree
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
     pix_deg_vert=1./((2*atan((screencm(2)/wRect(4))./(2*v_d))).*(180/pi));
+    %pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360 %to calculate the limit of target position
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
     gray=round((white+black)/2);
@@ -302,14 +321,14 @@ PRLsize =5; % diameter PRL
         Eyelink('dodriftcorrect');
     end
     
-    %% SOUND
+    % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 1, 44100, 2);
     pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
     pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
     
     
-    % audio stimuli
+    %% fill buffers
     
     try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -318,45 +337,64 @@ PRLsize =5; % diameter PRL
     try
         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end;  
+    end;
+    
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     load('S096_marl-nyu');
     
     %% STAIRCASE
-%     StartCont=1;  %15
-%     thresh(1:1, 1:1)=StartCont;
-%     step=5;
-%     
-%     
-%     reversals(1:1, 1:1)=0;
-%     isreversals(1:1, 1:1)=0;
-%     staircounter(1:1, 1:1)=0;
-%     corrcounter(1:1, 1:1)=0;
-%     
-%     % Threshold -> 79%
-%     sc.up = 1;                          % # of incorrect answers to go one step up
-%     sc.down = 3;                        % # of correct answers to go one step down
-%     
-% 
-%     stepsizes=[1 1 1 1 1];
+    StartCont=1;  %15
+    thresh(1:1, 1:1)=StartCont;
+    step=5;
+    
+    
+    reversals(1:1, 1:1)=0;
+    isreversals(1:1, 1:1)=0;
+    staircounter(1:1, 1:1)=0;
+    corrcounter(1:1, 1:1)=0;
+    
+    % Threshold -> 79%
+    sc.up = 1;                          % # of incorrect answers to go one step up
+    sc.down = 3;                        % # of correct answers to go one step down
+    
+
+    stepsizes=[1 1 1 1 1];
 
       
     %% stimulus settings and fixation point
     
     imsize=stimulussize*pix_deg;
     [x,y]=meshgrid(-imsize:imsize,-imsize:imsize);
+    fixationlength = 10; % pixels
     
     
+    %set the limit for stimuli position along x and y axis
+    %xLim=((wRect(3)-(2*imsize))/pix_deg)/2;
+    %yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
+       
+    
+   % xLim=(((35*pix_deg)-(2*imsize))/pix_deg)/2;
+   % yLim=(((35*pix_deg_vert)-(2*imsize))/pix_deg_vert)/2;
     bg_index =round(gray*255); %background color
     
     
+    %radius=17.5;   %radius of the circle in which the target can appear
+    % radius=6
+  %  r_lim=((radius*pix_deg)-(imsize))/pix_deg;
+    
+    
+    
+    %  positions=(-r_lim:stimulussize*1.2:r_lim);
+    
+   
     positions = [-3 3];
     positionmatrix=[positions; positions]';
     
     posmatrix=fullfact([length(positions) length(positions)]);
    
+    poknrw=imsize;
         
     [img, sss, alpha] =imread('neutralface.png');
     img(:, :, 4) = alpha;
@@ -365,7 +403,29 @@ PRLsize =5; % diameter PRL
     [img, sss, alpha] =imread('neutral21.png');
     img(:, :, 4) = alpha;
     Neutralface=Screen('MakeTexture', w, img);
+    
+    
+        [img, sss, alpha] =imread('vertical_bar2.tiff');
+   % img(:, :, 4) = alpha;
+    Neutralface2=Screen('MakeTexture', w, img);
+    
+        [img, sss, alpha] =imread('newletterc.tiff');
+  %  img(:, :, 4) = alpha;
+    Neutralface3=Screen('MakeTexture', w, img);
+    
+    
+    
+    [img, sss, alpha] =imread('happyface.png');
+    img(:, :, 4) = alpha;
+    Neutralface4=Screen('MakeTexture', w, img);
   
+    
+    
+        [img, sss, alpha] =imread('sadface.png');
+    img(:, :, 4) = alpha;
+    Neutralface5=Screen('MakeTexture', w, img);
+    
+    
     totalelements = 4-triangleformation; % number of stimuli on screen
     
     visibleCircle = 1; % 1= visible, 2 = invisible
@@ -373,6 +433,8 @@ PRLsize =5; % diameter PRL
     %%
  
     separation=round(separationdeg*pix_deg);
+
+    imsize=stimulussize*pix_deg;
     
     totalstimulussize=separation+imsize*2;
     totalstimulussize=[totalstimulussize totalstimulussize];
@@ -391,7 +453,7 @@ PRLsize =5; % diameter PRL
     constrain = 1;
     % rotationAngle=angles(randi(length(angles)));
     
-    theFolder = [cd '/utilities/'];
+    theFolder = [cd '/letter/'];
     
     %trials=10;
    % trials=10;
@@ -641,7 +703,23 @@ PRLsize =5; % diameter PRL
     DrawFormattedText(w, 'report whether the overall direction of the stimuli is left (left key) or rght (right key) \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
-   
+    %  Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    %  Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    
+    
+    %   DrawFormattedText(w, 'Press ' , imRect_offs(1)-20, imRect_offs(2)-80, white);
+    % DrawFormattedText(w, 'Press h' , imRect_offs2(1)-20, imRect_offs2(2)-80, white);
+    %
+    %
+    % Screen('DrawTexture',w,Happyface,[],imRect_offs2);%
+    % Screen('DrawTexture',w,Sadface,[],imRect_offs);%
+    %
+    %
+    %
+
+    %     Screen('Flip', w);
+    %     WaitSecs(1.5);
+    %       KbWait;
     Screen('Flip', w);
     %possible orientations
     
@@ -674,20 +752,22 @@ PRLsize =5; % diameter PRL
     fliptime=[ ];
     mss=[ ];
     scotoma_color=[200 200 200];
+    fixat=1;
+    fixationlength = 40; % pixels
     
-    if inductionType ==1
-        PRLxx=[0 PRLecc 0 -PRLecc];
-        PRLyy=[-PRLecc 0 PRLecc 0 ];
-    %    PRLxx=[0 2 0 -2];
-    %    PRLyy=[-2 0 2 0 ];
-    else
-        PRLxx=0;
-        PRLyy=0;
-    end
-    
-    angolo=pi/2;
-    %angolo=0;
-    
+%     if inductionType ==1
+%         PRLxx=[0 PRLecc 0 -PRLecc];
+%         PRLyy=[-PRLecc 0 PRLecc 0 ];
+%     %    PRLxx=[0 2 0 -2];
+%     %    PRLyy=[-2 0 2 0 ];
+%     else
+%         PRLxx=0;
+%         PRLyy=0;
+%     end
+%     
+%     angolo=pi/2;
+%     %angolo=0;
+%     
 %     for ui=1:length(PRLxx)
 %         [theta,rho] = cart2pol(PRLxx(ui), PRLyy(ui));
 %         ecc_r=rho;
@@ -842,14 +922,14 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         ycrand=0;
     end
      
-       % if randomposition == 1
-%             posmatrix=[1:4; 1:4]';
-%             positionmatrix=assignedpositionmatrix;
-%             
-%             tgtpos=randi(length(posmatrix));
-%             ecc_x=positionmatrix(posmatrix(tgtpos,1),1);
-%             ecc_y=positionmatrix(posmatrix(tgtpos,2),2);
-     %   else
+        if randomposition == 1
+            posmatrix=[1:4; 1:4]';
+            positionmatrix=assignedpositionmatrix;
+            
+            tgtpos=randi(length(posmatrix));
+            ecc_x=positionmatrix(posmatrix(tgtpos,1),1);
+            ecc_y=positionmatrix(posmatrix(tgtpos,2),2);
+        else
             if totalelements==4
             tgtpos=randi(length(posmatrix));
          %   eccentricity_X=positionmatrix(posmatrix(tgtpos,1));
@@ -863,7 +943,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
          %           eccentricity_X=ecc_x*pix_deg;
       %  eccentricity_Y=ecc_y*pix_deg_vert;
             end
-      %  end
+        end
         
         newpos=posmatrix;
         newpos(tgtpos,:)=[];
@@ -876,21 +956,21 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         end
         
         
-%         if randomposition == 1
-%             
-%             target_ecc_x=positionmatrix(posmatrix(targetlocation(trial)),1);
-%             target_ecc_y=positionmatrix(posmatrix(targetlocation(trial)),2);
-%             
-%             newnewpos=posmatrix;
-%             newnewpos(targetlocation(trial),:)=[];
-%             
-%             for gg=1:(totalelements-1)
-%                 newdistpos(gg)=randi(length(newnewpos(:,1)));
-%                 newecc_xd(gg)=positionmatrix(newnewpos(newdistpos(gg)),1);
-%                 newecc_yd(gg)=positionmatrix(newnewpos(newdistpos(gg)),2);
-%                 newnewpos(newdistpos(gg),:)=[];
-%             end
-%         else
+        if randomposition == 1
+            
+            target_ecc_x=positionmatrix(posmatrix(targetlocation(trial)),1);
+            target_ecc_y=positionmatrix(posmatrix(targetlocation(trial)),2);
+            
+            newnewpos=posmatrix;
+            newnewpos(targetlocation(trial),:)=[];
+            
+            for gg=1:(totalelements-1)
+                newdistpos(gg)=randi(length(newnewpos(:,1)));
+                newecc_xd(gg)=positionmatrix(newnewpos(newdistpos(gg)),1);
+                newecc_yd(gg)=positionmatrix(newnewpos(newdistpos(gg)),2);
+                newnewpos(newdistpos(gg),:)=[];
+            end
+        else
             if totalelements == 4
             target_ecc_x=positionmatrix(posmatrix(targetlocation(trial),1));
             target_ecc_y=positionmatrix(posmatrix(targetlocation(trial),2));
@@ -922,11 +1002,13 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         neweccentricity_X=elementcoordx(1);
         neweccentricity_Y=elementcoordy(1); 
             end
-    %    end
+        end
+                target_ecc_x=0;
         
+        target_ecc_y=0;
         neweccentricity_X=target_ecc_x;
         neweccentricity_Y=target_ecc_y;
-        imageRect = CenterRect([0, 0, [imsize imsize]], wRect);
+        imageRect = CenterRect([0, 0, [poknrw poknrw]], wRect);
         imageRect_offs =[imageRect(1)+neweccentricity_X, imageRect(2)+neweccentricity_Y,...
             imageRect(3)+neweccentricity_X, imageRect(4)+neweccentricity_Y];
         
@@ -958,7 +1040,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
   
         audiocue2 %generates audio cue
         
-        
+
         %type of target
 %         theTarget(trial) = randi(length(theTargets));
 %         texture(trial)=theTargets{theTarget(trial)};
@@ -989,53 +1071,53 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                       
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*75 && fixating<fixTime/ifi && stopchecking>1
                 fixationscriptrand
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
             elseif  (eyetime2-pretrial_time)>=ifi*75 && fixating<fixTime/ifi && stopchecking>1
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
                 IsFixating4
                 fixationscriptrand
             elseif (eyetime2-pretrial_time)>ifi*75 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1
                 trial_time = GetSecs;
                 fixating=1500;
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
             end
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<waittime+ifi*2 && fixating>400 && stopchecking>1
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
             end
                        
             if (eyetime2-trial_time)>=waittime+ifi*2 && (eyetime2-trial_time)<waittime+ifi*4 && fixating>400 && stopchecking>1
 
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
                 %here i present the stimuli+acoustic cue
             elseif (eyetime2-trial_time)>waittime+ifi*4 && (eyetime2-trial_time)<waittime+ifi*6 && fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
                 
@@ -1058,13 +1140,13 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                 
                 stim_start=GetSecs;
                 stimpresent=1111;
-%                 for iu=1:length(PRLx)
-%                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
-%                         imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
-%                     if visibleCircle ==1
-%                         Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
-%                     end
-%                 end
+                for iu=1:length(PRLx)
+                    imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
+                        imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
+                    if visibleCircle ==1
+                        Screen('FrameOval', w,200, imageRect_offscue{iu}, oval_thick, oval_thick);
+                    end
+                end
             elseif (eyetime2-trial_time)>=waittime+ifi*6 && fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
 
                 if exist('stim_start')==0
@@ -1147,7 +1229,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                                         % if  EyeCode(end-1)~=0 && EyeCode(end)~=0
                                         if sum(EyeCode(end-6:end))~=0
 
-                                            Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                                            Screen('DrawTexture', w, Neutralface2, [], imageRect_offs);
 %                                             for iu=1:length(PRLx)
 %                                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
 %                                                     imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1169,7 +1251,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                                             % circlefix=circlefix+1;
                                         end
                                     elseif length(EyeCode)<=5 %&& circlefix<=6
-                                        Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                                        Screen('DrawTexture', w, Neutralface3, [], imageRect_offs);
 %                                         for iu=1:length(PRLx)
 %                                             imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
 %                                                 imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1179,7 +1261,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
 %                                         end
                                         circlefix=circlefix+1;
                                     elseif length(EyeCode)>5 %&& circlefix<=6
-                                       Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                                       Screen('DrawTexture', w, Neutralface4, [], imageRect_offs);
 %                                         for iu=1:length(PRLx)
 %                                             imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
 %                                                 imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1197,8 +1279,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                             
                             
                             circlefix=0;
-% If this texture is active it will make the target visible only if all the PRLs are within the screen. If one of themis outside the target won't be visible                     
-%       Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+             %               Screen('DrawTexture', w, Neutralface5, [], imageRect_offs);
 %                             for iu=1:length(PRLx)
 %                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
 %                                     imageRectcue(3)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(4)+(newsampley-wRect(4)/2)+PRLypix(iu)];
@@ -1478,7 +1559,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
             %FixStamp(TrialCounter,1);
             EyeSummary.(TrialNum).TimeStamps.Stimulus = stim_start;
             EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
-            EyeSummary.(TrialNum).StimulusSize=imsize;
+            EyeSummary.(TrialNum).StimulusSize=poknrw;
             EyeSummary.(TrialNum).Target.App = mostratarget;
             EyeSummary.(TrialNum).Target.counter=countertarget;
             EyeSummary.(TrialNum).Target.FixInd=fixind;

@@ -1,4 +1,3 @@
-
 % FLAP Attention task via RSVP streams on 3 peripheral location
 % Marcello Maniglia 7/21/2021
 close all; clear all; clc;
@@ -241,9 +240,7 @@ try
     
     
     if EyeTracker == 1
-        
-        
-        
+            
         % old variables
         [winCenter_x,winCenter_y]=RectCenter(wRect);
         backgroundEntry = [0.5 0.5 0.5];
@@ -421,7 +418,7 @@ try
     RespType(2) = KbName('LeftArrow');
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
-    RespType(5:8) = KbName('w');
+    RespType(5:9) = KbName('w');
     
     
     %load testswitchmatrix.mat;
