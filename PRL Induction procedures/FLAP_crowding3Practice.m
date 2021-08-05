@@ -41,7 +41,7 @@ fixationlength = 40; % pixels
 
 red=[255 0 0];
 
-StartSize=1.1; %for VA
+StartSize=2.5; %for VA
 cueSize=3;
 
 oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
@@ -69,7 +69,7 @@ kk=1;
 cueonset=0.55;
 cueduration=.05;
 cueISI=0.1;
-presentationtime=0.133;
+presentationtime=0.18;
 
 
 cue_spatial_offset=2;
@@ -740,12 +740,19 @@ elseif whichTask == 3
                imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);               
 
     
-    if exist('ThreshlistVA') ==0
-        ThreshlistVA = [ones(30,1)];
-               imageRect = CenterRect([0, 0, 1*pix_deg 1*pix_deg], wRect);               
-
+%     if exist('ThreshlistVA') ==0
+%         ThreshlistVA = [ones(30,1)];
+%                imageRect = CenterRect([0, 0, 1*pix_deg 1*pix_deg], wRect);               
+% 
+%     end
+%     
+    for ui=1:length(eccentricity_X)
+    PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-20:end));
+    
     end
-    VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
+    
+    
+    VA_thresho=max(cell2mat(PRL_va_thresh));
     
                         if VA_thresho<0
                         VA_thresho=1;
