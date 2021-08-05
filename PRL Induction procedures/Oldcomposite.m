@@ -1,4 +1,6 @@
 % this time we will merge it with main.  test Aug 5, 3:25
+%this time we want to make crazy changes, and will put it in a branch, and
+%keep it and see where it gets saved as part of the branch 3:41
     
     OtherFolder = [cd '/Induction_stimuli/'];
     
