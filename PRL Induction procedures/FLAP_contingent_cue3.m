@@ -5,11 +5,12 @@ close all; clear all; clc;
 commandwindow
 
 try
-    prompt={'Subject Name', 'day'};
+    prompt={'Subject Name', 'day', 'Site (UCR=1, UAB=2)'};
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'1', '15' };
+    defaultanswer={'1', '15' , '2'};
+    % former code: BITS=0; %0; 1=bits++; 2=display++ (UAB)
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -18,6 +19,7 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=answer{2,:};
+    BITS = str2num(answer{3,:}); % Gets site that we are working at.
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -35,7 +37,7 @@ try
     sigma_deg = 1; %4;
     sfs=3;
     color=0;
-    BITS=0; %0; 1=bits++; 2=display++
+ 
     randomizzato=0;
     
     if color ==1
@@ -90,7 +92,7 @@ try
     %elseif ismac
     escapeKey = KbName('ESCAPE');	% quit key
     %end
-    
+    'got to line 95'
     if BITS==1  %UCR
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -149,10 +151,14 @@ try
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+  
     end
+    
     Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    'got to line after screen'
     struct.sz=[screencm(1), screencm(2)];
     
+    'got to line 159'
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
     pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360;
     pix_deg_vert=1./((2*atan((screencm(2)/wRect(4))./(2*v_d))).*(180/pi));
@@ -169,7 +175,7 @@ try
     if ifi==0
         ifi=1/75;
     end
-
+    'got to line 175'
     prefixwait=ifi*40;
     if stimulus_contingent==1
         waittime=0;
@@ -180,6 +186,7 @@ try
     end
     
     
+    'got to line 185'
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 1, 44100, 2);
@@ -202,8 +209,10 @@ try
     % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
+    'got to 212'
     
     if EyeTracker==1
+        'inside Eyetracker if statement'
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
         eyeTrackerBaseName =[SUBJECT expdayeye];
@@ -226,12 +235,12 @@ try
         
         
         if exist('dataeyet')==0
-            mkdir('dataeyet')
+            mkdir('dataeyet');
         end;
         save_dir=[cd './dataeyet/'];
         
     end;
-  
+    'got to 242'
     fixationlength = 10; % pixels
     fixwindowPix=fixwindow*pix_deg;
     
@@ -243,7 +252,7 @@ try
     if EyeTracker == 1
         
         
-        
+        'inside other eyetracker loop 255'
         % old variables
         [winCenter_x,winCenter_y]=RectCenter(wRect);
         backgroundEntry = [0.5 0.5 0.5];
@@ -308,6 +317,7 @@ try
         Eyelink('dodriftcorrect');
     end
     
+    'got to 320'
     
     %% main loop
     HideCursor;
@@ -318,7 +328,7 @@ try
     e_Y=180;
     e_YY=-180;
     
-    
+    'got to 331'
     imageRect = CenterRect([0, 0, [wRect(4)/10 wRect(4)/10]], wRect);
     imRect_offs =[imageRect(1)+e_X, imageRect(2)+e_Y,...
         imageRect(3)+e_X, imageRect(4)+e_Y];
@@ -329,20 +339,20 @@ try
     imRect_offs4 =[imageRect(1)+e_X, imageRect(2)+e_YY,...
         imageRect(3)+e_X, imageRect(4)+e_YY];
     
-    
+    'got to 342'
     ori_1=0;
     ori_2=90;
     ori_3=180;
     ori_4=270;
-    
-    theLetter=imread('newletterc22.tiff');
+    'got to 347'
+    theLetter=imread('test_stimuli_induction/letter/newletterc22.tiff'); %this file did not exist in current directory
     %theLetter=imread('target_black.tiff');
-    
+    'got to 350'
     theLetter=theLetter(:,:,1);
     theLetter=imresize(theLetter,[300 300],'bicubic');
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    
+    'got to 352'
     WaitSecs(1);
     Screen('TextFont',w, 'Arial');
     Screen('TextSize',w, 42);
@@ -380,7 +390,7 @@ try
     PRL_x_axis=0;
     PRL_y_axis=-8;
     
-    
+    'got to 390'
     [theta,rho] = cart2pol(PRL_x_axis, PRL_y_axis);
     
     ecc_r=rho;
@@ -1333,5 +1343,6 @@ try
     end
     
 catch ME
+    'There was an error, and it was caught'
     psychlasterror()
 end
