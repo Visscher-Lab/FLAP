@@ -1,6 +1,11 @@
+<<<<<<< Updated upstream
 % this time we will merge it with main.  test Aug 5, 3:25
 %this time we want to make crazy changes, and will put it in a branch, and
 %keep it and see where it gets saved as part of the branch 3:41
+=======
+% This file is named OldComposite  We made a change to it at 3:21pm on
+% August 5, 2021
+>>>>>>> Stashed changes
     
     OtherFolder = [cd '/Induction_stimuli/'];
     
