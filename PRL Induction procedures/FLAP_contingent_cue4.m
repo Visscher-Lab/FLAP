@@ -36,7 +36,7 @@ try
     color=0;
     BITS=0; %0; 1=bits++; 2=display++
     randomizzato=0;
-    
+    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
     if color ==1
         ContCirc= [0 70 0];
         ContCirc2= [70 0 0];
@@ -346,8 +346,8 @@ try
     
     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
-    colorfixation = black;
-    DrawFormattedText(w, 'report where the gap of the C is using the arrow keys \n \n a visual cue will indicate the next location of the target \n \n \n \n Press any key to start', 'center', 'center', black);
+    colorfixation = white;
+    DrawFormattedText(w, 'report where the gap of the C is using the arrow keys \n \n a visual cue will indicate the next location of the target \n \n \n \n Press any key to start', 'center', 'center', white);
     % Screen('TextSize',w, 100);
     % Screen('TextFont',w, 'Sloan');
     % DrawFormattedText(w, 'D \n \n L \n \n \n \n R \n \n C', 'center', 'center', 0);
@@ -1084,10 +1084,18 @@ try
                 Screen('FrameOval', w,ContCirc2, imageRect_circleoffs4, oval_thick, oval_thick);
                 
             else
-              end
+            end
 
+              
+            
+            if ScotomaPresent == 1
             Screen('FillOval', w, scotoma_color, scotoma);
+            else
+                fixationlength=10;
+                  Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
 
+            end
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
             
