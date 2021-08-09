@@ -34,7 +34,7 @@ try
     sigma_deg = 1; %4;
     sfs=3;
     color=0;
-    BITS=0; %0; 1=bits++; 2=display++
+    BITS=2; %0; 1=bits++; 2=display++
     randomizzato=0;
     
     if color ==1
