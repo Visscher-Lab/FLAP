@@ -545,7 +545,7 @@ load     reducedAttMatrix2.mat
     mss=[ ];
     tracktime=[];
     
-    for trial=1:length(newtrialmatrix)
+    for trial=500:length(newtrialmatrix)
 Response.start=0;
         if trial>2 && trial<=length(newtrialmatrix)-1
             if newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)~=newtrialmatrix(trial+1,1)   &&    newtrialmatrix(trial-1,1)~=0

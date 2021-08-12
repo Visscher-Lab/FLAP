@@ -18,16 +18,19 @@ try
     end;
     
     SUBJECT = answer{1,:}; %Gets Subject Name
-    expdayeye=str2num(answer{2,:});
+    expdayeye=(answer{2,:});
     site= answer{3,:};
-    %load (['../PRLocations/' name]);
+    BITS=str2num(site); %0; 1=bits++; 2=display++ %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end;
-    baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-    
+    if BITS==1
+        baseName=['.\data\' SUBJECT '_FLAPcrowdingacuity4' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif BITS==2
+        baseName=[cd '\data\' SUBJECT '_FLAPcrowdingacuity4' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
     c=clock;
         TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
@@ -67,7 +70,7 @@ try
     n_blocks=1;
     
     
-    BITS=str2num(site); %0; 1=bits++; 2=display++
+    %BITS=str2num(site); %0; 1=bits++; 2=display++
     closescript=0;
     kk=1;
     
