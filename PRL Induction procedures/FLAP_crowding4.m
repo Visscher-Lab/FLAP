@@ -63,7 +63,7 @@ try
     n_blocks=1;
     
     
-    BITS=0; %0; 1=bits++; 2=display++
+    BITS=2; %0; 1=bits++; 2=display++
     closescript=0;
     kk=1;
     
@@ -281,12 +281,12 @@ try
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-    
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-    end
+    escapeKey = KbName('ESCAPE')
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
+%         escapeKey = KbName('ESCAPE');	% quit key
+%     end
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -854,11 +854,11 @@ try
                         isreversalsVA(mixtrVA(trial))=0;
                         %      reversalcounterVA=reversalcounterVA+1;
                     end
-                    thestep=min(reversalsVA(mixtrVA(trial))+1,length(stepsizes));
+                    thestep=min(reversalsVA(mixtrVA(trial))+1,length(stepsizesVA));
                     if thestep>5
                         thestep=5;
                     end;
-                    threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) +stepsizes(thestep);
+                    threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) +stepsizesVA(thestep);
                     threshVA(mixtrVA(trial))=min(threshVA(mixtrVA(trial)),length(Sizelist));
                 end
             elseif (thekeys==escapeKey) % esc pressed
@@ -871,11 +871,11 @@ try
                 end
                 corrcounterVA(mixtrVA(trial))=0;
                 PsychPortAudio('Start', pahandle2);
-                thestep=max(reversalsVA(mixtrVA(trial))+1,length(stepsizes));
+                thestep=max(reversalsVA(mixtrVA(trial))+1,length(stepsizesVA));
                 if thestep>5
                     thestep=5;
                 end;
-                threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) -stepsizes(thestep);
+                threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) -stepsizesVA(thestep);
                 threshVA(mixtrVA(trial))=max(threshVA(mixtrVA(trial)),1);
             end
             
@@ -894,11 +894,11 @@ try
                         reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1;
                         isreversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))=0;
                     end
-                    thestep=min(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizes));
+                    thestep=min(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizesCW));
                     if thestep>5 %Doesn't this negate the step size of 8 in the step size list? --Denton
                         thestep=5;
                     end;
-                    threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) +stepsizes(thestep);
+                    threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) +stepsizesCW(thestep);
                     threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,1),mixtrCW(trial,2)),length(Separationtlist));
                 end
             elseif (thekeys==escapeKey) % esc pressed
@@ -911,11 +911,11 @@ try
                 end
                 corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=0;
                 PsychPortAudio('Start', pahandle2);
-                thestep=max(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizes));
+                thestep=max(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizesCW));
                 if thestep>5
                     thestep=5;
                 end;
-                threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) -stepsizes(thestep);
+                threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) -stepsizesCW(thestep);
                 threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,1),mixtrCW(trial,2)),1);
             end
             
