@@ -39,7 +39,7 @@ try
         EyetrackerType=1;
         
     elseif eyeOrtrack==0
-        EyeTracker = 0; % set to 1 for UAB code testing
+        EyeTracker = 1; % set to 1 for UAB code testing
     end
     fixat=1;
     fixationlength = 40; % pixels
@@ -67,7 +67,7 @@ try
     n_blocks=1;
     
     
-    BITS=site; %0; 1=bits++; 2=display++
+    BITS=str2num(site); %0; 1=bits++; 2=display++
     closescript=0;
     kk=1;
     
@@ -282,12 +282,12 @@ try
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-    
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-    end
+    escapeKey = KbName('ESCAPE')
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
+%         escapeKey = KbName('ESCAPE');	% quit key
+%     end
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
