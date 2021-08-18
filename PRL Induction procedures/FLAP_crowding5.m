@@ -19,7 +19,7 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
-    site= answer{3,:};
+    site= str2num(answer{3,:});
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -252,19 +252,19 @@ try
     % Crowding
     cndt=4;
     ca=2;
-    threshCW(1:cndt, 1:ca)=19;
+    threshCW(1:cndt, 1:ca)=25;
     reversalsCW(1:cndt, 1:ca)=0;
     isreversalsCW(1:cndt, 1:ca)=0;
     staircounterCW(1:cndt, 1:ca)=0;
     corrcounterCW(1:cndt, 1:ca)=0;
     
-    max_separation=2.5; %15
+    max_separation=6; %15
     %min_separation=2.5;
     
     %Separationtlist=log_unit_up(StartSize, 0.01, 64);
     
-        Separationtlist=log_unit_down(max_separation, 0.01, 64);
-
+      %  Separationtlist=log_unit_down(max_separation, 0.01, 64);
+Separationtlist=log_unit_down(max_separation, 0.015, 80);
     %Sizelist=log_unit_down(StartSize, 0.0135, 64)
    
   %  Separationtlist=fliplr(Separationtlist);
@@ -406,6 +406,7 @@ try
     
     %% main loop
     HideCursor;
+        ListenChar(2);
     counter = 0;    
     fixwindowPix=fixwindow*pix_deg;        
     WaitSecs(1);
@@ -494,7 +495,7 @@ try
         dio=randi(numar(1),1,2);
     end
     
-    subMat={'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'};
+    subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
     firstPartMat=AttMat.(subMat{dio(1)});
     secondPartMat=AttMat.(subMat{dio(2)});
     
@@ -595,7 +596,7 @@ try
             if VA_thresho<0
                 VA_thresho=1;
             end
-            imageRect = CenterRect([0, 0, VA_thresho*pix_deg VA_thresho*pix_deg], wRect);
+            imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
             imageRect11 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             imageRect12 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             sep = Separationtlist(threshCW(mixtrCW(trial,1),mixtrCW(trial,2)));
@@ -696,7 +697,8 @@ try
             
             if VA_thresho<0
                 VA_thresho=1;
-            end
+            end           
+                        imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
             theeccentricity_X=eccentricity_X(mixtrAtt(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrAtt(trial,1));
             imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -745,7 +747,7 @@ try
                     imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                   
-                    if mixtrAtt(trial,2)==1
+                    if mixtrAtt(trial,2)==  1
                         Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
@@ -867,6 +869,7 @@ try
                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
+                ListenChar(0);
                 break;
             else
                 resp = 0;
@@ -953,7 +956,8 @@ try
             lettersize(kk)=VAsize;
         elseif whichTask ==2
             separation(kk)=sep;
-            sizeCrSti(kk)=VA_thresho;
+            refsizeCrSti(kk)=VA_thresho;
+           sizeCrSti(kk)=imageRect_offs(3)-imageRect_offs(1);
         elseif whichTask ==3
             correx(kk)=resp;
             SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
@@ -1034,6 +1038,7 @@ try
         TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    ListenChar(0);
     Screen('Flip', w);
     KbQueueWait;
     ShowCursor;
