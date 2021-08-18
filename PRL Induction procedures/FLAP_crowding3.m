@@ -1,6 +1,10 @@
 % Contrast threshold measurement with randomized position of the target -
 % wait until response
+<<<<<<< HEAD
+% UCR change august 18th
+=======
 %this is a change August 18, 4:30pm
+>>>>>>> 3f9d70cf000c11079aae22f3ea02754ad4f1440b
 close all; clear all; clc;
 commandwindow
     addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
