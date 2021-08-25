@@ -1,5 +1,6 @@
 % FLAP Attention task via RSVP streams on 4 peripheral locations
 % Marcello Maniglia 7/21/2021
+% steady state
 close all; clear all; clc;
 commandwindow
 
