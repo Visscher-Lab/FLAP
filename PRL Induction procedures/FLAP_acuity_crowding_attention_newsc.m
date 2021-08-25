@@ -581,7 +581,7 @@ try
             
         end
         
-           whichTask=2
+        %   whichTask=2
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         
