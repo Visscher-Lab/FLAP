@@ -1,4 +1,4 @@
-% FLAP Attention task via RSVP streams on 3 peripheral location
+ % FLAP Attention task via RSVP streams on 3 peripheral location
 % Marcello Maniglia 7/21/2021
 close all; clear all; clc;
 commandwindow
@@ -545,7 +545,7 @@ load     reducedAttMatrix2.mat
     mss=[ ];
     tracktime=[];
     
-    for trial=500:length(newtrialmatrix)
+    for trial=1:length(newtrialmatrix)
 Response.start=0;
         if trial>2 && trial<=length(newtrialmatrix)-1
             if newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)~=newtrialmatrix(trial+1,1)   &&    newtrialmatrix(trial-1,1)~=0

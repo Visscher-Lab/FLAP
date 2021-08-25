@@ -285,7 +285,7 @@ try
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-    escapeKey = KbName('ESCAPE')
+    escapeKey = KbName('ESCAPE');
 %     if ispc
 %         escapeKey = KbName('esc');	% quit key
 %     elseif ismac
