@@ -452,12 +452,9 @@ try
     for  ui=1:tr_per_condition
         b=randperm(PRLlocations);
         mixtrVAsc2=[mixtrVAsc2 b];
-    end
-    
+    end    
     mixtrVA=[ mixtrVAsc1' ones(length(mixtrVAsc1),1); mixtrVAsc2' ones(length(mixtrVAsc2),1)*2];
-    
-    
-    
+
     %Crowding
     %radial
     mixtrCWsc1r=[];
@@ -492,17 +489,13 @@ try
     end
     
     mixtrCWt=[ mixtrCWsc1t' ones(length(mixtrCWsc1t),1); mixtrCWsc2t' ones(length(mixtrCWsc2t),1)*2 ];
-    
-    
-    
+   
     if randi(2)==2   
                 mixtrCW= [ mixtrCWt ones(length(mixtrCWt),1) ; mixtrCWr ones(length(mixtrCWr),1)*2];
     else
         mixtrCW= [ mixtrCWr ones(length(mixtrCWr),1)*2 ; mixtrCWt ones(length(mixtrCWt),1)];
     end
-    
-    
-    
+   
     mixtrCW =[mixtrCW(:,1) mixtrCW(:,3) mixtrCW(:,2)];
     %mixtr =1 1 % left + radial
     %mixtr =2 2 % right + tangient
@@ -566,7 +559,7 @@ try
     FixDotSize=15;
     
     for totaltrial=1:totalmixtr
-        if totaltrial== length(mixtrVA) || totaltrial== (length(mixtrVA)+length(mixtrCW))
+        if totaltrial== length(mixtrVA)+1 || totaltrial== (length(mixtrVA)+length(mixtrCW))+1
             interblock_instruction
         end
         if totaltrial<= length(mixtrVA)
@@ -581,7 +574,7 @@ try
             
         end
         
-        %   whichTask=2
+        %   whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         
@@ -620,21 +613,21 @@ try
             
                                         VA_thresho=1;
 
-%             if exist('VA_thresho')==1
+ %           if exist('VA_thresho')==1
 %             for ui=1:length(eccentricity_X)
 %                 VA_thresho=mean(ThreshlistVA(end-10:end));
 %             end
 %                         else
 %                              VA_thresho=1;   
 %         end
-        %    VA_thresho=max(cell2mat(PRL_va_thresh));
-            %       VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
+    %       VA_thresho=max(cell2mat(PRL_va_thresh));
+          % VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
+                                    VA_thresho=mean(ThreshlistVA(end-20:end));
+
             if VA_thresho<0
                 VA_thresho=1;
             end
             
-
-
             imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
             imageRect11 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             imageRect12 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
@@ -722,12 +715,12 @@ try
             
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
             
-            for ui=1:length(eccentricity_X)
-                PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-10:end));
-                
-            end
-            
-            VA_thresho=max(cell2mat(PRL_va_thresh));
+%             for ui=1:length(eccentricity_X)
+%                 PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-10:end));
+%                 
+%             end
+%             
+         %   VA_thresho=max(cell2mat(PRL_va_thresh));
             %VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
             
             if VA_thresho<0
@@ -879,7 +872,6 @@ try
         
         foo=(RespType==thekeys);
         
-        
         if whichTask == 1
             staircounterVA=staircounterVA+1;
             ThreshlistVA(staircounterVA)=VAsize;
@@ -937,9 +929,7 @@ try
                             threshVA=max(threshVA);
                         end
                     end
-                    
-                    
-                    
+                  
                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
@@ -1029,14 +1019,10 @@ try
                                 elseif mixtrCW(trial,3)==2                   
                     if mod(trial,4)==1 && ((trial> 17 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==1) || (trial > 97 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==2 || (trial> 17 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==2) || (trial > 97 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==1) )) %(trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 1) || ...
                    % (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 2 &  mixtrCW(trial,2) == 2) || ...     
-                  %  (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 2) || ... 
-                    
-                
+                  %  (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 2) || ...                                     
                 %start with radial; trial >
                 
-                
-                
-                mixtrCW(:,2)==1,mixtrCW(:,3)==2
+          %      mixtrCW(:,2)==1,mixtrCW(:,3)==2
                 % mixtrCW(:,2)==1 rad, mixtrCW(:,2)==2 tan
                 %mixtrCW(:,3)==1 sc1, mixtrCW(:,3)==2 sc2
                 
