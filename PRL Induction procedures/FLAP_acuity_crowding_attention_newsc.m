@@ -211,7 +211,7 @@ try
     
     theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
-    theCircles=Screen('MakeTexture', w, theCircles);
+    theCircles=Screen('MakeTexture', w, theCircles); 
     
     
     
