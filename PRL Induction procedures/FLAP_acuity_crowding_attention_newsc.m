@@ -26,7 +26,13 @@ try
     if exist('data')==0
         mkdir('data')
     end;
-    baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    
+    if site==1
+        baseName=['.\data\' SUBJECT '_FLAPcrowdingacuity4' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[cd '\data\' SUBJECT '_FLAPcrowdingacuity4' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
+    
     
     c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
@@ -206,10 +212,13 @@ try
     theCircles=theLetter;
     
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
-    %theLetter=Screen('MakeTexture', w, theLetter);
+    theLetter=Screen('MakeTexture', w, theLetter);
     
-    
+    if site==1
     theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
+    elseif site==2
+        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+    end
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles); 
     
@@ -245,7 +254,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
-    Sizelist=log_unit_down(StartSize, 0.01, 64);
+    Sizelist=log_unit_down(StartSize, 0.01, 100);
     
    % stepsizesVA=[8 4 3 2 1];
         stepsizesVA=[4 4 4 4 4];
@@ -290,12 +299,12 @@ try
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-    
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-    end
+    escapeKey = KbName('ESCAPE');
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
+%         escapeKey = KbName('ESCAPE');	% quit key
+%     end
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -874,6 +883,7 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         
+        thekeys=thekeys(1);
         foo=(RespType==thekeys);
         
         if whichTask == 1
