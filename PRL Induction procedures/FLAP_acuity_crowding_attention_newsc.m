@@ -247,8 +247,9 @@ try
     
     Sizelist=log_unit_down(StartSize, 0.01, 64);
     
-    stepsizesVA=[8 4 3 2 1];
-    
+   % stepsizesVA=[8 4 3 2 1];
+        stepsizesVA=[4 4 4 4 4];
+
     % Acuity sc2
     
     
@@ -273,7 +274,10 @@ try
     
     %  Separationtlist=fliplr(Separationtlist);
     
-    stepsizesCW=[8 4 3 2 1];
+%    stepsizesCW=[8 4 3 2 1];
+    
+        stepsizesCW=[4 4 4 4 4];
+
     
     rand('twister', sum(100*clock));
     
@@ -879,9 +883,7 @@ try
                 resp = 1;
                 nswr(trial)=1;
                 PsychPortAudio('Start', pahandle1);
-                
-                
-                corrcounterVA=corrcounterVA+1;
+               corrcounterVA=corrcounterVA+1;
                 if mixtrVA(trial,2) == 1
                     
                     if corrcounterVA>=sc.down
@@ -901,10 +903,10 @@ try
                     
                 elseif mixtrVA(trial,2)==2
                     
-                    if mod(trial,4)==1 && trial>(sum(mixtrVA(:,2)==1))+1
+                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
                         
                         chec(trial) =99;
-                        if sum(nswr(trial:trial-4))==4
+                        if sum(nswr(trial-3:trial))==4
                             if isreversalsVA==1
                                 reversalsVA=reversalsVA+1;
                                 isreversalsVA=0;
@@ -917,9 +919,9 @@ try
                             threshVA=threshVA +stepsizesVA(thestep);
                             threshVA=min(threshVA,length(Sizelist));
                             
-                        elseif sum(nswr(trial:trial-4))>2 && sum(nswr(trial:trial-4))<4
+                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
                             threshVA=threshVA;
-                        elseif sum(nswr(trial:trial-4))<2
+                        elseif sum(nswr(trial-3:trial))<2
                             corrcounterVA=0;
                             thestep=max(reversalsVA+1,length(stepsizesVA));
                             if thestep>5
@@ -955,10 +957,10 @@ try
                     
                 elseif mixtrVA(trial,2)==2
                     
-                    if mod(trial,4)==1 && trial>(sum(mixtrVA(:,2)==1))+1
+                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
                         
                         chec(trial) =99;
-                        if sum(nswr(trial:trial-4))==4
+                        if sum(nswr(trial-3:trial))==4
                             if isreversalsVA==1
                                 reversalsVA=reversalsVA+1;
                                 isreversalsVA=0;
@@ -971,9 +973,9 @@ try
                             threshVA=threshVA +stepsizesVA(thestep);
                             threshVA=min(threshVA,length(Sizelist));
                             
-                        elseif sum(nswr(trial:trial-4))>2 && sum(nswr(trial:trial-4))<4
+                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
                             threshVA=threshVA;
-                        elseif sum(nswr(trial:trial-4))<2
+                        elseif sum(nswr(trial-3:trial))<2
                             corrcounterVA=0;
                             thestep=max(reversalsVA+1,length(stepsizesVA));
                             if thestep>5
@@ -1017,7 +1019,7 @@ try
                 end
                 
                                 elseif mixtrCW(trial,3)==2                   
-                    if mod(trial,4)==1 && ((trial> 17 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==1) || (trial > 97 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==2 || (trial> 17 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==2) || (trial > 97 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==1) )) %(trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 1) || ...
+                    if mod(trial,4)==0 && ((trial> 17 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==1) || (trial > 97 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==2 || (trial> 17 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==2) || (trial > 97 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==1) )) %(trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 1) || ...
                    % (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 2 &  mixtrCW(trial,2) == 2) || ...     
                   %  (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 2) || ...                                     
                 %start with radial; trial >
@@ -1028,7 +1030,7 @@ try
                 
                     % (trial>(sum(mixtrVA(:,3)==1))+1 && mixtrCW(1,3) == 1 )
                         chec(trial) =99;
-                        if sum(nswr(trial:trial-4))==4
+                        if sum(nswr(trial-3:trial))==4
                             if isreversalsCW(mixtrCW(trial,2))==1
                                 reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
                         isreversalsCW(mixtrCW(trial,2))=0;
@@ -1040,9 +1042,9 @@ try
                             threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
                     threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
                             
-                        elseif sum(nswr(trial:trial-4))>2 && sum(nswr(trial:trial-4))<4
+                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
                             threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
-                        elseif sum(nswr(trial:trial-4))<2
+                        elseif sum(nswr(trial-3:trial))<2
                             corrcounterCW(mixtrCW(trial,2))=0;
                 thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
                             if thestep>5
@@ -1075,9 +1077,9 @@ try
                 threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
                 elseif mixtrCW(trial,3)==2
                     
-                    if mod(trial,4)==1
+                    if mod(trial,4)==0
                         chec(trial) =99;
-                        if sum(nswr(trial:trial-4))==4
+                        if sum(nswr(trial-3:trial))==4
                             if isreversalsCW(mixtrCW(trial,2))==1
                                 reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
                         isreversalsCW(mixtrCW(trial,2))=0;
@@ -1089,9 +1091,9 @@ try
                             threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
                     threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
                             
-                        elseif sum(nswr(trial:trial-4))>2 && sum(nswr(trial:trial-4))<4
+                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
                             threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
-                        elseif sum(nswr(trial:trial-4))<2
+                        elseif sum(nswr(trial-3:trial))<2
                             corrcounterCW(mixtrCW(trial,2))=0;
                 thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
                             if thestep>5
@@ -1132,6 +1134,7 @@ try
         rispo(kk)=resp;
         if whichTask==1
             lettersize(kk)=VAsize;
+            tles(kk) = threshVA;
         elseif whichTask ==2
             separation(kk)=sep;
             refsizeCrSti(kk)=VA_thresho;
