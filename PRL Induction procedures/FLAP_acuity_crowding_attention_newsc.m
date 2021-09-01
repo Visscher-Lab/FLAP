@@ -11,7 +11,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '1' };
+    defaultanswer={'test','1', '2' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -177,10 +177,10 @@ try
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
     
-    try
-        [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end;
+%     try
+%         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+%         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+%     end;
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
@@ -209,9 +209,9 @@ try
     theLetter=Screen('MakeTexture', w, theLetter);
     
     
-    theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
-    theCircles=Screen('MakeTexture', w, theCircles);
+    theCircles=Screen('MakeTexture', w, theCircles); 
     
     
     
@@ -1251,5 +1251,6 @@ try
     
     
 catch ME
+    'There was an error caught in the main program.'
     psychlasterror()
 end
