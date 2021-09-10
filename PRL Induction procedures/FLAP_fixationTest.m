@@ -507,7 +507,7 @@ try
                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
 clear stimstar
                               
-                
+                cue_last=GetSecs;
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && (eyetime2-trial_time)<waittime+ifi*4+cueonset+cueduration+cueISI+presentationtime&& fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
                 %   Screen('Close');
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
@@ -517,7 +517,7 @@ stimstar=1;
                 %   Screen('Close');
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
           %      
-          if exist('stimstar')
+          if exist('stimstar')==0
           stim_start = GetSecs; 
           end
             
@@ -608,7 +608,7 @@ stimstar=1;
             correx(kk)=resp;
             SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
             Att_RT(kk) = stim_stop - stim_start;
-
+cueendToResp(kk)=stim_stop-cue_last;
         cheis(kk)=thekeys;
         
         if EyeTracker==1
