@@ -52,7 +52,7 @@ try
     fixwindow=2;
     fixTime=0.2;
     fixTime2=0.2;
-    
+    flickeringrate=0.25;
     PRLecc=12;         %7.5; %eccentricity of PRLs
     %   PRLxx=[0 PRLecc 0 -PRLecc];
     %   PRLyy=[-PRLecc 0 PRLecc 0 ];
@@ -209,6 +209,10 @@ try
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles);
   
+    theTest=imread('target_black.tiff');
+    theTest=theTest(:,:,1);
+        theTest=Screen('MakeTexture', w, theTest);
+
     % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
@@ -514,13 +518,19 @@ clear theSwitcher
                           theSwitcher=0;
            end
            flicker_time=GetSecs;
-           if
-               theSwitcher=theSwitcher+1;
-           end
+           
+        %   framecounter=framecounter+1;
+%            if mod(round((flicker_time-flicker_time_start)*1000),2500)>0 && mod(round((flicker_time-flicker_time_start)*1000),2500)<6
+%                theSwitcher=theSwitcher+1;
+%            end
+
+if mod(length(VBL_Timestamp),(round(flickeringrate/ifi)))==0
+    theSwitcher=theSwitcher+1;
+end
            if mod(theSwitcher,2)==0 
                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-           elseif 
-               
+           else
+         %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
                end
 clear stimstar
           if exist('circlestar')==0
@@ -536,7 +546,19 @@ clear stimstar
 stimstar=1;
                        elseif (eyetime2-trial_time)>=waittime+ifi*4+cueonset+cueduration+cueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
                 %   Screen('Close');
+                
+                
+                
+                if mod(length(VBL_Timestamp),(round(flickeringrate/ifi)))==0
+    theSwitcher=theSwitcher+1;
+                end
+
+                
+                if mod(theSwitcher,2)==0 
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
+           else
+         %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
+               end
           %      
           if exist('stimstar')==0
           stim_start = GetSecs; 
