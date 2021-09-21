@@ -26,7 +26,7 @@ try
     if exist('data')==0
         mkdir('data')
     end;
-    baseName=['./data/' SUBJECT '_FLAPfixation' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    baseName=['./data/' SUBJECT '_FLAPfixationflicker' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
@@ -682,7 +682,9 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
-            EyeSummary.(TrialNum).TimeStamps.Stimulus = stim_start;
+            EyeSummary.(TrialNum).TimeStamps.StimulusStart = circle_start;
+            EyeSummary.(TrialNum).TimeStamps.StimulusEnd = cue_last;
+
             clear ErrorInfo
             
         end
