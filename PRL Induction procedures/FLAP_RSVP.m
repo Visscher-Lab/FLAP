@@ -485,7 +485,7 @@ Response.start=0;
 % 
 %         end
         if sum(trial==totaltrialbreak)>0
-            interblock_instruction;
+            interblock_instruction_rsvp;
         end
         
         TrialNum = strcat('Trial',num2str(trial));
