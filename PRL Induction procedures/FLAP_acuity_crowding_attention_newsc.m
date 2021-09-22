@@ -433,7 +433,7 @@ try
     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
     colorfixation = white;
-    DrawFormattedText(w, 'report the orientation of the gap of the C \n \n using the keyboard arrows \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'Please keep your eyes at the center of the screen. Target stimulus -C- can appear in four main directions: right, left, up and down. Please indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible. As soon as you respond, you will have an auditory feedback. \n \n  \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
     %Screen('Flip', w);
