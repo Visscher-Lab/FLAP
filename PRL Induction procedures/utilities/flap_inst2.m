@@ -18,4 +18,4 @@ Screen('DrawTexture',w,AtheLetter,[],imagelocation1,ori);Screen('DrawTexture',w,
 DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nTarget stimulus -C- can appear in four main directions: right, left, up and down.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback. \n \n  \n \n \n \n Press any key to start', 100, 100, [255 255 255]);
 %DrawFormattedText(w, 'Please keep your eyes at the center of the screen', 200, 100, [255 255 255]);
 Screen('Flip', w);
-KbWait;
+KbQueueWait;
