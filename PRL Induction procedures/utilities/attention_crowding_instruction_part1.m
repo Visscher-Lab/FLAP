@@ -1,6 +1,4 @@
-Screen('TextFont',w, 'Arial');
-Screen('TextSize',w, 20);
-Screen('FillRect', w, [128 128 128]);
+
 AtheLetter=imread('newletterc22.tiff');
 
 AtheLetter=AtheLetter(:,:,1);
