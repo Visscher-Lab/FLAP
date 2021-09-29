@@ -427,13 +427,14 @@ try
     counter = 0;
     fixwindowPix=fixwindow*pix_deg;
     WaitSecs(1);
-    attention_crowding_instruction_part1
+    %attention_crowding_instruction_part1
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
-    Screen('TextSize',w, 42);
+    Screen('TextSize',w, 20);
 %     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
     colorfixation = white;
+    attention_crowding_instruction_part1
 %     DrawFormattedText(w, 'Please keep your eyes at the center of the screen. /n /n  Target stimulus -C- can appear in four main directions: right, left, up and down. /n Please indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible. /n As soon as you respond, you will have an auditory feedback. \n \n  \n \n \n \n Press any key to start', 'center', 'center', white);
 %     Screen('Flip', w);
 %     KbQueueWait;
