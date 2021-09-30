@@ -54,7 +54,7 @@ try
     
     StartSize=2; %for VA
     cueSize=3;
-    
+    circleSize=4.5;
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
     fixwindow=2;
     fixTime=0.2;
@@ -67,7 +67,11 @@ try
     %PRL_y_axis=0;
     %NoPRL_x_axis=5;
     %NoPRL_y_axis=0;
-    
+ 
+    ContCirc= [200 200 200];
+   
+    oval_thick=6; %thickness of oval
+
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
     n_blocks=1;
@@ -214,11 +218,20 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
+% <<<<<<< HEAD
+%     if site ==2
+%         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
+%     elseif site==1
+%         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+%     end
+%     
+% =======
     if site==1
     theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
     elseif site==2
-        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
     end
+%>>>>>>> 542aaf7088c35e4d0787a8ac79b9666fe70e3595
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles); 
     
@@ -589,7 +602,7 @@ try
             
         end
         
-        %   whichTask=3
+          whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         
@@ -729,7 +742,7 @@ try
         elseif whichTask == 3
             
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            
+            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
 %             for ui=1:length(eccentricity_X)
 %                 PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-10:end));
 %                 
@@ -737,7 +750,9 @@ try
 %             
          %   VA_thresho=max(cell2mat(PRL_va_thresh));
             %VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
-            
+            if exist('VA_thresho')==0
+                VA_thresho=1;
+            end
             if VA_thresho<0
                 VA_thresho=1;
             end
@@ -789,9 +804,13 @@ try
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                    
+                     imageRect_offsCirc =[imageRectCirc(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                    imageRectCirc(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+
                     if mixtrAtt(trial,2)==  1
-                        Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
+                      %  Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
+                                Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
+
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue3,0,[],1);
