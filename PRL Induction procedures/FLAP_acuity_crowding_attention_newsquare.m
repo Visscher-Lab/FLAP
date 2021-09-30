@@ -212,12 +212,14 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    if site ==2
-        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
-    elseif site==1
-        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    end
+%     if site ==2
+%         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
+%     elseif site==1
+%         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+%     end
     
+    
+          theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles); 
     
