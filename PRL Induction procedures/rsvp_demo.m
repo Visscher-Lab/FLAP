@@ -41,6 +41,12 @@ theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
 theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
 theCircles=Screen('MakeTexture', w, theCircles);
 
+%Dot Cue
+theDot=imread('thedot2.tiff');
+theDot=theDot(:,:,1);
+[cc rr]=size(theDot);
+theDot=Screen('MakeTexture', w, theDot);
+
 %Fixation
 fixationlength=10;
 Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
@@ -67,17 +73,29 @@ KbQueueCreate(deviceIndex);
 KbQueueStart(deviceIndex);
 
 %Experiment
+%HideCursor;
 KbName('UnifyKeyNames');
 ori_ex=90;
 imagelocation1_ex=[100 350 165 415]; imagelocation2_ex=[200 350 265 415]; imagelocation3_ex=[300 350 365 415]; imagelocation4_ex=[400 350 465 415];%example stimulus locations
 Screen('DrawTexture',w,AtheLetter,[],imagelocation1_ex,ori_ex);Screen('DrawTexture',w,AtheLetter,[],imagelocation2_ex,ori_ex+180);Screen('DrawTexture',w,AtheLetter,[],imagelocation3_ex,ori_ex+270);Screen('DrawTexture',w,AtheLetter,[],imagelocation4_ex,ori_ex+90);
-DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nTarget stimulus -C- will be shown with two distracter stimuli-Os in four main directions: right, left, up and down.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback.\n \nPossible stimuli are: \n \n \n  \n \n \n \n Press any key to start', 100, 100, white);
+DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nThere will be four circles at right, left, up and down.\n \nA visual cue on a circle will indicate the next location of the target.\n \nA series of stimuli including Os and Cs will be shown in one of the circles.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have a auditory feedback.\n\n  \n \n \n \n Press any key to start', 100, 100, white);
 Screen('Flip', w);
 KbQueueWait;
 KbQueueFlush();
-for t=1:10
-    
-    r=randi([1 4],1); % randomly assign PRL locations
+circle1=[(wRect(3)/2)-(7*cc)-cc/2 (wRect(4)/2)-(2*cc)-cc/2 (wRect(3)/2)-(2*cc)-cc/2 (wRect(4)/2)+(2*cc)+cc/2];%left
+circle2=[(wRect(3)/2)+(2*cc)+cc/2 (wRect(4)/2)-(2*cc)-cc/2 (wRect(3)/2)+(7*cc)+cc/2 (wRect(4)/2)+(2*cc)+cc/2];%right
+circle3=[(wRect(3)/2)-(2*cc)-cc/2 (wRect(4)/2)-(7*cc)-cc/2 (wRect(3)/2)+(2*cc)+cc/2 (wRect(4)/2)-(2*cc)-cc/2];%up
+circle4=[(wRect(3)/2)-(2*cc)-cc/2 (wRect(4)/2)+(2*cc)+cc/2 (wRect(3)/2)+(2*cc)+cc/2 (wRect(4)/2)+(7*cc)+cc/2];%down
+Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+Screen('FrameOval', w,white, circle1, 5, 5);
+Screen('FrameOval', w,white, circle2, 5, 5);
+Screen('FrameOval', w,white, circle3, 5, 5);
+Screen('FrameOval', w,white, circle4, 5, 5);
+Screen('Flip', w);
+WaitSecs(3);
+for t=1:5
+    r=randi([1 4],1); % randomly assign PRL locations for stimulus
     if r==1
         imagelocation1=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-(3*cc)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)-(3*cc)+cc/2];%left
         imagelocation2=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)+cc/2];
@@ -95,25 +113,74 @@ for t=1:10
         imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
         imagelocation3=[(wRect(3)/2)+(3*cc)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+(3*cc)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
     end
-    ro=randi([0 3],1);%randomly assign ori
+    ro=randi([0 3],1);%randomly assign to which side should C look at to
     ori=ro*90;
-
+    
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('Flip', w);
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-    Screen('DrawTexture',w, theCircles, [], imagelocation1,0,[],1);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
+    Screen('Flip', w);
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
+    Screen('DrawTexture',w, theCircles, [], imagelocation2,0,[],1);
+    Screen('Flip', w);
+    WaitSecs(0.3)
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
+    Screen('Flip', w);
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('DrawTexture',w, AtheLetter, [], imagelocation2,ori,[],1);
-    Screen('DrawTexture',w, theCircles, [], imagelocation3,0,[],1);
     Screen('Flip', w);
-    WaitSecs(1);
+    WaitSecs(0.3)
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
+    Screen('Flip', w);
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
+    Screen('DrawTexture',w, theCircles, [], imagelocation2,0,[],1);
+    Screen('Flip', w);
+    WaitSecs(0.3)
     StimTime=GetSecs;
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('FrameOval', w,white, circle1, 5, 5);
+    Screen('FrameOval', w,white, circle2, 5, 5);
+    Screen('FrameOval', w,white, circle3, 5, 5);
+    Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('Flip', w);
     WaitSecs(0.5);
-    %Response
+    %Response and feedback
     [keyIsDown,keysecs,keyCode] = KbQueueCheck;
     conditions(1)=logical(ori==180 && keyCode(KbName('LeftArrow')));conditions(2)=logical(ori==0 && keyCode(KbName('RightArrow')));conditions(3)=logical(ori==270 && keyCode(KbName('UpArrow'))); conditions(4)=logical(ori==90 && keyCode(KbName('DownArrow')));
     if keyIsDown==1
@@ -131,6 +198,7 @@ for t=1:10
     WaitSecs(3-(TrialEndTime-StimTime));
     KbQueueFlush();
 end
+
 WaitSecs(2);
 PsychPortAudio('Close', pahandle);
 Screen('CloseAll');

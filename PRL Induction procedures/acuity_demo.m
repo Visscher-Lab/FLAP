@@ -74,6 +74,13 @@ KbQueueStart(deviceIndex);
 
 %Experiment
 KbName('UnifyKeyNames');
+ori_ex=90;
+imagelocation1_ex=[100 350 165 415]; imagelocation2_ex=[200 350 265 415]; imagelocation3_ex=[300 350 365 415]; imagelocation4_ex=[400 350 465 415];%example stimulus locations
+Screen('DrawTexture',w,AtheLetter,[],imagelocation1_ex,ori_ex);Screen('DrawTexture',w,AtheLetter,[],imagelocation2_ex,ori_ex+180);Screen('DrawTexture',w,AtheLetter,[],imagelocation3_ex,ori_ex+270);Screen('DrawTexture',w,AtheLetter,[],imagelocation4_ex,ori_ex+90);
+DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nTarget stimulus -C- can appear in four main directions: right, left, up and down.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback.\n \nPossible stimuli are: \n \n \n  \n \n \n \n Press any key to start', 100, 100, white);
+Screen('Flip', w);
+KbQueueWait;
+KbQueueFlush();
 for t=1:10
     
     r=randi([1 4],1); % randomly assign PRL locations
@@ -91,18 +98,27 @@ for t=1:10
     
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('Flip', w);
+    WaitSecs(0.05);
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('DrawTexture',w, theDot, [], imagelocation,0,[],1);
     Screen('Flip', w);
     WaitSecs(0.05);
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+    Screen('Flip', w);
+    WaitSecs(0.5);
+    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('DrawTexture',w, AtheLetter, [], imagelocation,ori,[],1);
     Screen('Flip', w);
-    WaitSecs(1);
+    WaitSecs(0.5);
     StimTime=GetSecs;
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('Flip', w);
+    WaitSecs(0.5);
     %Response
     [keyIsDown,keysecs,keyCode] = KbQueueCheck;
     conditions(1)=logical(ori==180 && keyCode(KbName('LeftArrow')));conditions(2)=logical(ori==0 && keyCode(KbName('RightArrow')));conditions(3)=logical(ori==270 && keyCode(KbName('UpArrow'))); conditions(4)=logical(ori==90 && keyCode(KbName('DownArrow')));
