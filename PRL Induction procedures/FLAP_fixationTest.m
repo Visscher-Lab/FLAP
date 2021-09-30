@@ -183,7 +183,7 @@ try
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     bg_index =round(gray*255); %background color
-    
+   
     %
     imsize=stimulusSize*pix_deg;
     
@@ -212,7 +212,7 @@ try
     % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
- 
+
     rand('twister', sum(100*clock));
     
     %% response
@@ -226,14 +226,14 @@ try
     RespType(4) = KbName('DownArrow');
     
 
+    escapeKey = KbName('ESCAPE');
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
+%         escapeKey = KbName('ESCAPE');	% quit key
+%     end
     
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-    end
-    
-    
+  
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % get keyboard for the key recording
     deviceIndex = -1; % reset to default keyboard
@@ -429,7 +429,7 @@ try
             interblock_instruction
         end
          
-        
+       
         
         presentationtime=Jitter(randi(length(Jitter)))
         TrialNum = strcat('Trial',num2str(trial));

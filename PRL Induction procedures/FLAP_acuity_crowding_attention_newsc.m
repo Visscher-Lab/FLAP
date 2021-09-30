@@ -26,7 +26,13 @@ try
     if exist('data')==0
         mkdir('data')
     end;
-    baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    
+    if site==1
+        baseName=['.\data\' SUBJECT '_FLAPcrowdingacuity4' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[cd '\data\' SUBJECT '_FLAPcrowdingacuity4' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
+    
     
     c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
@@ -48,7 +54,7 @@ try
     
     StartSize=2; %for VA
     cueSize=3;
-    circleSize=4.5;
+    
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
     fixwindow=2;
     fixTime=0.2;
@@ -61,11 +67,7 @@ try
     %PRL_y_axis=0;
     %NoPRL_x_axis=5;
     %NoPRL_y_axis=0;
- 
-    ContCirc= [200 200 200];
-   
-    oval_thick=6; %thickness of oval
-
+    
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
     n_blocks=1;
@@ -212,12 +214,11 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    if site ==2
-        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
-    elseif site==1
-        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+    if site==1
+    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
+    elseif site==2
+        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
     end
-    
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles); 
     
@@ -253,7 +254,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
-    Sizelist=log_unit_down(StartSize, 0.01, 64);
+    Sizelist=log_unit_down(StartSize, 0.01, 100);
     
    % stepsizesVA=[8 4 3 2 1];
         stepsizesVA=[4 4 4 4 4];
@@ -298,12 +299,12 @@ try
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-    
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-    end
+    escapeKey = KbName('ESCAPE');
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
+%         escapeKey = KbName('ESCAPE');	% quit key
+%     end
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -426,15 +427,17 @@ try
     counter = 0;
     fixwindowPix=fixwindow*pix_deg;
     WaitSecs(1);
+    %attention_crowding_instruction_part1
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
-    Screen('TextSize',w, 42);
-    %     Screen('TextStyle', w, 1+2);
+    Screen('TextSize',w, 20);
+%     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
     colorfixation = white;
-    DrawFormattedText(w, 'report the orientation of the gap of the C \n \n using the keyboard arrows \n \n \n \n Press any key to start', 'center', 'center', white);
-    Screen('Flip', w);
-    KbQueueWait;
+    attention_crowding_instruction_part1
+%     DrawFormattedText(w, 'Please keep your eyes at the center of the screen. /n /n  Target stimulus -C- can appear in four main directions: right, left, up and down. /n Please indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible. /n As soon as you respond, you will have an auditory feedback. \n \n  \n \n \n \n Press any key to start', 'center', 'center', white);
+%     Screen('Flip', w);
+%     KbQueueWait;
     %Screen('Flip', w);
     %WaitSecs(1.5);
     
@@ -586,7 +589,7 @@ try
             
         end
         
-          whichTask=3
+        %   whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         
@@ -726,7 +729,7 @@ try
         elseif whichTask == 3
             
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
+            
 %             for ui=1:length(eccentricity_X)
 %                 PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-10:end));
 %                 
@@ -734,9 +737,7 @@ try
 %             
          %   VA_thresho=max(cell2mat(PRL_va_thresh));
             %VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
-            if exist('VA_thresho')==0
-                VA_thresho=1;
-            end
+            
             if VA_thresho<0
                 VA_thresho=1;
             end
@@ -788,13 +789,9 @@ try
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                     imageRect_offsCirc =[imageRectCirc(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRectCirc(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-
+                    
                     if mixtrAtt(trial,2)==  1
-                      %  Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
-                                Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
-
+                        Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue3,0,[],1);
@@ -888,6 +885,7 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         
+        thekeys=thekeys(1);
         foo=(RespType==thekeys);
         
         if whichTask == 1
