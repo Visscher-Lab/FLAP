@@ -147,7 +147,7 @@ try
         rand('twister', sum(100*clock));
         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+     %   PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
