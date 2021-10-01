@@ -11,7 +11,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '1' };
+    defaultanswer={'test','1', '2' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -26,7 +26,13 @@ try
     if exist('data')==0
         mkdir('data')
     end;
-    baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    
+    if site==1
+        baseName=['.\data\' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[cd '\data\' SUBJECT '_FLAPcrowdingacuity4sc' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
     
     c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
@@ -83,7 +89,7 @@ try
     
     cue_spatial_offset=2;
     
-    
+
     if BITS==0  %UCR bits**
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -152,12 +158,13 @@ try
         fixationlengthy=10;
         fixationlengthx=10;
     end;
+    
     Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     struct.sz=[screencm(1), screencm(2)];
-    
+    'troubleshoot: defining pix_deg'
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
     %pix_deg = pi * wRect(3) / atan(screencm(1)/v_d/2) / 360; %pixperdegree
-    pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360 %to calculate the limit of target position
+    pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360; %to calculate the limit of target position
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
     gray=round((white+black)/2);
@@ -171,6 +178,8 @@ try
     if ifi==0
         ifi=1/75;
     end
+    
+    'troubleshoot: got just before sound'
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
@@ -213,16 +222,16 @@ try
     theLetter=Screen('MakeTexture', w, theLetter);
     
 %     if site ==2
-%         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, (round(nrw/2)+1):-1:1);
+         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
 %     elseif site==1
 %         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
 %     end
     
     
-          theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+%    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles); 
-    
+    'troubleshoot: got to defining circles' 
     
     
     theDot=imread('thedot2.tiff');
@@ -263,7 +272,7 @@ try
     % Acuity sc2
     
     
-    
+    'troubleshoot: staircase'
     % Crowding
     cndt=4;
     ca=2;
@@ -288,7 +297,7 @@ try
     
         stepsizesCW=[4 4 4 4 4];
 
-    
+    'troubleshoot: twister??'
     rand('twister', sum(100*clock));
     
     %% response
@@ -301,13 +310,13 @@ try
     RespType(4) = KbName('DownArrow');
     
     
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
+    %if ispc
+   %    escapeKey = KbName('esc');	% quit key
+    %elseif ismac
         escapeKey = KbName('ESCAPE');	% quit key
-    end
+    %end
     
-    
+    'troubleshoot got to keyboard'
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % get keyboard for the key recording
     deviceIndex = -1; % reset to default keyboard
@@ -421,7 +430,7 @@ try
         Eyelink('dodriftcorrect');
     end
     
-    
+    'troubleshoot: set up eyetracker, start main loop'
     %% main loop
     HideCursor;
     ListenChar(2);
@@ -528,7 +537,7 @@ try
      %    mixtrCWc=   mixtrCWc(randperm(length(mixtrCWc)),:);
      %      mixtrCWd=     mixtrCWd(randperm(length(mixtrCWd)),:);
 
-
+'troubleshoot: got someplace in the middle of a bunch of useless commented code'
 %mixtrCWa=mixtrCWa(1:10,:);
 %mixtrCWb=mixtrCWb(1:16,:);
 
