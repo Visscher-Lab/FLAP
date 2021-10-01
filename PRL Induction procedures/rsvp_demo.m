@@ -1,4 +1,5 @@
 close all; clear all; clc;
+%commandwindow;
 psycfolder='/Users/pinardemirayak/Documents/MATLAB/Psychtoolbox';
 addpath(genpath(psycfolder));
 addpath([cd '/utilities']);
@@ -45,6 +46,8 @@ theCircles=Screen('MakeTexture', w, theCircles);
 theDot=imread('thedot2.tiff');
 theDot=theDot(:,:,1);
 [cc rr]=size(theDot);
+theDot=imresize(theDot,[nrw nrw],'bicubic');
+theDot = double(circle) .* double(theDot)+bg_index * ~double(circle);
 theDot=Screen('MakeTexture', w, theDot);
 
 %Fixation
@@ -75,6 +78,7 @@ KbQueueStart(deviceIndex);
 %Experiment
 %HideCursor;
 KbName('UnifyKeyNames');
+locations=[3 2 4 1 2 3 1 4 2 1 3 4 3];
 ori_ex=90;
 imagelocation1_ex=[100 350 165 415]; imagelocation2_ex=[200 350 265 415]; imagelocation3_ex=[300 350 365 415]; imagelocation4_ex=[400 350 465 415];%example stimulus locations
 Screen('DrawTexture',w,AtheLetter,[],imagelocation1_ex,ori_ex);Screen('DrawTexture',w,AtheLetter,[],imagelocation2_ex,ori_ex+180);Screen('DrawTexture',w,AtheLetter,[],imagelocation3_ex,ori_ex+270);Screen('DrawTexture',w,AtheLetter,[],imagelocation4_ex,ori_ex+90);
@@ -94,35 +98,53 @@ Screen('FrameOval', w,white, circle3, 5, 5);
 Screen('FrameOval', w,white, circle4, 5, 5);
 Screen('Flip', w);
 WaitSecs(3);
-for t=1:5
-    r=randi([1 4],1); % randomly assign PRL locations for stimulus
-    if r==1
-        imagelocation1=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-(3*cc)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)-(3*cc)+cc/2];%left
+cases=[1 2 3 4];
+for t=1:length(locations)-1
+    r=locations(t);
+    c=locations(t+1);
+    con(1)=logical(r==1 && c==2); con(2)=logical(r==1 && c==3); con(3)=logical(r==1 && c==4);con(4)=logical(r==2 && c==1);con(5)=logical(r==2 && c==3);con(6)=logical(r==2 && c==4);con(7)=logical(r==3 && c==1);con(8)=logical(r==3 && c==2);con(9)=logical(r==3 && c==4);con(10)=logical(r==4 && c==1);con(11)=logical(r==4 && c==2);con(12)=logical(r==4 && c==3);
+    if con(1)==1
         imagelocation2=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)+cc/2];
-        imagelocation3=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)+(3*cc)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)+(3*cc)+cc/2];
-    elseif r==2
-        imagelocation1=[(wRect(3)/2)+(5*cc)-cc/2 (wRect(4)/2)-(3*cc)-cc/2 (wRect(3)/2)+(5*cc)+cc/2 (wRect(4)/2)-(3*cc)+cc/2];%right
+        cueloc=[(wRect(3)/2)-(2.5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)-(2.5*cc)+cc/2 (wRect(4)/2)+cc/2];
+    elseif con(2)==1
+        imagelocation2=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)+cc/2];
+        cueloc=[(wRect(3)/2)-(2*cc)-cc/sqrt(2)-cc/2 (wRect(4)/2)-(cc/sqrt(2))-cc/2 (wRect(3)/2)-(2*cc)-cc/sqrt(2)+cc/2 (wRect(4)/2)-(cc/sqrt(2))+cc/2];
+    elseif con(3)==1
+        imagelocation2=[(wRect(3)/2)-(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)-(5*cc)+cc/2 (wRect(4)/2)+cc/2];
+        cueloc=[(wRect(3)/2)-(2*cc)-cc/sqrt(2)-cc/2 (wRect(4)/2)+(cc/sqrt(2))-cc/2 (wRect(3)/2)-(2*cc)-cc/sqrt(2)+cc/2 (wRect(4)/2)+(cc/sqrt(2))+cc/2];
+    elseif con(4)==1
         imagelocation2=[(wRect(3)/2)+(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)+(5*cc)+cc/2 (wRect(4)/2)+cc/2];
-        imagelocation3=[(wRect(3)/2)+(5*cc)-cc/2 (wRect(4)/2)+(3*cc)-cc/2 (wRect(3)/2)+(5*cc)+cc/2 (wRect(4)/2)+(3*cc)+cc/2];
-    elseif r==3
-        imagelocation1=[(wRect(3)/2)-(3*cc)-cc/2 (wRect(4)/2)-(5*cc)-cc/2 (wRect(3)/2)-(3*cc)+cc/2 (wRect(4)/2)-(5*cc)+cc/2];%up
+        cueloc=[(wRect(3)/2)+(2.5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)+(2.5*cc)+cc/2 (wRect(4)/2)+cc/2];
+    elseif con(5)==1
+        imagelocation2=[(wRect(3)/2)+(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)+(5*cc)+cc/2 (wRect(4)/2)+cc/2];
+        cueloc=[(wRect(3)/2)+(2*cc)+cc/sqrt(2)-cc/2 (wRect(4)/2)-(cc/sqrt(2))-cc/2 (wRect(3)/2)+(2*cc)+cc/sqrt(2)+cc/2 (wRect(4)/2)-(cc/sqrt(2))+cc/2];
+    elseif con(6)==1
+        imagelocation2=[(wRect(3)/2)+(5*cc)-cc/2 (wRect(4)/2)-cc/2 (wRect(3)/2)+(5*cc)+cc/2 (wRect(4)/2)+cc/2];
+        cueloc=[(wRect(3)/2)+(2*cc)+cc/sqrt(2)-cc/2 (wRect(4)/2)+(cc/sqrt(2))-cc/2 (wRect(3)/2)+(2*cc)+cc/sqrt(2)+cc/2 (wRect(4)/2)+(cc/sqrt(2))+cc/2];
+    elseif con(7)==1
         imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)-(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)-(5*cc)+cc/2];
-        imagelocation3=[(wRect(3)/2)+(3*cc)-cc/2 (wRect(4)/2)-(5*cc)-cc/2 (wRect(3)/2)+(3*cc)+cc/2 (wRect(4)/2)-(5*cc)+cc/2];
-    else
-        imagelocation1=[(wRect(3)/2)-(3*cc)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)-(3*cc)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];%down
+        cueloc=[(wRect(3)/2)-cc/sqrt(2)-cc/2 (wRect(4)/2)-(2*cc)-(cc/sqrt(2))-cc/2 (wRect(3)/2)-cc/sqrt(2)+cc/2 (wRect(4)/2)-(2*cc)-(cc/sqrt(2))+cc/2];
+    elseif con(8)==1
+        imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)-(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)-(5*cc)+cc/2];
+        cueloc=[(wRect(3)/2)+cc/sqrt(2)-cc/2 (wRect(4)/2)-(2*cc)-(cc/sqrt(2))-cc/2 (wRect(3)/2)+cc/sqrt(2)+cc/2 (wRect(4)/2)-(2*cc)-(cc/sqrt(2))+cc/2];
+    elseif con(9)==1
+        imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)-(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)-(5*cc)+cc/2];
+        cueloc=[(wRect(3)/2)-cc/2 (wRect(4)/2)-(2.5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)-(2.5*cc)+cc/2];
+    elseif con(10)==1
         imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
-        imagelocation3=[(wRect(3)/2)+(3*cc)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+(3*cc)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
+        cueloc=[(wRect(3)/2)-cc/sqrt(2)-cc/2 (wRect(4)/2)+(2*cc)+(cc/sqrt(2))-cc/2 (wRect(3)/2)-cc/sqrt(2)+cc/2 (wRect(4)/2)+(2*cc)+(cc/sqrt(2))+cc/2];
+    elseif con(11)==1
+        imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
+        cueloc=[(wRect(3)/2)+cc/sqrt(2)-cc/2 (wRect(4)/2)+(2*cc)+(cc/sqrt(2))-cc/2 (wRect(3)/2)+cc/sqrt(2)+cc/2 (wRect(4)/2)+(2*cc)+(cc/sqrt(2))+cc/2];
+    elseif con(12)==1
+        imagelocation2=[(wRect(3)/2)-cc/2 (wRect(4)/2)+(5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)+(5*cc)+cc/2];
+        cueloc=[(wRect(3)/2)-cc/2 (wRect(4)/2)+(2.5*cc)-cc/2 (wRect(3)/2)+cc/2 (wRect(4)/2)+(2.5*cc)+cc/2];
     end
+    
     ro=randi([0 3],1);%randomly assign to which side should C look at to
     ori=ro*90;
     
-    Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-    Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-    Screen('FrameOval', w,white, circle1, 5, 5);
-    Screen('FrameOval', w,white, circle2, 5, 5);
-    Screen('FrameOval', w,white, circle3, 5, 5);
-    Screen('FrameOval', w,white, circle4, 5, 5);
-    Screen('Flip', w);
+    
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('FrameOval', w,white, circle1, 5, 5);
@@ -138,7 +160,7 @@ for t=1:5
     Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('DrawTexture',w, theCircles, [], imagelocation2,0,[],1);
     Screen('Flip', w);
-    WaitSecs(0.3)
+    WaitSecs(0.3);
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('FrameOval', w,white, circle1, 5, 5);
@@ -154,7 +176,7 @@ for t=1:5
     Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('DrawTexture',w, AtheLetter, [], imagelocation2,ori,[],1);
     Screen('Flip', w);
-    WaitSecs(0.3)
+    WaitSecs(0.3);
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('FrameOval', w,white, circle1, 5, 5);
@@ -170,8 +192,7 @@ for t=1:5
     Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('DrawTexture',w, theCircles, [], imagelocation2,0,[],1);
     Screen('Flip', w);
-    WaitSecs(0.3)
-    StimTime=GetSecs;
+    WaitSecs(0.3);
     Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
     Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
     Screen('FrameOval', w,white, circle1, 5, 5);
@@ -179,7 +200,8 @@ for t=1:5
     Screen('FrameOval', w,white, circle3, 5, 5);
     Screen('FrameOval', w,white, circle4, 5, 5);
     Screen('Flip', w);
-    WaitSecs(0.5);
+    WaitSecs(0.3);
+    StimTime=GetSecs;
     %Response and feedback
     [keyIsDown,keysecs,keyCode] = KbQueueCheck;
     conditions(1)=logical(ori==180 && keyCode(KbName('LeftArrow')));conditions(2)=logical(ori==0 && keyCode(KbName('RightArrow')));conditions(3)=logical(ori==270 && keyCode(KbName('UpArrow'))); conditions(4)=logical(ori==90 && keyCode(KbName('DownArrow')));
@@ -193,6 +215,26 @@ for t=1:5
             PsychPortAudio('Start', pahandle2);
             KbQueueFlush();
         end
+    end
+    if t~=1
+        WaitSecs(0.5);
+        Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+        Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+        Screen('FrameOval', w,white, circle1, 5, 5);
+        Screen('FrameOval', w,white, circle2, 5, 5);
+        Screen('FrameOval', w,white, circle3, 5, 5);
+        Screen('FrameOval', w,white, circle4, 5, 5);
+        Screen('DrawTexture',w, theDot, [], cueloc,0,[],1);
+        Screen('Flip', w);
+        WaitSecs(0.3);
+        Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+        Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+        Screen('FrameOval', w,white, circle1, 5, 5);
+        Screen('FrameOval', w,white, circle2, 5, 5);
+        Screen('FrameOval', w,white, circle3, 5, 5);
+        Screen('FrameOval', w,white, circle4, 5, 5);
+        Screen('Flip', w);
+        WaitSecs(0.3);
     end
     TrialEndTime=GetSecs;
     WaitSecs(3-(TrialEndTime-StimTime));
