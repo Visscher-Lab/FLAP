@@ -584,6 +584,8 @@ try
     subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
     firstPartMat=AttMat.(subMat{dio(1)});
     secondPartMat=AttMat.(subMat{dio(2)});
+    % troubleshooting: Marcello -- why only take parts one and 2 here?
+    % also 'one' is second in the variable AttMat?  so...  what's going on?
     
     mixtrAtt= [firstPartMat; secondPartMat];
     
@@ -851,7 +853,7 @@ try
                     if mixtrAtt(trial,2)==  1
                       %  Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
                            %     Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
-                                Screen('FrameRect', w, [200 200 200],imageRect_offsCirc, oval_thick);
+                        Screen('FrameRect', w, [200 200 200],imageRect_offsCirc, oval_thick);
 
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
