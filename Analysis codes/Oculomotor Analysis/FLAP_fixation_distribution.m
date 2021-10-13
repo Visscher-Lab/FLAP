@@ -14,7 +14,7 @@ addpath([cd '/Functions']);
 subNum=baseName(8:17);
 
 
-name=['Crossland distribution FLAP' subNum ]
+name=['Crossland distribution FLAP' subNum ];
 %subNum=['Sub 1' ];
 
 firsttrial=1;
@@ -93,12 +93,12 @@ firstfix=0;
      end;
     
      if sum(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.StimulusStart)>=1
-
+    % if sum(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.Stimulus)>=1
          
         %find the first available eye position after stimulus presentation
 
     FramesAfterTargetPresentation=find(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.StimulusStart);
-  
+  %FramesAfterTargetPresentation=find(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.Stimulus);
     if length(FramesAfterTargetPresentation)>0 %at least one valid frame after target presentation
 
                 skipp(i)=1;
@@ -167,8 +167,8 @@ newnewfixation.(TrialNum).fixStop=hihg2';
         totalfixation(i)=w
 
 
-                EyeX=EyeSummary.(TrialNum).EyeData(newfixation.(TrialNum).fixStart(w),1)
-        EyeY=EyeSummary.(TrialNum).EyeData(newfixation.(TrialNum).fixStart(w),2)
+                EyeX=EyeSummary.(TrialNum).EyeData(newfixation.(TrialNum).fixStart(w),1);
+        EyeY=EyeSummary.(TrialNum).EyeData(newfixation.(TrialNum).fixStart(w),2);
                 diffx=EyeX-(wRect(3)/2+tgt_x);
             diffy=EyeY-(wRect(4)/2+tgt_y);
 
@@ -262,6 +262,7 @@ clear fix_counter
   end
   end
      elseif sum(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.StimulusStart)==0
+             % elseif sum(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.Stimulus)==0
       numFixation.(TrialNum).Fix=0
      end
 
@@ -285,9 +286,9 @@ center_PRL(2)=mean(fixation_counter(:,2));
 
 
 
-ellli=cov(FixationsX,FixationsY)
-data=[FixationsX FixationsY]
-error_ellipse(ellli, mean(data), .68)
+ellli=cov(FixationsX,FixationsY);
+data=[FixationsX FixationsY];
+error_ellipse(ellli, mean(data), .68);
 
 [eigenvec, eigenval ] = eig(ellli);
 d=sqrt(eigenval);
