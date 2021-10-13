@@ -899,8 +899,11 @@ try
                 
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
                 eyechecked=10^4;
-                
+                %added by Rachel 10/13/21 to make code continue when 2 keys are accidentally pressed simultaneously 
                 thekeys = find(keyCode);
+                if length(thekeys)>1
+                        thekeys=thekeys(1);
+                end
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 respTime=GetSecs;
