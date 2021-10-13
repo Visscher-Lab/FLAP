@@ -175,10 +175,10 @@ try
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
     
-    try
-        [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
+    %try
+     %   [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+      %  [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+   % end
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
@@ -231,11 +231,11 @@ try
     
 
     
-    if ispc
-        escapeKey = KbName('esc');	% quit key
-    elseif ismac
+%     if ispc
+%         escapeKey = KbName('esc');	% quit key
+%     elseif ismac
         escapeKey = KbName('ESCAPE');	% quit key
-    end
+%    end
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
