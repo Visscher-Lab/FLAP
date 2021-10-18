@@ -264,7 +264,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
-    Sizelist=log_unit_down(StartSize, 0.01, 64);
+    Sizelist=log_unit_down(StartSize, 0.01, 90);
     
    % stepsizesVA=[8 4 3 2 1];
         stepsizesVA=[4 4 4 4 4];
@@ -288,7 +288,7 @@ try
     %Separationtlist=log_unit_up(StartSize, 0.01, 64);
     
     %  Separationtlist=log_unit_down(max_separation, 0.01, 64);
-    Separationtlist=log_unit_down(max_separation, 0.015, 80);
+    Separationtlist=log_unit_down(max_separation, 0.015, 90);
     %Sizelist=log_unit_down(StartSize, 0.0135, 64)
     
     %  Separationtlist=fliplr(Separationtlist);

@@ -92,7 +92,7 @@ hold on
 legend ('cued', 'uncued')
 ylabel('Percentage correct')
 title([  subj ' short ISI Attention %'])
-limits2=max([AttCorrshortCuedPerc AttCorrshortUncuedPerc]);
+limits2=max([AttCorrshortCuedPerc AttCorrshortUncuedPerc])
 limithigh=limits2*1.2;
 
 if limithigh>100 
@@ -164,25 +164,8 @@ print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 
 % AttCorrCued has 4 columns:1)?? 2)was it cued (1) or uncued (2)  3) correct(1) or incorrect (0)  4) RT in s
 % plot cued and uncued trials
 figure
-subplot(2,2,1)
-hist(AttCorrshortCued(:,4))
-ylabel('Reaction time (s)')
-legend ('short cued')
 
-subplot(2,2,2)
-hist(AttCorrshortUncued(:,4))
-ylabel('Reaction time (s)')
-legend ('short uncued')
-
-subplot(2,2,3)
-hist(AttCorrlongCued(:,4))
-ylabel('Reaction time (s)')
-legend ('long cued')
-
-subplot(2,2,4)
-hist(AttCorrlongUncued(:,4))
-ylabel('Reaction time (s)')
-legend ('long uncued')
+hist(AttCorrshortCued(:,4), AttCorrshortUncued(:,4))
 
 
 % Is RT different for cued vs. uncued?
@@ -230,8 +213,14 @@ legend ('long uncued')
 % conditions
 % write text in the figure giving the difference in means 
 
-[h p] = ttest2(AttCorrshortCued(:,4), AttCorrshortUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+[h p] = ttest2(AttCorrCued(:,4), AttCorrUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
-[h p] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
+
+AttCorrCuedRT=mean(AttCorrCued(:,4));
+AttCorrUncuedRT=mean(AttCorrUncued(:,4));
+
+
+AttCorrCued(:,4), AttCorrUncued(:,4)
+             
              
