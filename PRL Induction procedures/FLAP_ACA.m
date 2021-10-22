@@ -85,7 +85,7 @@ try
     cueduration=.05;
     cueISI=0.05;
     presentationtime=0.133;
-    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
     
