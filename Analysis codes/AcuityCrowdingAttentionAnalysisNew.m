@@ -22,16 +22,29 @@ testmatCW=[mixtrCW rispo(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))' t
 testmatAtt= [mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
 
 AttCorr=testmatAtt(testmatAtt(:,3)==1,:);
-AttCuedTotal=length(testmatAtt(testmatAtt(:,2)==1)); 
-AttUncuedTotal=length(testmatAtt(testmatAtt(:,2)==2));
-AttCorrCued=AttCorr(AttCorr(:,2)==1,:);
-AttCorrUncued=AttCorr(AttCorr(:,2)==2,:);
+AttshortCuedTotal=length(testmatAtt(testmatAtt(:,2)==1)); 
+AttshortUncuedTotal=length(testmatAtt(testmatAtt(:,2)==2));
+AttlongCuedTotal=length(testmatAtt(testmatAtt(:,2)==3)); 
+AttlongUncuedTotal=length(testmatAtt(testmatAtt(:,2)==4));
+AttCorrshortCued=AttCorr(AttCorr(:,2)==1,:);
+AttCorrshortUncued=AttCorr(AttCorr(:,2)==2,:);
+AttCorrlongCued=AttCorr(AttCorr(:,2)==3,:);
+AttCorrlongUncued=AttCorr(AttCorr(:,2)==4,:);
 
-AttCorrCuedRT=mean(AttCorrCued(:,4));
-AttCorrUncuedRT=mean(AttCorrUncued(:,4));
 
-AttCorrCuedPerc=length(AttCorrCued)/AttCuedTotal*100;
-AttCorrUncuedPerc=length(AttCorrUncued)/AttUncuedTotal*100;
+
+AttCorrshortCuedRT=mean(AttCorrshortCued(:,4));
+AttCorrshortUncuedRT=mean(AttCorrshortUncued(:,4));
+
+
+AttCorrlongCuedRT=mean(AttCorrlongCued(:,4));
+AttCorrlongUncuedRT=mean(AttCorrlongUncued(:,4));
+
+AttCorrshortCuedPerc=length(AttCorrshortCued)/AttshortCuedTotal*100;
+AttCorrshortUncuedPerc=length(AttCorrshortUncued)/AttshortUncuedTotal*100;
+
+AttCorrlongCuedPerc=length(AttCorrlongCued)/AttlongCuedTotal*100;
+AttCorrlongUncuedPerc=length(AttCorrlongUncued)/AttlongUncuedTotal*100;
 
 
 
@@ -56,9 +69,9 @@ set(gca,'FontSize',17)
 print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 figure
-scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.1,50, 'r','filled')
+scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.031,50, 'r','filled')
 hold on
-scatter(1:length(ThreshlistVA), ThreshlistCW_tan-0.1,50, 'k','filled')
+scatter(1:length(ThreshlistVA), ThreshlistCW_tan-0.031,50, 'k','filled')
 
 legend ('radial', 'tangential')
 %title([  subj titles{ui} ' acuity'])
@@ -69,18 +82,17 @@ ylabel('dva')
 set(gca,'FontSize',17)
 
 print([dir subj 'crowdingnew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-             
-             
+                      
 figure
 subplot(2,1,1)
-bar(1, AttCorrCuedPerc, 'g')
+bar(1, AttCorrshortCuedPerc, 'g')
 hold on
-bar(2, AttCorrUncuedPerc, 'r')
+bar(2, AttCorrshortUncuedPerc, 'r')
 hold on
 legend ('cued', 'uncued')
 ylabel('Percentage correct')
-title([  subj ' Attention %'])
-limits2=max([AttCorrCuedPerc AttCorrUncuedPerc])
+title([  subj ' short ISI Attention %'])
+limits2=max([AttCorrshortCuedPerc AttCorrshortUncuedPerc]);
 limithigh=limits2*1.2;
 
 if limithigh>100 
@@ -95,23 +107,84 @@ ylim([limits2*0.8 limithigh])
 %figure
 subplot(2,1,2)
 
-bar(1, AttCorrCuedRT, 'g')
+bar(1, AttCorrshortCuedRT, 'g')
 hold on
-bar(2, AttCorrUncuedRT, 'r')
+bar(2, AttCorrshortUncuedRT, 'r')
 hold on
 legend ('cued', 'uncued')
 ylabel('Reaction time (s)')
-title([  subj ' Attention RT'])
-limits=max([AttCorrCuedRT AttCorrUncuedRT])
+title([  subj ' short ISI Attention RT'])
+limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 
 ylim([limits*0.8 limits*1.2])
-print([dir subj 'att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+
+
+
+
+figure
+subplot(2,1,1)
+bar(1, AttCorrlongCuedPerc, 'g')
+hold on
+bar(2, AttCorrlongUncuedPerc, 'r')
+hold on
+legend ('cued', 'uncued')
+ylabel('Percentage correct')
+title([  subj ' long ISI Attention %'])
+limits2=max([AttCorrlongCuedPerc AttCorrlongUncuedPerc]);
+limithigh=limits2*1.2;
+
+if limithigh>100 
+    limithigh=100;
+end
+ylim([limits2*0.8 limithigh])
+
+ %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+
+
+%figure
+subplot(2,1,2)
+
+bar(1, AttCorrlongCuedRT, 'g')
+hold on
+bar(2, AttCorrlongUncuedRT, 'r')
+hold on
+legend ('cued', 'uncued')
+ylabel('Reaction time (s)')
+title([  subj ' long ISI Attention RT'])
+limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
+
+ylim([limits*0.8 limits*1.2])
+print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 %% Analyze reaction times for Attention task
 % AttCorrCued has 4 columns:1)?? 2)was it cued (1) or uncued (2)  3) correct(1) or incorrect (0)  4) RT in s
 % plot cued and uncued trials
-hist(AttCorrCued(:,4), AttCorrUncued(:,4))
+figure
+subplot(2,2,1)
+hist(AttCorrshortCued(:,4))
+ylabel('Reaction time (s)')
+legend ('short cued')
+
+subplot(2,2,2)
+hist(AttCorrshortUncued(:,4))
+ylabel('Reaction time (s)')
+legend ('short uncued')
+
+subplot(2,2,3)
+hist(AttCorrlongCued(:,4))
+ylabel('Reaction time (s)')
+legend ('long cued')
+
+subplot(2,2,4)
+hist(AttCorrlongUncued(:,4))
+ylabel('Reaction time (s)')
+legend ('long uncued')
+
+
 % Is RT different for cued vs. uncued?
 % Plot histogram
 % [h p] = ttest2(AttCorrCued(:,4), AttCorrUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
@@ -157,14 +230,8 @@ hist(AttCorrCued(:,4), AttCorrUncued(:,4))
 % conditions
 % write text in the figure giving the difference in means 
 
-[h p] = ttest2(AttCorrCued(:,4), AttCorrUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+[h p] = ttest2(AttCorrshortCued(:,4), AttCorrshortUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
+[h2 p2] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
-
-AttCorrCuedRT=mean(AttCorrCued(:,4));
-AttCorrUncuedRT=mean(AttCorrUncued(:,4));
-
-
-AttCorrCued(:,4), AttCorrUncued(:,4)
-             
              
