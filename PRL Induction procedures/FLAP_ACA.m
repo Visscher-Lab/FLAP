@@ -276,13 +276,13 @@ try
     % Crowding
     cndt=4;
     ca=2;
-    threshCW(1, 1:ca)=25;
+    threshCW(1, 1:ca)=33; %25;
     reversalsCW(1, 1:ca)=0;
     isreversalsCW(1, 1:ca)=0;
     staircounterCW(1, 1:ca)=0;
     corrcounterCW(1, 1:ca)=0;
     
-    max_separation=6; %15
+    max_separation=8; %15
     %min_separation=2.5;
     
     %Separationtlist=log_unit_up(StartSize, 0.01, 64);

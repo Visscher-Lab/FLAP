@@ -69,9 +69,9 @@ set(gca,'FontSize',17)
 print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 figure
-scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.1,50, 'r','filled')
+scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.031,50, 'r','filled')
 hold on
-scatter(1:length(ThreshlistVA), ThreshlistCW_tan-0.1,50, 'k','filled')
+scatter(1:length(ThreshlistVA), ThreshlistCW_tan-0.031,50, 'k','filled')
 
 legend ('radial', 'tangential')
 %title([  subj titles{ui} ' acuity'])
@@ -232,6 +232,6 @@ legend ('long uncued')
 
 [h p] = ttest2(AttCorrshortCued(:,4), AttCorrshortUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
-[h p] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+[h2 p2] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
              
