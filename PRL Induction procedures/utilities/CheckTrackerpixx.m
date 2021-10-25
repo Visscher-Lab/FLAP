@@ -1,4 +1,4 @@
-function [SummaryData EyeTrackerData ErrorData] = CheckTracker(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh,el)
+function [SummaryData EyeTrackerData ErrorData] = CheckTrackerpixx(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh,el)
 if(nargin==7)
     el = 0;
 end
@@ -36,9 +36,16 @@ switch EyetrackerType
         
         case 2 % VPixx
             
-            
-            
-            
+               [xScreenRight, yScreenRight, ~, ~, ~, ~, ~, ~, ~] = Datapixx('GetEyePosition');
+    pos = Datapixx('ConvertCoordSysToCustom', [xScreenRight, yScreenRight]);
+            SummaryData(1) = pos(1)-driftoffsetx; % +1 to eye used as we're accessing a MATLAB array
+                SummaryData(2) = pos(2)-driftoffsety;
+                SummaryData(3) = 0; %CurEyelinkEvt.pa(eye_used+1);
+                SummaryData(4) = -1; % need to compute velocity outside this function
+                SummaryData(5) = GetSecs;
+                
+                EyeTrackerData = 0; %CurEyelinkEvt;
+                ErrorData= -1;
     case 3 % Arrington
         [DataQuality]=vpx_GetDataQuality(eye_used);
         if(DataQuality > 2)
