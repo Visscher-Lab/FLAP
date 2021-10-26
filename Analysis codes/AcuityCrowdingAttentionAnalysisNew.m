@@ -3,7 +3,7 @@
 % Written by Marcello Maniglia, 2021
 
 close all
-dir= ['.\PilotFigures\' ];
+dir= [cd '\PilotFigures\'];
 subj=baseName(8:9);
 subj=baseName(51:58);
 
@@ -66,7 +66,9 @@ ylabel('dva')
 %ylim([0 2])
 set(gca,'FontSize',17)
 
-print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print('-dpng', '-r300');
+%print(test, '-dpng', '-r300');
+%print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 figure
 scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.031,50, 'r','filled')
@@ -81,7 +83,8 @@ ylabel('dva')
 %ylim([0 2])
 set(gca,'FontSize',17)
 
-print([dir subj 'crowdingnew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print('crowdingTask','-dpng')
+%print(theName, '-dpng', '-r300'); %<-Save as PNG with 300 DPI
                       
 figure
 subplot(2,1,1)
@@ -117,7 +120,8 @@ title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 
 ylim([limits*0.8 limits*1.2])
-print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print([subj 'crowdingTask'],'-dpng')
+%print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 
@@ -157,7 +161,7 @@ title([  subj ' long ISI Attention RT'])
 limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
 
 ylim([limits*0.8 limits*1.2])
-print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 %% Analyze reaction times for Attention task
@@ -184,6 +188,30 @@ hist(AttCorrlongUncued(:,4))
 ylabel('Reaction time (s)')
 legend ('long uncued')
 
+subplot(2,2,1)
+hist(AttCorrshortCued(:,4))
+title('ACA Data Analysis: Short Cued')
+xlabel('Reaction time (s)')
+ylabel('Frequency')
+hold on
+subplot(2,2,2)
+hist(AttCorrshortUncued(:,4))
+title('ACA Data Analysis: Short Uncued')
+xlabel('Reaction time (s)')
+ylabel('Frequency')
+axis([0.2 2 0 80])
+
+subplot(2,2,3)
+hist(AttCorrlongCued(:,4))
+xlabel('Reaction time (s)')
+ylabel('Frequency')
+title('ACA Data Analysis: Long Cued')
+hold on
+subplot(2,2,4)
+hist(AttCorrlongUncued(:,4))
+xlabel('Reaction time (s)')
+ylabel('Frequency')
+title('ACA Data Analysis: Long Uncued')
 
 % Is RT different for cued vs. uncued?
 % Plot histogram
