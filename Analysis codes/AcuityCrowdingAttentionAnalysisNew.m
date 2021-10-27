@@ -193,25 +193,28 @@ hist(AttCorrshortCued(:,4))
 title('ACA Data Analysis: Short Cued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
+axis([0.2 1 0 25])
 hold on
 subplot(2,2,2)
 hist(AttCorrshortUncued(:,4))
 title('ACA Data Analysis: Short Uncued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
-axis([0.2 2 0 80])
+axis([0.2 1 0 25])
 
 subplot(2,2,3)
 hist(AttCorrlongCued(:,4))
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Cued')
+axis([0.2 1 0 25])
 hold on
 subplot(2,2,4)
 hist(AttCorrlongUncued(:,4))
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Uncued')
+axis([0.2 1 0 25])
 
 % Is RT different for cued vs. uncued?
 % Plot histogram
