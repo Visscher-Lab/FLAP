@@ -3,7 +3,7 @@
 % Written by Marcello Maniglia, 2021
 
 close all
-dir= [cd '\PilotFigures\'];
+newdir= [cd '\PilotFigures\'];
 subj=baseName(8:9);
 subj=baseName(51:58);
 
@@ -66,7 +66,8 @@ ylabel('dva')
 %ylim([0 2])
 set(gca,'FontSize',17)
 
-print('-dpng', '-r300');
+print([newdir subj 'ACAacuity'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%print('-dpng', '-r300');
 %print(test, '-dpng', '-r300');
 %print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -83,7 +84,8 @@ ylabel('dva')
 %ylim([0 2])
 set(gca,'FontSize',17)
 
-print('crowdingTask','-dpng')
+print([newdir subj 'ACAcrowding'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%print('crowdingTask','-dpng')
 %print(theName, '-dpng', '-r300'); %<-Save as PNG with 300 DPI
                       
 figure
@@ -120,7 +122,8 @@ title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 
 ylim([limits*0.8 limits*1.2])
-print([subj 'crowdingTask'],'-dpng')
+print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%print([subj 'crowdingTask'],'-dpng')
 %print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
@@ -144,6 +147,7 @@ if limithigh>100
 end
 ylim([limits2*0.8 limithigh])
 
+%print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
  %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
@@ -162,7 +166,7 @@ limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
 
 ylim([limits*0.8 limits*1.2])
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-
+print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 %% Analyze reaction times for Attention task
 % AttCorrCued has 4 columns:1)?? 2)was it cued (1) or uncued (2)  3) correct(1) or incorrect (0)  4) RT in s
@@ -188,33 +192,34 @@ hist(AttCorrlongUncued(:,4))
 ylabel('Reaction time (s)')
 legend ('long uncued')
 
+
 subplot(2,2,1)
 hist(AttCorrshortCued(:,4))
 title('ACA Data Analysis: Short Cued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
-axis([0.2 1 0 25])
+% axis([0.2 1 0 25])
 hold on
 subplot(2,2,2)
 hist(AttCorrshortUncued(:,4))
 title('ACA Data Analysis: Short Uncued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
-axis([0.2 1 0 25])
+% axis([0.2 1 0 25])
 
 subplot(2,2,3)
 hist(AttCorrlongCued(:,4))
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Cued')
-axis([0.2 1 0 25])
+% axis([0.2 1 0 25])
 hold on
 subplot(2,2,4)
 hist(AttCorrlongUncued(:,4))
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Uncued')
-axis([0.2 1 0 25])
+% axis([0.2 1 0 25])
 
 % Is RT different for cued vs. uncued?
 % Plot histogram
