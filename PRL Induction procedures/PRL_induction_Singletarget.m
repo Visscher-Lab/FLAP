@@ -1547,8 +1547,8 @@ ycrand= yc+possibleX(randi(length(possibleY)));
     if trial>1
         comparerisp=[rispoTotal' rispoInTime'];
     end
+        DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
     ListenChar(0);
     Screen('Flip', w);
     KbWait;

@@ -1579,8 +1579,8 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
     if trial>1
         comparerisp=[rispoTotal' rispoInTime'];
     end
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
+        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         ListenChar(0);
     Screen('Flip', w);
     KbWait;
