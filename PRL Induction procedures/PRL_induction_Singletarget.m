@@ -86,7 +86,7 @@ trialTimeout=timeOut+3;
     rand('twister',theseed);
   
     %   trials=500;
-    trials=50;
+    trials=500;
 
     mixtr=ones(trials,2);
     KbQueueCreate;
@@ -1391,21 +1391,21 @@ ycrand= yc+possibleX(randi(length(possibleY)));
             
             if stim_stop - stim_start<5
                 respTime=1;
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                
-                if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                    corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    if isreversals(mixtr(trial,1),mixtr(trial,2))==1
-                        reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                        isreversals(mixtr(trial,1),mixtr(trial,2))=0;
-                    end
-                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                    if thestep>5 
-                        thestep=5;
-                    end;
-
-                end
-                
+%                 corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
+%                 
+%                 if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+%                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+%                     if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+%                         reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+%                         isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+%                     end
+%                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+%                     if thestep>5 
+%                         thestep=5;
+%                     end;
+% 
+%                 end
+%                 
 
                 
                
@@ -1425,17 +1425,17 @@ ycrand= yc+possibleX(randi(length(possibleY)));
             respTime=0;
             PsychPortAudio('Start', pahandle2);
             
-            if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-            end
-            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-            
-            thestep=max(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-            if thestep>5
-                thestep=5;
-            end;
-            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-            thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+%             if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+%                 isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+%             end
+%             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+%             
+%             thestep=max(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+%             if thestep>5
+%                 thestep=5;
+%             end;
+%             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+%             thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
         end
                 else
             

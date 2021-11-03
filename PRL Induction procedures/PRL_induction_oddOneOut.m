@@ -13,7 +13,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','0', '10'};
+    defaultanswer={'test','0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -87,7 +87,7 @@ trialTimeout=timeOut+3;
     
     
     %   trials=500;
-    trials=100;
+    trials=500;
     mixtr=ones(trials,2);
     KbQueueCreate;
     

@@ -1369,7 +1369,8 @@ try
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-    
+        DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
@@ -1377,7 +1378,6 @@ try
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     ListenChar(0);
     Screen('Flip', w);
     KbQueueWait;
