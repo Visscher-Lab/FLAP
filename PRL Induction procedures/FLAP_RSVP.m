@@ -372,11 +372,14 @@ try
     RespType(4) = KbName('DownArrow');
     RespType(5:9) = KbName('w');
     
-
+if str2num(expdayeye)==1
 load testAttMat.mat
-    newtrialmatrix=totalnewnewtrial_incongruent2;
- 
-    
+elseif str2num(expdayeye)==2
+load testAttMatpost.mat
+end
+
+newtrialmatrix=totalnewnewtrial_incongruent2;
+
     % check EyeTracker status
     if EyeTracker == 1
         status = Eyelink('startrecording');
