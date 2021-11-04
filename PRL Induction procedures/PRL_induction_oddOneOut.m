@@ -87,7 +87,7 @@ trialTimeout=timeOut+3;
     
     
     %   trials=500;
-    trials=500;
+    trials=250;
     mixtr=ones(trials,2);
     KbQueueCreate;
     
@@ -1566,7 +1566,8 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
         end;
            
     end
-    
+        DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
+
     % shut down EyeTracker
     if EyeTracker==1
         Eyelink('StopRecording');
@@ -1579,7 +1580,6 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
     if trial>1
         comparerisp=[rispoTotal' rispoInTime'];
     end
-    DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
         save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         ListenChar(0);
     Screen('Flip', w);
