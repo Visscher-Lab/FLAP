@@ -85,7 +85,7 @@ try
     cueduration=.05;
     cueISI=0.05;
     presentationtime=0.133;
-    ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
     
@@ -671,9 +671,16 @@ try
     FixDotSize=15;
     
     for totaltrial=1:totalmixtr
-        if totaltrial== length(mixtrVA)+1 || totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-            interblock_instruction
-        end
+%         if totaltrial== length(mixtrVA)+1 || totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+%             interblock_instruction
+%         end
+       
+if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+    interblock_instruction_crowding
+end
+if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+    interblock_instruction_attention
+end
         if totaltrial<= length(mixtrVA)
             whichTask=1;
             trial=totaltrial;
@@ -877,14 +884,14 @@ try
                 Datapixx('RegWrRd');
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1
-                fixationscript2
+                fixationscript3
             elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1
                 if site<3
                     IsFixating4
                 elseif site==3
                     IsFixating4pixx
                 end
-                fixationscript2
+                fixationscript3
             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1
                 trial_time = GetSecs;
                 fixating=1500;
