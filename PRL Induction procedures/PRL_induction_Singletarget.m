@@ -86,7 +86,7 @@ trialTimeout=timeOut+3;
     rand('twister',theseed);
   
     %   trials=500;
-    trials=250;
+    trials=500;
 
     mixtr=ones(trials,2);
     KbQueueCreate;
@@ -230,87 +230,7 @@ trialTimeout=timeOut+3;
         ifi=1/75;
     end
     
-    if EyeTracker == 1
-        
-        % eye_used
-        ScreenHeightPix=screencm(2)*pix_deg_vert;
-        ScreenWidthPix=screencm(1)*pix_deg;
-        VelocityThreshs = [250 2000];      	% px/sec
-        ViewpointRefresh = 1;               % dummy variable
-        driftoffsetx=0;                     % initial x offset for all eyetracker values
-        driftoffsety=0;                     % initial y offset for all eyetracker values
-        driftcorr=0.1;                      % how much to adjust drift correction each trial.
-        % Parameters to identify fixations
-        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
-        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
-        % note, the eye velocity is already low enough to be considered a "fixation"
-        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
-        
-        % old variables
-        [winCenter_x,winCenter_y]=RectCenter(wRect);
-        backgroundEntry = [0.5 0.5 0.5];
-        % height and width of the screen
-        winWidth  = RectWidth(wRect);
-        winHeight = RectHeight(wRect);
-        % initialize eyelink
-        if EyelinkInit()~= 1
-            error('Eyelink initialization failed!');
-        end
-        % continue with the rest of eyelink initialization
-        elHandle=EyelinkInitDefaults(w);
-        el=elHandle;
-        eyeTrackerFileName = [eyeTrackerBaseName '.edf'];
-        % Modify calibration and validation target locations %%
-        % it's location here is overridded by EyelinkDoTracker which resets it
-        % with display PC coordinates
-        Eyelink('command','screen_pixel_coords = %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
-        Eyelink('message', 'DISPLAY_COORDS %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
-        % set calibration type.
-        Eyelink('command', 'calibration_type = HV9');
-        %      Eyelink('command', 'calibration_type = HV5'); % changed to 5 to correct upper left corner of the screen issue
-        % you must send this command with value NO for custom calibration
-        % you must also reset it to YES for subsequent experiments
-        %     Eyelink('command', 'generate_default_targets = NO');
-        
-        
-        %% Modify target locations
-        % due to issues with calibrating the upper left corner of the screen the following lines have been
-        % commmented out to change the the sampling from 10 to 5 as
-        % listed in line 323
-        Eyelink('command','calibration_samples = 10');
-        Eyelink('command','calibration_sequence = 0,1,2,3,4,5,6,7,8,9');
-        %
-        %             modFactor = 0.183;
-        %
-        %             Eyelink('command','calibration_targets = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor) );
-        %
-        %             Eyelink('command','validation_samples = 5');
-        Eyelink('command','validation_samples = 10'); %changed to make
-        % it 5 samples instead of 10 to deal with upper left corner of
-        % the screem issue
-        Eyelink('command','validation_sequence = 0,1,2,3,4,5,6,7,8,9');
-        %             Eyelink('command','validation_targets =  %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor),
-        %                 round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor)  );
-        %
-        % make sure that we get gaze data from the Eyelink
-        Eyelink('command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
-        Eyelink('OpenFile', eyeTrackerFileName); % open file to record data  & calibration
-        EyelinkDoTrackerSetup(elHandle);
-        Eyelink('dodriftcorrect');
-    end
-    
+
     %% SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 1, 44100, 2);
@@ -625,6 +545,94 @@ trialTimeout=timeOut+3;
             lesanglesrighty{righty}=lesangles;
         end
         i=i+1;
+        lowest=min(a,b);
+        
+        thephrase= ['Creating images - Please wait: ' num2str((lowest/(trials+1))*100) '%'];
+            DrawFormattedText(w, thephrase, 'center', 'center', white);
+    Screen('Flip', w);
+
+    end
+    
+    
+        if EyeTracker == 1
+        
+        % eye_used
+        ScreenHeightPix=screencm(2)*pix_deg_vert;
+        ScreenWidthPix=screencm(1)*pix_deg;
+        VelocityThreshs = [250 2000];      	% px/sec
+        ViewpointRefresh = 1;               % dummy variable
+        driftoffsetx=0;                     % initial x offset for all eyetracker values
+        driftoffsety=0;                     % initial y offset for all eyetracker values
+        driftcorr=0.1;                      % how much to adjust drift correction each trial.
+        % Parameters to identify fixations
+        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
+        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
+        % note, the eye velocity is already low enough to be considered a "fixation"
+        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
+        
+        % old variables
+        [winCenter_x,winCenter_y]=RectCenter(wRect);
+        backgroundEntry = [0.5 0.5 0.5];
+        % height and width of the screen
+        winWidth  = RectWidth(wRect);
+        winHeight = RectHeight(wRect);
+        % initialize eyelink
+        if EyelinkInit()~= 1
+            error('Eyelink initialization failed!');
+        end
+        % continue with the rest of eyelink initialization
+        elHandle=EyelinkInitDefaults(w);
+        el=elHandle;
+        eyeTrackerFileName = [eyeTrackerBaseName '.edf'];
+        % Modify calibration and validation target locations %%
+        % it's location here is overridded by EyelinkDoTracker which resets it
+        % with display PC coordinates
+        Eyelink('command','screen_pixel_coords = %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
+        Eyelink('message', 'DISPLAY_COORDS %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
+        % set calibration type.
+        Eyelink('command', 'calibration_type = HV9');
+        %      Eyelink('command', 'calibration_type = HV5'); % changed to 5 to correct upper left corner of the screen issue
+        % you must send this command with value NO for custom calibration
+        % you must also reset it to YES for subsequent experiments
+        %     Eyelink('command', 'generate_default_targets = NO');
+        
+        
+        %% Modify target locations
+        % due to issues with calibrating the upper left corner of the screen the following lines have been
+        % commmented out to change the the sampling from 10 to 5 as
+        % listed in line 323
+        Eyelink('command','calibration_samples = 10');
+        Eyelink('command','calibration_sequence = 0,1,2,3,4,5,6,7,8,9');
+        %
+        %             modFactor = 0.183;
+        %
+        %             Eyelink('command','calibration_targets = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
+        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
+        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
+        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
+        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
+        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
+        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor) );
+        %
+        %             Eyelink('command','validation_samples = 5');
+        Eyelink('command','validation_samples = 10'); %changed to make
+        % it 5 samples instead of 10 to deal with upper left corner of
+        % the screem issue
+        Eyelink('command','validation_sequence = 0,1,2,3,4,5,6,7,8,9');
+        %             Eyelink('command','validation_targets =  %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
+        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
+        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
+        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
+        %                 round(winWidth*modFactor), round(winHeight*modFactor),
+        %                 round(winWidth - winWidth*modFactor), ...
+        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
+        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor)  );
+        %
+        % make sure that we get gaze data from the Eyelink
+        Eyelink('command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
+        Eyelink('OpenFile', eyeTrackerFileName); % open file to record data  & calibration
+        EyelinkDoTrackerSetup(elHandle);
+        Eyelink('dodriftcorrect');
     end
     
     %%
@@ -648,7 +656,7 @@ trialTimeout=timeOut+3;
     
     %%
     
-    DrawFormattedText(w, 'report whether the overall direction of the stimuli is left (left key) or rght (right key) \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'Report the overall orientation of the C stimuli \n \n left (left key) or right (right key) \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
    
@@ -1472,6 +1480,9 @@ ycrand= yc+possibleX(randi(length(possibleY)));
             
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
+                        if exist('EyeCode')==0
+                EyeCode = 888;
+            end
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
             clear EyeCode
             
@@ -1534,8 +1545,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         end;
            
     end
-            DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
-
+    
     % shut down EyeTracker
     if EyeTracker==1
         Eyelink('StopRecording');
@@ -1549,6 +1559,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         comparerisp=[rispoTotal' rispoInTime'];
     end
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
     ListenChar(0);
     Screen('Flip', w);
     KbWait;

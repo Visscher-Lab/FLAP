@@ -14,7 +14,7 @@ addpath([cd '/Functions']);
 subNum=baseName(8:17);
 
 
-name=['Crossland distribution FLAP' subNum ];
+name=['Crossland distribution FLAP' subNum 'post test'];
 %subNum=['Sub 1' ];
 
 firsttrial=1;

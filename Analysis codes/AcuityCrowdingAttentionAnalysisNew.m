@@ -5,7 +5,7 @@
 close all
 newdir= [cd '\PilotFigures\'];
 subj=baseName(8:9);
-subj=baseName(51:58);
+%subj=baseName(51:58);
 
 testmatVA=[mixtrVA rispo(1:length(mixtrVA))' time_stim(1:length(mixtrVA))'];
 
@@ -71,6 +71,7 @@ print([newdir subj 'ACAacuity'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print(test, '-dpng', '-r300');
 %print([dir subj 'acitynew'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
+
 figure
 scatter(1:length(ThreshlistVA), ThreshlistCW_radial+0.031,50, 'r','filled')
 hold on
@@ -103,7 +104,7 @@ limithigh=limits2*1.2;
 if limithigh>100 
     limithigh=100;
 end
-ylim([limits2*0.8 limithigh])
+%ylim([limits2*0.8 limithigh])
 
  %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -121,7 +122,7 @@ ylabel('Reaction time (s)')
 title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 
-ylim([limits*0.8 limits*1.2])
+%ylim([limits*0.8 limits*1.2])
 print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([subj 'crowdingTask'],'-dpng')
 %print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -145,7 +146,7 @@ limithigh=limits2*1.2;
 if limithigh>100 
     limithigh=100;
 end
-ylim([limits2*0.8 limithigh])
+%ylim([limits2*0.8 limithigh])
 
 %print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
  %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -164,7 +165,7 @@ ylabel('Reaction time (s)')
 title([  subj ' long ISI Attention RT'])
 limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
 
-ylim([limits*0.8 limits*1.2])
+%ylim([limits*0.8 limits*1.2])
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -270,4 +271,218 @@ title('ACA Data Analysis: Long Uncued')
 
 [h2 p2] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
-             
+           
+
+
+%% PRL-specific analysis
+
+
+listOfThreshVA=[mixtrVA ThreshlistVA' time_stim(1:length(mixtrVA))' rispo(1:length(mixtrVA))'];
+
+for iu=1:length(xlocs)   
+    listOfThreshVAPRL(:,:,iu)=listOfThreshVA(listOfThreshVA(:,1)==iu,:);
+end
+
+for iu=1:length(xlocs)   
+    CorrVAPRL(iu)=sum(listOfThreshVAPRL(:,5,iu))/length(listOfThreshVAPRL(:,5,iu));
+    RTVAPRL(iu)=mean(listOfThreshVAPRL(:,4,iu));
+end
+
+
+listOfThreshCW=[mixtrCW separation(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))' time_stim(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))' rispo(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))'];
+
+listOfThreshCWradial=listOfThreshCW(listOfThreshCW(:,2)==1,:);
+listOfThreshCWtangential=listOfThreshCW(listOfThreshCW(:,2)==2,:);
+
+for iu=1:length(xlocs)
+    %1:PRL 
+    %2:radial/tangential 
+    %3: sc1/sc2
+    %4:critical space
+    %5:RT
+    %6:corr resp
+    listOfThreshCWradialPRL(:,:,iu)=listOfThreshCWradial(listOfThreshCWradial(:,1)==iu,:);
+listOfThreshCWtangentialPRL(:,:,iu)=listOfThreshCWtangential(listOfThreshCWtangential(:,1)==iu,:);
+end
+
+for iu=1:length(xlocs)   
+    CorrCWtangentialPRL(iu)=sum(listOfThreshCWtangentialPRL(:,6,iu))/length(listOfThreshCWtangentialPRL(:,6,iu));
+    RTCWtangentialPRL(iu)=mean(listOfThreshCWtangentialPRL(:,5,iu));
+end
+
+for iu=1:length(xlocs)   
+    CorrCWradialPRL(iu)=sum(listOfThreshCWradialPRL(:,6,iu))/length(listOfThreshCWradialPRL(:,6,iu));
+    RTCWradialPRL(iu)=mean(listOfThreshCWradialPRL(:,5,iu));
+end
+
+
+
+listOfThreshAtt=[mixtrAtt time_stim(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW))+length(mixtrAtt))' rispo(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW))+length(mixtrAtt))'];
+
+
+listOfThreshAttshortcued=listOfThreshAtt(listOfThreshAtt(:,2)==1,:);
+listOfThreshAttshortuncued=listOfThreshAtt(listOfThreshAtt(:,2)==2,:);
+listOfThreshAttloongcued=listOfThreshAtt(listOfThreshAtt(:,2)==3,:);
+listOfThreshAttlonguncued=listOfThreshAtt(listOfThreshAtt(:,2)==4,:);
+
+for iu=1:length(xlocs)
+%column 1: location
+%column 2: cue type (1:short cued, 2: short uncued, 3: long cued, 4: long
+%uncued)
+%column 3: RT
+%column 4: corr resp
+listOfThreshAttPRL(:,:,iu)=listOfThreshAtt(listOfThreshAtt(:,1)==iu,:);
+
+end
+%listOfThreshCW=[mixtrCW ThreshlistCW time_stim(1:length(mixtrVA))']
+
+
+
+
+
+
+for iu=1:length(xlocs)   
+    CorrAttPRL(iu)=sum(listOfThreshAttPRL(:,4,iu))/length(listOfThreshAttPRL(:,4,iu));
+    RTAttPRL(iu)=mean(listOfThreshAttPRL(:,3,iu));
+end
+
+
+figure
+subplot(2,1,1)
+                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+score=num2str(CorrVAPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('VA corr')
+                set (gca,'YDir','reverse');
+                
+                subplot(2,1,2)
+                                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+score=num2str(RTVAPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('VA RT')
+                set (gca,'YDir','reverse');
+                
+                              
+                figure
+
+subplot(2,2,1)
+                                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+score=num2str(CorrCWradialPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('CW radial corr')
+                set (gca,'YDir','reverse');
+                
+                subplot(2,2,2)
+                                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+score=num2str(RTCWradialPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('CW radial RT')
+                set (gca,'YDir','reverse');
+                
+                subplot(2,2,3)
+                                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+text(xlocs(ui),ylocs(ui), num2str(CorrCWtangentialPRL(ui)))
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('CW tangential corr')
+                set (gca,'YDir','reverse');
+                
+                subplot(2,2,4)
+                scatter(0,0, 'r', 'filled')
+for ui=1:length(xlocs)
+%scatter(xlocs(ui),ylocs(ui))
+hold on
+score=num2str(RTCWtangentialPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('CW tangential RT')
+                set (gca,'YDir','reverse');
+                
+                
+                
+                figure
+subplot(2,1,1)
+                scatter(0,0, 'r', 'filled')
+for ui=1:length(xlocs)
+hold on
+score=num2str(CorrAttPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('Att corr')
+                set (gca,'YDir','reverse');
+                
+                subplot(2,1,2)
+                                scatter(0,0, 'r', 'filled')
+
+for ui=1:length(xlocs)
+hold on
+score=num2str(RTAttPRL(ui));
+if length(score)>4
+    score=score(1:4);
+end
+text(xlocs(ui),ylocs(ui), score)
+hold on
+end
+xlim([-20 20])
+ylim([-15 15])
+title('Att RT')
+                set (gca,'YDir','reverse');
+                
