@@ -1302,10 +1302,14 @@ end
         elseif whichTask ==2
             separation(kk)=sep;
             refsizeCrSti(kk)=VA_thresho;
+            if exist('imageRect_offs')
             sizeCrSti(kk)=imageRect_offs(3)-imageRect_offs(1);
+            end
         elseif whichTask ==3
             correx(kk)=resp;
+                        if exist('imageRect_offs')
             SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
+                        end
             Att_RT(kk) = respTime - stim_start;
         end
         cheis(kk)=thekeys;
@@ -1364,7 +1368,11 @@ end
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-    
+            DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+Screen('Flip', w);
+    Screen('TextFont', w, 'Arial');
+        KbQueueWait;
+
     % shut down EyeTracker
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1378,18 +1386,14 @@ end
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-        DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
 
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    Screen('Flip', w);
-    Screen('TextFont', w, 'Arial');
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     ListenChar(0);
-    Screen('Flip', w);
-    KbQueueWait;
+ %   Screen('Flip', w);
     ShowCursor;
     
     if site==1

@@ -595,7 +595,7 @@ for ui=2:length(sss)
             if sss(ui,7)==1 %&& sss(ui,8)>0
                 twoinCorrPos1to4=twoinCorrPos1to4+1;
                 if sss(ui,8)>0
-                    twoinCorrPos1t43RT(twoinCorrPos1to4)=sss(ui,8);
+                    twoinCorrPos1to4RT(twoinCorrPos1to4)=sss(ui,8);
                 end
             elseif sss(ui,7)==0
                 twoinCorrPos1to4Miss=twoinCorrPos1to4Miss+1;
@@ -605,7 +605,7 @@ for ui=2:length(sss)
             if sss(ui,7)==1 %&& sss(ui,8)>0
                 twoinCorrPos2to4=twoinCorrPos2to4+1;
                 if sss(ui,8)>0
-                    twoinCorrPos2t43RT(twoinCorrPos2to4)=sss(ui,8);
+                    twoinCorrPos2to4RT(twoinCorrPos2to4)=sss(ui,8);
                 end
             elseif sss(ui,7)==0
                 twoinCorrPos2to4Miss=twoinCorrPos2to4Miss+1;
@@ -615,7 +615,7 @@ for ui=2:length(sss)
             if sss(ui,7)==1 %&& sss(ui,8)>0
                 twoinCorrPos3to4=twoinCorrPos3to4+1;
                 if sss(ui,8)>0
-                    twoinCorrPos3t43RT(twoinCorrPos3to4)=sss(ui,8);
+                    twoinCorrPos3to4RT(twoinCorrPos3to4)=sss(ui,8);
                 end
             elseif sss(ui,7)==0
                 twoinCorrPos3to4Miss=twoinCorrPos3to4Miss+1;
@@ -1913,7 +1913,7 @@ meanEndoAway3inc
 meanEndoTo4inc
 meanEndoAway4inc
 
-%Acc incorrect
+%Acc incongruent
 meanEndoTo1incAcc
 meanEndoAway1incAcc
 meanEndoTo2incAcc
@@ -1924,6 +1924,7 @@ meanEndoTo4incAcc
 meanEndoAway4incAcc
 
 
+%switch cost endo incongruent: target presented to the wrong place
 %RT incongruent 2 
 meanEndoTo1inc2
 meanEndoAway1inc2
@@ -1934,7 +1935,7 @@ meanEndoAway3inc2
 meanEndoTo4inc2
 meanEndoAway4inc2
 
-%Acc incorrect
+%Acc incongruent
 meanEndoTo1incAcc2
 meanEndoAway1incAcc2
 meanEndoTo2incAcc2
@@ -1967,6 +1968,9 @@ meanExAway3Acc
 meanExTo4Acc
 meanExAway4Acc
 
+
+%switch cost exo incongruent: cue presented to the wrong place
+
 %Exo incongruent 1 ()
 meanExTo1in
 meanExAway1in
@@ -1986,6 +1990,7 @@ meanExAway3inAcc
 meanExTo4inAcc
 meanExAway4inAcc
 
+%switch cost exo incongruent: target presented to the wrong place
 
 %Exo incongruent 2 ()
 meanExTo1in2
@@ -2041,3 +2046,142 @@ ExsusPos4Acc
 % target position next: 1 2 3
 % target: 1 2 3 4 5 6 7 8
         % 1 2 3 4 Foil, L, R, D 
+        
+        
+        all_results=[meanEndoTo1
+meanEndoAway1
+meanEndoTo2
+meanEndoAway2
+meanEndoTo3
+meanEndoAway3
+meanEndoTo4
+meanEndoAway4
+%accuracy
+meanEndoTo1Acc
+meanEndoAway1Acc
+meanEndoTo2Acc
+meanEndoAway2Acc
+meanEndoTo3Acc
+meanEndoAway3Acc
+meanEndoTo4Acc
+meanEndoAway4Acc
+
+%switch cost endo incongruent: cue presented to the wrong place
+%RT incongruent
+meanEndoTo1inc
+meanEndoAway1inc
+meanEndoTo2inc
+meanEndoAway2inc
+meanEndoTo3inc
+meanEndoAway3inc
+meanEndoTo4inc
+meanEndoAway4inc
+
+%Acc incorrect
+meanEndoTo1incAcc
+meanEndoAway1incAcc
+meanEndoTo2incAcc
+meanEndoAway2incAcc
+meanEndoTo3incAcc
+meanEndoAway3incAcc
+meanEndoTo4incAcc
+meanEndoAway4incAcc
+
+
+%RT incongruent 2 
+meanEndoTo1inc2
+meanEndoAway1inc2
+meanEndoTo2inc2
+meanEndoAway2inc2
+meanEndoTo3inc2
+meanEndoAway3inc2
+meanEndoTo4inc2
+meanEndoAway4inc2
+
+%Acc incorrect
+meanEndoTo1incAcc2
+meanEndoAway1incAcc2
+meanEndoTo2incAcc2
+meanEndoAway2incAcc2
+meanEndoTo3incAcc2
+meanEndoAway3incAcc2
+meanEndoTo4incAcc2
+meanEndoAway4incAcc2
+
+%Exo RT
+meanExTo1
+meanExAway1
+meanExTo2
+meanExAway2
+meanExTo3
+meanExAway3
+meanExTo4
+meanExAway4
+
+%Exo Acc
+meanExTo1Acc
+meanExAway1Acc
+meanExTo2Acc
+meanExAway2Acc
+meanExTo3Acc
+meanExAway3Acc
+meanExTo4Acc
+meanExAway4Acc
+%Exo incongruent 1 ()
+meanExTo1in
+meanExAway1in
+meanExTo2in
+meanExAway2in
+meanExTo3in
+meanExAway3in
+meanExTo4in
+meanExAway4in
+%exo Acc incongruent 1 
+meanExTo1inAcc
+meanExAway1inAcc
+meanExTo2inAcc
+meanExAway2inAcc
+meanExTo3inAcc
+meanExAway3inAcc
+meanExTo4inAcc
+meanExAway4inAcc
+%Exo incongruent 2 ()
+meanExTo1in2
+meanExAway1in2
+meanExTo2in2
+meanExAway2in2
+meanExTo3in2
+meanExAway3in2
+meanExTo4in2
+meanExAway4in2
+%exo Acc incongruent 2
+meanExTo1inAcc2
+meanExAway1inAcc2
+meanExTo2inAcc2
+meanExAway2inAcc2
+meanExTo3inAcc2
+meanExAway3inAcc2
+meanExTo4inAcc2
+meanExAway4inAcc2
+
+
+%sustained
+%disp('results endo sus');
+
+endoPos1RT;
+endoPos2RT;
+endoPos3RT;
+endoPos4RT;
+EndosusPos1Acc;
+EndosusPos2Acc;
+EndosusPos3Acc;
+EndosusPos4Acc;
+%disp('results exo sus');
+exPos1RT;
+exPos2RT;
+exPos3RT;
+exPos4RT;
+ExsusPos1Acc;
+ExsusPos2Acc;
+ExsusPos3Acc;
+ExsusPos4Acc]

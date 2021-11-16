@@ -31,7 +31,7 @@ try
     %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
     if site==1
-        baseName=['.\data\' SUBJECT '_FLAP_ACApractice' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+        baseName=['./data/' SUBJECT 'FLAP_ACApractice' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
         baseName=[cd '\data\' SUBJECT '_FLAP_ACApractice' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     elseif site==3
@@ -352,7 +352,7 @@ try
     staircounterCW(1, 1:ca)=0;
     corrcounterCW(1, 1:ca)=0;
     
-    max_separation=8; %15
+    max_separation=12; %15
     %min_separation=2.5;
     
     %Separationtlist=log_unit_up(StartSize, 0.01, 64);

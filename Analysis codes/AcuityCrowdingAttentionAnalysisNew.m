@@ -630,9 +630,12 @@ set (gca,'YDir','reverse');
               
 summarytable=[VAAcc;
 VART;
+crowdingradialAcc;
+crowdingradialRT;
 crowdingtangentialAcc;
 crowdingtangentialRT;
-longcueAcc;
 shortcueAcc;
+shortcueRT
+longcueAcc;
 longcueRT;
-shortcueRT]
+]
