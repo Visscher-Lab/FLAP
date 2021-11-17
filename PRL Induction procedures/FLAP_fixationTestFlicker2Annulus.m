@@ -45,7 +45,7 @@ try
     
     red=[255 0 0];
     
-    stimulusSize=1.5; 
+    stimulusSize=1.5;
     cueSize=3;
     
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
@@ -64,8 +64,8 @@ try
     %NoPRL_x_axis=5;
     %NoPRL_y_axis=0;
     PRLsize =10; % diameter PRL
-
-       
+    
+    
     
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
@@ -79,7 +79,7 @@ try
     cueonset=0.55;
     cueduration=.05;
     cueISI=0.1;
-   % FlickerTime=0.133;
+    % FlickerTime=0.133;
     ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
@@ -157,7 +157,7 @@ try
     struct.sz=[screencm(1), screencm(2)];
     
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
-    pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360; 
+    pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360;
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
     gray=round((white+black)/2);
@@ -182,9 +182,9 @@ try
     end
     
     %try
-     %   [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-      %  [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-   % end
+    %   [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+    %  [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+    % end
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
@@ -199,12 +199,12 @@ try
     xylim = imsize; %radius of circular mask
     circle = x.^2 + y.^2 <= xylim^2;
     [nrw, ncl]=size(x);
-      
+    
     
     %theLetter=imread('letter_c2.tiff');
     theLetter=imread('newletterc22.tiff');
     theLetter=theLetter(:,:,1);
-
+    
     theLetter=imresize(theLetter,[nrw nrw],'bicubic');
     theCircles=theLetter;
     
@@ -214,54 +214,54 @@ try
     theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles);
-  
+    
     theTest=imread('target_black.tiff');
     theTest=theTest(:,:,1);
-        theTest=Screen('MakeTexture', w, theTest);
-
+    theTest=Screen('MakeTexture', w, theTest);
+    
     [img, sss, alpha] =imread('neutral21.png');
     img(:, :, 4) = alpha;
-  Neutralface=Screen('MakeTexture', w, img);
-        
-            [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
-
-             radiusPRL=(PRLsize/2)*pix_deg;
-
+    Neutralface=Screen('MakeTexture', w, img);
+    
+    [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
+    
+    radiusPRL=(PRLsize/2)*pix_deg;
+    
     smallradius=radiusPRL; %+pix_deg/2 %+1*pix_deg;
-        radiusPRL=radiusPRL+3*pix_deg;
-        
-        circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
-        circlePixels2=sx.^2 + sy.^2 <= smallradius.^2;
-        
-        d=(circlePixels2==1);
-        newfig=circlePixels;
-        newfig(d==1)=0;
-        circlePixels=newfig;
+    radiusPRL=radiusPRL+3*pix_deg;
+    
+    circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
+    circlePixels2=sx.^2 + sy.^2 <= smallradius.^2;
+    
+    d=(circlePixels2==1);
+    newfig=circlePixels;
+    newfig(d==1)=0;
+    circlePixels=newfig;
     % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
- 
+    
     rand('twister', sum(100*clock));
     
     %% response
-     
+    
     KbName('UnifyKeyNames');
     
-        
+    
     RespType(1) = KbName('LeftArrow');
     RespType(2) = KbName('RightArrow');
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     
-
-    
-%     if ispc
-%         escapeKey = KbName('esc');	% quit key
-%     elseif ismac
-        escapeKey = KbName('ESCAPE');	% quit key
-%    end
     
     
+    %     if ispc
+    %         escapeKey = KbName('esc');	% quit key
+    %     elseif ismac
+    escapeKey = KbName('ESCAPE');	% quit key
+    %    end
+    
+    'troubleshoot got to keyboard'
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % get keyboard for the key recording
     deviceIndex = -1; % reset to default keyboard
@@ -275,7 +275,7 @@ try
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    
+    'troubleshoot got to eyetracker'
     
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
@@ -304,7 +304,7 @@ try
         % note, the eye velocity is already low enough to be considered a "fixation"
         FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
         
-      
+        'troubleshoot got to eyetracker1'
         if exist('dataeyet')==0
             mkdir('dataeyet');
         end;
@@ -374,40 +374,42 @@ try
     end
     
     
+    'troubleshoot got to line 377'
     %% Trial structure
-        scotomadeg=10; 
+    scotomadeg=10;
     scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
-      imageRect = CenterRect([0, 0, stimulusSize*pix_deg stimulusSize*pix_deg], wRect);
-
+    imageRect = CenterRect([0, 0, stimulusSize*pix_deg stimulusSize*pix_deg], wRect);
     
-          ecc_r=PRLecc*pix_deg;
-
-         angolo= [90 45 0 315 270 225 180 135];
-                 
-         for ui=1:length(angolo)
-           ecc_t=deg2rad(angolo(ui));
-            cs= [cos(ecc_t), sin(ecc_t)];
-            xxyy=[ecc_r ecc_r].*cs;
-            ecc_x=xxyy(1);
-            ecc_y=xxyy(2);            
-            eccentricity_X(ui)=ecc_x;
-            eccentricity_Y(ui)=ecc_y;          
-         end
-    tr=10;  
-
-     mixtr=[repmat(1:length(angolo),1,tr)'];
-      mixtr =mixtr(randperm(length(mixtr)),:);
-      
-      
-                  [xc, yc] = RectCenter(wRect);
-
     
+    ecc_r=PRLecc*pix_deg;
+    
+    angolo= [90 45 0 315 270 225 180 135];
+    
+    for ui=1:length(angolo)
+        ecc_t=deg2rad(angolo(ui));
+        cs= [cos(ecc_t), sin(ecc_t)];
+        xxyy=[ecc_r ecc_r].*cs;
+        ecc_x=xxyy(1);
+        ecc_y=xxyy(2);
+        eccentricity_X(ui)=ecc_x;
+        eccentricity_Y(ui)=ecc_y;
+    end
+    tr=10;
+    
+    mixtr=[repmat(1:length(angolo),1,tr)'];
+    mixtr =mixtr(randperm(length(mixtr)),:);
+    
+    
+    [xc, yc] = RectCenter(wRect);
+    
+    
+    'troubleshoot got to line 407'
     %% main loop
     HideCursor;
-    counter = 0;    
+    counter = 0;
     ListenChar(2);
-    fixwindowPix=fixwindow*pix_deg;        
+    fixwindowPix=fixwindow*pix_deg;
     WaitSecs(1);
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
@@ -420,8 +422,8 @@ try
     KbQueueWait;
     %Screen('Flip', w);
     %WaitSecs(1.5);
-     
-      
+    
+    
     % check EyeTracker status
     if EyeTracker == 1
         status = Eyelink('startrecording');
@@ -434,13 +436,13 @@ try
         location =  zeros(length(mixtr), 6);
     end
     
-
+    
     eyetime2=0;
     waittime=0;
-
+    
     xeye=[];
     yeye=[];
-
+    
     tracktime=[];
     VBL_Timestamp=[];
     stimonset=[ ];
@@ -449,18 +451,18 @@ try
     scotoma_color=[200 200 200];
     FixDotSize=15;
     
-    
+    'troubleshoot got to line 377'
     
     for trial=1:length(mixtr)
         if trial== length(mixtr)/8 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
             interblock_instruction
         end
-         
+        
         
         
         FlickerTime=Jitter(randi(length(Jitter)));
         TrialNum = strcat('Trial',num2str(trial));
-              
+        
         clear EyeData
         clear FixIndex
         xeye=[];
@@ -474,7 +476,7 @@ try
         tracktime=[];
         FixCount=0;
         FixatingNow=0;
-        EndIndex=0;  
+        EndIndex=0;
         
         fixating=0;
         counter=0;
@@ -486,16 +488,16 @@ try
         area_eye=0;
         xeye2=[];
         yeye2=[];
-
-            theeccentricity_X=eccentricity_X(mixtr(trial,1));
-            theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
-            
-            imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-            
-      theoris =[-180 0 -90 90];
         
-        theans(trial)=randi(4); 
+        theeccentricity_X=eccentricity_X(mixtr(trial,1));
+        theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
+        
+        imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+            imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
+        
+        theoris =[-180 0 -90 90];
+        
+        theans(trial)=randi(4);
         
         ori=theoris(theans(trial));
         
@@ -521,129 +523,129 @@ try
                 trial_time = GetSecs;
                 fixating=1500;
             end
-                     
-            if (eyetime2-trial_time)>=waittime+ifi*2+cueonset && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration && fixating>400 && stopchecking>1
-
-                %show cue
-               clear circlestar
-               clear flickerstar
-               clear theSwitcher
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1
-                               clear circlestar
-clear flickerstar
-clear theSwitcher
-                %no cue
-   %         elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && stopchecking>1
-           
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0
-
             
-                            IsFixatingAnnulus  
-                                Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                       elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0
-                     
-                   thekeys = find(keyCode);             
-                                
-break;
-%             clear annulusend
+            if (eyetime2-trial_time)>=waittime+ifi*2+cueonset && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration && fixating>400 && stopchecking>1
+                
+                %show cue
+                clear circlestar
+                clear flickerstar
+                clear theSwitcher
+            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1
+                clear circlestar
+                clear flickerstar
+                clear theSwitcher
+                %no cue
+                %         elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && stopchecking>1
+                
+            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0
+                
+                'troubleshoot got to line 542'
+                IsFixatingAnnulus
+                Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0
+                
+                thekeys = find(keyCode);
+                
+                break;
+                %             clear annulusend
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus>=AnnulusTime/ifi && counterflicker<FlickerTime/ifi
-          
+                
                 counterflicker=counterflicker+1;
-%                   if exist('annulusend') == 0
-%                           annulus_time_end=GetSecs;
-%                           annulusend=1;
-%            end
-            %    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-           %         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-           if exist('flickerstar') == 0
-                          flicker_time_start=GetSecs;
-                          flickerstar=1;
-                          theSwitcher=0;
-           end
-           flicker_time=GetSecs;
-           
-        %   framecounter=framecounter+1;
-%            if mod(round((flicker_time-flicker_time_start)*1000),2500)>0 && mod(round((flicker_time-flicker_time_start)*1000),2500)<6
-%                theSwitcher=theSwitcher+1;
-%            end
-
-if mod(length(VBL_Timestamp),(round(flickeringrate/ifi)))==0
-    theSwitcher=theSwitcher+1;
-end
-if mod(theSwitcher,2)==0
-    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-else
-    %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
-end
-clear stimstar
-          if exist('circlestar')==0
-          circle_start = GetSecs; 
-          circlestar=1;
-          end
-                              
-                cue_last=GetSecs;
-      %      elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && (eyetime2-trial_time)<waittime+ifi*4+cueonset+cueduration+cueISI+FlickerTime&& fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
-                   elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && counterannulus>=AnnulusTime/ifi && counterflicker>=FlickerTime/ifi && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
-       
+                %                   if exist('annulusend') == 0
+                %                           annulus_time_end=GetSecs;
+                %                           annulusend=1;
+                %            end
+                %    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                %         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                if exist('flickerstar') == 0
+                    flicker_time_start=GetSecs;
+                    flickerstar=1;
+                    theSwitcher=0;
+                end
+                flicker_time=GetSecs;
                 
-                
-          
-                
-%                 %   Screen('Close');
-%                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
-%                 if exist('stimstar')==0
-%                     stim_start = GetSecs;
-% stimstar=1;
-%                 end
-%                        elseif (eyetime2-trial_time)>=waittime+ifi*4+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
-%                 %   Screen('Close');
-%                 
-%                 
+                %   framecounter=framecounter+1;
+                %            if mod(round((flicker_time-flicker_time_start)*1000),2500)>0 && mod(round((flicker_time-flicker_time_start)*1000),2500)<6
+                %                theSwitcher=theSwitcher+1;
+                %            end
                 
                 if mod(length(VBL_Timestamp),(round(flickeringrate/ifi)))==0
-    theSwitcher=theSwitcher+1;
+                    theSwitcher=theSwitcher+1;
                 end
-
+                if mod(theSwitcher,2)==0
+                    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+                else
+                    %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
+                end
+                clear stimstar
+                if exist('circlestar')==0
+                    circle_start = GetSecs;
+                    circlestar=1;
+                end
                 
-                if mod(theSwitcher,2)==0 
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
-           else
-         %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
-               end
-          %      
-          if exist('stimstar')==0
-          stim_start = GetSecs; 
-          end
-            
+                cue_last=GetSecs;
+                %      elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && (eyetime2-trial_time)<waittime+ifi*4+cueonset+cueduration+cueISI+FlickerTime&& fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && counterannulus>=AnnulusTime/ifi && counterflicker>=FlickerTime/ifi && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+                
+                
+                
+                
+                
+                %                 %   Screen('Close');
+                %                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
+                %                 if exist('stimstar')==0
+                %                     stim_start = GetSecs;
+                % stimstar=1;
+                %                 end
+                %                        elseif (eyetime2-trial_time)>=waittime+ifi*4+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+                %                 %   Screen('Close');
+                %
+                %
+                
+                if mod(length(VBL_Timestamp),(round(flickeringrate/ifi)))==0
+                    theSwitcher=theSwitcher+1;
+                end
+                
+                
+                if mod(theSwitcher,2)==0
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
+                else
+                    %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
+                end
+                %
+                if exist('stimstar')==0
+                    stim_start = GetSecs;
+                end
+                
             elseif (eyetime2-trial_time)>=waittime+ifi*4+cueonset+cueduration+cueISI+FlickerTime && fixating>400 && counterannulus>=AnnulusTime/ifi && counterflicker>=FlickerTime/ifi && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
                 eyechecked=1111111111;
-                               
+                
                 thekeys = find(keyCode);
-                      if length(thekeys)>1
+                if length(thekeys)>1
                     thekeys=thekeys(1);
-                      end
+                end
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 
             end
             
             eyefixation3
-             if ScotomaPresent == 1
-            Screen('FillOval', w, scotoma_color, scotoma);
-                   else
+            if ScotomaPresent == 1
+                Screen('FillOval', w, scotoma_color, scotoma);
+            else
                 fixationlength=10;
-                  Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-    Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-
-            end      
-  
+                Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                'troubleshoot got to line 639'
+            end
+            
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
             
+            VBL_Timestamp=[VBL_Timestamp eyetime2];
+            'troubleshoot got to line 648'
             if EyeTracker==1
                 
                 GetEyeTrackerData
@@ -653,7 +655,7 @@ clear stimstar
                     trial_time = GetSecs;
                     stopchecking=10;
                 end
-                               
+                'troubleshoot got to line 658'
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -671,47 +673,47 @@ clear stimstar
                     end
                     
                 end
-                
+                'troubleshoot got to line 676'
             end
-            [keyIsDown, keyCode] = KbQueueCheck;           
+            [keyIsDown, keyCode] = KbQueueCheck;
         end
-
+        'troubleshoot got to line 680'
         foo=(RespType==thekeys);
-                                    
-            if foo(theans(trial))
-                resp = 1;             
-                PsychPortAudio('Start', pahandle1);
-            elseif (thekeys==escapeKey) % esc pressed
-                closescript = 1;
-                ListenChar(0);
-                break;
-            else
-                resp = 0;              
-                PsychPortAudio('Start', pahandle2);            
-            end
-            
+        
+        if foo(theans(trial))
+            resp = 1;
+            PsychPortAudio('Start', pahandle1);
+        elseif (thekeys==escapeKey) % esc pressed
+            closescript = 1;
+            ListenChar(0);
+            break;
+        else
+            resp = 0;
+            PsychPortAudio('Start', pahandle2);
+        end
+        
         
         stim_stop=secs;
         time_stim(kk) = stim_stop - stim_start;
-        totale_trials(kk)=trial;       
+        totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
         flipptime(trial).ix=[fliptime];
-
+        
         rispo(kk)=resp;
-            SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
-cueendToResp(kk)=stim_stop-cue_last;
-cuebeginningToResp(kk)=stim_stop-circle_start;
+        SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
+        cueendToResp(kk)=stim_stop-cue_last;
+        cuebeginningToResp(kk)=stim_stop-circle_start;
         cheis(kk)=thekeys;
         
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
-            clear EyeCode            
+            clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
             end;
@@ -727,7 +729,7 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
-
+            
             if exist('EndIndex')==0
                 EndIndex=0;
             end;
@@ -739,7 +741,7 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
             EyeSummary.(TrialNum).TimeStamps.StimulusStart = circle_start;
             EyeSummary.(TrialNum).TimeStamps.StimulusEnd = cue_last;
             EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
-
+            
             clear ErrorInfo
             
         end
@@ -750,7 +752,7 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
             end
         end
-              
+        
         if closescript==1
             break;
         end
@@ -759,7 +761,7 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     ListenChar(0);
     Screen('Flip', w);
     % shut down EyeTracker
@@ -778,9 +780,9 @@ cuebeginningToResp(kk)=stim_stop-circle_start;
     
     
     c=clock;
-        TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-
-   
+    TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
+    
     KbQueueWait;
     ShowCursor;
     
