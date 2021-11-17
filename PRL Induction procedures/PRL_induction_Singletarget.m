@@ -86,7 +86,7 @@ trialTimeout=timeOut+3;
     rand('twister',theseed);
   
     %   trials=500;
-    trials=500;
+    trials=250;
 
     mixtr=ones(trials,2);
     KbQueueCreate;
