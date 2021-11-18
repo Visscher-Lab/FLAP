@@ -19,14 +19,24 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
-    site = answer{3,:};
+    site = str2num(answer{3,:});
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
-    baseName=['./data/' SUBJECT '_FLAPfixationflicker' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+  %  baseName=['./data/' SUBJECT '_FLAPfixationflicker' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    
+    
+        if site==1
+        baseName=['./data/' SUBJECT '_FLAPfixationflickerAnnulus' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[cd '\data\' SUBJECT '_FLAPfixationflickerAnnulus' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    elseif site==3
+        baseName=[cd '\data\' SUBJECT '_FLAPfixationflickerAnnulusPixx' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
+    
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
@@ -72,7 +82,7 @@ try
     n_blocks=1;
     
     
-    BITS=str2num(site); %0; 1=bits++; 2=display++
+    BITS=site; %0; 1=bits++; 2=display++
     closescript=0;
     kk=1;
     
