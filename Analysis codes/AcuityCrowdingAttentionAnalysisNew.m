@@ -639,3 +639,13 @@ shortcueRT
 longcueAcc;
 longcueRT;
 ]
+
+
+dio=[ThreshlistVA(:,end); ThreshlistCW(:,end); AttCorrshortCuedRT;
+AttCorrshortUncuedRT;
+AttCorrshortCuedPerc;
+AttCorrshortUncuedPerc;
+AttCorrlongCuedRT;
+AttCorrlongUncuedRT;
+AttCorrlongCuedPerc;
+AttCorrlongUncuedPerc;]

@@ -12,13 +12,17 @@ dir= ['./FLAPanalysis/' ];
 
 addpath([cd '/Functions']);
 subNum=baseName(8:17);
+% if mod(iui,2)>0
+% name=['Crossland distribution FLAP' subNum 'pre test'];
+% elseif mod(iui,2)==0
+% name=['Crossland distribution FLAP' subNum 'post test'];
+% end
+%subNum=['Sub 1' ];
 
 
 name=['Crossland distribution FLAP' subNum 'pre test'];
-%subNum=['Sub 1' ];
-
 firsttrial=1;
-totaltrial=str2num(TrialNum(6:end));
+totaltrial=str2num(TrialNum(6:end))-1;
 
 
 %define the duration of the fixation in seconds (default: .133s)
@@ -280,12 +284,28 @@ ylim([(-(wRect(4)/2)/pix_deg_vert)*1.2 ((wRect(4)/2)/pix_deg_vert)*1.2]);
 FixationsX=fixation_counter(:,1)/pix_deg;
 FixationsY=fixation_counter(:,2)/pix_deg_vert;
 AllFix=[FixationsX FixationsY];
-
+  %  AllFix_deg=[FixationsX FixationsY];
 center_PRL(1)=mean(fixation_counter(:,1));
 center_PRL(2)=mean(fixation_counter(:,2));
 
+center_PRL_deg(1)=mean(fixation_counter(:,1)/pix_deg);
+center_PRL_deg(2)=mean(fixation_counter(:,2)/pix_deg_vert);
 
+%PRL split
+PRL_left_counter=0;
+PRL_right_counter=0;
+for ui=1:length(AllFix)
+    
+    if AllFix(ui,1)<0
+        PRL_left_counter=PRL_left_counter+1;
+        PRL_left(PRL_left_counter,:)= AllFix(ui,:);
+    elseif AllFix(ui,1)>0
+                PRL_right_counter=PRL_right_counter+1;
+           PRL_right(PRL_right_counter,:)= AllFix(ui,:);
+    end
 
+    
+end
 ellli=cov(FixationsX,FixationsY);
 data=[FixationsX FixationsY];
 error_ellipse(ellli, mean(data), .68);
