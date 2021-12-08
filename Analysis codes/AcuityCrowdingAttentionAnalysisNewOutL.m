@@ -38,14 +38,20 @@ AttCorrshortUncued=AttCorr(AttCorr(:,2)==2,:);
 AttCorrlongCued=AttCorr(AttCorr(:,2)==3,:);
 AttCorrlongUncued=AttCorr(AttCorr(:,2)==4,:);
 
+cleanAttCorrshortCued=AttCorrshortCued(AttCorrshortCued(:,4)<(nanmean(AttCorrshortCued(:,4)+3*nanstd(AttCorrshortCued(:,4)))),4);
+cleanAttCorrshortUncued=AttCorrshortUncued(AttCorrshortUncued(:,4)<(nanmean(AttCorrshortUncued(:,4)+3*nanstd(AttCorrshortUncued(:,4)))),4);
 
 
-AttCorrshortCuedRT=nanmean(AttCorrshortCued(:,4));
-AttCorrshortUncuedRT=nanmean(AttCorrshortUncued(:,4));
+cleanAttCorrlongCued=AttCorrlongCued(AttCorrlongCued(:,4)<(nanmean(AttCorrlongCued(:,4)+3*nanstd(AttCorrlongCued(:,4)))),4);
+cleanAttCorrlongUncued=AttCorrlongUncued(AttCorrlongUncued(:,4)<(nanmean(AttCorrlongUncued(:,4)+3*nanstd(AttCorrlongUncued(:,4)))),4);
 
 
-AttCorrlongCuedRT=nanmean(AttCorrlongCued(:,4));
-AttCorrlongUncuedRT=nanmean(AttCorrlongUncued(:,4));
+AttCorrshortCuedRT=nanmean(cleanAttCorrshortCued);
+AttCorrshortUncuedRT=nanmean(cleanAttCorrshortUncued);
+
+
+AttCorrlongCuedRT=nanmean(cleanAttCorrlongCued);
+AttCorrlongUncuedRT=nanmean(cleanAttCorrlongUncued);
 
 AttCorrshortCuedPerc=length(AttCorrshortCued)/AttshortCuedTotal*100;
 AttCorrshortUncuedPerc=length(AttCorrshortUncued)/AttshortUncuedTotal*100;
@@ -181,49 +187,50 @@ print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 3
 % plot cued and uncued trials
 figure
 subplot(2,2,1)
-hist(AttCorrshortCued(:,4))
+hist(cleanAttCorrshortCued)
 ylabel('Reaction time (s)')
 legend ('short cued')
 
+
 subplot(2,2,2)
-hist(AttCorrshortUncued(:,4))
+hist(cleanAttCorrshortUncued)
 ylabel('Reaction time (s)')
 legend ('short uncued')
 
 subplot(2,2,3)
-hist(AttCorrlongCued(:,4))
+hist(cleanAttCorrlongCued)
 ylabel('Reaction time (s)')
 legend ('long cued')
 
 subplot(2,2,4)
-hist(AttCorrlongUncued(:,4))
+hist(cleanAttCorrlongUncued)
 ylabel('Reaction time (s)')
 legend ('long uncued')
 
 
 subplot(2,2,1)
-hist(AttCorrshortCued(:,4))
+hist(cleanAttCorrshortCued)
 title('ACA Data Analysis: Short Cued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 % axis([0.2 1 0 25])
 hold on
 subplot(2,2,2)
-hist(AttCorrshortUncued(:,4))
+hist(cleanAttCorrshortUncued)
 title('ACA Data Analysis: Short Uncued')
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 % axis([0.2 1 0 25])
 
 subplot(2,2,3)
-hist(AttCorrlongCued(:,4))
+hist(cleanAttCorrlongCued)
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Cued')
 % axis([0.2 1 0 25])
 hold on
 subplot(2,2,4)
-hist(AttCorrlongUncued(:,4))
+hist(cleanAttCorrlongUncued)
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Uncued')
@@ -274,9 +281,9 @@ title('ACA Data Analysis: Long Uncued')
 % conditions
 % write text in the figure giving the difference in means
 
-[h p] = ttest2(AttCorrshortCued(:,4), AttCorrshortUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+[h p] = ttest2(cleanAttCorrshortCued, cleanAttCorrshortUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
-[h2 p2] = ttest2(AttCorrlongCued(:,4), AttCorrlongUncued(:,4),'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+[h2 p2] = ttest2(cleanAttCorrlongCued, cleanAttCorrlongUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
 
 
@@ -364,6 +371,8 @@ for iu=1:length(xlocs)
     STDAttPRLshortcued(iu)=nanstd(listOfThreshAttshortcuedPRL{iu}(:,3));
     
     %outlier removal
+        clear upperborder lowerborder
+
     upperborder=RTAttPRLshortcued(iu)+2*STDAttPRLshortcued(iu);
     lowerborder=RTAttPRLshortcued(iu)-2*STDAttPRLshortcued(iu);
     
@@ -384,6 +393,8 @@ for iu=1:length(xlocs)
     STDAttPRLshortuncued(iu)=nanstd(listOfThreshAttshortuncuedPRL{iu}(:,3));
     
     %outlier removal
+        clear upperborder lowerborder
+
     upperborder=RTAttPRLshortuncued(iu)+2*STDAttPRLshortuncued(iu);
     lowerborder=RTAttPRLshortuncued(iu)-2*STDAttPRLshortuncued(iu);
     
@@ -407,6 +418,8 @@ for iu=1:length(xlocs)
     STDAttPRLlongcued(iu)=nanstd(listOfThreshAttlongcuedPRL{iu}(:,3));
     
     %outlier removal
+        clear upperborder lowerborder
+
     upperborder=RTAttPRLlongcued(iu)+2*STDAttPRLlongcued(iu);
     lowerborder=RTAttPRLlongcued(iu)-2*STDAttPRLlongcued(iu);
     
@@ -427,6 +440,7 @@ for iu=1:length(xlocs)
     STDAttPRLlonguncued(iu)=nanstd(listOfThreshAttlonguncuedPRL{iu}(:,3));
     
     %outlier removal
+    clear upperborder lowerborder
     upperborder=RTAttPRLlonguncued(iu)+2*STDAttPRLlonguncued(iu);
     lowerborder=RTAttPRLlonguncued(iu)-2*STDAttPRLlonguncued(iu);
     
