@@ -33,7 +33,13 @@ switch EyetrackerType
             EyeTrackerData = -1;
             ErrorData = -1;
         end
-    case 2 % Arrington
+        
+        case 2 % VPixx
+            
+            
+            
+            
+    case 3 % Arrington
         [DataQuality]=vpx_GetDataQuality(eye_used);
         if(DataQuality > 2)
             SummaryData = -1;

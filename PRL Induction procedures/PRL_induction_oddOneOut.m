@@ -13,7 +13,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','0', '10'};
+    defaultanswer={'test','0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -72,7 +72,7 @@ try
 PRLsize =5; % diameter PRL
 
 
-timeOut=15;
+timeOut=45;
 trialTimeout=timeOut+3;
 
 
@@ -87,7 +87,7 @@ trialTimeout=timeOut+3;
     
     
     %   trials=500;
-    trials=100;
+    trials=250;
     mixtr=ones(trials,2);
     KbQueueCreate;
     
@@ -529,12 +529,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         try
             largerrotLetterone(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
-        end
-        
+        end        
         try
             largerrotLetterone(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterone(1:end,1:end);
-        end
-        
+        end        
         try
             largerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
         end
@@ -546,12 +544,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         try
             largerrotLettertwo(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLettertwo(1:end,1:end);
-        end
-        
+        end        
         try
             largerrotLettertwo(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLettertwo(1:end,1:end);           
-        end
-        
+        end        
         try
             largerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
         end
@@ -564,12 +560,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         try
             largerrotLetterthree(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
-        end
-        
+        end        
         try
             largerrotLetterthree(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterthree(1:end,1:end);
         end
-        
         try
             largerrotLetterthree(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
         end
@@ -577,16 +571,13 @@ oui(i)=newangles(randi(length(newangles)));
         largerrotLetterfour=largerBlankimage;
         
         border_two_rot =round(largrotrw-rotrwiv)/2;
-        border_one_rot=border_two_rot+1;
-        
+        border_one_rot=border_two_rot+1;        
         try
             largerrotLetterfour(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
         end
-        
         try
             largerrotLetterfour(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterfour(1:end,1:end);         
-        end
-        
+        end        
         try
             largerrotLetterfour(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
         end
@@ -643,12 +634,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         try
             TlargerrotLetterone(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
-        end
-        
+        end        
         try
             TlargerrotLetterone(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterone(1:end,1:end);
-        end
-        
+        end       
         try
             TlargerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
         end
@@ -660,13 +649,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         try
             TlargerrotLettertwo(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLettertwo(1:end,1:end);
-        end
-        
+        end        
         try
-            TlargerrotLettertwo(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLettertwo(1:end,1:end);
-            
-        end
-        
+            TlargerrotLettertwo(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLettertwo(1:end,1:end);            
+        end      
         try
             TlargerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
         end
@@ -926,7 +912,7 @@ oui(i)=newangles(randi(length(newangles)));
         
         imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
         
-        if (mod(trial,50))==1
+        if (mod(trial,25))==1
             if trial==1
                 
             else
@@ -945,21 +931,21 @@ oui(i)=newangles(randi(length(newangles)));
             eyetime2=0;
         end;
         
-
-            if randomfix ==1
-        possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
-        possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
         
-        possibleX=possibleXdeg*pix_deg;
-        possibleY=possibleYdeg*pix_deg;
-        xcrand= xc+possibleX(randi(length(possibleX)));
-ycrand= yc+possibleX(randi(length(possibleY)));
-    else
+        if randomfix ==1
+            possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
+            possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
+            
+            possibleX=possibleXdeg*pix_deg;
+            possibleY=possibleYdeg*pix_deg;
+            xcrand= xc+possibleX(randi(length(possibleX)));
+            ycrand= yc+possibleX(randi(length(possibleY)));
+        else
+            
+            xcrand=0;
+            ycrand=0;
+        end
         
-         xcrand=0;
-        ycrand=0;
-    end
-     
 %         if randomposition == 1
 %             posmatrix=[1:4; 1:4]';
 %             positionmatrix=assignedpositionmatrix;
@@ -968,13 +954,13 @@ ycrand= yc+possibleX(randi(length(possibleY)));
 %             ecc_x=positionmatrix(posmatrix(tgtpos,1),1);
 %             ecc_y=positionmatrix(posmatrix(tgtpos,2),2);
     %    else
-            if totalelements==4
-            tgtpos=randi(length(posmatrix));
-            elseif totalelements==3      
-                posmatrix=[elementcoordx' elementcoordy'];
-                tgtpos=randi(length(posmatrix));
-
-            end
+    if totalelements==4
+        tgtpos=randi(length(posmatrix));
+    elseif totalelements==3
+        posmatrix=[elementcoordx' elementcoordy'];
+        tgtpos=randi(length(posmatrix));
+        
+    end
     %    end
         
         newpos=posmatrix;
@@ -982,7 +968,7 @@ ycrand= yc+possibleX(randi(length(possibleY)));
         
         
         %generate visual cue
-
+        
         
         if totalelements == 3
             targetlocation(trial)=randi(3); %generates answer for this trial
@@ -1223,6 +1209,8 @@ end
                                                         &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(suis))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(suis))> 0;
                                                     if circlePixels(codey(suis), codex(suis))>0.781
                                                         countertargettt(suis,nn)=1;
+                                          %              countertargettteyeX(suis,nn)=1;
+                                                                                              %                  countertargettteyeX(suis,nn)=1;
                                                     else
                                                         countertargettt(suis,nn)=88;
                                                     end
@@ -1507,7 +1495,12 @@ end
 
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
+            if exist('EyeCode')==0
+                EyeCode = 888;
+            end
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
+
+            
             clear EyeCode                     
     %        EyeSummary.(TrialNum).showstim = showstim;           
     %        EyeSummary.(TrialNum).showother = showother;
@@ -1567,6 +1560,11 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
            
     end
     
+            DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
+ListenChar(0);
+    Screen('Flip', w);
+        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+
     % shut down EyeTracker
     if EyeTracker==1
         Eyelink('StopRecording');
@@ -1579,10 +1577,7 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
     if trial>1
         comparerisp=[rispoTotal' rispoInTime'];
     end
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
-        ListenChar(0);
-    Screen('Flip', w);
+        
     KbWait;
     ShowCursor;
     
