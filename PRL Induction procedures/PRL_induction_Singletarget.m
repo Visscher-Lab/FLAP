@@ -1,4 +1,4 @@
-% PRL induction procedure with simulated scotoma, single target
+7% PRL induction procedure with simulated scotoma, single target
 % written by Marcello A. Maniglia 2017/2021
 
 close all; clear all; clc;
