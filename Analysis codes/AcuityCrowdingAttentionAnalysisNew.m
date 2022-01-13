@@ -3,8 +3,15 @@
 % Written by Marcello Maniglia, 2021
 
 close all
+uab=0
 newdir= [cd '\PilotFigures\'];
-subj=baseName(8:9);
+if uab==1
+    subj=baseName(51:53);
+else
+    subj=baseName(8:9);
+
+end
+
 %subj=baseName(51:58);
 
 testmatVA=[mixtrVA rispo(1:length(mixtrVA))' time_stim(1:length(mixtrVA))'];
@@ -33,12 +40,12 @@ AttCorrlongUncued=AttCorr(AttCorr(:,2)==4,:);
 
 
 
-AttCorrshortCuedRT=mean(AttCorrshortCued(:,4));
-AttCorrshortUncuedRT=mean(AttCorrshortUncued(:,4));
+AttCorrshortCuedRT=nanmean(AttCorrshortCued(:,4));
+AttCorrshortUncuedRT=nanmean(AttCorrshortUncued(:,4));
 
 
-AttCorrlongCuedRT=mean(AttCorrlongCued(:,4));
-AttCorrlongUncuedRT=mean(AttCorrlongUncued(:,4));
+AttCorrlongCuedRT=nanmean(AttCorrlongCued(:,4));
+AttCorrlongUncuedRT=nanmean(AttCorrlongUncued(:,4));
 
 AttCorrshortCuedPerc=length(AttCorrshortCued)/AttshortCuedTotal*100;
 AttCorrshortUncuedPerc=length(AttCorrshortUncued)/AttshortUncuedTotal*100;
@@ -285,7 +292,7 @@ end
 
 for iu=1:length(xlocs)
     CorrVAPRL(iu)=sum(listOfThreshVAPRL(:,5,iu))/length(listOfThreshVAPRL(:,5,iu));
-    RTVAPRL(iu)=mean(listOfThreshVAPRL(:,4,iu));
+    RTVAPRL(iu)=nanmean(listOfThreshVAPRL(:,4,iu));
 end
 
 
@@ -307,12 +314,12 @@ end
 
 for iu=1:length(xlocs)
     CorrCWtangentialPRL(iu)=sum(listOfThreshCWtangentialPRL(:,6,iu))/length(listOfThreshCWtangentialPRL(:,6,iu));
-    RTCWtangentialPRL(iu)=mean(listOfThreshCWtangentialPRL(:,5,iu));
+    RTCWtangentialPRL(iu)=nanmean(listOfThreshCWtangentialPRL(:,5,iu));
 end
 
 for iu=1:length(xlocs)
     CorrCWradialPRL(iu)=sum(listOfThreshCWradialPRL(:,6,iu))/length(listOfThreshCWradialPRL(:,6,iu));
-    RTCWradialPRL(iu)=mean(listOfThreshCWradialPRL(:,5,iu));
+    RTCWradialPRL(iu)=nanmean(listOfThreshCWradialPRL(:,5,iu));
 end
 
 
@@ -353,8 +360,8 @@ end
 
 for iu=1:length(xlocs)
     CorrAttPRLshortcued(iu)=sum(listOfThreshAttshortcuedPRL{iu}(:,4))/length(listOfThreshAttshortcuedPRL{iu}(:,4));
-    RTAttPRLshortcued(iu)=mean(listOfThreshAttshortcuedPRL{iu}(:,3));
-    STDAttPRLshortcued(iu)=std(listOfThreshAttshortcuedPRL{iu}(:,3));
+    RTAttPRLshortcued(iu)=nanmean(listOfThreshAttshortcuedPRL{iu}(:,3));
+    STDAttPRLshortcued(iu)=nanstd(listOfThreshAttshortcuedPRL{iu}(:,3));
     
     %outlier removal
     upperborder=RTAttPRLshortcued(iu)+2*STDAttPRLshortcued(iu);
@@ -373,8 +380,8 @@ for iu=1:length(xlocs)
     end
     
     CorrAttPRLshortuncued(iu)=sum(listOfThreshAttshortuncuedPRL{iu}(:,4))/length(listOfThreshAttshortuncuedPRL{iu}(:,4));
-    RTAttPRLshortuncued(iu)=mean(listOfThreshAttshortuncuedPRL{iu}(:,3));
-    STDAttPRLshortuncued(iu)=std(listOfThreshAttshortuncuedPRL{iu}(:,3));
+    RTAttPRLshortuncued(iu)=nanmean(listOfThreshAttshortuncuedPRL{iu}(:,3));
+    STDAttPRLshortuncued(iu)=nanstd(listOfThreshAttshortuncuedPRL{iu}(:,3));
     
     %outlier removal
     upperborder=RTAttPRLshortuncued(iu)+2*STDAttPRLshortuncued(iu);
@@ -396,8 +403,8 @@ for iu=1:length(xlocs)
     
     
     CorrAttPRLlongcued(iu)=sum(listOfThreshAttlongcuedPRL{iu}(:,4))/length(listOfThreshAttlongcuedPRL{iu}(:,4));
-    RTAttPRLlongcued(iu)=mean(listOfThreshAttlongcuedPRL{iu}(:,3));
-    STDAttPRLlongcued(iu)=std(listOfThreshAttlongcuedPRL{iu}(:,3));
+    RTAttPRLlongcued(iu)=nanmean(listOfThreshAttlongcuedPRL{iu}(:,3));
+    STDAttPRLlongcued(iu)=nanstd(listOfThreshAttlongcuedPRL{iu}(:,3));
     
     %outlier removal
     upperborder=RTAttPRLlongcued(iu)+2*STDAttPRLlongcued(iu);
@@ -416,8 +423,8 @@ for iu=1:length(xlocs)
     end
     
     CorrAttPRLlonguncued(iu)=sum(listOfThreshAttlonguncuedPRL{iu}(:,4))/length(listOfThreshAttlonguncuedPRL{iu}(:,4));
-    RTAttPRLlonguncued(iu)=mean(listOfThreshAttlonguncuedPRL{iu}(:,3));
-    STDAttPRLlonguncued(iu)=std(listOfThreshAttlonguncuedPRL{iu}(:,3));
+    RTAttPRLlonguncued(iu)=nanmean(listOfThreshAttlonguncuedPRL{iu}(:,3));
+    STDAttPRLlonguncued(iu)=nanstd(listOfThreshAttlonguncuedPRL{iu}(:,3));
     
     %outlier removal
     upperborder=RTAttPRLlonguncued(iu)+2*STDAttPRLlonguncued(iu);
@@ -628,7 +635,7 @@ title('long cue RT (cued-uncued)')
 set (gca,'YDir','reverse');
 
               
-summarytable=[VAAcc;
+zzzsummarytable=[VAAcc;
 VART;
 crowdingradialAcc;
 crowdingradialRT;
@@ -639,3 +646,13 @@ shortcueRT
 longcueAcc;
 longcueRT;
 ]
+
+
+zzzdio=[ThreshlistVA(:,end); ThreshlistCW(:,end); AttCorrshortCuedRT;
+AttCorrshortUncuedRT;
+AttCorrshortCuedPerc;
+AttCorrshortUncuedPerc;
+AttCorrlongCuedRT;
+AttCorrlongUncuedRT;
+AttCorrlongCuedPerc;
+AttCorrlongUncuedPerc;]
