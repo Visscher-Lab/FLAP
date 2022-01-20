@@ -64,10 +64,10 @@ elseif station=='b'
 elseif station == 'a'
     %this site uses a pc, so the filenames differ.
     baseName=[cd '\data\' SUBJECT '_' Session '_CI_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-    screencm= [40 30]; %[69.8 35.5];
+    screencm= [69.8 35.5];
     struct.res= [1920 1080]; %[3840 2160]; %[1920 1080];
     struct.sz=[screencm(1), screencm(2)];
-    BITS=0; %0;
+    BITS=2; %0;
 end
 
 v_d=57;  % distance in cm to the screen [this is a guess. COMMENT YOUR CODE.]
@@ -145,7 +145,7 @@ if BITS==1 %bits ++
     %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     %    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-else
+elseif BITS==0
     %% psychtoobox settings
     AssertOpenGL;
     screenNumber=max(Screen('Screens'));
@@ -158,6 +158,20 @@ else
     %struct.res=[ScreenParameters.width ScreenParameters.height];
     %Nlinear_lut = repmat((linspace(0,1,256).^(1/Gamma))',1,3);
     %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+elseif BITS==2
+    v_d=57;
+        AssertOpenGL;
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
 end;
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
