@@ -42,7 +42,7 @@ theNames=['CC'
 'JK'
 'JO'
 'JV'
-'VH']
+'VH'];
 
 VA_ovr=general_thresh(1,:);
 
