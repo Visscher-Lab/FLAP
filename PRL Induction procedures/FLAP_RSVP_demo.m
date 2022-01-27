@@ -409,7 +409,7 @@ shortexo=exo(1:trialcounterExo(5)-1,:);
 newtrialmatrix=[shortendo;shortexo];
 
 
-blocking=4;
+blocking=8;
 
 blockCounterEndo=[trialcounterEndo(1:blocking:end); length(endo)+1];
 blockCounterExo=[trialcounterExo(1:blocking:end); length(exo)+1];
