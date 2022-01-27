@@ -684,7 +684,8 @@ end
         
         for seu=2:length(totalnewnewtrial_incongruent2)           
             if totalnewnewtrial_incongruent2(seu-1,1)==1 && totalnewnewtrial_incongruent2(seu,1)==2                              
-                newone= [3 totalnewnewtrial_incongruent2(seu,2:end)];
+            %    newone= [3 totalnewnewtrial_incongruent2(seu,2:end)];
+            newone= [3 totalnewnewtrial_incongruent2(seu,2:end-1) randi(4)];
                 totalnewnewtrial_incongruent3=[totalnewnewtrial_incongruent2(1:seu-1,:); newone; totalnewnewtrial_incongruent2(seu:end,:)];
             end
         end
@@ -701,8 +702,33 @@ end
 
      sss=[ (1:length(totalnewnewtrial_incongruent2(:,1)))' totalnewnewtrial_incongruent2];         
 
-
+sss2=[(1:length(totalnewnewtrial_incongruent3(:,1)))' totalnewnewtrial_incongruent3];
 dummysss=[sss nan(length(sss(:,1)),1) nan(length(sss(:,1)),1)];
+
+% find endo-exo divider
+ce=find(totalnewnewtrial_incongruent3(:,1)==2);
+%create endo only matrix
+nexendo=totalnewnewtrial_incongruent3(1:ce(1)-2,:);
+% %clean up final part of endo so that it ends on a 3 
+threeindex=find(nexendo(:,1)==3);
+nexendox=nexendo(1:threeindex(end),:);
+
+
+nexexo=totalnewnewtrial_incongruent3(ce(1)-1:end,:);
+threeindex=find(nexexo(:,1)==3);
+nexexox=nexexo(1:threeindex(end),:);
+
+
+totalnewnewtrial_incongruent4=[nexendox; nexexox];
+
+du= find(totalnewnewtrial_incongruent4(:,1)==3 & totalnewnewtrial_incongruent4(:,5)==5)
+
+if du>0    
+    for ud=1:length(du)
+        totalnewnewtrial_incongruent4(du(ud),:)=[totalnewnewtrial_incongruent4(du(ud),1:end-1) randi(4)];
+    end   
+end
+%~=
 %sss 1: trial n
 %sss 2: trial type: 0: exogenous cue, 1: endogenous trial, 2: exogenous stream,3: beginning of trial/wait until response, 
 %sss 3:where the cue is
@@ -746,6 +772,6 @@ dummysss=[sss nan(length(sss(:,1)),1) nan(length(sss(:,1)),1)];
 % end
 diditclose=10;
 end
-save RSVPTrialMat.mat
+save RSVPTrialMat2022-D.mat
 end
 io

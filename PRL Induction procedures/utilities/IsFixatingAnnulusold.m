@@ -33,7 +33,7 @@ if Eyelink( 'NewFloatSampleAvailable') > 0
         
         if framecounter>1 & round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y)))>0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X))) >0 ...
              && round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y)))<wRect(4) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X)))<= wRect(3)
-          %count frames within the annulus created in the main script (annulus around the scotoma)  
+            
     if   framecounter>1 & circlePixels(round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y))), round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X))))>0.81
        % fixating=fixating+1;
         counterannulus=counterannulus+1;
