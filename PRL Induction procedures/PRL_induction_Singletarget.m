@@ -1,4 +1,4 @@
-7% PRL induction procedure with simulated scotoma, single target
+% PRL induction procedure with simulated scotoma, single target
 % written by Marcello A. Maniglia 2017/2021
 
 close all; clear all; clc;
@@ -86,7 +86,7 @@ trialTimeout=timeOut+3;
     rand('twister',theseed);
   
     %   trials=500;
-    trials=250;
+    trials=300;%500;
 
     mixtr=ones(trials,2);
     KbQueueCreate;
@@ -244,10 +244,10 @@ trialTimeout=timeOut+3;
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
-%     try
-%         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-%         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-%     end;  
+    try
+        [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+        [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+    end;  
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
@@ -1146,11 +1146,18 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                         
                         if  stimpresent>0 && round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aux))<wRect(4) && round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aux))>0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X)+PRLxpix(aux)))<wRect(3) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X)+PRLxpix(aux)))>0
                                                       
+                                % if the stimulus should be present and the
+                                % eye position is within the limits of the
+                                % screen
                             if   circlePixels(codey(1), codex(1))<0.81 && circlePixels(codey(2), codex(2))<0.81 && circlePixels(codey(3), codex(3))<0.81 ...
                                     && circlePixels(codey(4), codex(4))<0.81
                                 
                                 
-                                %
+                                % if the stimulus should be present and the
+                                % eye position is within the limits of the
+                                % screen but the stimulus is outside the
+                                % PRL(s)
+                            
                                 Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                                 %  Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
                                 
@@ -1166,12 +1173,17 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                                 circlefix=0;
                                 
                             else
+                                %if we have the EyeCode element, which
+                                %tracks the frames for which we have eye position recorded (even if the eye position is missing) 
                                 if  exist('EyeCode','var')
                                     if length(EyeCode)>6 %&& circlefix>6
                                         circlefix=circlefix+1;
+                                        %if we have at least 6 frames
+                                        %within this trial
                                         % if  EyeCode(end-1)~=0 && EyeCode(end)~=0
                                         if sum(EyeCode(end-6:end))~=0
-
+                                            %if we don't have 6 consecutive frames with no eye movement (aka, with
+                                            %fixation)
                                             Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
 %                                             for iu=1:length(PRLx)
 %                                                 imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -1182,8 +1194,10 @@ ycrand= yc+possibleX(randi(length(possibleY)));
 %                                             end
                                             %     elseif EyeCode(end-1)==0 && EyeCode(end)==0
                                         elseif sum(EyeCode(end-5:end))==0
-                                            %mostra target
-                                            
+                                            %If we have at least 5
+                                            %consecutive frames with
+                                            %fixation
+                                            %HERE WE SHOW THE TARGET                                             
                                             countertarget=countertarget+1;
                                             framefix(countertarget)=length(EyeData(:,1));
                                             if exist('FixIndex','var')
@@ -1194,6 +1208,8 @@ ycrand= yc+possibleX(randi(length(possibleY)));
                                             % circlefix=circlefix+1;
                                         end
                                     elseif length(EyeCode)<=5 %&& circlefix<=6
+                                        %if we don't have at least 5 frames
+                                        %per trial
                                         Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
 %                                         for iu=1:length(PRLx)
 %                                             imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
