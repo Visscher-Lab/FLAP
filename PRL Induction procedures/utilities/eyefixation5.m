@@ -1,10 +1,14 @@
 %   if eyetime>0
 if EyeTracker==0
     [posx posy]=GetMouse(0);
-    occhi(1)=posx;
-    occhi(2)=posy;
-    xeye=[xeye posx];
-    yeye=[yeye posy];
+ %   occhi(1)=posx;
+ %   occhi(2)=posy;
+    newsamplex=posx;
+    newsampley=posy;
+    newsamplex=wRect(3)/2;
+        newsampley=wRect(4)/2;
+ %   xeye=[xeye posx];
+  %  yeye=[yeye posy];
 elseif EyeTracker==1
 if EyetrackerType==1
     err=Eyelink('CheckRecording');
@@ -53,13 +57,13 @@ elseif EyetrackerType==2
     %                             trial(trial).pupil=[pupils, elEvent.pa(eye_used+1)];
     %                             trial(trial).time=[eyetime, elEvent.time];
 end
-
+end
             occhi(1)=newsamplex;
             occhi(2)=newsampley;
             
             xeye=[xeye newsamplex];
             yeye=[yeye newsampley];
-end  
+%end  
 %  end
 %  end
 scotoma = [scotomarect(1)+(occhi(1)-wRect(3)/2), scotomarect(2)+(occhi(2)-wRect(4)/2), scotomarect(3)+(occhi(1)-wRect(3)/2), scotomarect(4)+(occhi(2)-wRect(4)/2)];
