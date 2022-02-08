@@ -85,8 +85,7 @@ trialTimeout=timeOut+3;
     theseed=sum(100*clock);
     rand('twister',theseed);
   
-    %   trials=500;
-    trials=300;%500;
+    trials=30;%500;
 
     mixtr=ones(trials,2);
     KbQueueCreate;
@@ -559,7 +558,8 @@ trialTimeout=timeOut+3;
         % eye_used
         ScreenHeightPix=screencm(2)*pix_deg_vert;
         ScreenWidthPix=screencm(1)*pix_deg;
-        VelocityThreshs = [250 2000];      	% px/sec
+        %VelocityThreshs = [250 2000];      	% px/sec
+        VelocityThreshs = [20*pix_deg 60*pix_deg];      	% px/sec        
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
