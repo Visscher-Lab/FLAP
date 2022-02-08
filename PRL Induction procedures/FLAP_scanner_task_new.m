@@ -7,7 +7,7 @@ commandwindow
 %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
 
 
-addpath([cd '/utilities']);
+addpath([cd '/utilities']); %marcello what does this do?  why the 'cd'?
 try
     prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)', 'demo (0) or session (1)', 'Eyetracker(1) or not (0)'};
     
@@ -23,7 +23,7 @@ try
     expdayeye=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     demo=str2num(answer{4,:});
-     EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
+    EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -44,7 +44,7 @@ try
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     
-   
+    
     
     %     if EyeTracker==1
     %         EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
@@ -63,19 +63,19 @@ try
     fixTime=0.2;
     fixTime2=0.2;
     sigma_degBig=1;
-        sigma_degSmall=.1;
-        sfs=3;
+    sigma_degSmall=.1;
+    sfs=3;
     PRL1x=-7.5;
     PRL1y=0; %0.5;
     PRL2x=7.5;
     PRL2y=0; %-0.5;%7.5; %eccentricity of PRLs
-           jitterCI=1;
-        possibleoffset=[-2:2];
+    jitterCI=1;
+    possibleoffset=[-2:2];
     Gamma=1; %Gamma value. Normally 2.2, but set to 1 if using other tool  for linearlization
-ExerTime=0 ; % If this is a 1 then break time will be ignored.
-JitRat=1; % amount of jit ration the larger the value the less jitter
-
-gaborcontrast=0.5;
+    ExerTime=0 ; % If this is a 1 then break time will be ignored.
+    JitRat=1; % amount of jit ration the larger the value the less jitter
+    
+    gaborcontrast=0.5;
     %   PRLxx=[0 PRLecc 0 -PRLecc];
     %   PRLyy=[-PRLecc 0 PRLecc 0 ];
     %PRL_x_axis=-5;
@@ -100,17 +100,17 @@ gaborcontrast=0.5;
     cueISI=0.05;
     
     if demo ==0
-            presentationtime=0.5133;
-            trialnumber=5;
+        presentationtime=0.5133;
+        trialnumber=5;
     elseif demo==1
-    presentationtime=0.133;
-    trialnumber=20;
+        presentationtime=0.133;
+        trialnumber=20;
     end
     ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
     
-    
+    % BELOW SETS UP SCREEN
     if site==0  %UCR bits**
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -155,11 +155,13 @@ gaborcontrast=0.5;
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     elseif site==2   %UAB
-        s1=serial('com3');
-        fopen(s1);
-        fprintf(s1, ['$monoPlusPlus' 13]);
-        fclose(s1);
-        clear s1
+        %The below code seems to be specifically for the BOLD++
+        % commented out for troubleshooting
+        %s1=serial('com3');
+        %fopen(s1);
+        %fprintf(s1, ['$monoPlusPlus' 13]);
+        %fclose(s1);
+        %clear s1
         screencm=[69.8, 35.5];
         v_d=57;
         AssertOpenGL;
@@ -264,8 +266,8 @@ gaborcontrast=0.5;
     elseif EyeTracker ==0
         
         
-                EyetrackerType=0; %1 = Eeyelink, 2 = Vpixx
-    
+        EyetrackerType=0; %1 = Eeyelink, 2 = Vpixx
+        
     end
     
     'troubleshoot: got just before sound'
@@ -346,7 +348,7 @@ gaborcontrast=0.5;
     
     
     %% STAIRCASES:
-    
+    % question for MArcello -- I thought this wasn't adaptive?
     % Acuity sc1
     %cndt=4;
     %ca=1;
@@ -386,7 +388,7 @@ gaborcontrast=0.5;
     escapeKey = KbName('ESCAPE');	% quit key
     %end
     
-
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % get keyboard for the key recording
     deviceIndex = -1; % reset to default keyboard
@@ -483,7 +485,7 @@ gaborcontrast=0.5;
     ListenChar(2);
     counter = 0;
     fixwindowPix=fixwindow*pix_deg;
-    WaitSecs(1);
+    WaitSecs(1);  % marcello, question: why wait here?
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
     Screen('TextSize',w, 42);
@@ -496,10 +498,10 @@ gaborcontrast=0.5;
     %Screen('Flip', w);
     %WaitSecs(1.5);
     
-     [xc, yc] = RectCenter(wRect);
-%     xlocs=[0 PRLecc 0 -PRLecc];
-%     ylocs=[-PRLecc 0 PRLecc 0 ];
-%     
+    [xc, yc] = RectCenter(wRect);
+    %     xlocs=[0 PRLecc 0 -PRLecc];
+    %     ylocs=[-PRLecc 0 PRLecc 0 ];
+    %
     eccentricity_X=[PRL1x PRL2x]*pix_deg;
     eccentricity_Y=[PRL1y PRL2y]*pix_deg;
     
@@ -508,6 +510,7 @@ gaborcontrast=0.5;
     
     PRLlocations=2;
     
+    %% DEFINING BLOCK AND TRIAL RANDOMIZED ORDER
     tr_per_condition=16;  %50
     mixtrVAsc1=[];
     
@@ -523,125 +526,132 @@ gaborcontrast=0.5;
         mixtrVAsc2=[mixtrVAsc2 b];
     end
     mixtrVA=[ mixtrVAsc1' ones(length(mixtrVAsc1),1); mixtrVAsc2' ones(length(mixtrVAsc2),1)*2];
-  %  mixtrVA=mixtrVA(1:2,:);
+    %  mixtrVA=mixtrVA(1:2,:);
     
     
     mixtrVA=[];
-% Contour integration stimuli
-%% settings for individual gabors and fixation point
-sigma_pixSmall = sigma_degSmall*pix_deg;
-imsizeSmall=sigma_pixSmall*2.5;
-sigma_pixBig = sigma_degBig*pix_deg;
-imsizeBig=sigma_pixBig*2.5;
-
-[x0Small,y0Small]=meshgrid(-imsizeSmall:imsizeSmall,-imsizeSmall:imsizeSmall);
-G = exp(-((x0Small/sigma_pixSmall).^2)-((y0Small/sigma_pixSmall).^2));
-[r, c] = size(G);
-midgray=0.5;
-%creating gabor images
-rot=0*pi/180; %redundant but theoretically correct
-maxcontrast=1; %0.15; %same
-for i=1:(length(sfs))  %bpk: note that sfs has only one element
-    f_gabor=(sfs(i)/pix_deg)*2*pi;
-    a=cos(rot)*f_gabor;
-    b=sin(rot)*f_gabor;
-    m=maxcontrast*sin(a*x0Small+b*y0Small+pi).*G;
-    TheGaborsSmall(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
-end
-
-clear a b m f_gabor
-
-
-[x0Big,y0Big]=meshgrid(-imsizeBig:imsizeBig,-imsizeBig:imsizeBig);
-G = exp(-((x0Big/sigma_pixBig).^2)-((y0Big/sigma_pixBig).^2));
-for i=1:(length(sfs))  %bpk: note that sfs has only one element
-    f_gabor=(sfs(i)/pix_deg)*2*pi;
-    a=cos(rot)*f_gabor;
-    b=sin(rot)*f_gabor;
-    m=maxcontrast*sin(a*x0Big+b*y0Big+pi).*G;
-    TheGaborsBig(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
-end
-
-
-%set the limit for stimuli position along x and y axis
-xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
-yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
-
-bg_index =round(gray*255); %background color
-
-%circular mask
-xylim = imsize; %radius of circular mask
-circle = x0Big.^2 + y0Big.^2 <= xylim^2;
-[nrw, ncl]=size(x0Big);
-
-xs=12;
-ys=9;
-
-xs=60;
-ys=45;
-
-xs=7;
-ys=7;
-
-%density 1 deg
-[x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
-
-%density 0.5 deg
-%[x1,y1]=meshgrid(-xs:0.5:xs,-ys:0.5:ys); %possible positions of Gabors within grid; in degrees of visual angle
-
-
-%density 0.8 deg
-%[x1,y1]=meshgrid(-xs:0.8:xs,-ys:0.8:ys); %possible positions of Gabors within grid; in degrees of visual angle
-
-
-xlocsCI=x1(:)';
-ylocsCI=y1(:)';
-
-%generate visual cue
-eccentricity_XCI=xlocsCI*pix_deg/2;
-eccentricity_YCI=ylocsCI*pix_deg/2;
-
-% r=1;
-% C =[0 0];
-% theta = 0:2*pi/360:2*pi;
-% theta=0:2*pi/12:2*pi
-% m=r*[cos(theta')+C(1) sin(theta') + C(2)];
-% m=[m; 0.8 -1; 0.4 -1.5; 0 -2];
-% m_six=[-m(:,1) m(:,2)];
-% m_six=m_six.*pix_deg;
-% 
-% m_nine=[m(:,1) -m(:,2)];
-% m_nine=m_nine.*pix_deg;
-
-
-yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
-xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
-orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
-
-
-Xoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
-Yoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
-
-Targx= [xfoo; -xfoo];
-Targy= [yfoo; -yfoo];
-
-Targori=[orifoo; orifoo];
-
-offsetx= [Xoff; -Xoff];
-offsety=[Yoff; -Yoff];
-  
+    % Contour integration stimuli
+    %% settings for individual gabors and fixation point
+    sigma_pixSmall = sigma_degSmall*pix_deg;
+    imsizeSmall=sigma_pixSmall*2.5;
+    sigma_pixBig = sigma_degBig*pix_deg;
+    imsizeBig=sigma_pixBig*2.5;
+    
+    [x0Small,y0Small]=meshgrid(-imsizeSmall:imsizeSmall,-imsizeSmall:imsizeSmall);
+    G = exp(-((x0Small/sigma_pixSmall).^2)-((y0Small/sigma_pixSmall).^2));
+    [r, c] = size(G);
+    midgray=0.5;
+    %creating gabor images
+    rot=0*pi/180; %redundant but theoretically correct
+    maxcontrast=1; %0.15; %same
+    for i=1:(length(sfs))  %bpk: note that sfs has only one element  % Marcello question: what does this do if sfs is one element long?
+        f_gabor=(sfs(i)/pix_deg)*2*pi;
+        a=cos(rot)*f_gabor;
+        b=sin(rot)*f_gabor;
+        m=maxcontrast*sin(a*x0Small+b*y0Small+pi).*G;
+        TheGaborsSmall(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
+    end
+    
+    clear a b m f_gabor
+    
+    
+    [x0Big,y0Big]=meshgrid(-imsizeBig:imsizeBig,-imsizeBig:imsizeBig);
+    G = exp(-((x0Big/sigma_pixBig).^2)-((y0Big/sigma_pixBig).^2));
+    for i=1:(length(sfs))  %bpk: note that sfs has only one element
+        f_gabor=(sfs(i)/pix_deg)*2*pi;
+        a=cos(rot)*f_gabor;
+        b=sin(rot)*f_gabor;
+        m=maxcontrast*sin(a*x0Big+b*y0Big+pi).*G;
+        TheGaborsBig(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
+    end
+    
+    
+    %set the limit for stimuli position along x and y axis
+    xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
+    yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
+    
+    bg_index =round(gray*255); %background color
+    
+    %circular mask
+    xylim = imsize; %radius of circular mask
+    circle = x0Big.^2 + y0Big.^2 <= xylim^2;
+    [nrw, ncl]=size(x0Big);
+    
+    xs=12;
+    ys=9;
+    
+    xs=60;
+    ys=45;
+    
+    xs=7;
+    ys=7;
+    
+    %density 1 deg
+    [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
+    
+    %density 0.5 deg
+    %[x1,y1]=meshgrid(-xs:0.5:xs,-ys:0.5:ys); %possible positions of Gabors within grid; in degrees of visual angle
+    
+    
+    %density 0.8 deg
+    %[x1,y1]=meshgrid(-xs:0.8:xs,-ys:0.8:ys); %possible positions of Gabors within grid; in degrees of visual angle
+    
+    
+    xlocsCI=x1(:)';
+    ylocsCI=y1(:)';
+    
+    %generate visual cue   %question for Marcello-- What is the visual cue?
+    %what does this do?
+    eccentricity_XCI=xlocsCI*pix_deg/2;
+    eccentricity_YCI=ylocsCI*pix_deg/2;
+    
+    
+    % question for marcello: can the next few lines be deleted?
+    % r=1;
+    % C =[0 0];
+    % theta = 0:2*pi/360:2*pi;
+    % theta=0:2*pi/12:2*pi
+    % m=r*[cos(theta')+C(1) sin(theta') + C(2)];
+    % m=[m; 0.8 -1; 0.4 -1.5; 0 -2];
+    % m_six=[-m(:,1) m(:,2)];
+    % m_six=m_six.*pix_deg;
+    %
+    % m_nine=[m(:,1) -m(:,2)];
+    % m_nine=m_nine.*pix_deg;
+    
+    
+    yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
+    xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
+    orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
+    
+    
+    Xoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
+    Yoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
+    
+    Targx= [xfoo; -xfoo];
+    Targy= [yfoo; -yfoo];
+    
+    Targori=[orifoo; orifoo];
+    
+    offsetx= [Xoff; -Xoff];
+    offsety=[Yoff; -Yoff];
+    
     %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
-        for  ui=1:(tr_per_condition/PRLlocations)
+    
+    %% BELOW SETS UP THE ODER OF BLOCKS AND TRIALS??? AGAIN? I THINK? QUESTION FOR MARCELLO
+    for  ui=1:(tr_per_condition/PRLlocations)
         b=randperm(PRLlocations);
         mixtrCI=[mixtrVAsc1 b];
     end
-
+    
     mixtrCI=[ mixtrCI' ones(length(mixtrCI),1)];%; mixtrVAsc2' ones(length(mixtrVAsc2),1)*2];
     mixtrCI=[ ones(trialnumber,1) ones(trialnumber,1);ones(trialnumber,1)*2 ones(trialnumber,1)  ];
     
     mixtrVA=mixtrCI;
     totalmixtr=length(mixtrVA)+length(mixtrCI);
     totalmixtr=[mixtrVA;mixtrCI ];
+    
+    
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -678,25 +688,26 @@ offsety=[Yoff; -Yoff];
     scotoma_color=[200 200 200];
     FixDotSize=15;
     
+    %% something about the below is going through trial by trial
+    %% question marcello: is the above correct?
+    %% FOR LOOP FOR ALL THE TRIALS
     for totaltrial=1:length(totalmixtr)
-
-                    
-                    
-       if  totaltrial<=length(mixtrVA)
-           stimulusType=1;
-       elseif totaltrial>length(mixtrVA)
-                          stimulusType=2;     
-    end
-trial=totaltrial;
-
-if  totaltrial==1 && totalmixtr(trial,1)==1 || totaltrial>1 && totalmixtr(trial,1)==1 &&  totalmixtr(trial-1,1)==2
-    scanner_instructions_left
-end
-
-if  totaltrial==1 && totalmixtr(trial,1)==2 || totaltrial>1 && totalmixtr(trial,1)==2 &&  totalmixtr(trial-1,1)==1
-    scanner_instructions_right
-end
-
+        
+        if  totaltrial<=length(mixtrVA)
+            stimulusType=1;
+        elseif totaltrial>length(mixtrVA)
+            stimulusType=2;
+        end
+        trial=totaltrial;
+        
+        if  totaltrial==1 && totalmixtr(trial,1)==1 || totaltrial>1 && totalmixtr(trial,1)==1 &&  totalmixtr(trial-1,1)==2
+            scanner_instructions_left
+        end
+        
+        if  totaltrial==1 && totalmixtr(trial,1)==2 || totaltrial>1 && totalmixtr(trial,1)==2 &&  totalmixtr(trial-1,1)==1
+            scanner_instructions_right
+        end
+        
         %     whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
@@ -727,153 +738,153 @@ end
         
         
         if stimulusType ==1
-
+            
             %   VAsize = Sizelist(threshVA(mixtrVA(trial,1),mixtrVA(trial,2)));
             theeccentricity_X=eccentricity_X(mixtrVA(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial,1));
             
             
-                        theeccentricity_X2=-theeccentricity_X;
+            theeccentricity_X2=-theeccentricity_X;
             theeccentricity_Y2=-theeccentricity_Y;
-          %  Gaborsize = 2;%Sizelist(threshVA);
+            %  Gaborsize = 2;%Sizelist(threshVA);
             
-         %   imageRect = CenterRect([0, 0, Gaborsize*pix_deg Gaborsize*pix_deg], wRect);
+            %   imageRect = CenterRect([0, 0, Gaborsize*pix_deg Gaborsize*pix_deg], wRect);
             imageRect = CenterRect([0, 0, size(x0Big)], wRect);
-       % theoris =[-180 0 -90 90];
-                theoris =[-45 45];
-
-        theans(trial)=randi(2);
-        
-    %    ori=theoris(theans(trial));
-       if theans(trial)==1 %left
-           ori=theoris(1);
-           ori2=theoris(2);
-       elseif theans(trial)==2 %right
-           ori=theoris(2);
-           ori2=theoris(1);
-       end
+            % theoris =[-180 0 -90 90];
+            theoris =[-45 45];
+            
+            theans(trial)=randi(2);
+            
+            %    ori=theoris(theans(trial));
+            if theans(trial)==1 %left
+                ori=theoris(1);
+                ori2=theoris(2);
+            elseif theans(trial)==2 %right
+                ori=theoris(2);
+                ori2=theoris(1);
+            end
         elseif stimulusType ==2
             
             
-             theeccentricity_XCI=eccentricity_X(totalmixtr(trial,1));
+            theeccentricity_XCI=eccentricity_X(totalmixtr(trial,1));
             theeccentricity_YCI=eccentricity_Y(totalmixtr(trial),1);
             
             theeccentricity_XCI2=-theeccentricity_XCI;
             theeccentricity_YCI2=-theeccentricity_YCI;
-               %         theeccentricity_XDCI=-theeccentricity_X;
-          %  theeccentricity_YDCI=-theeccentricity_Y;
-                    Oscat= 0.5; %JitList(thresh(Ts,Tc));
-
+            %         theeccentricity_XDCI=-theeccentricity_X;
+            %  theeccentricity_YDCI=-theeccentricity_Y;
+            Oscat= 0.5; %JitList(thresh(Ts,Tc));
+            
             imageRect = CenterRect([0, 0, size(x0Small)], wRect);
-% These are the individual rectangles for each Gabor within the array
-imageRect_offs =[imageRect(1)+eccentricity_XCI', imageRect(2)+eccentricity_YCI',...
-    imageRect(3)+eccentricity_XCI', imageRect(4)+eccentricity_YCI'];
-
+            % These are the individual rectangles for each Gabor within the array
+            imageRect_offs =[imageRect(1)+eccentricity_XCI', imageRect(2)+eccentricity_YCI',...
+                imageRect(3)+eccentricity_XCI', imageRect(4)+eccentricity_YCI'];
+            
             sf=1;
-                       % texture(trial)=TheGabors(sf);
-Tscat=0;
-GoodBlock=0;
-Tc=1;
+            % texture(trial)=TheGabors(sf);
+            Tscat=0;
+            GoodBlock=0;
+            Tc=1;
             xmax=2*xs+1; %total number of squares in grid, along x direction (17)
-    ymax=2*ys+1; %total number of squares in grid, along x direction (13)
-    
-    %     Xoff=round(mod(theans(trial),2)-.5)
-    %     Yoff=round((theans(trial)>=2)-.5)
-    %
-    
-%     xTrans=4+randi(xmax-8); %Translate target left/right or up/down within grid
-%     yTrans=4+randi(ymax-8);
-%     
-    xTrans=round(xmax/2); %Translate target left/right or up/down within grid
-    yTrans=round(ymax/2);
- %       xTrans=round(xmax/2)+round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
- %   yTrans=round(ymax/2)+round(eccentricity_Ydeg(mixtrCI(trial)));
-  %      xTrans2=round(xmax/2)-round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
-    
- 
-    theans(trial)=randi(2); %generates answer for this trial
-          
-    if jitterCI==1
-        jitterxci(trial)=possibleoffset(randi(length(possibleoffset)));
-        jitteryci(trial)=possibleoffset(randi(length(possibleoffset)));
-        newTargy= Targy+jitteryci(trial);
-        newTargx= Targx+jitterxci(trial);
-    elseif jitterCI==0
-        newTargy= Targy;
-        newTargx= Targx;
-    end
-    
-    
-    if theans(trial)==2
-        targetcord =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
-        targetcord2 =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
-    elseif theans(trial)==1
-        targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
-        targetcord2 =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
-        
-    end
-    
-
-%targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
-     
-    %   targetcord =Targx(theans(trial),:)+x  + (Targy(theans(trial),:)+y - 1)*xm;
-  %  targetcord2 =Targy(theans(trial),:)+yTrans  + (Targx(theans(trial),:)+xTrans2 - 1)*ymax;
-%targetcord2=targetcord;
-    xJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat; %plus or minus .25 deg
-    yJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat;
-    xJitLoc2=xJitLoc;
-    yJitLoc2=yJitLoc;
-    
-    xModLoc=zeros(1,length(imageRect_offs));
-    yModLoc=zeros(1,length(imageRect_offs));
-
-    %jitter location except for target
-    xJitLoc(targetcord)=Tscat*xJitLoc(targetcord);
-    yJitLoc(targetcord)=Tscat*yJitLoc(targetcord);
-        xJitLoc2(targetcord2)=Tscat*xJitLoc2(targetcord2);
-    yJitLoc2(targetcord2)=Tscat*yJitLoc2(targetcord2);
-  %      xJitLoc(targetcord2)=Tscat*xJitLoc(targetcord2);
- %   yJitLoc(targetcord2)=Tscat*yJitLoc(targetcord2);
-        theori=180*rand(1,length(imageRect_offs));
-
-        if theans(trial)==1
-            theori(targetcord)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-            theori(targetcord2)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+            ymax=2*ys+1; %total number of squares in grid, along x direction (13)
             
-            xJitLoc(targetcord)=(pix_deg*offsetx(1,:))+xJitLoc(targetcord);
-            yJitLoc(targetcord)=(pix_deg*offsety(1,:))+yJitLoc(targetcord);
+            %     Xoff=round(mod(theans(trial),2)-.5)
+            %     Yoff=round((theans(trial)>=2)-.5)
+            %
             
-            xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
-            yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
-        elseif theans(trial)==2
-            theori(targetcord)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-            theori(targetcord2)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-            xJitLoc(targetcord)=(pix_deg*offsetx(2,:))+xJitLoc(targetcord);
-            yJitLoc(targetcord)=(pix_deg*offsety(2,:))+yJitLoc(targetcord);
+            %     xTrans=4+randi(xmax-8); %Translate target left/right or up/down within grid
+            %     yTrans=4+randi(ymax-8);
+            %
+            xTrans=round(xmax/2); %Translate target left/right or up/down within grid
+            yTrans=round(ymax/2);
+            %       xTrans=round(xmax/2)+round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
+            %   yTrans=round(ymax/2)+round(eccentricity_Ydeg(mixtrCI(trial)));
+            %      xTrans2=round(xmax/2)-round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
             
-            xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
-            yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
+            
+            theans(trial)=randi(2); %generates answer for this trial
+            
+            if jitterCI==1
+                jitterxci(trial)=possibleoffset(randi(length(possibleoffset)));
+                jitteryci(trial)=possibleoffset(randi(length(possibleoffset)));
+                newTargy= Targy+jitteryci(trial);
+                newTargx= Targx+jitterxci(trial);
+            elseif jitterCI==0
+                newTargy= Targy;
+                newTargx= Targx;
+            end
+            
+            
+            if theans(trial)==2
+                targetcord =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
+                targetcord2 =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
+            elseif theans(trial)==1
+                targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
+                targetcord2 =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
+                
+            end
+            
+            
+            %targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
+            
+            %   targetcord =Targx(theans(trial),:)+x  + (Targy(theans(trial),:)+y - 1)*xm;
+            %  targetcord2 =Targy(theans(trial),:)+yTrans  + (Targx(theans(trial),:)+xTrans2 - 1)*ymax;
+            %targetcord2=targetcord;
+            xJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat; %plus or minus .25 deg
+            yJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat;
+            xJitLoc2=xJitLoc;
+            yJitLoc2=yJitLoc;
+            
+            xModLoc=zeros(1,length(imageRect_offs));
+            yModLoc=zeros(1,length(imageRect_offs));
+            
+            %jitter location except for target
+            xJitLoc(targetcord)=Tscat*xJitLoc(targetcord);
+            yJitLoc(targetcord)=Tscat*yJitLoc(targetcord);
+            xJitLoc2(targetcord2)=Tscat*xJitLoc2(targetcord2);
+            yJitLoc2(targetcord2)=Tscat*yJitLoc2(targetcord2);
+            %      xJitLoc(targetcord2)=Tscat*xJitLoc(targetcord2);
+            %   yJitLoc(targetcord2)=Tscat*yJitLoc(targetcord2);
+            theori=180*rand(1,length(imageRect_offs));
+            
+            if theans(trial)==1
+                theori(targetcord)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                theori(targetcord2)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                
+                xJitLoc(targetcord)=(pix_deg*offsetx(1,:))+xJitLoc(targetcord);
+                yJitLoc(targetcord)=(pix_deg*offsety(1,:))+yJitLoc(targetcord);
+                
+                xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
+            elseif theans(trial)==2
+                theori(targetcord)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                theori(targetcord2)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                xJitLoc(targetcord)=(pix_deg*offsetx(2,:))+xJitLoc(targetcord);
+                yJitLoc(targetcord)=(pix_deg*offsety(2,:))+yJitLoc(targetcord);
+                
+                xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
+            end
+            %  xJitLoc(targetcord2)=(pix_deg*offsetx)+xJitLoc(targetcord2);
+            %      yJitLoc(targetcord2)=(pix_deg*offsety)+yJitLoc(targetcord2);
+            
+            
+            
+            %jitter orientation, except for that of target
+            theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
+            
+            % theori(targetcord2)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
+            
+            
+            %    Tcontr=1;
+            Tcontr=0.738;
+            %   Dcontr=0.35; %0.5;
+            Dcontr=0.38; %0.5;
+            
+            %  Tcontr=Contlist(1);
+            % Dcontr =1- Contlist(thresh(Ts,Tc));
+            %  Oscat=0;
         end
-  %  xJitLoc(targetcord2)=(pix_deg*offsetx)+xJitLoc(targetcord2);
-  %      yJitLoc(targetcord2)=(pix_deg*offsety)+yJitLoc(targetcord2);
-        
-        
-        
-    %jitter orientation, except for that of target
-    theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
-    
-             % theori(targetcord2)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
-
-    
-%    Tcontr=1;
-        Tcontr=0.738;
- %   Dcontr=0.35; %0.5;
-        Dcontr=0.38; %0.5;
-
-          %  Tcontr=Contlist(1);
-       % Dcontr =1- Contlist(thresh(Ts,Tc));
-      %  Oscat=0;
-    end
         %KbQueueFlush()
         
         Priority(0);
@@ -884,6 +895,7 @@ Tc=1;
         stopchecking=-100;
         skipnonetetracker=0;
         trial_time=100000;
+        % marcello question:  why allocate all the above on each trial?  
         
         pretrial_time=GetSecs;
         while eyechecked<1
@@ -892,30 +904,30 @@ Tc=1;
             end
             
             if EyeTracker==1
-            if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1
-                fixationscript3
-            elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1
-                if site<3
-                    IsFixating4
-                elseif site==3
-                    IsFixating4pixx
+                if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1
+                    fixationscript3
+                elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1
+                    if site<3
+                        IsFixating4
+                    elseif site==3
+                        IsFixating4pixx
+                    end
+                    fixationscript3
+                elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1
+                    trial_time = GetSecs;
+                    fixating=1500;
                 end
-                fixationscript3
-            elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1
-                trial_time = GetSecs;
-                fixating=1500;
-            end
             elseif EyeTracker==0
                 if skipnonetetracker<1
-                fixating=1500;
-                                  stopchecking=10;
-                                trial_time = GetSecs;
-                                skipnonetetracker=1000;
+                    fixating=1500;
+                    stopchecking=10;
+                    trial_time = GetSecs;
+                    skipnonetetracker=1000;
                 end
             end
             clear imageRect_offsCirc
             if (eyetime2-trial_time)>=waittime+ifi*2+cueonset && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration && fixating>400 && stopchecking>1
-
+                
                 
                 clear imageRect_offs imageRect_offs2 imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offsCI imageRect_offsCII
                 
@@ -924,60 +936,58 @@ Tc=1;
                 
                 %no cue
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && stopchecking>1
-              
+                
                 
                 if stimulusType==1
-                      if exist('imageRect_offs')==0
-                    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                
-                imageRect_offs2 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X2, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y2,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X2, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y2];
-         
-                end
-                Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs, ori,[], gaborcontrast);
-                                Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs2, ori2,[], gaborcontrast);
-                
-
-                     imagearray{trial}=Screen('GetImage', w)
-
+                    if exist('imageRect_offs')==0
+                        imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        
+                        imageRect_offs2 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X2, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y2,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X2, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y2];
+                        
+                    end
+                    Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs, ori,[], gaborcontrast);
+                    Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs2, ori2,[], gaborcontrast);
+                    imagearray{trial}=Screen('GetImage', w);
+                    
                 elseif stimulusType==2
                     
-                                    if exist('imageRect_offsCI')==0
-
-% imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_YCI,...
-%                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_YCI];
-%                                     
-%                                     
-                             imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
-    imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];  
-
-                             imageRect_offsCII =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
-    imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];  
-
-%                             imageRect_offsCIsmoothL =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
-%     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth]; 
-%                                 imageRect_offsCIsmoothL=round(imageRect_offsCIsmoothL);
-%                                                               imageRect_offsCIsmoothR =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
-%     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth]; 
-%                                  imageRect_offsCIsmoothR=round(imageRect_offsCIsmoothR);
-                                    imageRect_offsCI2=imageRect_offsCI;
-                                    imageRect_offsCII2=imageRect_offsCII;
-                                                                        imageRect_offsCI3=imageRect_offsCI;
-%
-                                    end
-
-     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-       imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Tcontr );
-    
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Dcontr );
-       imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
-     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Tcontr );
-
-
-     imagearray{trial}=Screen('GetImage', w);
-              end
+                    if exist('imageRect_offsCI')==0
+                        
+                        % imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_YCI,...
+                        %                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_YCI];
+                        %
+                        %
+                        imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];
+                        
+                        imageRect_offsCII =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];
+                        
+                        %                             imageRect_offsCIsmoothL =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
+                        %     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth];
+                        %                                 imageRect_offsCIsmoothL=round(imageRect_offsCIsmoothL);
+                        %                                                               imageRect_offsCIsmoothR =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
+                        %     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth];
+                        %                                  imageRect_offsCIsmoothR=round(imageRect_offsCIsmoothR);
+                        imageRect_offsCI2=imageRect_offsCI;
+                        imageRect_offsCII2=imageRect_offsCII;
+                        imageRect_offsCI3=imageRect_offsCI;
+                        %
+                    end
+                    
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                    imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Tcontr );
+                    
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Dcontr );
+                    imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Tcontr );
+                    
+                    
+                    imagearray{trial}=Screen('GetImage', w);
+                end
                 stim_start = GetSecs;
                 
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
@@ -996,11 +1006,11 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
                 [secs  indfirst]=min(thetimes);
                 respTime=GetSecs;
             end
-        %    if site <3
-                eyefixation5
-       %     elseif site ==3
-       %         eyefixation4
-         %   end
+            %    if site <3
+            eyefixation5
+            %     elseif site ==3
+            %         eyefixation4
+            %   end
             
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
@@ -1055,9 +1065,9 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
         
         foo=(RespType==thekeys);
         
-            staircounterVA=staircounterVA+1;
-         %   ThreshlistVA(staircounterVA)=VAsize;
-            if stimulusType ==1
+        staircounterVA=staircounterVA+1;
+        %   ThreshlistVA(staircounterVA)=VAsize;
+        if stimulusType ==1
             if foo(theans(trial))
                 resp = 1;
                 nswr(trial)=1;
@@ -1138,7 +1148,7 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
                     
                 elseif mixtrVA(trial,2)==2
                     
-                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1                       
+                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
                         chec(trial) =99;
                         if sum(nswr(trial-3:trial))==4
                             if isreversalsVA==1
@@ -1170,8 +1180,8 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
                 end
             end
             
-            elseif stimulusType ==2
-                if foo(theans(trial))
+        elseif stimulusType ==2
+            if foo(theans(trial))
                 resp = 1;
                 nswr(trial)=1;
                 PsychPortAudio('Start', pahandle1);
@@ -1184,20 +1194,20 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
                 
                 nswr(trial)=0;
                 PsychPortAudio('Start', pahandle2);
-                    
-                end
+                
             end
-            
-            
+        end
+        
+        
         %   stim_stop=secs;
         time_stim(kk) = respTime - stim_start;
         totale_trials(kk)=trial;
         if stimulusType==1
-        coordinate(totaltrial).x=theeccentricity_X/pix_deg;
-        coordinate(totaltrial).y=theeccentricity_Y/pix_deg;
+            coordinate(totaltrial).x=theeccentricity_X/pix_deg;
+            coordinate(totaltrial).y=theeccentricity_Y/pix_deg;
         elseif stimulusType==2
             coordinate(totaltrial).x=theeccentricity_XCI/pix_deg;
-        coordinate(totaltrial).y=theeccentricity_YCI/pix_deg;
+            coordinate(totaltrial).y=theeccentricity_YCI/pix_deg;
         end
         xxeye(totaltrial).ics=xeye;
         yyeye(totaltrial).ipsi=yeye;
@@ -1205,9 +1215,9 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
         flipptime(totaltrial).ix=fliptime;
         
         rispo(kk)=resp;
-           % lettersize(kk)=Gaborsize;
-       %     tles(kk) = threshVA;
-
+        % lettersize(kk)=Gaborsize;
+        %     tles(kk) = threshVA;
+        
         cheis(kk)=thekeys;
         
         if EyeTracker==1
@@ -1236,9 +1246,9 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
             if stimulusType==1
-           %     EyeSummary.(TrialNum).VA= Gaborsize;
+                %     EyeSummary.(TrialNum).VA= Gaborsize;
             elseif stimulusType==2
-             %   EyeSummary.(TrialNum).Separation = sep;
+                %   EyeSummary.(TrialNum).Separation = sep;
             end
             if exist('EndIndex')==0
                 EndIndex=0;
@@ -1268,11 +1278,12 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xMo
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-            DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-Screen('Flip', w);
+    
+    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
-        KbQueueWait;
-
+    KbQueueWait;
+    
     % shut down EyeTracker
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1286,14 +1297,18 @@ Screen('Flip', w);
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-
+    
+    % save the data
+    tic
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    toc
+    'This was the time it took to save all the data'
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     ListenChar(0);
- %   Screen('Flip', w);
+    %   Screen('Flip', w);
     ShowCursor;
     
     if site==1
@@ -1329,4 +1344,8 @@ Screen('Flip', w);
 catch ME
     'There was an error caught in the main program.'
     psychlasterror()
+    ME.stack.line
+    ME.stack.file
+    
+    
 end
