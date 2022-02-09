@@ -348,8 +348,7 @@ try
     
     
     %% STAIRCASES:
-    % question for MArcello -- I thought this wasn't adaptive? %mm: useless
-    % pieces of codes from the one I used to write this
+    % question for MArcello -- I thought this wasn't adaptive? %mm:
     % Acuity sc1
     %cndt=4;
     %ca=1;
@@ -486,7 +485,7 @@ try
     ListenChar(2);
     counter = 0;
     fixwindowPix=fixwindow*pix_deg;
-    WaitSecs(1);  % marcello, question: why wait here? mm: can be removed
+    WaitSecs(1);  % marcello, question: why wait here?
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
     Screen('TextSize',w, 42);
@@ -545,7 +544,7 @@ try
     %creating gabor images
     rot=0*pi/180; %redundant but theoretically correct
     maxcontrast=1; %0.15; %same
-    for i=1:(length(sfs))  %bpk: note that sfs has only one element  % Marcello question: what does this do if sfs is one element long? %mm: cause in other scripts we use mulltiple sfs, it's redundant and can be removed
+    for i=1:(length(sfs))  %bpk: note that sfs has only one element  % Marcello question: what does this do if sfs is one element long?
         f_gabor=(sfs(i)/pix_deg)*2*pi;
         a=cos(rot)*f_gabor;
         b=sin(rot)*f_gabor;
@@ -602,14 +601,12 @@ try
     ylocsCI=y1(:)';
     
     %generate visual cue   %question for Marcello-- What is the visual cue?
-    %mm: it's wrongly called visual cue, it's just the coordinates of the
-    %little gabos
     %what does this do?
     eccentricity_XCI=xlocsCI*pix_deg/2;
     eccentricity_YCI=ylocsCI*pix_deg/2;
     
     
-    % question for marcello: can the next few lines be deleted? mm: yes
+    % question for marcello: can the next few lines be deleted?
     % r=1;
     % C =[0 0];
     % theta = 0:2*pi/360:2*pi;
@@ -641,7 +638,7 @@ try
     
     %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
     
-    %% BELOW SETS UP THE ODER OF BLOCKS AND TRIALS??? AGAIN? I THINK? QUESTION FOR MARCELLO %mm: randomization
+    %% BELOW SETS UP THE ODER OF BLOCKS AND TRIALS??? AGAIN? I THINK? QUESTION FOR MARCELLO
     for  ui=1:(tr_per_condition/PRLlocations)
         b=randperm(PRLlocations);
         mixtrCI=[mixtrVAsc1 b];
@@ -692,7 +689,7 @@ try
     FixDotSize=15;
     
     %% something about the below is going through trial by trial
-    %% question marcello: is the above correct? mm: assigning conditions
+    %% question marcello: is the above correct?
     %% FOR LOOP FOR ALL THE TRIALS
     for totaltrial=1:length(totalmixtr)
         
@@ -898,8 +895,7 @@ try
         stopchecking=-100;
         skipnonetetracker=0;
         trial_time=100000;
-        % marcello question:  why allocate all the above on each trial?  %
-        % it's for the while loop
+        % marcello question:  why allocate all the above on each trial?  
         
         pretrial_time=GetSecs;
         while eyechecked<1

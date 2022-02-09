@@ -1,4 +1,4 @@
-% Visual Acuity/Crowding/cued-uncued attention task
+% Gabor and contour task for scanner
 % written by Marcello A. Maniglia july 2021 %2017/2021
 close all;
 clear all;
@@ -7,7 +7,7 @@ commandwindow
 %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
 
 
-addpath([cd '/utilities']); %marcello what does this do?  why the 'cd'? %mm: this adds the utilities folder to our path
+addpath([cd '/utilities']);
 try
     prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)', 'demo (0) or session (1)', 'Eyetracker(1) or not (0)'};
     
@@ -28,7 +28,7 @@ try
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
-        mkdir('data')
+        mkdir('data');
     end
     %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
@@ -76,13 +76,14 @@ try
     JitRat=1; % amount of jit ration the larger the value the less jitter
     
     gaborcontrast=0.5;
+    circularMasking=1; % if we want a circular masking around the contour
     %   PRLxx=[0 PRLecc 0 -PRLecc];
     %   PRLyy=[-PRLecc 0 PRLecc 0 ];
     %PRL_x_axis=-5;
     %PRL_y_axis=0;
     %NoPRL_x_axis=5;
     %NoPRL_y_axis=0;
-    
+    randomizeUnattended=1; % do we randomize the unattended stimulus or it will always be the other orientation?
     ContCirc= [200 200 200];
     
     oval_thick=6; %thickness of oval
@@ -110,7 +111,7 @@ try
     
     cue_spatial_offset=2;
     
-    % BELOW SETS UP SCREEN
+    
     if site==0  %UCR bits**
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -155,13 +156,11 @@ try
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     elseif site==2   %UAB
-        %The below code seems to be specifically for the BOLD++
-        % commented out for troubleshooting
-        %s1=serial('com3');
-        %fopen(s1);
-        %fprintf(s1, ['$monoPlusPlus' 13]);
-        %fclose(s1);
-        %clear s1
+        s1=serial('com3');
+        fopen(s1);
+        fprintf(s1, ['$monoPlusPlus' 13]);
+        fclose(s1);
+        clear s1
         screencm=[69.8, 35.5];
         v_d=57;
         AssertOpenGL;
@@ -245,7 +244,9 @@ try
         % eye_used
         ScreenHeightPix=screencm(2)*pix_deg_vert;
         ScreenWidthPix=screencm(1)*pix_deg;
-        VelocityThreshs = [250 2000];      	% px/sec
+    %    VelocityThreshs = [250 2000];      	% px/sec
+                VelocityThreshs = [20*pix_deg 60*pix_deg];      	% px/sec
+
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
@@ -343,34 +344,9 @@ try
     theDot=Screen('MakeTexture', w, theDot);
     
     
-    % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
-    
-    %% STAIRCASES:
-    % question for MArcello -- I thought this wasn't adaptive? %mm: useless
-    % pieces of codes from the one I used to write this
-    % Acuity sc1
-    %cndt=4;
-    %ca=1;
-    threshVA=19;
-    reversalsVA=0;
-    %reversalcounterVA
-    isreversalsVA=0;
-    staircounterVA=0;
-    corrcounterVA=0;
-    
-    % Threshold -> 79%
-    sc.up = 1;                          % # of incorrect answers to go one step up
-    sc.down = 3;                        % # of correct answers to go one step down
-    
-    Sizelist=log_unit_down(StartSize, 0.01, 90);
-    
-    % stepsizesVA=[8 4 3 2 1];
-    stepsizesVA=[4 4 4 4 4];
-    
-    % Acuity sc2
-    
+  
     rand('twister', sum(100*clock));
     
     %% response
@@ -486,7 +462,7 @@ try
     ListenChar(2);
     counter = 0;
     fixwindowPix=fixwindow*pix_deg;
-    WaitSecs(1);  % marcello, question: why wait here? mm: can be removed
+    WaitSecs(1);
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
     Screen('TextSize',w, 42);
@@ -511,7 +487,6 @@ try
     
     PRLlocations=2;
     
-    %% DEFINING BLOCK AND TRIAL RANDOMIZED ORDER
     tr_per_condition=16;  %50
     mixtrVAsc1=[];
     
@@ -545,7 +520,7 @@ try
     %creating gabor images
     rot=0*pi/180; %redundant but theoretically correct
     maxcontrast=1; %0.15; %same
-    for i=1:(length(sfs))  %bpk: note that sfs has only one element  % Marcello question: what does this do if sfs is one element long? %mm: cause in other scripts we use mulltiple sfs, it's redundant and can be removed
+    for i=1:(length(sfs))  %bpk: note that sfs has only one element
         f_gabor=(sfs(i)/pix_deg)*2*pi;
         a=cos(rot)*f_gabor;
         b=sin(rot)*f_gabor;
@@ -601,15 +576,10 @@ try
     xlocsCI=x1(:)';
     ylocsCI=y1(:)';
     
-    %generate visual cue   %question for Marcello-- What is the visual cue?
-    %mm: it's wrongly called visual cue, it's just the coordinates of the
-    %little gabos
-    %what does this do?
+    %generate visual cue
     eccentricity_XCI=xlocsCI*pix_deg/2;
     eccentricity_YCI=ylocsCI*pix_deg/2;
     
-    
-    % question for marcello: can the next few lines be deleted? mm: yes
     % r=1;
     % C =[0 0];
     % theta = 0:2*pi/360:2*pi;
@@ -640,8 +610,6 @@ try
     offsety=[Yoff; -Yoff];
     
     %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
-    
-    %% BELOW SETS UP THE ODER OF BLOCKS AND TRIALS??? AGAIN? I THINK? QUESTION FOR MARCELLO %mm: randomization
     for  ui=1:(tr_per_condition/PRLlocations)
         b=randperm(PRLlocations);
         mixtrCI=[mixtrVAsc1 b];
@@ -653,8 +621,6 @@ try
     mixtrVA=mixtrCI;
     totalmixtr=length(mixtrVA)+length(mixtrCI);
     totalmixtr=[mixtrVA;mixtrCI ];
-    
-    
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -691,10 +657,9 @@ try
     scotoma_color=[200 200 200];
     FixDotSize=15;
     
-    %% something about the below is going through trial by trial
-    %% question marcello: is the above correct? mm: assigning conditions
-    %% FOR LOOP FOR ALL THE TRIALS
     for totaltrial=1:length(totalmixtr)
+        
+        
         
         if  totaltrial<=length(mixtrVA)
             stimulusType=1;
@@ -742,14 +707,12 @@ try
         
         if stimulusType ==1
             
-            %   VAsize = Sizelist(threshVA(mixtrVA(trial,1),mixtrVA(trial,2)));
             theeccentricity_X=eccentricity_X(mixtrVA(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial,1));
             
             
             theeccentricity_X2=-theeccentricity_X;
             theeccentricity_Y2=-theeccentricity_Y;
-            %  Gaborsize = 2;%Sizelist(threshVA);
             
             %   imageRect = CenterRect([0, 0, Gaborsize*pix_deg Gaborsize*pix_deg], wRect);
             imageRect = CenterRect([0, 0, size(x0Big)], wRect);
@@ -761,16 +724,24 @@ try
             %    ori=theoris(theans(trial));
             if theans(trial)==1 %left
                 ori=theoris(1);
-                ori2=theoris(2);
+                if randomizeUnattended==1
+                    ori2=theoris(randi(2));
+                elseif randomizeUnattended==0
+                    ori2=theoris(2);
+                end
             elseif theans(trial)==2 %right
-                ori=theoris(2);
-                ori2=theoris(1);
+                ori=theoris(2);              
+                if randomizeUnattended==1
+                    ori2=theoris(randi(2));
+                elseif randomizeUnattended==0
+                    ori2=theoris(1);
+                end
             end
         elseif stimulusType ==2
             
             
             theeccentricity_XCI=eccentricity_X(totalmixtr(trial,1));
-            theeccentricity_YCI=eccentricity_Y(totalmixtr(trial),1);
+            theeccentricity_YCI=eccentricity_Y(totalmixtr(trial,1));
             
             theeccentricity_XCI2=-theeccentricity_XCI;
             theeccentricity_YCI2=-theeccentricity_YCI;
@@ -820,11 +791,22 @@ try
             
             if theans(trial)==2
                 targetcord =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
-                targetcord2 =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
+                
+                if randomizeUnattended==1
+                    randcontour=randi(2);
+                    targetcord2 =newTargy(randcontour,:)+yTrans  + (newTargx(randcontour,:)+xTrans - 1)*ymax;
+                elseif randomizeUnattended==0
+                    targetcord2 =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
+                end
             elseif theans(trial)==1
                 targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
-                targetcord2 =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
                 
+                if randomizeUnattended==1
+                    randcontour=randi(2);
+                    targetcord2 =newTargy(randcontour,:)+yTrans  + (newTargx(randcontour,:)+xTrans - 1)*ymax;
+                elseif randomizeUnattended==0
+                    targetcord2 =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
+                end
             end
             
             
@@ -852,21 +834,33 @@ try
             
             if theans(trial)==1
                 theori(targetcord)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                if randomizeUnattended==1
+                    theori(targetcord2)=Targori(randcontour,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
+                elseif randomizeUnattended==0
                 theori(targetcord2)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-                
+                xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
+                end
                 xJitLoc(targetcord)=(pix_deg*offsetx(1,:))+xJitLoc(targetcord);
                 yJitLoc(targetcord)=(pix_deg*offsety(1,:))+yJitLoc(targetcord);
                 
-                xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
             elseif theans(trial)==2
                 theori(targetcord)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                if randomizeUnattended==1
+                    theori(targetcord2)=Targori(randcontour,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                                    xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
+                elseif randomizeUnattended==0
                 theori(targetcord2)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                                xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
+                yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
+                end
                 xJitLoc(targetcord)=(pix_deg*offsetx(2,:))+xJitLoc(targetcord);
                 yJitLoc(targetcord)=(pix_deg*offsety(2,:))+yJitLoc(targetcord);
                 
-                xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
+
             end
             %  xJitLoc(targetcord2)=(pix_deg*offsetx)+xJitLoc(targetcord2);
             %      yJitLoc(targetcord2)=(pix_deg*offsety)+yJitLoc(targetcord2);
@@ -874,7 +868,7 @@ try
             
             
             %jitter orientation, except for that of target
-            theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
+           % theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
             
             % theori(targetcord2)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
             
@@ -898,8 +892,6 @@ try
         stopchecking=-100;
         skipnonetetracker=0;
         trial_time=100000;
-        % marcello question:  why allocate all the above on each trial?  %
-        % it's for the while loop
         
         pretrial_time=GetSecs;
         while eyechecked<1
@@ -953,6 +945,8 @@ try
                     end
                     Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs, ori,[], gaborcontrast);
                     Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs2, ori2,[], gaborcontrast);
+                    
+                    
                     imagearray{trial}=Screen('GetImage', w);
                     
                 elseif stimulusType==2
@@ -963,11 +957,11 @@ try
                         %                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_YCI];
                         %
                         %
-                        imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
-                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];
+                        imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
                         
-                        imageRect_offsCII =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI',...
-                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'];
+                        imageRect_offsCII =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
                         
                         %                             imageRect_offsCIsmoothL =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
                         %     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth];
@@ -979,6 +973,18 @@ try
                         imageRect_offsCII2=imageRect_offsCII;
                         imageRect_offsCI3=imageRect_offsCI;
                         %
+                        
+                        
+                        
+                        if circularMasking==1
+                            imageRectMask = CenterRect([0, 0, [ xs*1.75*pix_deg xs*1.75*pix_deg]], wRect);
+                            
+                            imageRect_offsCImask1=[imageRectMask(1)+theeccentricity_XCI, imageRectMask(2)+theeccentricity_YCI,...
+                                imageRectMask(3)+theeccentricity_XCI, imageRectMask(4)+theeccentricity_YCI];
+                            imageRect_offsCImask2=[imageRectMask(1)+theeccentricity_XCI2, imageRectMask(2)+theeccentricity_YCI2,...
+                                imageRectMask(3)+theeccentricity_XCI2, imageRectMask(4)+theeccentricity_YCI2];
+                            
+                        end
                     end
                     
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
@@ -988,6 +994,9 @@ try
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Dcontr );
                     imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Tcontr );
+                    
+                    Screen('FrameOval', w,gray, imageRect_offsCImask2, 12, 60);
+                    Screen('FrameOval', w,gray, imageRect_offsCImask1, 12, 60);
                     
                     
                     imagearray{trial}=Screen('GetImage', w);
@@ -1069,63 +1078,12 @@ try
         
         foo=(RespType==thekeys);
         
-        staircounterVA=staircounterVA+1;
-        %   ThreshlistVA(staircounterVA)=VAsize;
         if stimulusType ==1
             if foo(theans(trial))
                 resp = 1;
                 nswr(trial)=1;
                 PsychPortAudio('Start', pahandle1);
-                corrcounterVA=corrcounterVA+1;
-                if mixtrVA(trial,2) == 1
-                    
-                    if corrcounterVA>=sc.down
-                        
-                        if isreversalsVA==1
-                            reversalsVA=reversalsVA+1;
-                            isreversalsVA=0;
-                            %      reversalcounterVA=reversalcounterVA+1;
-                        end
-                        thestep=min(reversalsVA+1,length(stepsizesVA));
-                        if thestep>5
-                            thestep=5;
-                        end
-                        threshVA=threshVA +stepsizesVA(thestep);
-                        threshVA=min(threshVA,length(Sizelist));
-                    end
-                    
-                elseif mixtrVA(trial,2)==2
-                    
-                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
-                        
-                        chec(trial) =99;
-                        if sum(nswr(trial-3:trial))==4
-                            if isreversalsVA==1
-                                reversalsVA=reversalsVA+1;
-                                isreversalsVA=0;
-                                %      reversalcounterVA=reversalcounterVA+1;
-                            end
-                            thestep=min(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA +stepsizesVA(thestep);
-                            threshVA=min(threshVA,length(Sizelist));
-                            
-                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
-                            threshVA=threshVA;
-                        elseif sum(nswr(trial-3:trial))<2
-                            corrcounterVA=0;
-                            thestep=max(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA -stepsizesVA(thestep);
-                            threshVA=max(threshVA);
-                        end
-                    end
-                    
-                end
+
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 ListenChar(0);
@@ -1135,53 +1093,7 @@ try
                 
                 nswr(trial)=0;
                 PsychPortAudio('Start', pahandle2);
-                if mixtrVA(trial,2)==1
-                    if  corrcounterVA>=sc.down
-                        isreversalsVA=1;
-                    end
-                    corrcounterVA=0;
-                    thestep=max(reversalsVA+1,length(stepsizesVA));
-                    if thestep>5
-                        thestep=5;
-                    end
-                    threshVA=threshVA -stepsizesVA(thestep);
-                    threshVA=max(threshVA);
-                    if threshVA<1
-                        threshVA=1;
-                    end
-                    
-                elseif mixtrVA(trial,2)==2
-                    
-                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
-                        chec(trial) =99;
-                        if sum(nswr(trial-3:trial))==4
-                            if isreversalsVA==1
-                                reversalsVA=reversalsVA+1;
-                                isreversalsVA=0;
-                                %      reversalcounterVA=reversalcounterVA+1;
-                            end
-                            thestep=min(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA +stepsizesVA(thestep);
-                            threshVA=min(threshVA,length(Sizelist));
-                            
-                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
-                            threshVA=threshVA;
-                        elseif sum(nswr(trial-3:trial))<2
-                            corrcounterVA=0;
-                            thestep=max(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA -stepsizesVA(thestep);
-                            threshVA=max(threshVA);
-                        end
-                    end
-                    
-                    
-                end
+
             end
             
         elseif stimulusType ==2
@@ -1282,7 +1194,6 @@ try
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-    
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
@@ -1302,11 +1213,7 @@ try
         Datapixx('Close');
     end
     
-    % save the data
-    tic
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    toc
-    'This was the time it took to save all the data'
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
@@ -1323,7 +1230,6 @@ try
         %     fprintf(s1, ['$BitsPlusPlus' 13]); %one day we might use the bits# so better not to get rid of these lines
         %     fclose(s1);
         PsychPortAudio('Close', pahandle);
-        
     else
         Screen('Preference', 'SkipSyncTests', 0);
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
@@ -1336,20 +1242,8 @@ try
         end
     end
     
-    %% data analysis
-    %thresho=permute(Threshlist,[3 1 2]);
-    
-    %to get the final value for each staircase
-    %final_threshold=thresho(10,1:length(thresho(1,:,1)),1:length(thresho(1,1,:)));
-    %total_thresh= [final_threshold(:,:,1) final_threshold(:,:,2)];
-    %%
-    
     
 catch ME
     'There was an error caught in the main program.'
     psychlasterror()
-    ME.stack.line
-    ME.stack.file
-    
-    
 end
