@@ -297,9 +297,20 @@ for iu=1:length(xlocs)
     listOfThreshVAPRL(:,:,iu)=listOfThreshVA(listOfThreshVA(:,1)==iu,:);
 end
 
+
+%cleanup VA RT
+for iu=1:length(xlocs)
+    %listOfThreshVAPRL(:,4,1) (all trials, rt column, PRL number)
+
+    cleanlistOfThreshVAPRL{:,:,iu}=listOfThreshVAPRL(listOfThreshVAPRL(:,4,iu)<(nanmean(listOfThreshVAPRL(:,4,iu)+3*nanstd(listOfThreshVAPRL(:,4,iu)))),:,iu);
+
+end
+
 for iu=1:length(xlocs)
     CorrVAPRL(iu)=sum(listOfThreshVAPRL(:,5,iu))/length(listOfThreshVAPRL(:,5,iu));
-    RTVAPRL(iu)=nanmean(listOfThreshVAPRL(:,4,iu));
+    
+   % RTVAPRL(iu)=nanmean(cleanlistOfThreshVAPRL(:,4,iu));
+    RTVAPRL(iu)=nanmean(cleanlistOfThreshVAPRL{iu}(:,4,1));
 end
 
 
