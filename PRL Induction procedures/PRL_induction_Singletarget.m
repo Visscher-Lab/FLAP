@@ -87,7 +87,7 @@ try
     
     trials=30;%500;
     
-    mixtr=ones(trials,2); %Marcello - Is this used for anything or relic from another script?
+    mixtr=ones(trials,2);
     KbQueueCreate;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -333,7 +333,9 @@ try
     lefty=0;
     righty=0;
     diocane=0;
-    while a<=trials || b<=trials
+    %Marcello -The section in this while loop appears to create the images used in the
+    %trials. Does it do anything else? (creating the trials themselves,etc)
+    while a<=trials || b<=trials  
         
         a=size(theTargets_left);
         a=a(:,2);
@@ -677,7 +679,7 @@ try
     end
     
     
-    waittime=ifi*50;
+    waittime=ifi*50; %ifi is flip interval of the screen
     
     
     scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
@@ -755,7 +757,7 @@ try
         d=(circlePixels2==1);
         newfig=circlePixels;
         newfig(d==1)=0;
-        circlePixels=newfig;
+        circlePixels=newfig; %Marcello - what kind of shape is being created here?
         
     end
     
@@ -827,6 +829,7 @@ try
         %  imageRectcue = CenterRect([0, 0, [cue_sizex cue_sizey]], wRect);
         imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
         
+        %Every 50 trials, pause to allow subject to rest eyes
         if (mod(trial,50))==1
             if trial==1
                 
@@ -847,7 +850,7 @@ try
         end;
         
         
-        if randomfix ==1
+        if randomfix ==1 %Marcello - it doesn't look like randomfix/xcrand/ycrand/etc are used. Are these important?
             possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
             possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
             
