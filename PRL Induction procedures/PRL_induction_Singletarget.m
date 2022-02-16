@@ -67,7 +67,7 @@ try
     
     stimulussize=3; %size of the stimulus (in degrees visual angle)
     separationdeg=2; % distance among elements within each stimulus
-    triangleformation= 1; % three stimuli
+    triangleformation= 1; % three stimuli if 1, four stimuli if 0
     randomfix = 1; %initial fixation in a random location
     distancedeg=9; % distance among stimuli
     PRLecc=7.5; %eccentricity of PRLs
@@ -83,12 +83,12 @@ try
     
     randomizzato=1;    %Marcello - is this variable used in this code or a dependency? %probably a relic from dead parts of the code, we can remove
     theseed=sum(100*clock);
-    rand('twister',theseed); %Marcello - is "theseed" variable intended to be used for anything? %it is used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions 
+    rand('twister',theseed); %Marcello - is "theseed" variable intended to be used for anything? %it is used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions
     
     trials=30;%500;
     
     mixtr=ones(trials,2); %Marcello - Is this used for anything or relic from another script? % it looks like another relic, I'll remove it
-
+    
     KbQueueCreate;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,7 +339,7 @@ try
     %it creates the trials so that the number of responses left and right
     %are balanced. It does so by computing the overall angle to be biased
     %left or right
-    while a<=trials || b<=trials  
+    while a<=trials || b<=trials
         
         a=size(theTargets_left);
         a=a(:,2);
@@ -855,7 +855,8 @@ try
             eyetime2=0;
         end;
         
-        
+        %Marcello we commented this if statement out since it doesn't
+        %appear
         if randomfix ==1 %Marcello - it doesn't look like randomfix/xcrand/ycrand/etc are used. Are these important?
             possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
             possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
@@ -904,21 +905,6 @@ try
         end
         
         
-        %         if randomposition == 1
-        %
-        %             target_ecc_x=positionmatrix(posmatrix(targetlocation(trial)),1);
-        %             target_ecc_y=positionmatrix(posmatrix(targetlocation(trial)),2);
-        %
-        %             newnewpos=posmatrix;
-        %             newnewpos(targetlocation(trial),:)=[];
-        %
-        %             for gg=1:(totalelements-1)
-        %                 newdistpos(gg)=randi(length(newnewpos(:,1)));
-        %                 newecc_xd(gg)=positionmatrix(newnewpos(newdistpos(gg)),1);
-        %                 newecc_yd(gg)=positionmatrix(newnewpos(newdistpos(gg)),2);
-        %                 newnewpos(newdistpos(gg),:)=[];
-        %             end
-        %         else
         if totalelements == 4
             target_ecc_x=positionmatrix(posmatrix(targetlocation(trial),1));
             target_ecc_y=positionmatrix(posmatrix(targetlocation(trial),2));
@@ -950,7 +936,6 @@ try
             neweccentricity_X=elementcoordx(1);
             neweccentricity_Y=elementcoordy(1);
         end
-        %    end
         
         neweccentricity_X=target_ecc_x;
         neweccentricity_Y=target_ecc_y;
@@ -1411,7 +1396,7 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
             %  toc
             %    disp('fine')
-                        nn=nn+1;
+            nn=nn+1;
         end
         
         

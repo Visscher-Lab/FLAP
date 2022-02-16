@@ -111,7 +111,7 @@ try
     
     cue_spatial_offset=2;
     
-    
+    %% Set up Screen
     if site==0  %UCR bits**
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -244,9 +244,9 @@ try
         % eye_used
         ScreenHeightPix=screencm(2)*pix_deg_vert;
         ScreenWidthPix=screencm(1)*pix_deg;
-    %    VelocityThreshs = [250 2000];      	% px/sec
-                VelocityThreshs = [20*pix_deg 60*pix_deg];      	% px/sec
-
+        %    VelocityThreshs = [250 2000];      	% px/sec
+        VelocityThreshs = [20*pix_deg 60*pix_deg];      	% px/sec
+        
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
@@ -346,7 +346,7 @@ try
     
     load('S096_marl-nyu');
     
-  
+    
     rand('twister', sum(100*clock));
     
     %% response
@@ -656,7 +656,7 @@ try
     %     mss=[ ];
     scotoma_color=[200 200 200];
     FixDotSize=15;
-    
+%% Start Trials
     for totaltrial=1:length(totalmixtr)
         
         
@@ -730,7 +730,7 @@ try
                     ori2=theoris(2);
                 end
             elseif theans(trial)==2 %right
-                ori=theoris(2);              
+                ori=theoris(2);
                 if randomizeUnattended==1
                     ori2=theoris(randi(2));
                 elseif randomizeUnattended==0
@@ -836,12 +836,12 @@ try
                 theori(targetcord)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
                 if randomizeUnattended==1
                     theori(targetcord2)=Targori(randcontour,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-                xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
+                    xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
+                    yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
                 elseif randomizeUnattended==0
-                theori(targetcord2)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-                xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
+                    theori(targetcord2)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                    xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
+                    yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
                 end
                 xJitLoc(targetcord)=(pix_deg*offsetx(1,:))+xJitLoc(targetcord);
                 yJitLoc(targetcord)=(pix_deg*offsety(1,:))+yJitLoc(targetcord);
@@ -850,17 +850,17 @@ try
                 theori(targetcord)=Targori(2,:) + (2*rand(1,length(targetcord))-1)*Oscat;
                 if randomizeUnattended==1
                     theori(targetcord2)=Targori(randcontour,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-                                    xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
+                    xJitLoc2(targetcord2)=(pix_deg*offsetx(randcontour,:))+xJitLoc2(targetcord2);
+                    yJitLoc2(targetcord2)=(pix_deg*offsety(randcontour,:))+yJitLoc2(targetcord2);
                 elseif randomizeUnattended==0
-                theori(targetcord2)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
-                                xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
-                yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
+                    theori(targetcord2)=Targori(1,:) + (2*rand(1,length(targetcord))-1)*Oscat;
+                    xJitLoc2(targetcord2)=(pix_deg*offsetx(1,:))+xJitLoc2(targetcord2);
+                    yJitLoc2(targetcord2)=(pix_deg*offsety(1,:))+yJitLoc2(targetcord2);
                 end
                 xJitLoc(targetcord)=(pix_deg*offsetx(2,:))+xJitLoc(targetcord);
                 yJitLoc(targetcord)=(pix_deg*offsety(2,:))+yJitLoc(targetcord);
                 
-
+                
             end
             %  xJitLoc(targetcord2)=(pix_deg*offsetx)+xJitLoc(targetcord2);
             %      yJitLoc(targetcord2)=(pix_deg*offsety)+yJitLoc(targetcord2);
@@ -868,7 +868,7 @@ try
             
             
             %jitter orientation, except for that of target
-           % theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
+            % theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
             
             % theori(targetcord2)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
             
@@ -1083,7 +1083,7 @@ try
                 resp = 1;
                 nswr(trial)=1;
                 PsychPortAudio('Start', pahandle1);
-
+                
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 ListenChar(0);
@@ -1093,7 +1093,7 @@ try
                 
                 nswr(trial)=0;
                 PsychPortAudio('Start', pahandle2);
-
+                
             end
             
         elseif stimulusType ==2
@@ -1194,6 +1194,7 @@ try
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
+    %% Clean up
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     Screen('Flip', w);
     Screen('TextFont', w, 'Arial');

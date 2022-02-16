@@ -21,7 +21,7 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=answer{2,:};
     site=answer{3,:};
-        Isdemo=answer{4,:};
+    Isdemo=answer{4,:};
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -30,8 +30,8 @@ try
     baseName=['./data/' SUBJECT 'flap_rsvp_demo' expdayeye '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
     c=clock;
-        TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-
+    TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
     max_size=10;
@@ -41,7 +41,7 @@ try
     sigma_deg = 1; %4;
     sfs=3;
     color=0;
-   % BITS=site; %0; 1=bits++; 2=display++
+    % BITS=site; %0; 1=bits++; 2=display++
     
     BITS=str2num(site);
     randomizzato=0;
@@ -148,7 +148,7 @@ try
         rand('twister', sum(100*clock));
         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-     %   PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %   PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
@@ -173,7 +173,7 @@ try
     if ifi==0
         ifi=1/75;
     end
-
+    
     prefixwait=ifi*40;
     if stimulus_contingent==1
         waittime=0;
@@ -182,7 +182,7 @@ try
         waittime=ifi*50;
         durfix=.133;    %.133
     end
- 
+    
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 1, 44100, 2);
@@ -204,7 +204,7 @@ try
     
     % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
-     
+    
     if EyeTracker==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
@@ -233,15 +233,15 @@ try
         save_dir=[cd './dataeyet/'];
         
     end;
-  
+    
     fixationlength = 10; % pixels
-    fixwindowPix=fixwindow*pix_deg;   
+    fixwindowPix=fixwindow*pix_deg;
     
     bg_index =round(gray*255); %background color
     
     
     if EyeTracker == 1
-            
+        
         % old variables
         [winCenter_x,winCenter_y]=RectCenter(wRect);
         backgroundEntry = [0.5 0.5 0.5];
@@ -311,22 +311,22 @@ try
     HideCursor;
     ListenChar(2);
     WaitSecs(1);
-
-%     
-%     Screen('TextFont',w, 'Arial');
-% Screen('TextSize',w, 42);
-% %     Screen('TextStyle', w, 1+2);
-% Screen('FillRect', w, gray);
-% colorfixation = white;
-% DrawFormattedText(w, 'Part I \n\n  report the orientation of the C within the ring \n \n a brief cue will point towards the location \n \n of the upcoming target \n \n \n \n Press any key to start', 'center', 'center', white);
-% 
-%     %DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nThere will be four circles at right, left, up and down.\n \nThere wont be a visual cue to indicate the next location of the target.\n \nA series of stimuli including Os and Cs will be shown in one of the circles.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback. \n\n  \n \n \n \n Press any key to start', 100, 100, [255 255 255]);
-%     % Screen('TextSize',w, 100);
-%     % Screen('TextFont',w, 'Sloan');
-%     % DrawFormattedText(w, 'D \n \n L \n \n \n \n R \n \n C', 'center', 'center', 0);
-%     Screen('Flip', w);
-%     KbQueueWait;
-   
+    
+    %
+    %     Screen('TextFont',w, 'Arial');
+    % Screen('TextSize',w, 42);
+    % %     Screen('TextStyle', w, 1+2);
+    % Screen('FillRect', w, gray);
+    % colorfixation = white;
+    % DrawFormattedText(w, 'Part I \n\n  report the orientation of the C within the ring \n \n a brief cue will point towards the location \n \n of the upcoming target \n \n \n \n Press any key to start', 'center', 'center', white);
+    %
+    %     %DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nThere will be four circles at right, left, up and down.\n \nThere wont be a visual cue to indicate the next location of the target.\n \nA series of stimuli including Os and Cs will be shown in one of the circles.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback. \n\n  \n \n \n \n Press any key to start', 100, 100, [255 255 255]);
+    %     % Screen('TextSize',w, 100);
+    %     % Screen('TextFont',w, 'Sloan');
+    %     % DrawFormattedText(w, 'D \n \n L \n \n \n \n R \n \n C', 'center', 'center', 0);
+    %     Screen('Flip', w);
+    %     KbQueueWait;
+    
     theoris=[0 180 270 90 991 992 993 994 995];
     
     [xc, yc] = RectCenter(wRect); % coordinate del centro schermo
@@ -350,7 +350,7 @@ try
     xxyy=[ecc_r ecc_r].*cs;
     PRL4_x_axis=xxyy(1);
     PRL4_y_axis=xxyy(2);
-       
+    
     ecc_t=theta+pi/2;
     cs= [cos(ecc_t), sin(ecc_t)];
     xxyy=[ecc_r ecc_r].*cs;
@@ -376,73 +376,73 @@ try
     RespType(4) = KbName('DownArrow');
     RespType(5:9) = KbName('w');
     
-% if str2num(expdayeye)==1
-% load testAttMat.mat
-% elseif str2num(expdayeye)==2
-% load testAttMatpost.mat
-% end
-if str2num(expdayeye)==1
-load RSVPTrialMat2022-A.mat
-elseif str2num(expdayeye)==2
-load RSVPTrialMat2022-B.mat
-elseif str2num(expdayeye)==3
-    load RSVPTrialMat2022-C.mat
-elseif str2num(expdayeye)==0
-    load RSVPTrialMat2022-D.mat
-end
-newtrialmatrix=totalnewnewtrial_incongruent4;
-
-exo_index=find(newtrialmatrix(:,1)==2);
-exo_index=exo_index(1)-1;
-endo=newtrialmatrix(1:exo_index-1,:);
-exo=newtrialmatrix(exo_index:end,:);
-
-
-trialcounterEndo=find(endo(:,1)==3);
-trialcounterExo=find(exo(:,1)==3);
-
-
-shortendo=endo(1:trialcounterEndo(5)-1,:);
-shortexo=exo(1:trialcounterExo(5)-1,:);
-
-
-newtrialmatrix=[shortendo;shortexo];
-
-
-blocking=8;
-
-blockCounterEndo=[trialcounterEndo(1:blocking:end); length(endo)+1];
-blockCounterExo=[trialcounterExo(1:blocking:end); length(exo)+1];
-counterexo=0;
-counterendo=0;
-soloexo=[];
-soloendo=[];
-
-newnewtrialmatrix=[];
-for ui=1:(length(blockCounterEndo)+length(blockCounterExo)-1)
-    if mod(ui,2)==0
-                counterexo=counterexo+1;
-                exocon(counterexo)=ui;
-                if length(blockCounterExo)>counterexo
-           chunck=[exo(blockCounterExo(counterexo):blockCounterExo(counterexo+1)-1,:)];
-           soloexo=[soloexo; chunck]
-    newnewtrialmatrix=[newnewtrialmatrix;chunck];  
-                end
-    elseif mod(ui,2)>0
-        counterendo=counterendo+1;
-                        endocon(counterendo)=ui;
-        if length(blockCounterEndo)>counterendo
-    chunck=[endo(blockCounterEndo(counterendo):blockCounterEndo(counterendo+1)-1,:)];
-    soloendo=[soloendo; chunck]
-    newnewtrialmatrix=[newnewtrialmatrix;chunck];
+    % if str2num(expdayeye)==1
+    % load testAttMat.mat
+    % elseif str2num(expdayeye)==2
+    % load testAttMatpost.mat
+    % end
+    if str2num(expdayeye)==1
+        load RSVPTrialMat2022-A.mat
+    elseif str2num(expdayeye)==2
+        load RSVPTrialMat2022-B.mat
+    elseif str2num(expdayeye)==3
+        load RSVPTrialMat2022-C.mat
+    elseif str2num(expdayeye)==0
+        load RSVPTrialMat2022-D.mat
+    end
+    newtrialmatrix=totalnewnewtrial_incongruent4;
+    
+    exo_index=find(newtrialmatrix(:,1)==2);
+    exo_index=exo_index(1)-1;
+    endo=newtrialmatrix(1:exo_index-1,:);
+    exo=newtrialmatrix(exo_index:end,:);
+    
+    
+    trialcounterEndo=find(endo(:,1)==3);
+    trialcounterExo=find(exo(:,1)==3);
+    
+    
+    shortendo=endo(1:trialcounterEndo(5)-1,:);
+    shortexo=exo(1:trialcounterExo(5)-1,:);
+    
+    
+    newtrialmatrix=[shortendo;shortexo];
+    
+    
+    blocking=8;
+    
+    blockCounterEndo=[trialcounterEndo(1:blocking:end); length(endo)+1];
+    blockCounterExo=[trialcounterExo(1:blocking:end); length(exo)+1];
+    counterexo=0;
+    counterendo=0;
+    soloexo=[];
+    soloendo=[];
+    %% Generate trial blocks
+    newnewtrialmatrix=[];
+    for ui=1:(length(blockCounterEndo)+length(blockCounterExo)-1)
+        if mod(ui,2)==0
+            counterexo=counterexo+1;
+            exocon(counterexo)=ui;
+            if length(blockCounterExo)>counterexo
+                chunck=[exo(blockCounterExo(counterexo):blockCounterExo(counterexo+1)-1,:)];
+                soloexo=[soloexo; chunck]
+                newnewtrialmatrix=[newnewtrialmatrix;chunck];
+            end
+        elseif mod(ui,2)>0
+            counterendo=counterendo+1;
+            endocon(counterendo)=ui;
+            if length(blockCounterEndo)>counterendo
+                chunck=[endo(blockCounterEndo(counterendo):blockCounterEndo(counterendo+1)-1,:)];
+                soloendo=[soloendo; chunck]
+                newnewtrialmatrix=[newnewtrialmatrix;chunck];
+            end
         end
     end
-end
-
-if str2num(Isdemo)==1
-newtrialmatrix=newnewtrialmatrix;
-end
-
+    
+    if str2num(Isdemo)==1
+        newtrialmatrix=newnewtrialmatrix;
+    end
+    %% Load images and set up eyetracker
     % check EyeTracker status
     if EyeTracker == 1
         status = Eyelink('startrecording');
@@ -464,10 +464,10 @@ end
     cue_color=[255 255 255];
     
     imageRectcue = CenterRect([0, 0, [cue_size*pix_deg cue_size*pix_deg_vert]], wRect);
-    imageRectcircles = CenterRect([0, 0, [circle_size*pix_deg circle_size*pix_deg_vert]], wRect);  
+    imageRectcircles = CenterRect([0, 0, [circle_size*pix_deg circle_size*pix_deg_vert]], wRect);
     fixationwindowRect = CenterRect([0, 0, [fixationwindow*pix_deg fixationwindow*pix_deg_vert]], wRect);
     
-   
+    
     imsize=stimulussize*pix_deg;
     imsize2=stimulussize*pix_deg_vert;
     [x,y]=meshgrid(-imsize:imsize,-imsize2:imsize2);
@@ -487,7 +487,7 @@ end
     theLetterO(:,ncl/2+1:end)=theLetterO(:,ncl/2:-1:1);
     %      theLetterO=Screen('MakeTexture', w, theLetterO);
     whichLetter(1)=Screen('MakeTexture', w, theLetterO);
-       
+    
     theLetterl=imread('letter_l2.tiff');
     %                         theLetterl=imread('letter_d2.tiff');
     theLetterl=theLetterl(:,:,1);
@@ -517,16 +517,16 @@ end
     thecue=thecue(:,:,1);
     thecue=imresize(thecue,[nrw ncl],'bicubic');
     % thecue = double(circle) .* double(thecue)+bg_index * ~double(circle);
-  
+    
     cueimage=Screen('MakeTexture', w, thecue);
     
     cueleft=[-circle_size*pix_deg/2 0  -circle_size*pix_deg/2 0];
     cueright=[circle_size*pix_deg/2 0  circle_size*pix_deg/2 0];
     cuedown=[0 circle_size*pix_deg/2 0  circle_size*pix_deg/2 ];
     cueup=[0 -circle_size*pix_deg/2 0  -circle_size*pix_deg/2 ];
-        
+    
     thecues={cueup cueright cuedown cueleft};
-   % thecuesEx={cueleft cueright cuedown cueup};
+    % thecuesEx={cueleft cueright cuedown cueup};
     
     thecuesEx=thecues;
     xeye=[];
@@ -536,38 +536,38 @@ end
     fliptime=[ ];
     mss=[ ];
     tracktime=[];
-    
+%% Trials
     for trial=1:length(newtrialmatrix)
- % for trial=1:14
-Response.start=0;
-
-
-if trial==1 && newtrialmatrix(trial+1,1)==1
-    switch_task_script_endo
-end
-%         if trial>2 && trial<=length(newtrialmatrix)-1
-%             if newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)~=newtrialmatrix(trial+1,1)   &&    newtrialmatrix(trial-1,1)~=0
-%                 switch_task_script
-%             end
-%         end
-
-if trial==1 && newtrialmatrix(trial+1,1)==2
-    switch_task_script_exo
-end
-
-if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
-    switch_task_script_exo
-end
-
-
-if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==2 && newtrialmatrix(trial+1,1)==1
-    switch_task_script_endo
-end
+        % for trial=1:14
+        Response.start=0;
         
-%         if trial==length(newtrialmatrix)/2+1
-%             switch_task_script
-% 
-%         end
+        
+        if trial==1 && newtrialmatrix(trial+1,1)==1
+            switch_task_script_endo
+        end
+        %         if trial>2 && trial<=length(newtrialmatrix)-1
+        %             if newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)~=newtrialmatrix(trial+1,1)   &&    newtrialmatrix(trial-1,1)~=0
+        %                 switch_task_script
+        %             end
+        %         end
+        
+        if trial==1 && newtrialmatrix(trial+1,1)==2
+            switch_task_script_exo
+        end
+        
+        if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
+            switch_task_script_exo
+        end
+        
+        
+        if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==2 && newtrialmatrix(trial+1,1)==1
+            switch_task_script_endo
+        end
+        
+        %         if trial==length(newtrialmatrix)/2+1
+        %             switch_task_script
+        %
+        %         end
         if sum(trial==totaltrialbreak)>0
             interblock_instruction_rsvp;
         end
@@ -587,7 +587,7 @@ end
         tracktime=[];
         FixCount=0;
         FixatingNow=0;
-        EndIndex=0;  
+        EndIndex=0;
         if trial==1
             fixating=0;
         else
@@ -602,10 +602,10 @@ end
         area_eye=0;
         xeye2=[];
         yeye2=[];
-
-%current target location
+        
+        %current target location
         cloc=newtrialmatrix(trial,2);
-%next target location
+        %next target location
         tloc=newtrialmatrix(trial,3);
         ecc_x_tgt=xlocs(tloc);
         ecc_y_tgt=ylocs(tloc);
@@ -622,7 +622,7 @@ end
         %   theans(trial)=newtrial(trial,3);
         %T=newtrial(trial,2)
         
-       % coding target ori or cue
+        % coding target ori or cue
         ori_i(trial)=theans(trial);
         ori= theoris(ori_i(trial));
         
@@ -679,7 +679,7 @@ end
             end
         end
         
-                %timing trials        
+        %timing trials
         if T==3 %trial==1 || sum(trial==totaltrialbreak)>0
             pretrial_time=GetSecs;
             trial_time=-1000;
@@ -692,11 +692,11 @@ end
                 imageRect1(3)+eccentricity_X(2), imageRect1(4)+eccentricity_Y(2)];
             imageRect_offs3=[imageRect1(1)+eccentricity_X(3), imageRect1(2)+eccentricity_Y(3),...
                 imageRect1(3)+eccentricity_X(3), imageRect1(4)+eccentricity_Y(3)];
-           imageRect_offs4=[imageRect1(1)+eccentricity_X(4), imageRect1(2)+eccentricity_Y(4),...
+            imageRect_offs4=[imageRect1(1)+eccentricity_X(4), imageRect1(2)+eccentricity_Y(4),...
                 imageRect1(3)+eccentricity_X(4), imageRect1(4)+eccentricity_Y(4)];
-         
+            
             imageRect_offs={imageRect_offs1 imageRect_offs2 imageRect_offs3 imageRect_offs4};
-           
+            
         else
             trial_time=GetSecs;
             fixating=1500;
@@ -711,11 +711,11 @@ end
         
         
         imageRect_circleoffs1=[imageRectcircles(1)+eccentricity_X(1), imageRectcircles(2)+eccentricity_Y(1),...
-            imageRectcircles(3)+eccentricity_X(1), imageRectcircles(4)+eccentricity_Y(1)];        
+            imageRectcircles(3)+eccentricity_X(1), imageRectcircles(4)+eccentricity_Y(1)];
         imageRect_circleoffs2=[imageRectcircles(1)+eccentricity_X(2), imageRectcircles(2)+eccentricity_Y(2),...
-            imageRectcircles(3)+eccentricity_X(2), imageRectcircles(4)+eccentricity_Y(2)];       
+            imageRectcircles(3)+eccentricity_X(2), imageRectcircles(4)+eccentricity_Y(2)];
         imageRect_circleoffs3=[imageRectcircles(1)+eccentricity_X(3), imageRectcircles(2)+eccentricity_Y(3),...
-            imageRectcircles(3)+eccentricity_X(3), imageRectcircles(4)+eccentricity_Y(3)];               
+            imageRectcircles(3)+eccentricity_X(3), imageRectcircles(4)+eccentricity_Y(3)];
         imageRect_circleoffs4=[imageRectcircles(1)+eccentricity_X(4), imageRectcircles(2)+eccentricity_Y(4),...
             imageRectcircles(3)+eccentricity_X(4), imageRectcircles(4)+eccentricity_Y(4)];
         
@@ -739,9 +739,9 @@ end
         Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
         
         while eyechecked<1
- 
+            
             if T==3
-                                             
+                
                 if (eyetime2-pretrial_time)>=0 && (eyetime2-pretrial_time)<=prefixwait+28*ifi
                     
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
@@ -775,20 +775,20 @@ end
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                 elseif      (eyetime2-pretrial_time)>prefixwait+30*ifi+ifi*20 && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0
-
-                     if exist('stim_star')==0
+                    
+                    if exist('stim_star')==0
                         stim_star=GetSecs;
                         stim_start(trial)=stim_star;
                         skipframe(trial)=1;
-                     end
-                     
-                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
+                    end
+                    
+                    Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                     
-                %    if exist('respTotrial') == 0
+                    %    if exist('respTotrial') == 0
                     thekeys = find(keyCode);
                     if length(thekeys)>1
                         thekeys=thekeys(1);
@@ -817,9 +817,9 @@ end
                     respTimeSTamp(trial)=secs;
                     respTotrial=1;
                     resptrial(trial)=99;
-                %    end
-                     if exist('stim_star')==0
-                        stim_start(trial)=GetSecs;   
+                    %    end
+                    if exist('stim_star')==0
+                        stim_start(trial)=GetSecs;
                         errorTrial(trial)=99;
                     end
                     respRT(trial)=secs-stim_start(trial);
@@ -830,7 +830,7 @@ end
             
             
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<precuetime  && fixating>400
-             %   clear respTotrial
+                %   clear respTotrial
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1055,8 +1055,8 @@ end
                     
                     if ~exist('EyeCode','var')
                         EyeCode =9001;
-                    end                    
-                   if length(EyeCode)>length(EyeData)
+                    end
+                    if length(EyeCode)>length(EyeData)
                         EyeCode=0;
                     end
                     clear EyeData
@@ -1086,7 +1086,7 @@ end
                         EyeSummary.(TrialNum).cueX = 0;
                         EyeSummary.(TrialNum).cueY = 0;
                     end
-                   
+                    
                     if exist('EvtInfo')==0
                         
                         EvtInfo=ones(1,153);
@@ -1106,11 +1106,11 @@ end
                     
                 end
                 
-
+                
             end
             
             eyefixation3
-  
+            
             
             if     newsamplex>fixationwindowRect(3)|| newsampley>fixationwindowRect(4) || newsamplex<fixationwindowRect(1) || newsampley<fixationwindowRect(2)
                 
@@ -1122,22 +1122,22 @@ end
                 
             else
             end
-
-              
+            
+            
             
             if ScotomaPresent == 1
-            Screen('FillOval', w, scotoma_color, scotoma);
+                Screen('FillOval', w, scotoma_color, scotoma);
             else
                 fixationlength=10;
-                  Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-    Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-
+                Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                
             end
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
             
             VBL_Timestamp=[VBL_Timestamp eyetime2];
-
+            
             
             if eyeOrtrack==1
                 GetEyeTrackerData
@@ -1180,119 +1180,119 @@ end
                 %  elseif trial>=3
                 if sum(contains(fieldnames(Response), (TrialNum))) ==0
                     Response.(TrialNum)=1;
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
-                end
-                
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                
-                foo=(RespType==thekeys);
-                
-                
-                % staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1
-                % ),mixtr(trial,2))+1;
-                % Threshlist(mixtr(trial),staircounter(mixtr(trial)))=siz(mixtr(trial,1), mixtr(trial,2));
-                
-                
-                if (thekeys==escapeKey) % esc pressed
-                    closescript = 1;
-                    ListenChar(0);
-                    break;
-                end
-                if trial==1
-                    if foo(theans(trial))
-                        resp = 1;
-                        PsychPortAudio('Start', pahandle1);
-                    else
-                        resp=-1;
-                        PsychPortAudio('Start', pahandle2);
-                    end
-                    respo(trial)=resp;
-                    respTimeSTamp(trial)=secs;
-                    respRT(trial)=secs-stim_start(trial);
-                elseif trial==2
-                    if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants
-                        resp = 1;
-                        PsychPortAudio('Start', pahandle1);
-                        if foo(theans(trial))
-                            respo(trial)=resp;
-                            respTimeSTamp(trial)=secs;
-                            respRT(trial)=secs-stim_start(trial);
-                        elseif  foo(theans(trial-1))
-                            respo(trial-1)=resp;
-                            respTimeSTamp(trial-1)=secs;
-                            respRT(trial-1)=secs-stim_start(trial-1);
-                        end
-                    else
-                        resp = -1;
-                        if theans(trial-1)<5
-                            respo(trial-1)=resp;
-                            respTimeSTamp(trial-1)=secs;
-                            respRT(trial-1)=secs-stim_start(trial-1);
-                        elseif theans(trial)<5
-                            respo(trial)=resp;
-                            respTimeSTamp(trial)=secs;
-                            respRT(trial)=secs-stim_start(trial);
-                        end
-                        PsychPortAudio('Start', pahandle2);
+                    thekeys = find(keyCode);
+                    if length(thekeys)>1
+                        thekeys=thekeys(1);
                     end
                     
-                elseif trial>2
-                    if foo(theans(trial)) || foo(theans(trial-1)) || foo(theans(trial-2))
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes);
+                    
+                    foo=(RespType==thekeys);
+                    
+                    
+                    % staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1
+                    % ),mixtr(trial,2))+1;
+                    % Threshlist(mixtr(trial),staircounter(mixtr(trial)))=siz(mixtr(trial,1), mixtr(trial,2));
+                    
+                    
+                    if (thekeys==escapeKey) % esc pressed
+                        closescript = 1;
+                        ListenChar(0);
+                        break;
+                    end
+                    if trial==1
+                        if foo(theans(trial))
+                            resp = 1;
+                            PsychPortAudio('Start', pahandle1);
+                        else
+                            resp=-1;
+                            PsychPortAudio('Start', pahandle2);
+                        end
+                        respo(trial)=resp;
+                        respTimeSTamp(trial)=secs;
+                        respRT(trial)=secs-stim_start(trial);
+                    elseif trial==2
+                        if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants
+                            resp = 1;
+                            PsychPortAudio('Start', pahandle1);
+                            if foo(theans(trial))
+                                respo(trial)=resp;
+                                respTimeSTamp(trial)=secs;
+                                respRT(trial)=secs-stim_start(trial);
+                            elseif  foo(theans(trial-1))
+                                respo(trial-1)=resp;
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
+                            end
+                        else
+                            resp = -1;
+                            if theans(trial-1)<5
+                                respo(trial-1)=resp;
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
+                            elseif theans(trial)<5
+                                respo(trial)=resp;
+                                respTimeSTamp(trial)=secs;
+                                respRT(trial)=secs-stim_start(trial);
+                            end
+                            PsychPortAudio('Start', pahandle2);
+                        end
                         
-                        if foo(theans(trial))
-                            respo(trial)=resp;
-                            respTimeSTamp(trial)=secs;
-                            if exist('stim_star')==0
-                                stim_start(trial)=GetSecs;
-                                skipframe2(trial)=1;
+                    elseif trial>2
+                        if foo(theans(trial)) || foo(theans(trial-1)) || foo(theans(trial-2))
+                            
+                            if foo(theans(trial))
+                                respo(trial)=resp;
+                                respTimeSTamp(trial)=secs;
+                                if exist('stim_star')==0
+                                    stim_start(trial)=GetSecs;
+                                    skipframe2(trial)=1;
+                                end
+                                respRT(trial)=secs-stim_start(trial);
+                                resp = 1;
+                                PsychPortAudio('Start', pahandle1);
+                            elseif  foo(theans(trial-1)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %one back
+                                respo(trial-1)=resp;
+                                respTimeSTamp(trial-1)=secs;
+                                
+                                respRT(trial-1)=secs-stim_start(trial-1);
+                                resp = 1;
+                                PsychPortAudio('Start', pahandle1);
+                            elseif foo(theans(trial-2)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %two back
+                                respo(trial-2)=resp;
+                                respTimeSTamp(trial-2)=secs;
+                                respRT(trial-2)=secs-stim_start(trial-2);
+                                resp = 1;
+                                PsychPortAudio('Start', pahandle1);
                             end
-                            respRT(trial)=secs-stim_start(trial);
-                            resp = 1;
-                                                    PsychPortAudio('Start', pahandle1);
-                        elseif  foo(theans(trial-1)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %one back
-                            respo(trial-1)=resp;
-                            respTimeSTamp(trial-1)=secs;
                             
-                            respRT(trial-1)=secs-stim_start(trial-1);
-                            resp = 1;
-                                                    PsychPortAudio('Start', pahandle1);
-                        elseif foo(theans(trial-2)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %two back
-                            respo(trial-2)=resp;
-                            respTimeSTamp(trial-2)=secs;
-                            respRT(trial-2)=secs-stim_start(trial-2);
-                            resp = 1;
-                                                    PsychPortAudio('Start', pahandle1);
-                        end
-                 
-                    else
-                        resp = -1;
-                        if theans(trial-2)<5
-                            respo(trial-2)=resp;
-                            respTimeSTamp(trial-2)=secs;
-                            respRT(trial-2)=secs-stim_start(trial-2);
-                        elseif theans(trial-1)<5
-                            respo(trial-1)=resp;
-                            respTimeSTamp(trial-1)=secs;
-                            respRT(trial-1)=secs-stim_start(trial-1);
-                        elseif theans(trial)<5
-                            respo(trial)=resp;
-                            respTimeSTamp(trial)=secs;
-                            
-                            if exist('stim_star')==0
-                                stim_start(trial)=GetSecs;
-                                skipframe2(trial)=1;
+                        else
+                            resp = -1;
+                            if theans(trial-2)<5
+                                respo(trial-2)=resp;
+                                respTimeSTamp(trial-2)=secs;
+                                respRT(trial-2)=secs-stim_start(trial-2);
+                            elseif theans(trial-1)<5
+                                respo(trial-1)=resp;
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
+                            elseif theans(trial)<5
+                                respo(trial)=resp;
+                                respTimeSTamp(trial)=secs;
+                                
+                                if exist('stim_star')==0
+                                    stim_start(trial)=GetSecs;
+                                    skipframe2(trial)=1;
+                                end
+                                respRT(trial)=secs-stim_start(trial);
+                                
+                                %  respo(trial)=resp
                             end
-                            respRT(trial)=secs-stim_start(trial);
-                            
-                            %  respo(trial)=resp
+                            PsychPortAudio('Start', pahandle2);
                         end
-                        PsychPortAudio('Start', pahandle2);
+                        
                     end
-                    
-                end
                 end
                 %   KbQueueFlush()
                 % end
@@ -1320,7 +1320,7 @@ end
         %   save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-    
+%% Clean up and Save 
     % shut down EyeTracker
     if EyeTracker==1
         Eyelink('StopRecording');
@@ -1339,7 +1339,7 @@ end
             % respo=[respo;ss]
             % respo=respo'
             respo=[respo ss];
-        end       
+        end
         if length(respRT)<trial
             s=trial-length(respRT);
             ss=nan(1,s);
@@ -1350,8 +1350,8 @@ end
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     
     c=clock;
-        TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-
+    TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     ListenChar(0);
     Screen('Flip', w);
@@ -1366,7 +1366,7 @@ end
         %     fopen(s1);
         %     fprintf(s1, ['$BitsPlusPlus' 13]); %one day we might use the bits# so better not to get rid of these lines
         %     fclose(s1);
-        PsychPortAudio('Close', pahandle);       
+        PsychPortAudio('Close', pahandle);
     else
         Screen('Preference', 'SkipSyncTests', 0);
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
@@ -1384,7 +1384,7 @@ end
             % respo=[respo;ss]
             % respo=respo'
             respo=[respo ss];
-        end     
+        end
         if length(respRT)<trial
             s=trial-length(respRT);
             ss=nan(1,s);
