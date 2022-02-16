@@ -336,6 +336,9 @@ try
     diocane=0;
     %Marcello -The section in this while loop appears to create the images used in the
     %trials. Does it do anything else? (creating the trials themselves,etc)
+    %it creates the trials so that the number of responses left and right
+    %are balanced. It does so by computing the overall angle to be biased
+    %left or right
     while a<=trials || b<=trials  
         
         a=size(theTargets_left);
@@ -758,7 +761,9 @@ try
         d=(circlePixels2==1);
         newfig=circlePixels;
         newfig(d==1)=0;
-        circlePixels=newfig; %Marcello - what kind of shape is being created here?
+        circlePixels=newfig; %Marcello - what kind of shape is being created here? % this is the circular PRL region within which the target would be visible
+        %later on in the code I 'move' it around with each PRL location and when it is aligned
+        %with the target location,it shows the target.
         
     end
     
