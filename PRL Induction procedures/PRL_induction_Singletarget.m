@@ -75,19 +75,19 @@ try
     
     
     timeOut=15;
-    trialTimeout=timeOut+3; %Marcello what is the timeout number used for? What are units?
+    trialTimeout=timeOut+3; %Marcello what is the timeout number used for? What are units? %this is the max duration of each trial in seconds. If the participant doesn't respond, it assigns the response as wrong
     
     
     scotomadeg=10; %diameter or radius?
     baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
-    randomizzato=1;    %Marcello - is this variable used in this code or a dependency?
+    randomizzato=1;    %Marcello - is this variable used in this code or a dependency? %probably a relic from dead parts of the code, we can remove
     theseed=sum(100*clock);
-    rand('twister',theseed); %Marcello - is "theseed" variable intended to be used for anything?
+    rand('twister',theseed); %Marcello - is "theseed" variable intended to be used for anything? %it is used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions 
     
     trials=30;%500;
     
-    mixtr=ones(trials,2); %Marcello - Is this used for anything or relic from another script?
+    mixtr=ones(trials,2); %Marcello - Is this used for anything or relic from another script? % it looks like another relic, I'll remove it
     KbQueueCreate;
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -795,7 +795,7 @@ try
         
         
         
-        
+        clear fixind
         clear EyeData
         clear FixIndex
         xeye=[];
@@ -1129,7 +1129,7 @@ try
                         
                         for aup= 1:length(PRLxpix)
                             if round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aup))<=size(circlePixels,1) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(aup))<=size(circlePixels,2) ...
-                                    &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aup))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(aup))> 0;
+                                    &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aup))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(aup))> 0
                                 
                                 
                                 codey(aup)=round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(aup));
@@ -1301,7 +1301,8 @@ try
                                                 %                                                 end
                                                 % elseif EyeCode(end-1)==0 && EyeCode(end)==0
                                             elseif   sum(EyeCode(end-5:end))==0
-                                                %mostra target
+                                                %show target
+                                                countertargettt(aux,nn)=1;
                                             end
                                         elseif length(EyeCode)<5 && circlefix2(gg)<=5
                                             %           Screen('DrawTexture', w, Neutralface, [], imageRect_offsDist{gg});
@@ -1376,7 +1377,7 @@ try
                 
                 if EyeData(1)<8000 && stopchecking<0
                     trial_time = GetSecs;
-                    stopchecking=10
+                    stopchecking=10;
                 end
                 
                 if CheckCount > 1
@@ -1401,6 +1402,7 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
             %  toc
             %    disp('fine')
+                        nn=nn+1;
         end
         
         
@@ -1506,7 +1508,7 @@ try
             
             if exist('FixIndex')==0
                 FixIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).FixationIndices = FixIndex;
             clear FixIndex
             EyeSummary.(TrialNum).TotalEvents = CheckCount;
@@ -1558,7 +1560,7 @@ try
         
         if closescript==1
             break;
-        end;
+        end
         
     end
     
@@ -1570,9 +1572,9 @@ try
         if status < 0, fprintf('Error in receiveing file!\n');
         end
         Eyelink('Shutdown');
-    end;
+    end
     if trial>1
-        comparerisp=[rispoTotal' rispoInTime']; %Marcello - is this for debugging/needed for anything?
+        comparerisp=[rispoTotal' rispoInTime']; %Marcello - is this for debugging/needed for anything? % it's just a quick summary of the response (correct/incorrect) and the RT per trial
     end
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
@@ -1597,7 +1599,7 @@ try
         Screen('Flip', w);
         Screen('CloseAll');
         PsychPortAudio('Close', pahandle);
-    end;
+    end
     
     
     %    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|ax|ay|xxx|yyyy|circle|azimuths|corrS|errorS|Allimg)$).');

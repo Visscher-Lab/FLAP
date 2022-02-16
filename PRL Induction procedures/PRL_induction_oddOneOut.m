@@ -1208,6 +1208,8 @@ end
                                                 if round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(suis))<=size(circlePixels,1) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(suis))<=size(circlePixels,2) ...
                                                         &&  round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Y))+PRLypix(suis))> 0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_X))+PRLxpix(suis))> 0;
                                                     if circlePixels(codey(suis), codex(suis))>0.781
+                                                        
+                                                        %target shown
                                                         countertargettt(suis,nn)=1;
                                           %              countertargettteyeX(suis,nn)=1;
                                                                                               %                  countertargettteyeX(suis,nn)=1;
@@ -1309,14 +1311,24 @@ end
                                                             %  if circlePixels(codey(suis), codex(suis))>0.781
                                                             
                                                             if     circlePixels(coodey(gei,suis), coodex(gei,suis))>0.781
-                                                                
+                                                                % target is
+                                                                % shown
+                                                                % here
                                                                 countertargetdist(gei, suis,nn)=1;
                                                             else
+                                                                % target
+                                                                % not shown
+                                                                % but eyes
+                                                                % within
+                                                                % the
+                                                                % screen
                                                                 countertargetdist(gei, suis,nn)=88;
                                                                 
                                                             end
                                                             
                                                         else
+                                                            %eyes off, no
+                                                            %target shown
                                                             countertargetdist(gei, suis,nn)=99;
                                                             
                                                         end
@@ -1573,7 +1585,7 @@ ListenChar(0);
         if status < 0, fprintf('Error in receiveing file!\n');
         end
         Eyelink('Shutdown');
-    end;
+    end
     if trial>1
         comparerisp=[rispoTotal' rispoInTime'];
     end
@@ -1597,7 +1609,7 @@ ListenChar(0);
         Screen('Flip', w);
         Screen('CloseAll');
         PsychPortAudio('Close', pahandle);
-    end;
+    end
     
   
     %    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|ax|ay|xxx|yyyy|circle|azimuths|corrS|errorS|Allimg)$).');
