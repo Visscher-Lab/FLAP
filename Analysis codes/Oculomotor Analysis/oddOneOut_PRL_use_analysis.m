@@ -1,23 +1,85 @@
 
 
 
-%single target analysis
+%odd one out target analysis
 
 clear all
 addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data')
-load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
+load ('PD_DAY_1_PRL_induction_OddOneOutAssigned_10 deg 22_2_8_13_30.mat')
 
 subNum=['Sub ' baseName(8:10) ' Sess ' baseName(16) ' ' ];
 
-name=['single target PRL use analysis' subNum ];
+name=['odd one out PRL use analysis' subNum ];
+
+
+
 
 
 %PRLxpix
 %PRLypix
 firsttrial=1;
-totaltrial=str2num(TrialNum(6:end));
+totaltrial=str2num(TrialNum(6:end))-1;
 
 %totaltrial=1;
+
+coord=[PRLx' PRLy'];
+
+
+for ui=1:length(PRLx)
+text(PRLx(ui), PRLy(ui), num2str(ui))
+end
+
+xlim([-10 10]); ylim([-10 10])
+                set (gca,'YDir','reverse')
+
+                
+for i=firsttrial:totaltrial
+    TrialNum = strcat('Trial',num2str(i));
+    
+    % clear tempo tempo2
+    targetFrameCounter(i)=EyeSummary.(TrialNum).Target.counter;
+    tempo{i}=size(EyeSummary.(TrialNum).Target.visible);
+    
+    countTarget(i)=tempo{i}(2);
+    
+    tempo2{i}=size(EyeSummary.(TrialNum).Target.Disvisible);
+    
+    countDistr(i)=tempo2{i}(3);
+    
+    
+    trialTarget{i}=EyeSummary.(TrialNum).Target.visible==1;
+    
+    PRLonetarget{i}=trialTarget{i}(1,:);
+    PRLtwotarget{i}=trialTarget{i}(2,:);
+    PRLthreetarget{i}=trialTarget{i}(3,:);
+    PRLfourtarget{i}=trialTarget{i}(4,:);
+    
+    
+    totalPRLonetarget{i}=sum(PRLonetarget{i});
+    totalPRLtwotarget{i}=sum(PRLtwotarget{i});
+    totalPRLthreetarget{i}=sum(PRLthreetarget{i});
+    totalPRLfourtarget{i}=sum(PRLfourtarget{i});
+    
+    trialdistTarget{i}=EyeSummary.(TrialNum).Target.Disvisible==1;
+    
+    PRLoneDist{i}=trialdistTarget{1}(:,1,:);
+    PRLtwoDist{i}=trialdistTarget{1}(:,2,:);
+    PRLthreeDist{i}=trialdistTarget{1}(:,3,:);
+    PRLfourDist{i}=trialdistTarget{1}(:,4,:);
+    
+    
+    totalPRLoneDist{i}=sum(sum(PRLoneDist{i}));
+        totalPRLtwoDist{i}=sum(sum(PRLtwoDist{i}));
+        totalPRLthreeDist{i}=sum(sum(PRLthreeDist{i}));
+            totalPRLfourDist{i}=sum(sum(PRLfourDist{i}));
+end
+
+
+
+
+
+
+matr=[targetFrameCounter' countTarget' countDistr'];
 
 for i=firsttrial:totaltrial
     TrialNum = strcat('Trial',num2str(i));
@@ -27,17 +89,13 @@ for i=firsttrial:totaltrial
     TargetCoordX(i)=(wRect(3)/2)+EyeSummary.(TrialNum).TargetX;
     TargetCoordY(i)=(wRect(4)/2)+EyeSummary.(TrialNum).TargetY;
     
-    finalTargetFrame(i)=EyeSummary.(TrialNum).Target.counter;    
-      %  score_all_fix{i}=EyeSummary.(TrialNum).Target.FixInd;
+    finalTargetFrame(i)=EyeSummary.(TrialNum).Target.counter;
+    score_all_fix{i}=EyeSummary.(TrialNum).Target.FixInd;
+    tempscorefix=score_all_fix{i};
+    score_all_fix_end{i}=tempscorefix(1:finalTargetFrame(i));
+    score_fix(i)=length(score_all_fix_end{i})/4;
     
-     score_all_fix{i}=EyeSummary.(TrialNum).Target.FixInd(EyeSummary.(TrialNum).Target.FixInd>0);
-  
-%     tempscorefix=score_all_fix{i};
-%     score_all_fix_end{i}=tempscorefix(1:finalTargetFrame(i));
-%     score_fix(i)=length(score_all_fix_end{i})/4;
-%     fixationIndexesWithTarget{i}=unique(score_all_fix_end{i});
-    fixationIndexesWithTarget{i}=unique(score_all_fix{i});
-    
+    fixationIndexesWithTarget{i}=unique(score_all_fix_end{i});
     
     
     for oy=1:length(fixationIndexesWithTarget{i})

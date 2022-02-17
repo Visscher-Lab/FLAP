@@ -884,6 +884,10 @@ oui(i)=newangles(randi(length(newangles)));
         
         clear EyeData
         clear FixIndex
+        clear countertargettt
+        clear countertargetdist
+        clear fixind
+        clear fixind2
         xeye=[];
         yeye=[];
         pupils=[];
@@ -904,6 +908,7 @@ oui(i)=newangles(randi(length(newangles)));
         xeye2=[];
         yeye2=[];
         mostratarget=0;
+        mostradistract=0;
         countertarget=0;
         oval_thick=5;
         
@@ -1315,6 +1320,13 @@ end
                                                                 % shown
                                                                 % here
                                                                 countertargetdist(gei, suis,nn)=1;
+                                                                
+                                                                framefix2(gei,suis,countertarget)=length(EyeData(:,1));
+                                                                if exist('FixIndex','var')
+                                                                    fixind2(gei,suis,countertarget)=FixIndex(end,1);
+                                                                end
+                                                                mostradistract=100;
+                                                                timeprevioustarget2(gei,suis,countertarget)=GetSecs;
                                                             else
                                                                 % target
                                                                 % not shown
@@ -1547,8 +1559,11 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
             EyeSummary.(TrialNum).Target.App = mostratarget;
             EyeSummary.(TrialNum).Target.counter=countertarget;
             EyeSummary.(TrialNum).Target.visible=countertargettt;
+            EyeSummary.(TrialNum).Target.DistApp=mostradistract;
             EyeSummary.(TrialNum).Target.Disvisible=countertargetdist;
  EyeSummary.(TrialNum).Target.FixInd=fixind;
+  EyeSummary.(TrialNum).Target.DistFixInd=fixind2;
+
             EyeSummary.(TrialNum).Target.Fixframe=framefix;
             EyeSummary.(TrialNum).PRL.x=PRLx;
             EyeSummary.(TrialNum).PRL.y=PRLy;
