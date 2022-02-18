@@ -62,7 +62,7 @@ subjRT{ui}=FLAP_pilot_RT(stopsAcc(ui):stopsAcc(ui)+4,:);
   for ui=1:subjs
 %subjAccprenorm{ui}=subjAcc{ui}(1:3,:);
  %newsubj=subjAccprenorm{1};
- newsubj=subjAcc{ui}(1:3,:);
+ newsubj=subjRT{ui}(1:3,:);
   allsubjnorm=[allsubjnorm ;newsubj];
   end 
 
@@ -76,7 +76,7 @@ normalizedCWtan=allsubjnorm(3:3:end,:);
 % extract attention data
 allsubjprenormAtt=[];
   for ui=1:subjs
-newsubj=subjAcc{ui}(4:5,:);
+newsubj=subjRT{ui}(4:5,:);
   allsubjprenormAtt=[allsubjprenormAtt ;newsubj];
   end 
   
@@ -259,7 +259,7 @@ ax.ThetaZeroLocation = 'top';
 name=theNames{(ui)};
 name=char(name);
 name=name(1:2);
-title([name ' Summary performance Accuracy '])
+title([name ' Summary performance RT '])
 %rlim([0 60])
 %rlim([0 60]) % to zoom in
 
@@ -267,7 +267,7 @@ title([name ' Summary performance Accuracy '])
 
 legend('VA', 'CWrad', 'CWtan', 'short cue',  'long cue', 'PRL dist','PRL')
 
-print([name 'polar_summary_compare_norm_2022'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print([name 'polar_summary_compare_norm_2022RT'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([name 'polar_summary_compare_normzoom'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 %    close all 
