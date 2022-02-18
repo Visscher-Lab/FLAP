@@ -1,45 +1,45 @@
 
 
-
-%single target analysis
-
-
-%odd one out target analysis
-
+%MM 2/17/2022
+%single target and odd one out analysis from PRL induction with 4 possible
+%PRL locations
 
 clear all
 
-addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data')
+addpath('/Users/marcellomaniglia/Downloads/FLAP/BGC new pilots/Induction')
 
+cd '/Users/marcellomaniglia/Downloads/FLAP/BGC new pilots/Induction'
 nameOffile = dir(['*.mat']);
 
-load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
+%load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
 
-load ('PD_DAY_1_PRL_induction_OddOneOutAssigned_10 deg 22_2_8_13_30.mat')
+%load ('PD_DAY_1_PRL_induction_OddOneOutAssigned_10 deg 22_2_8_13_30.mat')
 
-subNum=['Sub ' baseName(8:10) ' Sess ' baseName(16) ' ' ];
 
-if baseName(31:33)== 'Odd'
+%for ui=1:length(nameOffile)
+    for uix=1:length(nameOffile)
     
-    OddOrSingle=1;
-    name=['odd one out PRL use analysis' subNum ];
+    newest = nameOffile(uix).name;     
+    load(['./' newest]);
+    subNum=['Sub ' baseName(8:15)]; %' Sess ' baseName(16) ' ' ];
     
-elseif baseName(31:33)== 'Sin'
-    OddOrSingle=2;
-    name=['single target PRL use analysis' subNum ];
-    
-end
-
-
-
-
+     if uix==34
+    if baseName(31:33)== 'Odd'
+        OddOrSingle=1;
+        name=['odd one out PRL use analysis' subNum ];
+        
+    elseif baseName(31:33)== 'Sin'
+        OddOrSingle=2;
+        name=['single target PRL use analysis' subNum ];
+        
+    end
 
 %PRLxpix
 %PRLypix
 firsttrial=1;
 totaltrial=str2num(TrialNum(6:end))-1;
-
-%totaltrial=1;
+%totaltrial=2;
+%totaltrial=149;
 
 for i=firsttrial:totaltrial
     
@@ -64,6 +64,7 @@ for i=firsttrial:totaltrial
     %  score_all_fix{i}=EyeSummary.(TrialNum).Target.FixInd;
     
     score_all_fix{i}=EyeSummary.(TrialNum).Target.FixInd(EyeSummary.(TrialNum).Target.FixInd>0);
+    
     %     tempscorefix=score_all_fix{i};
     %     score_all_fix_end{i}=tempscorefix(1:finalTargetFrame(i));
     %     score_fix(i)=length(score_all_fix_end{i})/4;
@@ -71,7 +72,8 @@ for i=firsttrial:totaltrial
     ffixationIndexesWithTarget{i}=unique(score_all_fix{i});
     
     fixationIndexesWithTarget{i}=ffixationIndexesWithTarget{i};
-    fixationIndexesWithTarget{i}=fixationIndexesWithTarget{i}(ffixationIndexesWithTarget{i}<=score_all_fix{i}(end));
+    % fixationIndexesWithTarget{i}=fixationIndexesWithTarget{i}(ffixationIndexesWithTarget{i}<=score_all_fix{i}(end));
+    fixationIndexesWithTarget{i}=fixationIndexesWithTarget{i}(ffixationIndexesWithTarget{i}<=EyeSummary.(TrialNum).FixationIndices(end));
     
     for oy=1:length(fixationIndexesWithTarget{i})
         if sum(sum((EyeSummary.(TrialNum).FixationIndices(:,1)==fixationIndexesWithTarget{i}(oy))))>0
@@ -87,7 +89,7 @@ for i=firsttrial:totaltrial
         end
     end
     
-    
+    if counterValidFixation>0
     for iuo=1:length(fixationIndexesWithTargetEnd{i})
         
         if fixationIndexesWithTargetEnd{i}(iuo)-fixationIndexesWithTargetUpdated{i}(iuo)>5
@@ -98,9 +100,10 @@ for i=firsttrial:totaltrial
         end
         
     end
-    
-    
-    
+    else
+        countlongfixation=0;
+end
+    thereisfix(i)=countlongfixation;
     if countlongfixation>0
         for iuo=1:length(fixationIndexesWithTargetUpdated_long{i})
             
@@ -137,22 +140,89 @@ for i=firsttrial:totaltrial
         end
         
         durationFixation{i}=fixationIndexesWithTargetEnd_long{i}-fixationIndexesWithTargetUpdated_long{i};
-    end
-end
-
-
-for i=firsttrial:totaltrial
+    
+    
     for ii=1:length(fixationIndexesWithTargetUpdated_long{i})
         
-        targetNearest(i,ii,:)=[d{i,ii,:}]==min([d{i,ii,:}]);
+        duration_for_fixation(ii)=durationFixation{i}(ii);
+        
+        targetNearest(1,ii,:)=[d{i,ii,:}]==min([d{i,ii,:}]);
         
         if OddOrSingle==1
-            distoneNearest(i,ii,:)=[d2{i,ii,:}]==min([d2{i,ii,:}]);
-            disttwoNearest(i,ii,:)=[d3{i,ii,:}]==min([d3{i,ii,:}]);
+            distoneNearest(1,ii,:)=[d2{i,ii,:}]==min([d2{i,ii,:}]);
+            disttwoNearest(1,ii,:)=[d3{i,ii,:}]==min([d3{i,ii,:}]);
         end
         
-        duration_for_fixation(i,ii)=durationFixation{i}(ii);
+        
         
     end
     
+    tgtnear{i}=targetNearest;
+    
+    
+    drts{i}=duration_for_fixation;
+    xframePerPRLtgt{i}=sum(targetNearest.*duration_for_fixation);
+    
+    if length(drts{i})<2
+        framePerPRLtgt{i}=(tgtnear{i}.*drts{i});
+    else
+        framePerPRLtgt{i}=sum(tgtnear{i}.*drts{i});
+    end
+    
+    if OddOrSingle==1
+        
+        distone{i}=distoneNearest;
+        distwo{i}=disttwoNearest;
+        xframePerPRLDistone{i}=sum(distoneNearest.*duration_for_fixation);
+        xframePerPRLDisttwo{i}=sum(disttwoNearest.*duration_for_fixation);
+        
+        if length(drts{i})<2
+            
+            framePerPRLDistone{i}=(distone{i}.*drts{i});
+            framePerPRLDisttwo{i}=(distwo{i}.*drts{i});
+        else
+            framePerPRLDistone{i}=sum(distone{i}.*drts{i});
+            framePerPRLDisttwo{i}=sum(distwo{i}.*drts{i});
+        end
+    end
+    
+    clear targetNearest distoneNearest disttwoNearest duration_for_fixation
+    end
+
 end
+
+
+counterPRLtarget=cell2mat(framePerPRLtgt);
+if OddOrSingle==1
+counterPRLdistone=cell2mat(framePerPRLDistone);
+counterPRLdisttwo=cell2mat(framePerPRLDisttwo);
+end
+
+for io=1:length(PRLxpix)
+    totalFramesXPRLtarget(io)=sum(counterPRLtarget(1,:,io));
+    
+    
+    if OddOrSingle==1
+        totalFramesXPRLdistone(io)=sum(counterPRLdistone(1,:,io));
+        totalFramesXPRLdisttwo(io)=sum(counterPRLdisttwo(1,:,io));
+        
+    end
+end
+
+
+% proportion of 'target visible' frames in ech PRL
+
+FrameTargetDistribution=totalFramesXPRLtarget/sum(totalFramesXPRLtarget);
+
+if OddOrSingle==1
+    FrameTargetDistribution=(totalFramesXPRLtarget+totalFramesXPRLdistone+totalFramesXPRLdisttwo)/(sum(totalFramesXPRLtarget)+sum(totalFramesXPRLdistone)+sum(totalFramesXPRLdisttwo));   
+end
+ 
+
+summaryTable.score{uix}=FrameTargetDistribution;
+summaryTable.name{uix}=name;
+
+clearvars -except summaryTable uix nameOffile
+
+end
+

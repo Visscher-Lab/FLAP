@@ -4,41 +4,42 @@
 %single target and odd one out analysis from PRL induction with 4 possible
 %PRL locations
 
-
-
 clear all
 
-addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data')
+addpath('/Users/marcellomaniglia/Downloads/FLAP/BGC new pilots/Induction')
 
+cd '/Users/marcellomaniglia/Downloads/FLAP/BGC new pilots/Induction'
 nameOffile = dir(['*.mat']);
 
-load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
+%load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
 
-load ('PD_DAY_1_PRL_induction_OddOneOutAssigned_10 deg 22_2_8_13_30.mat')
+%load ('PD_DAY_1_PRL_induction_OddOneOutAssigned_10 deg 22_2_8_13_30.mat')
 
-subNum=['Sub ' baseName(8:10) ' Sess ' baseName(16) ' ' ];
 
-if baseName(31:33)== 'Odd'
+%for ui=1:length(nameOffile)
+    for uix=1:length(nameOffile)
     
-    OddOrSingle=1;
-    name=['odd one out PRL use analysis' subNum ];
+    newest = nameOffile(uix).name;     
+    load(['./' newest]);
+    subNum=['Sub ' baseName(8:15)]; %' Sess ' baseName(16) ' ' ];
     
-elseif baseName(31:33)== 'Sin'
-    OddOrSingle=2;
-    name=['single target PRL use analysis' subNum ];
-    
-end
-
-
-
-
+        
+     if   baseName(33)== 'd'
+        OddOrSingle=1;
+        name=['odd one out PRL use analysis' subNum ];
+        
+     else %if baseName(31:33)== 'Sin'
+        OddOrSingle=2;
+        name=['single target PRL use analysis' subNum ];
+        
+    end
 
 %PRLxpix
 %PRLypix
 firsttrial=1;
 totaltrial=str2num(TrialNum(6:end))-1;
 %totaltrial=2;
-%totaltrial=1;
+%totaltrial=149;
 
 for i=firsttrial:totaltrial
     
@@ -88,7 +89,7 @@ for i=firsttrial:totaltrial
         end
     end
     
-    
+    if counterValidFixation>0
     for iuo=1:length(fixationIndexesWithTargetEnd{i})
         
         if fixationIndexesWithTargetEnd{i}(iuo)-fixationIndexesWithTargetUpdated{i}(iuo)>5
@@ -99,9 +100,10 @@ for i=firsttrial:totaltrial
         end
         
     end
-    
-    
-    
+    else
+        countlongfixation=0;
+end
+    thereisfix(i)=countlongfixation;
     if countlongfixation>0
         for iuo=1:length(fixationIndexesWithTargetUpdated_long{i})
             
@@ -138,7 +140,7 @@ for i=firsttrial:totaltrial
         end
         
         durationFixation{i}=fixationIndexesWithTargetEnd_long{i}-fixationIndexesWithTargetUpdated_long{i};
-    end
+    
     
     for ii=1:length(fixationIndexesWithTargetUpdated_long{i})
         
@@ -156,11 +158,71 @@ for i=firsttrial:totaltrial
     end
     
     tgtnear{i}=targetNearest;
-    drts{i}=duration_for_fixation;
-    framePerPRLtgt{i}=sum(targetNearest.*duration_for_fixation);
-    framePerPRLDistone{i}=sum(distoneNearest.*duration_for_fixation);
-    framePerPRLDisttwo{i}=sum(disttwoNearest.*duration_for_fixation);
     
+    
+    drts{i}=duration_for_fixation;
+    xframePerPRLtgt{i}=sum(targetNearest.*duration_for_fixation);
+    
+    if length(drts{i})<2
+        framePerPRLtgt{i}=(tgtnear{i}.*drts{i});
+    else
+        framePerPRLtgt{i}=sum(tgtnear{i}.*drts{i});
+    end
+    
+    if OddOrSingle==1
+        
+        distone{i}=distoneNearest;
+        distwo{i}=disttwoNearest;
+        xframePerPRLDistone{i}=sum(distoneNearest.*duration_for_fixation);
+        xframePerPRLDisttwo{i}=sum(disttwoNearest.*duration_for_fixation);
+        
+        if length(drts{i})<2
+            
+            framePerPRLDistone{i}=(distone{i}.*drts{i});
+            framePerPRLDisttwo{i}=(distwo{i}.*drts{i});
+        else
+            framePerPRLDistone{i}=sum(distone{i}.*drts{i});
+            framePerPRLDisttwo{i}=sum(distwo{i}.*drts{i});
+        end
+    end
     
     clear targetNearest distoneNearest disttwoNearest duration_for_fixation
+    end
+
 end
+
+
+counterPRLtarget=cell2mat(framePerPRLtgt);
+if OddOrSingle==1
+counterPRLdistone=cell2mat(framePerPRLDistone);
+counterPRLdisttwo=cell2mat(framePerPRLDisttwo);
+end
+
+for io=1:length(PRLxpix)
+    totalFramesXPRLtarget(io)=sum(counterPRLtarget(1,:,io));
+    
+    
+    if OddOrSingle==1
+        totalFramesXPRLdistone(io)=sum(counterPRLdistone(1,:,io));
+        totalFramesXPRLdisttwo(io)=sum(counterPRLdisttwo(1,:,io));
+        
+    end
+end
+
+
+% proportion of 'target visible' frames in ech PRL
+
+FrameTargetDistribution=totalFramesXPRLtarget/sum(totalFramesXPRLtarget);
+
+if OddOrSingle==1
+    FrameTargetDistribution=(totalFramesXPRLtarget+totalFramesXPRLdistone+totalFramesXPRLdisttwo)/(sum(totalFramesXPRLtarget)+sum(totalFramesXPRLdistone)+sum(totalFramesXPRLdisttwo));   
+end
+ 
+
+summaryTable.score{uix}=FrameTargetDistribution;
+summaryTable.name{uix}=name;
+
+clearvars -except summaryTable uix nameOffile
+
+end
+
