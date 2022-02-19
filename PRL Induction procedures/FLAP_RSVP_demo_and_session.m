@@ -1,7 +1,6 @@
 % FLAP Attention task via RSVP streams on 4 peripheral locations
 % Marcello Maniglia 7/21/2021
 
-% Marcello Maniglia 7/21/2021
 
 close all; clear all; clc; % clear the window
 commandwindow
@@ -476,38 +475,28 @@ try
     [nrw, ncl]=size(x);
     
     
-    %theLetter=imread('target_black.tiff');
     theLetter=imread('newletterc22.tiff');
     theLetter=theLetter(:,:,1);
     theLetter=imresize(theLetter,[nrw ncl],'bicubic');
-    %       theLetter=imresize(theLetter,[300 300],'bicubic');
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetterO=theLetter;
     theLetter=Screen('MakeTexture', w, theLetter);
     theLetterO(:,ncl/2+1:end)=theLetterO(:,ncl/2:-1:1);
-    %      theLetterO=Screen('MakeTexture', w, theLetterO);
     whichLetter(1)=Screen('MakeTexture', w, theLetterO);
     
     theLetterl=imread('letter_l2.tiff');
-    %                         theLetterl=imread('letter_d2.tiff');
     theLetterl=theLetterl(:,:,1);
     theLetterl=imresize(theLetterl,[nrw ncl],'bicubic');
-    % theLetterl = double(circle) .* double(theLetterl)+bg_index * ~double(circle);
-    % theLetterl=Screen('MakeTexture', w, theLetterl);
     whichLetter(2)=Screen('MakeTexture', w, theLetterl);
     
     theLetterr=imread('letter_r2.tiff');
     theLetterr=theLetterr(:,:,1);
     theLetterr=imresize(theLetterr,[nrw ncl],'bicubic');
-    %  theLetterr = double(circle) .* double(theLetterr)+bg_index * ~double(circle);
-    %  theLetterr=Screen('MakeTexture', w, theLetterr);
     whichLetter(3)=Screen('MakeTexture', w, theLetterr);
     
     theLetterd=imread('letter_d2.tiff');
     theLetterd=theLetterd(:,:,1);
     theLetterd=imresize(theLetterd,[nrw ncl],'bicubic');
-    %  theLetterd = double(circle) .* double(theLetterd)+bg_index * ~double(circle);
-    %  theLetterd=Screen('MakeTexture', w, theLetterd);
     whichLetter(4)=Screen('MakeTexture', w, theLetterd);
     
     imageRect1 = CenterRect([0, 0, [stimulussize*pix_deg stimulussize*pix_deg_vert]], wRect);
@@ -515,9 +504,7 @@ try
     
     thecue=imread('ccue2.tiff');
     thecue=thecue(:,:,1);
-    thecue=imresize(thecue,[nrw ncl],'bicubic');
-    % thecue = double(circle) .* double(thecue)+bg_index * ~double(circle);
-    
+    thecue=imresize(thecue,[nrw ncl],'bicubic');    
     cueimage=Screen('MakeTexture', w, thecue);
     
     cueleft=[-circle_size*pix_deg/2 0  -circle_size*pix_deg/2 0];
@@ -526,7 +513,6 @@ try
     cueup=[0 -circle_size*pix_deg/2 0  -circle_size*pix_deg/2 ];
     
     thecues={cueup cueright cuedown cueleft};
-    % thecuesEx={cueleft cueright cuedown cueup};
     
     thecuesEx=thecues;
     xeye=[];
@@ -538,19 +524,13 @@ try
     tracktime=[];
 %% Trials
     for trial=1:length(newtrialmatrix)
-        % for trial=1:14
         Response.start=0;
         
         
         if trial==1 && newtrialmatrix(trial+1,1)==1
             switch_task_script_endo
         end
-        %         if trial>2 && trial<=length(newtrialmatrix)-1
-        %             if newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)~=newtrialmatrix(trial+1,1)   &&    newtrialmatrix(trial-1,1)~=0
-        %                 switch_task_script
-        %             end
-        %         end
-        
+
         if trial==1 && newtrialmatrix(trial+1,1)==2
             switch_task_script_exo
         end
@@ -563,11 +543,7 @@ try
         if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==2 && newtrialmatrix(trial+1,1)==1
             switch_task_script_endo
         end
-        
-        %         if trial==length(newtrialmatrix)/2+1
-        %             switch_task_script
-        %
-        %         end
+
         if sum(trial==totaltrialbreak)>0
             interblock_instruction_rsvp;
         end
@@ -616,11 +592,9 @@ try
         %    theans(trial)=randi(4); %generates answer for this trial
         
         
-        %(trial)=trialmatrix(trial,3);
         theans(trial)=newtrialmatrix(trial,5);
         
-        %   theans(trial)=newtrial(trial,3);
-        %T=newtrial(trial,2)
+
         
         % coding target ori or cue
         ori_i(trial)=theans(trial);
@@ -629,13 +603,11 @@ try
         eyechecked=0;
         
         KbQueueFlush();
-        %trial_time = GetSecs;
         pretrial_time=GetSecs;
         trial_time=-1000;
         fixstart=100000;
         stopfixating=0;
         stopfixating2=0;
-        %  T=trialmatrix(trial,2);
         T=newtrialmatrix(trial,1);
         
         
@@ -702,14 +674,7 @@ try
             fixating=1500;
             stopfixating=1000;
         end
-        
-        
-        % if trial>1
-        
-        
-        %    end
-        
-        
+
         imageRect_circleoffs1=[imageRectcircles(1)+eccentricity_X(1), imageRectcircles(2)+eccentricity_Y(1),...
             imageRectcircles(3)+eccentricity_X(1), imageRectcircles(4)+eccentricity_Y(1)];
         imageRect_circleoffs2=[imageRectcircles(1)+eccentricity_X(2), imageRectcircles(2)+eccentricity_Y(2),...
@@ -788,7 +753,6 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                     
-                    %    if exist('respTotrial') == 0
                     thekeys = find(keyCode);
                     if length(thekeys)>1
                         thekeys=thekeys(1);
@@ -847,18 +811,15 @@ try
                     cueonset=GetSecs; %clear the screen
                     %Fill the buffer and play our sound
                     cueontime=cueonset + (ifi * 0.5);
-                    %      PsychPortAudio('Start', pahandle,1,inf); %starts sound at infinity
-                    %  PsychPortAudio('RescheduleStart', pahandle, cueontime, 0) %reschedules startime to
-                    
+
                     
                     imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
                     
                     
                     cuecounter(trial)=1;
-                    %  Screen('DrawTexture', w, cueimage, [], imageRect_offscue, 0,[], alphastim );
                     
-                    %
+                    
                     
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
@@ -866,7 +827,6 @@ try
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
                     
                 end
-                %   end
                 
             elseif  (eyetime2-trial_time)>precuetime+ifi && (eyetime2-trial_time)<precuetime+cuedir+ifi && fixating>500
                 
@@ -875,20 +835,17 @@ try
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                 
-                %  if  trial>1
-                if  T==0 %newtrialmatrix(trial-1,1)==1 && T==2 || newtrialmatrix(trial-1,1)==2 && T==2 && newtrialmatrix(trial,2)~=newtrialmatrix(trial-1,2)
+                if  T==0 
                     
                     imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
                     
-                    %             Screen('DrawTexture', w, cueimage, [], imageRect_offscue, 0,[], alphastim );
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{3}(1), imageRectendocues{tloc}(2)+thecuesEx{3}(2),imageRectendocues{tloc}(3)+thecuesEx{3}(3), imageRectendocues{tloc}(4)+thecuesEx{3}(4)]);
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
                     
                 end
-                %    end
                 
             elseif (eyetime2-trial_time)>=precuetime+cuedir+ifi && (eyetime2-trial_time)<=precuetime+cuedir+ifi+cuetargetISI && fixating>500
                 
@@ -912,7 +869,6 @@ try
                 
                 
                 imageRect_offs={imageRect_offs1 imageRect_offs2 imageRect_offs3 imageRect_offs4};
-                %    imageRect_offs_other={imageRect_offs1 imageRect_offs2 imageRect_offs3};
                 
                 if newtrialmatrix(trial,5)<5
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
@@ -945,11 +901,7 @@ try
                 
                 
             elseif (eyetime2-trial_time)>precuetime+cuedir+ifi+cuetargetISI+ifi*2 && (eyetime2-trial_time)<precuetime+cuedir+ifi+cuetargetISI+stimdur && fixating>500 && T<3%&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0
-                
-                
-                %           Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
-                %        Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
-                %        Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
+
                 imageRect_offs1=[imageRect1(1)+eccentricity_X(1), imageRect1(2)+eccentricity_Y(1),...
                     imageRect1(3)+eccentricity_X(1), imageRect1(4)+eccentricity_Y(1)];
                 imageRect_offs2=[imageRect1(1)+eccentricity_X(2), imageRect1(2)+eccentricity_Y(2),...
@@ -1007,7 +959,6 @@ try
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                 
                 
-                %  elseif
             elseif  (eyetime2-trial_time)>precuetime+cuedir+ifi+cuetargetISI+stimdur+poststimulustime && fixating>500 && T<3
                 
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
@@ -1026,10 +977,7 @@ try
                 
                 
                 eyechecked=1111111111;
-                %         resp = NaN;
-                %   if exist(respo(trial))==0
-                %                                                 respo(trial)=resp
-                %   end
+
                 
                 if fixating>80
                     if numel(stim_start)<kk
@@ -1168,16 +1116,9 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
             
             
-            %  if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3))+keyCode(RespType(4))+keyCode(RespType(5:8))+keyCode(escapeKey)~= 0 && stopfixating>80
             
             if sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0 && stopfixating>80
-                
-                %  if trial<3
-                %      resp = -1;
-                % respo(trial)=resp
-                %      PsychPortAudio('Start', pahandle2);
-                
-                %  elseif trial>=3
+
                 if sum(contains(fieldnames(Response), (TrialNum))) ==0
                     Response.(TrialNum)=1;
                     thekeys = find(keyCode);
@@ -1189,13 +1130,7 @@ try
                     [secs  indfirst]=min(thetimes);
                     
                     foo=(RespType==thekeys);
-                    
-                    
-                    % staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1
-                    % ),mixtr(trial,2))+1;
-                    % Threshlist(mixtr(trial),staircounter(mixtr(trial)))=siz(mixtr(trial,1), mixtr(trial,2));
-                    
-                    
+
                     if (thekeys==escapeKey) % esc pressed
                         closescript = 1;
                         ListenChar(0);
@@ -1303,9 +1238,7 @@ try
         
         if (mod(trial,200))==1
             if trial==1
-            else
-                
-                %save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+            else                
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
             end
         end
@@ -1316,9 +1249,7 @@ try
             break
         end
         
-        kk=kk+1;
-        %   save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-        
+        kk=kk+1;        
     end
 %% Clean up and Save 
     % shut down EyeTracker
@@ -1335,9 +1266,7 @@ try
         if length(respo)<trial
             s=trial-length(respo);
             ss=nan(1,s);
-            %  respo=[respo;ss']
-            % respo=[respo;ss]
-            % respo=respo'
+
             respo=[respo ss];
         end
         if length(respRT)<trial
@@ -1373,7 +1302,7 @@ try
         Screen('Flip', w);
         Screen('CloseAll');
         PsychPortAudio('Close', pahandle);
-    end;
+    end
     
     %%
     if exist('respo')==1

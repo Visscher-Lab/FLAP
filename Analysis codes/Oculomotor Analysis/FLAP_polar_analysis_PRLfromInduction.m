@@ -219,9 +219,10 @@ end
 
 
 %PRL dist long
+clear ddd
 hold on
-polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'y-o', 'MarkerFaceColor', 'y')
-
+ddd=polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'y-o', 'MarkerFaceColor', 'y')
+ddd.Color=[130/255 130/255 42/255 ];
 [t,r]=rose(alpha_rad_PRLdist,range)
 mr = max(2*r/sum(r));
  r = circ_r(alpha_rad_PRLdist) * mr;

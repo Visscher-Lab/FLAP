@@ -67,7 +67,9 @@ subjRT{ui}=FLAP_pilot_RT(stopsAcc(ui):stopsAcc(ui)+4,:);
   end 
 
   %normalize VA and crowding
-  allsubjnorm=mat2gray(allsubjnorm);
+      allsubjnorm=mat2gray(allsubjnorm);
+  allsubjnorm=1-allsubjnorm;
+  
 normalizedVA=allsubjnorm(1:3:end,:);
 normalizedCWrad=allsubjnorm(2:3:end,:);
 normalizedCWtan=allsubjnorm(3:3:end,:);
@@ -219,8 +221,12 @@ end
 
 
 %PRL dist long
+
+
+clear ddd
 hold on
-polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'y-o', 'MarkerFaceColor', 'y')
+ddd=polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'y-o', 'MarkerFaceColor', 'y')
+ddd.Color=[130/255 130/255 42/255 ];
 
 [t,r]=rose(alpha_rad_PRLdist,range)
 mr = max(2*r/sum(r));

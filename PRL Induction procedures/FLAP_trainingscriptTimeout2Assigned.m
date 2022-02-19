@@ -56,10 +56,11 @@ try
     stimulusSize=2.5;
     
     sigma_deg=stimulusSize/2.5;
-    holdtrial=0;
+    holdtrial=1;
     cueSize=3;
     
-    
+    annulusOrPRL=2; % in traiing types in which we force fixation before target appearance, 
+    %do we want fixation within an annulus or within their PRL?
     trialTimeout=8;
     realtrialTimeout=trialTimeout;
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
@@ -83,6 +84,8 @@ try
     jitterCI=1;
     possibleoffset=[-2:2];
     
+%possibleoffset=[-1:1];
+    
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
     n_blocks=1;
@@ -92,9 +95,9 @@ try
     closescript=0;
     kk=1;
     
-    cueonset=0.55; %0
-    cueduration=.05;
-    cueISI=0.1;
+    cueonset=0.55; %time between beginning of trial and cue apparition (when we need a switch cue)
+    cueduration=.05; % duration of cue when we have a cue (otherwise it's a blank interval)
+    cueISI=0.1; %time interval between cue disappearamce and next event
     % FlickerTime=0.133;
     ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
     
@@ -658,8 +661,49 @@ try
         
     end
     
-    if trainingType~=1
-    ecc_r=targetecc*pix_deg;
+%     if trainingType~=1
+%     ecc_r=targetecc*pix_deg;
+%     
+%     angolo= [90 45 0 315 270 225 180 135];
+%     
+%     for ui=1:length(angolo)
+%         %if we want to randomize the angle and the radius of the
+%         %target location
+%         % ecc_r=r_lim.*rand(1,1);
+%         %  ecc_t=2*pi*rand(1,1);
+%         ecc_t=deg2rad(angolo(ui));
+%         cs= [cos(ecc_t), sin(ecc_t)];
+%         xxyy=[ecc_r ecc_r].*cs;
+%         ecc_x=xxyy(1);
+%         ecc_y=xxyy(2);
+%         eccentricity_X(ui)=ecc_x;
+%         eccentricity_Y(ui)=ecc_y;
+%     end
+%     end
+
+    
+    
+    if trainingType==1
+        eccentricity_X= zeros(length(mixtr),1);
+        eccentricity_Y= zeros(length(mixtr),1);
+    elseif trainingType==2 || trainingType==4      
+        for ui=1:length(mixtr)
+            %if we want to randomize the angle and the radius of the
+            %target location
+            ecc_r=(r_lim*pix_deg).*rand(1,1);
+            ecc_t=2*pi*rand(1,1);
+            % ecc_t=deg2rad(angolo(ui));
+            cs= [cos(ecc_t), sin(ecc_t)];
+            xxyy=[ecc_r ecc_r].*cs;
+            ecc_x=xxyy(1);
+            ecc_y=xxyy(2);
+            eccentricity_X(ui)=ecc_x;
+            eccentricity_Y(ui)=ecc_y;
+        end       
+          elseif trainingType==3
+            
+        
+            ecc_r=targetecc*pix_deg;
     
     angolo= [90 45 0 315 270 225 180 135];
     
@@ -676,67 +720,35 @@ try
         eccentricity_X(ui)=ecc_x;
         eccentricity_Y(ui)=ecc_y;
     end
-end
-    if trainingType==3
-        mixtr=[repmat(1:length(angolo),1,trials)'];
-        mixtr =mixtr(randperm(length(mixtr)),:);
+    mixtr=[repmat(1:length(angolo),1,trials)'];
+        mixtr =mixtr(randperm(length(mixtr)),:);   
         
-        
-        
-        %       if holdlocations
-        %           for ui=1:length(mixtr)
-        %
-        %              if
-        %               thex=eccentricity_X(ui2);
-        %             they=eccentricity_Y(ui2);
-        %           end
-        %             newmixtr(ui,1)=thex;
-        %             newmixtr(ui,2)=they;
-        %           end
-        %       end
-    elseif trainingType==2 || trainingType==4
-        
-        for ui=1:length(mixtr)
-            %if we want to randomize the angle and the radius of the
-            %target location
-            ecc_r=(r_lim*pix_deg).*rand(1,1);
-            ecc_t=2*pi*rand(1,1);
-            % ecc_t=deg2rad(angolo(ui));
-            cs= [cos(ecc_t), sin(ecc_t)];
-            xxyy=[ecc_r ecc_r].*cs;
-            ecc_x=xxyy(1);
-            ecc_y=xxyy(2);
-            eccentricity_X(ui)=ecc_x;
-            eccentricity_Y(ui)=ecc_y;
-        end
-        
-        eccentricity_X= zeros(length(mixtr),1);
-        eccentricity_Y= zeros(length(mixtr),1);
-        
+        mixtr=[mixtr ones(length(mixtr),1)];
     end
-    
-    
-    if trainingType>1
+  
+    if trainingType>2
         
         if holdtrial==1
-            totcoord=[eccentricity_X' eccentricity_Y'];
+            %totcoord=[eccentricity_X' eccentricity_Y'];
+            totcoord=[1:length(angolo)];
             newmat=[];
+            conte=0;
             tempmat=totcoord(1,:);
-            while length(newmat)<length(mixtr)
+            while length(newmat)<length(mixtr)*4
                 
                 depl=totcoord~=tempmat(1,:);
                 newdep=totcoord(depl(:,1), :);
                 repnum=randi(4)+2;
-                newpair=newdep(randi(length(newdep)),:)
-                tempmat=repmat([newpair],repnum,1)
+                newpair=newdep(randi(length(newdep)),:);
+                tempmat=repmat([newpair],repnum,1);
                 newmat=[newmat;tempmat];
                 conte=conte+1;
             end
-            if length(newmat)>length(mixtr)
-                newmat=newmat(1:length(mixtr(:,1)),:);
+            if length(newmat)>length(mixtr)*4
+                newmat=newmat(1:length(mixtr(:,1))*4,:);
             end
-            eccentricity_X=newmat(:,1);
-            eccentricity_Y=newmat(:,2);
+         %   eccentricity_X=newmat(:,1);
+          %  eccentricity_Y=newmat(:,2);
         end
     end
     %  mixtr=[];
@@ -825,7 +837,8 @@ end
     
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
-        
+                    circlefix=0;
+
         if trial== length(mixtr)/8 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
             interblock_instruction
         end
@@ -897,12 +910,9 @@ end
         if trainingType==1
             theeccentricity_X=0;
             theeccentricity_Y=0;
-        elseif  trainingType==2 || trainingType==4
+        elseif  trainingType>1
             theeccentricity_X=eccentricity_X(trial);
             theeccentricity_Y=eccentricity_Y(trial);
-        elseif trainingType==3
-            theeccentricity_X=eccentricity_X(mixtr(trial,1));
-            theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
         end
         
         %  if trainingType~=2
@@ -1001,6 +1011,8 @@ end
             %             end
             if (eyetime2-trial_time)>=waittime+ifi*2+cueonset && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 
+                
+                %present  cue
                 clear circlestar
                 clear flickerstar
                 clear theSwitcher
@@ -1021,10 +1033,15 @@ end
                 %no cue
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
                 
-                if trainingType==1 || trainingType==2
+                if trainingType<3
                     counterannulus=(AnnulusTime/ifi)+1;
                 elseif        trainingType>2
+                    
+                    if annulusOrPRL==1
                     IsFixatingAnnulus
+                    elseif annulusOrPRL==2
+                        IsFixatingPRL
+                    end
                     Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
                 end
             elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
@@ -1084,6 +1101,7 @@ end
                     else
                         %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
                     end
+                    assignedPRLpatch
                 elseif trainingType==1 || (trainingType==4 && mixtr(trial,1))
                     
                     Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );

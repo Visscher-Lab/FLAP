@@ -3,9 +3,8 @@
 
 if trainingType==2 || (trainingType==4 && mixtr(trial,2))
      imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg PRLsize*pix_deg]], wRect);
-imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial), imageRectMaskscotoma(2)+eccentricity_Y(trial),...
-    imageRectMaskscotoma(3)+eccentricity_X(trial), imageRectMaskscotoma(4)+eccentricity_Y(trial)];  
-   
+imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg), imageRectMaskscotoma(2)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg),...
+    imageRectMaskscotoma(3)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg), imageRectMaskscotoma(4)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg)];  
 end
 stimpresent=1;
 if  stimpresent>0
@@ -41,10 +40,10 @@ if  stimpresent>0
             % PRL(s)
             if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
                         %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, scotoma_color, imageRect_offs);
+                        Screen('FillOval', w, mask_color, imageRect_offs);
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
 %            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
-                        Screen('FillOval', w, scotoma_color, imageRect_offsMaskscotoma);
+                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
 
             end
             
@@ -64,10 +63,10 @@ if  stimpresent>0
                         %fixation)
             if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
                         %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, scotoma_color, imageRect_offs);
+                        Screen('FillOval', w, mask_color, imageRect_offs);
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
 %            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);   
-                        Screen('FillOval', w, scotoma_color, imageRect_offsMaskscotoma);
+                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
 
             end                        
                     elseif sum(EyeCode(end-5:end))==0
@@ -89,20 +88,20 @@ if  stimpresent>0
                     %per trial
             if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
             %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, scotoma_color, imageRect_offs);
+                        Screen('FillOval', w, mask_color, imageRect_offs);
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
          %   Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);   
-            Screen('FillOval', w, scotoma_color, imageRect_offsMaskscotoma);
+            Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
             end                    
                     circlefix=circlefix+1;
                 elseif length(EyeCode)>5 %&& circlefix<=6
             if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
             %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, scotoma_color, imageRect_offs);
+                        Screen('FillOval', w, mask_color, imageRect_offs);
 
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
           %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma); 
-                        Screen('FillOval', w, scotoma_color, imageRect_offsMaskscotoma);
+                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
             end                    
                     circlefix=circlefix+1;
                 end
@@ -114,11 +113,11 @@ if  stimpresent>0
         
                     if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
             %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, scotoma_color, imageRect_offs);
+                        Screen('FillOval', w, mask_color, imageRect_offs);
 
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
           %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma); 
-                        Screen('FillOval', w, scotoma_color, imageRect_offsMaskscotoma);
+                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
             end    
         circlefix=0;
         % If this texture is active it will make the target visible only if all the PRLs are within the screen. If one of themis outside the target won't be visible

@@ -1,7 +1,7 @@
 %PreparePRLpatch
         oval_thick=10; %thickness of oval
 
-    PRLecc=[7.5 0 ]; %eccentricity of PRLs
+    PRLecc=[-7.5 0 ]; %eccentricity of PRLs
 
      PRLx= PRLecc(1);
         PRLy=-PRLecc(2);
@@ -17,3 +17,5 @@ PRLsize=5;
     [img, sss, alpha] =imread('neutral21.png');
     img(:, :, 4) = alpha;
     Neutralface=Screen('MakeTexture', w, img);
+    
+    mask_color= [170 170 170];

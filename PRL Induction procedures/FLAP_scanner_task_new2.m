@@ -131,7 +131,7 @@ try
         oldResolution=Screen( 'Resolution',screenNumber,1280,960);
         SetResolution(screenNumber, oldResolution);
         %lut_12bits= repmat((linspace(0,1,4096).^(1/2.2))',1,3);
-        %PsychColorCorrection('SetLookupTable', w, lut_12bits); --Denton-Disabled until calibration is done, moved to before OpenWindow, if initialized afterwards it won't have any effect until after the first flip
+        %PsychColorCorrection('SetLookupTable', w, lut_12bits); 
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
         %if you want to open a small window for debug
         %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
@@ -215,9 +215,7 @@ try
     
     Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     struct.sz=[screencm(1), screencm(2)];
-    'troubleshoot: defining pix_deg'
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
-    %pix_deg = pi * wRect(3) / atan(screencm(1)/v_d/2) / 360; %pixperdegree
     pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360; %to calculate the limit of target position
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
@@ -271,7 +269,6 @@ try
         
     end
     
-    'troubleshoot: got just before sound'
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
@@ -289,11 +286,7 @@ try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
-    
-    %     try
-    %         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-    %         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    %     end;
+
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
@@ -321,17 +314,10 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    %     if site ==2
     theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-    %     elseif site==1
-    %         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    %     end
-    
-    
-    %    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+   
     theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
     theCircles=Screen('MakeTexture', w, theCircles);
-    'troubleshoot: got to defining circles'
     
     
     theDot=imread('thedot2.tiff');
@@ -387,11 +373,8 @@ try
     if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
-        %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-        %eyeTrackerBaseName = 's00';
         eyeTrackerBaseName =[SUBJECT expdayeye];
         
-        %  save_dir= 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
         
         if exist('dataeyet')==0
             mkdir('dataeyet')
@@ -552,13 +535,7 @@ try
     xylim = imsize; %radius of circular mask
     circle = x0Big.^2 + y0Big.^2 <= xylim^2;
     [nrw, ncl]=size(x0Big);
-    
-    xs=12;
-    ys=9;
-    
-    xs=60;
-    ys=45;
-    
+
     xs=7;
     ys=7;
     
@@ -579,19 +556,7 @@ try
     %generate visual cue
     eccentricity_XCI=xlocsCI*pix_deg/2;
     eccentricity_YCI=ylocsCI*pix_deg/2;
-    
-    % r=1;
-    % C =[0 0];
-    % theta = 0:2*pi/360:2*pi;
-    % theta=0:2*pi/12:2*pi
-    % m=r*[cos(theta')+C(1) sin(theta') + C(2)];
-    % m=[m; 0.8 -1; 0.4 -1.5; 0 -2];
-    % m_six=[-m(:,1) m(:,2)];
-    % m_six=m_six.*pix_deg;
-    %
-    % m_nine=[m(:,1) -m(:,2)];
-    % m_nine=m_nine.*pix_deg;
-    
+     
     
     yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
     xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
@@ -609,7 +574,6 @@ try
     offsetx= [Xoff; -Xoff];
     offsety=[Yoff; -Yoff];
     
-    %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
     for  ui=1:(tr_per_condition/PRLlocations)
         b=randperm(PRLlocations);
         mixtrCI=[mixtrVAsc1 b];
@@ -645,15 +609,7 @@ try
     end
     
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
-    
-    %     xeye=[];
-    %     yeye=[];
-    %
-    %     tracktime=[];
-    %     VBL_Timestamp=[];
-    %     stimonset=[ ];
-    %     fliptime=[ ];
-    %     mss=[ ];
+
     scotoma_color=[200 200 200];
     FixDotSize=15;
 %% Start Trials
@@ -714,14 +670,11 @@ try
             theeccentricity_X2=-theeccentricity_X;
             theeccentricity_Y2=-theeccentricity_Y;
             
-            %   imageRect = CenterRect([0, 0, Gaborsize*pix_deg Gaborsize*pix_deg], wRect);
             imageRect = CenterRect([0, 0, size(x0Big)], wRect);
-            % theoris =[-180 0 -90 90];
             theoris =[-45 45];
             
             theans(trial)=randi(2);
             
-            %    ori=theoris(theans(trial));
             if theans(trial)==1 %left
                 ori=theoris(1);
                 if randomizeUnattended==1
@@ -745,8 +698,6 @@ try
             
             theeccentricity_XCI2=-theeccentricity_XCI;
             theeccentricity_YCI2=-theeccentricity_YCI;
-            %         theeccentricity_XDCI=-theeccentricity_X;
-            %  theeccentricity_YDCI=-theeccentricity_Y;
             Oscat= 0.5; %JitList(thresh(Ts,Tc));
             
             imageRect = CenterRect([0, 0, size(x0Small)], wRect);
@@ -762,19 +713,10 @@ try
             xmax=2*xs+1; %total number of squares in grid, along x direction (17)
             ymax=2*ys+1; %total number of squares in grid, along x direction (13)
             
-            %     Xoff=round(mod(theans(trial),2)-.5)
-            %     Yoff=round((theans(trial)>=2)-.5)
-            %
-            
-            %     xTrans=4+randi(xmax-8); %Translate target left/right or up/down within grid
-            %     yTrans=4+randi(ymax-8);
-            %
+           
             xTrans=round(xmax/2); %Translate target left/right or up/down within grid
             yTrans=round(ymax/2);
-            %       xTrans=round(xmax/2)+round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
-            %   yTrans=round(ymax/2)+round(eccentricity_Ydeg(mixtrCI(trial)));
-            %      xTrans2=round(xmax/2)-round(eccentricity_Xdeg(mixtrCI(trial))); %Translate target left/right or up/down within grid
-            
+
             
             theans(trial)=randi(2); %generates answer for this trial
             
@@ -809,12 +751,7 @@ try
                 end
             end
             
-            
-            %targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
-            
-            %   targetcord =Targx(theans(trial),:)+x  + (Targy(theans(trial),:)+y - 1)*xm;
-            %  targetcord2 =Targy(theans(trial),:)+yTrans  + (Targx(theans(trial),:)+xTrans2 - 1)*ymax;
-            %targetcord2=targetcord;
+
             xJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat; %plus or minus .25 deg
             yJitLoc=pix_deg*(rand(1,length(imageRect_offs))-.5)/JitRat;
             xJitLoc2=xJitLoc;
@@ -828,8 +765,7 @@ try
             yJitLoc(targetcord)=Tscat*yJitLoc(targetcord);
             xJitLoc2(targetcord2)=Tscat*xJitLoc2(targetcord2);
             yJitLoc2(targetcord2)=Tscat*yJitLoc2(targetcord2);
-            %      xJitLoc(targetcord2)=Tscat*xJitLoc(targetcord2);
-            %   yJitLoc(targetcord2)=Tscat*yJitLoc(targetcord2);
+
             theori=180*rand(1,length(imageRect_offs));
             
             if theans(trial)==1
@@ -862,27 +798,10 @@ try
                 
                 
             end
-            %  xJitLoc(targetcord2)=(pix_deg*offsetx)+xJitLoc(targetcord2);
-            %      yJitLoc(targetcord2)=(pix_deg*offsety)+yJitLoc(targetcord2);
-            
-            
-            
-            %jitter orientation, except for that of target
-            % theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
-            
-            % theori(targetcord2)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
-            
-            
-            %    Tcontr=1;
-            Tcontr=0.738;
-            %   Dcontr=0.35; %0.5;
+                      Tcontr=0.738; %0.5;
             Dcontr=0.38; %0.5;
             
-            %  Tcontr=Contlist(1);
-            % Dcontr =1- Contlist(thresh(Ts,Tc));
-            %  Oscat=0;
         end
-        %KbQueueFlush()
         
         Priority(0);
         buttons=0;
@@ -953,27 +872,18 @@ try
                     
                     if exist('imageRect_offsCI')==0
                         
-                        % imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_YCI,...
-                        %                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_YCI];
-                        %
-                        %
+
                         imageRect_offsCI =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
                             imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
                         
                         imageRect_offsCII =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
                             imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
-                        
-                        %                             imageRect_offsCIsmoothL =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
-                        %     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(1), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth];
-                        %                                 imageRect_offsCIsmoothL=round(imageRect_offsCIsmoothL);
-                        %                                                               imageRect_offsCIsmoothR =[imageRect(1)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(2)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth,...
-                        %     imageRect(3)+(newsamplex-wRect(3)/2)+eccentricity_XCIsmooth+eccentricity_X(2), imageRect(4)+(newsampley-wRect(4)/2)+eccentricity_YCIsmooth];
-                        %                                  imageRect_offsCIsmoothR=round(imageRect_offsCIsmoothR);
+
                         imageRect_offsCI2=imageRect_offsCI;
                         imageRect_offsCII2=imageRect_offsCII;
                         imageRect_offsCI3=imageRect_offsCI;
-                        %
                         
+                       
                         
                         
                         if circularMasking==1
@@ -1019,11 +929,8 @@ try
                 [secs  indfirst]=min(thetimes);
                 respTime=GetSecs;
             end
-            %    if site <3
             eyefixation5
-            %     elseif site ==3
-            %         eyefixation4
-            %   end
+
             
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
@@ -1131,8 +1038,7 @@ try
         flipptime(totaltrial).ix=fliptime;
         
         rispo(kk)=resp;
-        % lettersize(kk)=Gaborsize;
-        %     tles(kk) = threshVA;
+
         
         cheis(kk)=thekeys;
         
@@ -1191,7 +1097,6 @@ try
         end
         
         kk=kk+1;
-        %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
     %% Clean up

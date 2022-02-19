@@ -1561,9 +1561,8 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
             EyeSummary.(TrialNum).Target.visible=countertargettt;
             EyeSummary.(TrialNum).Target.DistApp=mostradistract;
             EyeSummary.(TrialNum).Target.Disvisible=countertargetdist;
- EyeSummary.(TrialNum).Target.FixInd=fixind;
-  EyeSummary.(TrialNum).Target.DistFixInd=fixind2;
-
+            EyeSummary.(TrialNum).Target.FixInd=fixind;
+            EyeSummary.(TrialNum).Target.DistFixInd=fixind2;
             EyeSummary.(TrialNum).Target.Fixframe=framefix;
             EyeSummary.(TrialNum).PRL.x=PRLx;
             EyeSummary.(TrialNum).PRL.y=PRLy;
@@ -1583,7 +1582,7 @@ EyeSummary.(TrialNum).Elements=imageRect_offsDist;
        
         if closescript==1
             break;
-        end;
+        end
            
     end
     
