@@ -334,7 +334,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
-    Sizelist=log_unit_down(StartSize, 0.01, 90);
+    Sizelist=log_unit_down(StartSize, 0.01, 120);
     
     % stepsizesVA=[8 4 3 2 1];
     stepsizesVA=[4 4 4 4 4];
