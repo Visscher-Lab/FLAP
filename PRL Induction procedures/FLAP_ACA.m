@@ -13,7 +13,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','1' };
+    defaultanswer={'test','1', '1', '0','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -909,14 +909,14 @@ end
                 Datapixx('RegWrRd');
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1
-                fixationscript3
+           %     fixationscript3
             elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1
                 if site<3
                     IsFixating4
                 elseif site==3
                     IsFixating4pixx
                 end
-                fixationscript3
+          %      fixationscript3
             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1
                 trial_time = GetSecs;
                 fixating=1500;
