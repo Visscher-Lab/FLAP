@@ -9,11 +9,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)'};
+    prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)','scotoma old mode active','scotoma Vpixx active'};
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '1' };
+    defaultanswer={'test','1', '3', '1','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -22,6 +22,8 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
+      scotomaoldmode= str2num(answer{4,:}); 
+scotomavpixx= str2num(answer{5,:});  
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -31,11 +33,11 @@ try
     %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     
     if site==1
-        baseName=['./data/' SUBJECT 'FLAP_ACApractice' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+        baseName=['./data/' SUBJECT '_FLAP_ACApractice' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
         baseName=[cd '\data\' SUBJECT '_FLAP_ACApractice' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     elseif site==3
-        baseName=[cd '\data\' SUBJECT '_FLAP_ACApracticeVPixx' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+        baseName=[cd '\data\' SUBJECT '_FLAP_ACAVPixxpractice' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     
     c=clock;
@@ -53,7 +55,7 @@ try
     
     red=[255 0 0];
     
-    StartSize=5; %for VA
+    StartSize=2; %for VA
     cueSize=3;
     circleSize=4.5;
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
@@ -85,7 +87,7 @@ try
     cueduration=.05;
     cueISI=0.05;
     presentationtime=0.133;
-    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = scotomaoldmode; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
     
@@ -116,9 +118,10 @@ try
         %    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     elseif site==1 %UCR no bits
-        
+        crt=0;
         %% psychtoobox settings
-        v_d=57;
+      if crt==1  
+          v_d=57;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -133,6 +136,26 @@ try
         %ScreenParameters=Screen('Resolution', screenNumber); %close all
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+      else
+          
+           screencm=[69.8, 40];
+        v_d=57;
+        AssertOpenGL;
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
+        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
+          
+      end
     elseif site==2   %UAB
         s1=serial('com3');
         fopen(s1);
@@ -202,7 +225,7 @@ try
     gray=round((white+black)/2);
     if gray == white
         gray=white / 2;
-    end;
+    end
     inc=1;
     theseed=sum(100*clock);
     rand('twister',theseed );
@@ -222,6 +245,8 @@ try
         ScreenHeightPix=screencm(2)*pix_deg_vert;
         ScreenWidthPix=screencm(1)*pix_deg;
         VelocityThreshs = [250 2000];      	% px/sec
+        VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
+
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
@@ -291,11 +316,12 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    %     if site ==2
-    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-    %     elseif site==1
-    %         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    %     end
+    
+    if  mod(length(theCircles)/2,2)==0
+        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+    elseif  mod(length(theCircles)/2,2)>0
+        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+    end
     
     
     %    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
@@ -352,7 +378,7 @@ try
     staircounterCW(1, 1:ca)=0;
     corrcounterCW(1, 1:ca)=0;
     
-    max_separation=12; %15
+    max_separation=8; %15
     %min_separation=2.5;
     
     %Separationtlist=log_unit_up(StartSize, 0.01, 64);
@@ -521,9 +547,7 @@ try
         mixtrVAsc2=[mixtrVAsc2 b];
     end
     mixtrVA=[ mixtrVAsc1' ones(length(mixtrVAsc1),1); mixtrVAsc2' ones(length(mixtrVAsc2),1)*2];
-    
-    
-    mixtrVA=mixtrVA(1:15,:);
+        mixtrVA=mixtrVA(1:15,:);
 
     %Crowding
     %radial
@@ -567,7 +591,7 @@ try
     end
     
     mixtrCW =[mixtrCW(:,1) mixtrCW(:,3) mixtrCW(:,2)];
-
+    
     %
     %
     % trymixtrCW=[    mixtrCW(1:16,:)
@@ -617,9 +641,9 @@ try
     
     % mixtrAtt=repmat(fullfact([cueloc targetloc]), rep,1);
     % mixtrAttrial=mixtrAtt(randperm(length(mixtrAtt)),:);
-        mixtrCW=mixtrCW(1:15,:);
-
     
+            mixtrCW=mixtrCW(1:15,:);
+
     load('AttMatNew.mat')
     
     %numar=size(fields(AttMat));
@@ -635,7 +659,7 @@ try
     
     mixtrAtt= [firstPartMat; secondPartMat];
         mixtrAtt=mixtrAtt(1:15,:);
-
+    
     %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
     
     totalmixtr=length(mixtrVA)+length(mixtrCW)+length(mixtrAtt);
@@ -657,7 +681,7 @@ try
     scotomadeg=10;
     
     if site<3
-        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
+        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     elseif site==3
         scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     end
@@ -676,15 +700,16 @@ try
     FixDotSize=15;
     
     for totaltrial=1:totalmixtr
-        if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-            interblock_instruction_crowding
-        end
-               if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-            interblock_instruction_attention
-        end
-         
-        
-        
+%         if totaltrial== length(mixtrVA)+1 || totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+%             interblock_instruction
+%         end
+       
+if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+    interblock_instruction_crowding
+end
+if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+    interblock_instruction_attention
+end
         if totaltrial<= length(mixtrVA)
             whichTask=1;
             trial=totaltrial;
@@ -730,7 +755,6 @@ try
             theeccentricity_X=eccentricity_X(mixtrVA(trial));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial));
             VAsize = Sizelist(threshVA);
-            
             imageRect = CenterRect([0, 0, VAsize*pix_deg VAsize*pix_deg], wRect);
         elseif whichTask ==2
             
@@ -746,14 +770,15 @@ try
             %       VA_thresho=max(cell2mat(PRL_va_thresh));
             % VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
             
-            if exist('ThreshlistVA')==0
-                VA_thresho=1;
-            else
-                VA_thresho=mean(ThreshlistVA(end-10:end));
-                
-            end
+%             if exist('ThreshlistVA')==0
+%                 VA_thresho=1;
+%             else
+%                 VA_thresho=mean(ThreshlistVA(end-20:end));
+%                 
+%             end
             
-            
+                            VA_thresho=1;
+
             if VA_thresho<0
                 VA_thresho=1;
             end
@@ -995,6 +1020,21 @@ try
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                 
             end
+            if EyetrackerType==2
+                
+                if scotomavpixx==1
+                    Datapixx('EnableSimulatedScotoma')
+                    Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
+                    %Datapixx('SetSimulatedScotomaMode'[,mode = 0]);
+                    scotomaradiuss=round(pix_deg*6);
+                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
+                    
+                    mode=Datapixx('GetSimulatedScotomaMode')
+                    status= Datapixx('IsSimulatedScotomaEnabled')
+                    radius= Datapixx('GetSimulatedScotomaRadius')
+                    
+                end
+            end
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
@@ -1099,6 +1139,10 @@ try
                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
+                if EyetrackerType==2
+                    Datapixx('DisableSimulatedScotoma')
+                    Datapixx('RegWrRd')
+                end
                 ListenChar(0);
                 break;
             else
@@ -1117,7 +1161,9 @@ try
                     end
                     threshVA=threshVA -stepsizesVA(thestep);
                     threshVA=max(threshVA);
-                    
+                    if threshVA<1
+                        threshVA=1;
+                    end
                     
                 elseif mixtrVA(trial,2)==2
                     
@@ -1304,10 +1350,14 @@ try
         elseif whichTask ==2
             separation(kk)=sep;
             refsizeCrSti(kk)=VA_thresho;
+            if exist('imageRect_offs')
             sizeCrSti(kk)=imageRect_offs(3)-imageRect_offs(1);
+            end
         elseif whichTask ==3
             correx(kk)=resp;
+                        if exist('imageRect_offs')
             SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
+                        end
             Att_RT(kk) = respTime - stim_start;
         end
         cheis(kk)=thekeys;
@@ -1366,7 +1416,11 @@ try
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-    
+            DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+Screen('Flip', w);
+    Screen('TextFont', w, 'Arial');
+        KbQueueWait;
+
     % shut down EyeTracker
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1380,18 +1434,14 @@ try
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-    
+
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    Screen('Flip', w);
-    Screen('TextFont', w, 'Arial');
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     ListenChar(0);
-    Screen('Flip', w);
-    KbQueueWait;
+ %   Screen('Flip', w);
     ShowCursor;
     
     if site==1

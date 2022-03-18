@@ -9,11 +9,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)'};
+    prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)','scotoma old mode active','scotoma Vpixx active'};
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '1' };
+    defaultanswer={'test','1', '3', '1','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -22,6 +22,8 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
+      scotomaoldmode= str2num(answer{4,:}); 
+scotomavpixx= str2num(answer{5,:});  
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -85,7 +87,7 @@ try
     cueduration=.05;
     cueISI=0.05;
     presentationtime=0.133;
-    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = scotomaoldmode; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
     
@@ -115,10 +117,11 @@ try
         %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
         %    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    elseif site==1 %UCR no bits
-        
+    elseif site==1 %UCR with bits
+        crt=0;
         %% psychtoobox settings
-        v_d=57;
+      if crt==1  
+          v_d=57;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -133,6 +136,26 @@ try
         %ScreenParameters=Screen('Resolution', screenNumber); %close all
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+      else
+          
+           screencm=[69.8, 40];
+        v_d=57;
+        AssertOpenGL;
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
+        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
+          
+      end
     elseif site==2   %UAB
         s1=serial('com3');
         fopen(s1);
@@ -202,7 +225,7 @@ try
     gray=round((white+black)/2);
     if gray == white
         gray=white / 2;
-    end;
+    end
     inc=1;
     theseed=sum(100*clock);
     rand('twister',theseed );
@@ -222,6 +245,8 @@ try
         ScreenHeightPix=screencm(2)*pix_deg_vert;
         ScreenWidthPix=screencm(1)*pix_deg;
         VelocityThreshs = [250 2000];      	% px/sec
+        VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
+
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
@@ -291,11 +316,12 @@ try
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    %     if site ==2
-    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-    %     elseif site==1
-    %         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    %     end
+    
+    if  mod(length(theCircles)/2,2)==0
+        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+    elseif  mod(length(theCircles)/2,2)>0
+        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+    end
     
     
     %    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
@@ -334,7 +360,7 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 3;                        % # of correct answers to go one step down
     
-    Sizelist=log_unit_down(StartSize, 0.01, 120);
+    Sizelist=log_unit_down(StartSize, 0.01, 90);
     
     % stepsizesVA=[8 4 3 2 1];
     stepsizesVA=[4 4 4 4 4];
@@ -652,7 +678,7 @@ try
     scotomadeg=10;
     
     if site<3
-        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
+        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     elseif site==3
         scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     end
@@ -726,7 +752,6 @@ end
             theeccentricity_X=eccentricity_X(mixtrVA(trial));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial));
             VAsize = Sizelist(threshVA);
-            
             imageRect = CenterRect([0, 0, VAsize*pix_deg VAsize*pix_deg], wRect);
         elseif whichTask ==2
             
@@ -978,7 +1003,7 @@ end
                 respTime=GetSecs;
             end
         %    if site <3
-                eyefixation4
+                eyefixation5
        %     elseif site ==3
        %         eyefixation4
          %   end
@@ -990,6 +1015,21 @@ end
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                 
+            end
+            if EyetrackerType==2
+                
+                if scotomavpixx==1
+                    Datapixx('EnableSimulatedScotoma')
+                    Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
+                    %Datapixx('SetSimulatedScotomaMode'[,mode = 0]);
+                    scotomaradiuss=round(pix_deg*6);
+                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
+                    
+                    mode=Datapixx('GetSimulatedScotomaMode');
+                    status= Datapixx('IsSimulatedScotomaEnabled');
+                    radius= Datapixx('GetSimulatedScotomaRadius');
+                    
+                end
             end
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
@@ -1095,6 +1135,10 @@ end
                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
+                if EyetrackerType==2
+                    Datapixx('DisableSimulatedScotoma')
+                    Datapixx('RegWrRd')
+                end
                 ListenChar(0);
                 break;
             else

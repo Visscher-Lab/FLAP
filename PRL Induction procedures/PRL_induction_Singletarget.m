@@ -32,13 +32,8 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expday = str2num(answer{2,:});
     expdayeye = answer{2,:};
-    site= answer{3,:};
-    
-    
-    BITS=str2num(site);
-    % BITS=0; % (1=Bits++; 2=Display++; 0=no bits)
+    site= str2num(answer{3,:});
 
-    
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -61,7 +56,7 @@ try
     stimulussize=3; %size of the stimulus (in degrees visual angle)
     separationdeg=2; % distance among elements within each stimulus
     triangleformation= 1; % three stimuli if 1, four stimuli if 0
-    randomfix = 1; %initial fixation in a random location
+    randomfix = 0; %initial fixation in a random location
     distancedeg=9; % distance among stimuli
     PRLecc=7.5; %eccentricity of PRLs
     PRLsize =5; % diameter PRL
@@ -119,7 +114,7 @@ try
         save_dir=[cd './dataeyet/'];
     end
     
-    if BITS==0
+    if site==0
         %UCR Bits++
         %% psychtoobox settings
         screencm=[40.6, 30];%[UAB:69.8x35.5; UCR: 40.6x30 ]
@@ -145,9 +140,8 @@ try
         % Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         %  PsychColorCorrection('SetLookupTable', window, Nlinear_lut);
         %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-    elseif BITS==2 %UAB
+    elseif site==2 %UAB
         
         s1=serial('com3');
         fopen(s1);
@@ -171,37 +165,49 @@ try
         %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
         
-        
-        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-    elseif BITS==1
-        %no Bits, 256 RGB
+                
+    elseif site==1
+        crt=0;
         %% psychtoobox settings
-        v_d=57;
-        %   radius=12.5;   %radius of the circle in which the target can appear
-        screencm=[40.6, 30];%[UAB:69.8x35.5; UCR: 40.6x30 ]
+      if crt==1  
+          v_d=57;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
-        %   PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        %    oldResolution=Screen( 'Resolution',screenNumber,1280,960);
-        %    oldResolution=Screen( 'Resolution',screenNumber,1280,960);
-        oldRes=SetResolution(0,1280,1024);
-        SetResolution(screenNumber, oldRes);
-        %   SetResolution(screenNumber, oldResolution);
+        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+        
+        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+        SetResolution(screenNumber, oldResolution);
         [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+        screencm=[40.6 30];
         %debug window
-        % [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
         %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        %struct.res=[ScreenParameters.width ScreenParameters.height];
-        %Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+      else
+          
+           screencm=[69.8, 40];
+        v_d=57;
+        AssertOpenGL;
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
+        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
+          
+      end
     end
-    
+        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     %struct.res=[1280 960];
     struct.sz=[screencm(1), screencm(2)];
     pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
@@ -769,19 +775,19 @@ try
         
         %Marcello we commented this if statement out since it doesn't
         %appear
-%         if randomfix ==1 %Marcello - it doesn't look like randomfix/xcrand/ycrand/etc are used. Are these important?
-%             possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
-%             possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
-%             
-%             possibleX=possibleXdeg*pix_deg;
-%             possibleY=possibleYdeg*pix_deg;
-%             xcrand= xc+possibleX(randi(length(possibleX)));
-%             ycrand= yc+possibleX(randi(length(possibleY)));
-%         else
-%             
-%             xcrand=0;
-%             ycrand=0;
-%         end
+        if randomfix ==1 %Marcello - it doesn't look like randomfix/xcrand/ycrand/etc are used. Are these important?
+            possibleXdeg=[-8 -6 -4 -2 2 4 6 8];
+            possibleYdeg= [-8 -6 -4 -2 2 4 6 8];
+            
+            possibleX=possibleXdeg*pix_deg;
+            possibleY=possibleYdeg*pix_deg;
+            xcrand= xc+possibleX(randi(length(possibleX)));
+            ycrand= yc+possibleX(randi(length(possibleY)));
+        else
+            
+            xcrand=xc;
+            ycrand=yc;
+        end
 
         if totalelements==4
             tgtpos=randi(length(posmatrix));
@@ -892,6 +898,7 @@ try
         
         pretrial_time=GetSecs;
         stimpresent=0;
+                nn=0;
         circlefix=0;
         while eyechecked<1
             
@@ -960,7 +967,7 @@ try
                 eyechecked=1111111111;
                 
             end
-            eyefixation3
+            eyefixation5
             
             
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
@@ -1327,7 +1334,7 @@ try
     KbWait;
     ShowCursor;
     
-    if BITS==1
+    if site==1
         Screen('CloseAll');
         Screen('Preference', 'SkipSyncTests', 0);
         %     s1 = serial('COM3');     % set the Bits mode back so the screen

@@ -10,8 +10,9 @@ angle = [ 0  pi/2  pi  3*pi/2];
 %range = (0:45:315)*pi/180;
 range = (0:90:315)*pi/180;
 
-addpath(['/Users/marcellomaniglia/Downloads/VSS 2021/Polar analysis/CircStat2012a']);
+%addpath(['/Users/marcellomaniglia/Downloads/VSS 2021/Polar analysis/CircStat2012a']);
 addpath([cd '/github_repo']);
+addpath([cd '/CircStat2012a']);
 
 %load FLAP_pilot.mat
 load FLAP_updated_2022_with_PRL.mat
@@ -140,7 +141,7 @@ alpha_rad_PRLdist = circ_ang2rad(newanglesPRLdist)';
 
 figure
 %VA
-polarplot([angle angle(1)], [score_VA score_VA(1)],'r-o', 'MarkerFaceColor', 'r')
+polarplot([angle angle(1)], [score_VA score_VA(1)],'b-o', 'MarkerFaceColor', 'b')
 
 [t,r]=rose(alpha_rad_VA,range);
 %[t2,r2]=polarhistogram(alpha_rad_VA)
@@ -157,7 +158,7 @@ end
 
 %crowding rad
 hold on
-polarplot([angle angle(1)], [score_CWrad score_CWrad(1)],'g-o', 'MarkerFaceColor', 'g')
+polarplot([angle angle(1)], [score_CWrad score_CWrad(1)],'r-o', 'MarkerFaceColor', 'r')
 
 [t,r]=rose(alpha_rad_CWrad,range);
 mr = max(2*r/sum(r));
@@ -173,7 +174,7 @@ end
 %polarplot([0 phi], [0 newr], 'g-o', 'lineWidth', 2)
 %crowding tan
 hold on
-polarplot([angle angle(1)], [score_CWtan score_CWtan(1)],'k-o', 'MarkerFaceColor', 'k')
+polarplot([angle angle(1)], [score_CWtan score_CWtan(1)],'c-o', 'MarkerFaceColor', 'c')
 
 [t,r]=rose(alpha_rad_CWtan,range);
 mr = max(2*r/sum(r));
@@ -188,7 +189,7 @@ end
 %polarplot([0 phi], [0 newr], 'k-o', 'lineWidth', 2)
 %att short
 hold on
-polarplot([angle angle(1)], [score_attshort score_attshort(1)],'m-o', 'MarkerFaceColor', 'm')
+polarplot([angle angle(1)], [score_attshort score_attshort(1)],'k-o', 'MarkerFaceColor', 'k')
 
 [t,r]=rose(alpha_rad_Attshort,range);
 mr = max(2*r/sum(r));
@@ -204,7 +205,7 @@ end
 
 %att long
 hold on
-polarplot([angle angle(1)], [score_attlong score_attlong(1)],'b-o', 'MarkerFaceColor', 'b')
+polarplot([angle angle(1)], [score_attlong score_attlong(1)],'y-o', 'MarkerFaceColor', 'y')
 
 [t,r]=rose(alpha_rad_Attlong,range)
 mr = max(2*r/sum(r));
@@ -225,7 +226,7 @@ end
 
 clear ddd
 hold on
-ddd=polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'y-o', 'MarkerFaceColor', 'y')
+ddd=polarplot([angle angle(1)], [score_PRLdist score_PRLdist(1)],'g-o', 'MarkerFaceColor', 'g')
 ddd.Color=[130/255 130/255 42/255 ];
 
 [t,r]=rose(alpha_rad_PRLdist,range)
@@ -244,15 +245,15 @@ end
 hold on
 %ppp=polarplot(PRL(ui,1), 0.5,'ko', 'MarkerFaceColor', 'y')
 
-if PRL(ui,2)>0
-%ppp=polarplot((PRL(ui,1)-deg2rad(270)), -0.5,'ko', 'MarkerFaceColor', 'y')
-ppp=polarplot((PRL(ui,1)-deg2rad(90)), -0.5,'ko', 'MarkerFaceColor', 'y')
-
-elseif PRL(ui,2)<0
-%    ppp=polarplot((PRL(ui,1)-deg2rad(270)), 0.5,'ko', 'MarkerFaceColor', 'y')
-    ppp=polarplot((PRL(ui,1)-deg2rad(90)), 0.5,'ko', 'MarkerFaceColor', 'y')
-
-end
+% if PRL(ui,2)>0
+% %ppp=polarplot((PRL(ui,1)-deg2rad(270)), -0.5,'ko', 'MarkerFaceColor', 'y')
+% ppp=polarplot((PRL(ui,1)-deg2rad(90)), -0.5,'ko', 'MarkerFaceColor', 'y')
+% 
+% elseif PRL(ui,2)<0
+% %    ppp=polarplot((PRL(ui,1)-deg2rad(270)), 0.5,'ko', 'MarkerFaceColor', 'y')
+%     ppp=polarplot((PRL(ui,1)-deg2rad(90)), 0.5,'ko', 'MarkerFaceColor', 'y')
+% 
+% end
 
 
 ppp.MarkerSize = 12;
@@ -282,3 +283,5 @@ clear newanglesVA    newanglesCWrad  newanglesCWtan  newanglesshortAtt newangles
 
 end
 
+
+close all
