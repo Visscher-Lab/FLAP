@@ -56,7 +56,7 @@ try
     stimulusSize=2.5;
     
     sigma_deg=stimulusSize/2.5;
-    holdtrial=1;
+    holdtrial=0;
     cueSize=3;
     
     annulusOrPRL=2; % in traiing types in which we force fixation before target appearance, 
