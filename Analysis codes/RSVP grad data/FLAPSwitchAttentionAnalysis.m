@@ -2141,7 +2141,7 @@ set(gca, 'FontSize', 14)
 title([baseName(8:11) 'Endogenous attention'])
 hold on
 
-errlow=[(std(Overall_endo_congruent)/sqrt(length(Overall_endo_congruent))) (std(Overall_endo_incongruent)/sqrt(length(Overall_endo_incongruent)))];
+errlow=[(nanstd(Overall_endo_congruent)/sqrt(length(Overall_endo_congruent))) (nanstd(Overall_endo_incongruent)/sqrt(length(Overall_endo_incongruent)))];
 errhigh=errlow;
 er = errorbar(c.XData,themeanEndo,errlow,errhigh);  
 er.Color = [0 0 0];                            
@@ -2163,7 +2163,7 @@ set(gca, 'FontSize', 14)
 title([baseName(8:11) 'Exogenous attention'])
 hold on
 
-errlow=[(std(Overall_exo_congruent)/sqrt(length(Overall_exo_congruent))) (std(Overall_exo_incongruent)/sqrt(length(Overall_exo_incongruent)))];
+errlow=[(nanstd(Overall_exo_congruent)/sqrt(length(Overall_exo_congruent))) (nanstd(Overall_exo_incongruent)/sqrt(length(Overall_exo_incongruent)))];
 errhigh=errlow;
 er = errorbar(c.XData,themeanExo,errlow,errhigh);  
 er.Color = [0 0 0];                            
