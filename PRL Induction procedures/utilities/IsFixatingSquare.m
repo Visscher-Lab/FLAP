@@ -27,14 +27,20 @@ if Eyelink( 'NewFloatSampleAvailable') > 0
 %     area_sticker = evt.pa(eye_used+1);
     % do we have valid data and is the pupil visible?
 %    if x~=el.MISSING_DATA & y~=el.MISSING_DATA & evt.pa(eye_used+1)>0 & abs(x)<=fixr & abs(y)<=fixr %subject fixating?  
-            if framecounter>1 & (xeye2(framecounter)-xeye2(framecounter-1))<fixwindowPix & (yeye2(framecounter)-yeye2(framecounter-1))<fixwindowPix %subject fixating?
-        % if data is valid, draw a circle on the screen at current gaze position
+          %  if framecounter>1 & (xeye2(framecounter)-xeye2(framecounter-1))<fixwindowPix & (yeye2(framecounter)-yeye2(framecounter-1))<fixwindowPix %subject fixating?
+     if   framecounter>1 & round(wRect(4)/2+(newsampley-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
+             && round(wRect(4)/2+(newsampley-(wRect(4)/2)))<(wRect(4)/2+fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2)))<= (wRect(3)/2+fixwindowPix)
+
+                
+                
+                
+                % if data is valid, draw a circle on the screen at current gaze position
         % using PsychToolbox's Screen function
-        fixating2=fixating2+1;
-        counter2=counter2+1;
+        fixating=fixating+1;
+        counter=counter+1;
     else
         % if data is invalid (e.g. during a blink), clear display
-        fixating2=0;
-        counter2=counter2+0;
+        fixating=0;
+        counter=counter+0;
     end
 end
