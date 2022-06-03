@@ -28,6 +28,9 @@ testmatCW=[mixtrCW rispo(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))' t
 
 testmatAtt= [mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
 
+
+
+
 AttCorr=testmatAtt(testmatAtt(:,3)==1,:);
 AttshortCuedTotal=length(testmatAtt(testmatAtt(:,2)==1));
 AttshortUncuedTotal=length(testmatAtt(testmatAtt(:,2)==2));
@@ -124,6 +127,11 @@ end
 
 
 %figure
+
+[h p] = ttest2(cleanAttCorrshortCued, cleanAttCorrshortUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
+[h2 p2] = ttest2(cleanAttCorrlongCued, cleanAttCorrlongUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
 subplot(2,1,2)
 
 bar(1, AttCorrshortCuedRT, 'g')
@@ -134,7 +142,7 @@ legend ('cued', 'uncued')
 ylabel('Reaction time (s)')
 title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
-
+text(1,0.5, ['p = ' num2str(p)]);
 %ylim([limits*0.8 limits*1.2])
 print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([subj 'crowdingTask'],'-dpng')
@@ -177,6 +185,7 @@ legend ('cued', 'uncued')
 ylabel('Reaction time (s)')
 title([  subj ' long ISI Attention RT'])
 limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
+text(1,0.5, ['p = ' num2str(p2)]);
 
 %ylim([limits*0.8 limits*1.2])
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -234,6 +243,9 @@ hist(cleanAttCorrlongUncued)
 xlabel('Reaction time (s)')
 ylabel('Frequency')
 title('ACA Data Analysis: Long Uncued')
+
+print([newdir subj 'PRL_Attan'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
 % axis([0.2 1 0 25])
 
 % Is RT different for cued vs. uncued?
@@ -508,6 +520,7 @@ xlim([-20 20])
 ylim([-15 15])
 title('VA RT')
 set (gca,'YDir','reverse');
+print([newdir subj 'PRLspec_va'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 figure
@@ -580,6 +593,7 @@ xlim([-20 20])
 ylim([-15 15])
 title('CW tangential RT')
 set (gca,'YDir','reverse');
+print([newdir subj 'PRLspec_crow'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 
@@ -658,6 +672,7 @@ xlim([-20 20])
 ylim([-15 15])
 title('long cue RT (cued-uncued)')
 set (gca,'YDir','reverse');
+print([newdir subj 'PRLspec_cue'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
               
 zzzsummarytable=[VAAcc;
