@@ -26,11 +26,12 @@ try
     if exist('data')==0
         mkdir('data');
     end
+    
     if str2num(Isdemo)==0
-        baseName=['./data/' SUBJECT 'FLAP_RSVP_demo' expdayeye '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    baseName=['./data/' SUBJECT 'FLAP_RSVP_demo' expdayeye '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif str2num(Isdemo)==1
         baseName=['./data/' SUBJECT 'FLAP_RSVP' expdayeye '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-    end    
+    end
     c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
@@ -39,12 +40,14 @@ try
     max_size=10;
     n_blocks=1;
     reps=100;
+    v_d=57;
+    sigma_deg = 1; %4;
+    sfs=3;
     color=0;
     % BITS=site; %0; 1=bits++; 2=display++
-    nope=0;
-    ContCircEx=[255 0 0];
+    
     randomizzato=0;
-    ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = 0; % 0 = no scotoma, 1 = scotoma
     if color ==1
         ContCirc= [0 70 0];
         ContCirc2= [70 0 0];
@@ -55,35 +58,32 @@ try
     if site>0
         ContCirc=ContCirc/255;
         ContCirc2=ContCirc2/255;
-        
+      
     end
-    alphastim=0.8;
+    alphastim=.8;
     fixat=1;
-    SOA=0.6;
+    SOA=.6;
     closescript=0;
     kk=1;
     stimulus_contingent=1;
-    precuetime=0.1;
+    precuetime=.1;
     cuedir=0.05;   %.05
-    cuetargetISI=0.05;
-    poststimulustime=0.1;
+    cuetargetISI=.05;
+    poststimulustime=.1;
     oval_thick=10; %thickness of oval
-        oval_thickEx=20; %thickness of oval
-            cueExsizedeg=3;
     cue_size=6;
     endocue=1;
     stimulussize=2;
     circle_size=4.5; % dimension of the circles
     newswitch=1;
     fixationwindow=6; % diameter
-    lookaway=2; % 0: location rings disappear, 1:location rings increase in brightness, 2: location rings stay the same color
+    
     fixwindow=2;
     fixTime=1.2;
     fixTime2=0.2;
     
-        EyeTracker = 1; %0=mouse, 1=eyetracker
-
-
+    EyeTracker = 1; %0=mouse, 1=eyetracker
+    
     
     KbQueueCreate;
     KbQueueStart;
@@ -96,7 +96,7 @@ try
     %end
     
     if site==0  %UCR bits++
-          v_d=57;
+        %% psychtoobox settings
         screencm=[40.6 30];
         %load gamma197sec;
         %load lut_12bits_pd; Disabled until display is calibrated
@@ -123,43 +123,44 @@ try
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     elseif site==1 %UCR no bits
-       %% psychtoobox settings
+        
+        %% psychtoobox settings
         crt=0;
-        if crt==1
-            v_d=57;
-            AssertOpenGL;
-            screenNumber=max(Screen('Screens'));
-            PsychImaging('PrepareConfiguration');
-            % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-            
-            oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-            SetResolution(screenNumber, oldResolution);
-            [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-            screencm=[40.6 30];
-            %debug window
-            %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-            %ScreenParameters=Screen('Resolution', screenNumber); %close all
-            Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-            Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        else
-            screencm=[69.8, 40];
-            v_d=57;
-            AssertOpenGL;
-            oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-            %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-            screenNumber=max(Screen('Screens'));
-            rand('twister', sum(100*clock));
-            PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-            PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-            PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-            %          PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-            oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-            SetResolution(screenNumber, oldResolution);
-            [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-            %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
-            %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
-            
-        end
+      if crt==1  
+          v_d=57;
+        AssertOpenGL;
+        screenNumber=max(Screen('Screens'));
+        PsychImaging('PrepareConfiguration');
+        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+        
+        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+        screencm=[40.6 30];
+        %debug window
+        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+        %ScreenParameters=Screen('Resolution', screenNumber); %close all
+        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+      else          
+           screencm=[69.8, 40];
+        v_d=57;
+        AssertOpenGL;
+        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
+        screenNumber=max(Screen('Screens'));
+        rand('twister', sum(100*clock));
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
+        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
+          
+      end
     elseif site==2   %UAB
         screencm=[69.8, 35.5];
         AssertOpenGL;
@@ -174,8 +175,9 @@ try
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
-        elseif site==3      %UCR VPixx
+        
+        
+    elseif site==3      %UCR VPixx      
         initRequired= 1;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
@@ -187,8 +189,8 @@ try
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
-        screencm=[69.8, 35.5];
-        
+                screencm=[69.8, 35.5];
+
         v_d=57;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
@@ -235,7 +237,7 @@ try
         waittime=ifi*50;
         durfix=.133;    %.133
     end
-if EyeTracker==1
+        if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
         else
@@ -247,7 +249,7 @@ if EyeTracker==1
         ScreenWidthPix=screencm(1)*pix_deg;
         VelocityThreshs = [250 2000];      	% px/sec
         VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
-        
+
         ViewpointRefresh = 1;               % dummy variable
         driftoffsetx=0;                     % initial x offset for all eyetracker values
         driftoffsety=0;                     % initial y offset for all eyetracker values
@@ -294,8 +296,7 @@ if EyeTracker==1
     
     bg_index =round(gray*255); %background color
     
-    
-    
+
     
     
     %% main loop
@@ -373,8 +374,7 @@ if EyeTracker==1
     % load testAttMatpost.mat
     % end
     if str2num(expdayeye)==1
-        %load RSVPTrialMat2022-A.mat
-                load RSVPTrialMat2022-B.mat
+        load RSVPTrialMat2022-A.mat
     elseif str2num(expdayeye)==2
         load RSVPTrialMat2022-B.mat
     elseif str2num(expdayeye)==3
@@ -389,21 +389,19 @@ if EyeTracker==1
     endo=newtrialmatrix(1:exo_index-1,:);
     exo=newtrialmatrix(exo_index:end,:);
     
-    endo=endo(1:end-1,:);
-        exo=exo(1:end-1,:);
-
+    
     trialcounterEndo=find(endo(:,1)==3);
     trialcounterExo=find(exo(:,1)==3);
     
     
     shortendo=endo(1:trialcounterEndo(5)-1,:);
     shortexo=exo(1:trialcounterExo(5)-1,:);
-    shortexo=shortexo(3:end,:);
+    
     
     newtrialmatrix=[shortendo;shortexo];
     
     
-    blocking= 16;%8;
+    blocking=8;
     
     blockCounterEndo=[trialcounterEndo(1:blocking:end); length(endo)+1];
     blockCounterExo=[trialcounterExo(1:blocking:end); length(exo)+1];
@@ -419,7 +417,7 @@ if EyeTracker==1
             exocon(counterexo)=ui;
             if length(blockCounterExo)>counterexo
                 chunck=[exo(blockCounterExo(counterexo):blockCounterExo(counterexo+1)-1,:)];
-                soloexo=[soloexo; chunck];
+                soloexo=[soloexo; chunck]
                 newnewtrialmatrix=[newnewtrialmatrix;chunck];
             end
         elseif mod(ui,2)>0
@@ -427,7 +425,7 @@ if EyeTracker==1
             endocon(counterendo)=ui;
             if length(blockCounterEndo)>counterendo
                 chunck=[endo(blockCounterEndo(counterendo):blockCounterEndo(counterendo+1)-1,:)];
-                soloendo=[soloendo; chunck];
+                soloendo=[soloendo; chunck]
                 newnewtrialmatrix=[newnewtrialmatrix;chunck];
             end
         end
@@ -437,7 +435,7 @@ if EyeTracker==1
         newtrialmatrix=newnewtrialmatrix;
     end
     
-     if EyetrackerType==1
+    if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
         %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
@@ -519,11 +517,12 @@ if EyeTracker==1
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
         
-        location =  zeros(length(newtrialmatrix), 6);
+        location =  zeros(length(newtrialmatrix(:,1)), 6);
     end
+    
     eyetime2=0;
     
-    scotomadeg=6;
+    scotomadeg=10;
     scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     %scotoma_color=[100 100 100];
@@ -608,13 +607,13 @@ if EyeTracker==1
         end
         
         
-        if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 && trial<length(newtrialmatrix)
+        if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==2 && newtrialmatrix(trial+1,1)==1
             switch_task_script_endo
         end
 
-%         if sum(trial==totaltrialbreak)>0
-%             interblock_instruction_rsvp;
-%         end
+        if sum(trial==totaltrialbreak)>0
+            interblock_instruction_rsvp;
+        end
         
         TrialNum = strcat('Trial',num2str(trial));
         
@@ -635,7 +634,7 @@ if EyeTracker==1
         if trial==1
             fixating=0;
         else
-            fixating=10^12;
+            fixating=10001213212;
         end
         fixating2=0;
         counter=0;
@@ -677,8 +676,7 @@ if EyeTracker==1
         stopfixating=0;
         stopfixating2=0;
         T=newtrialmatrix(trial,1);
-                cueExsize=cueExsizedeg*pix_deg;
-
+        
         
         if T==1 && newtrialmatrix(trial,5)<=5 || T==2 || T==3 %duration foil/non cued stimulus
             precuetime=.1;
@@ -697,8 +695,9 @@ if EyeTracker==1
             %   poststimulustime=.05;
         elseif T==0                     %duration exogenous stimulus
             precuetime=.2;
-            cuedir=.05;   %duration of the cue
-            cuetargetISI=.05; %interval between cue disappearance and target appearance
+            cuedir=.05;   %.05
+            %cuedir=1.05;   %.05
+            cuetargetISI=.05;
             %   stimdur=0.133; %.133
             stimdur=0.333; %.133
             poststimulustime=.1;
@@ -783,10 +782,9 @@ if EyeTracker==1
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
-                    clear stim_star
+                    
                 elseif (eyetime2-pretrial_time)>prefixwait+28*ifi && (eyetime2-pretrial_time)<prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6)))== 0
-                     %target at the beginning of the trial stays on screen
-                    %until response (2 frames)
+                    
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
@@ -797,8 +795,7 @@ if EyeTracker==1
                     stim_star=GetSecs;
                     
                 elseif (eyetime2-pretrial_time)>prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))== 0
-                      %target at the beginning of the trial stays on screen
-                    %until response (stimulus duration)
+                    
                     if exist('stim_star')==0
                         stim_star=GetSecs;
                         stim_start(trial)=stim_star;
@@ -818,10 +815,7 @@ if EyeTracker==1
                         stim_start(trial)=stim_star;
                         skipframe(trial)=1;
                     end
-                    %when response to the first target is produced, we only present the 4 circles
-                    %until response. 20 frames are provided of stimulus on
-                    %screen before participant is allowed to response
-                    %(avoid slips of finger at the beginning of a trial)
+                    
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -842,11 +836,6 @@ if EyeTracker==1
                     
                     if (thekeys==escapeKey) % esc pressed
                         closescript = 1;
-                       if EyetrackerType==2
-                            Datapixx('DisableSimulatedScotoma')
-                            Datapixx('RegWrRd')
-                        end
-                        ListenChar(0);
                         break;
                     end
                     
@@ -866,8 +855,8 @@ if EyeTracker==1
                         stim_start(trial)=GetSecs;
                         errorTrial(trial)=99;
                     end
-                    respRT(trial)=GetSecs-stim_start(trial);
-                    eyechecked=11^11;
+                    respRT(trial)=secs-stim_start(trial);
+                    eyechecked=1111111111;
                 end
             end
             
@@ -879,7 +868,7 @@ if EyeTracker==1
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
-                clear stim_star
+                
             elseif (eyetime2-trial_time)>=precuetime && (eyetime2-trial_time)<=precuetime+ifi && fixating>400
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
@@ -900,16 +889,12 @@ if EyeTracker==1
                     cuecounter(trial)=1;
                     
                     
-                     imageRect_circleoffscover=[imageRectcircles(1)+eccentricity_X(tloc), imageRectcircles(2)+eccentricity_Y(tloc),...
-                        imageRectcircles(3)+eccentricity_X(tloc), imageRectcircles(4)+eccentricity_Y(tloc)]; 
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{3}(1), imageRectendocues{tloc}(2)+thecuesEx{3}(2),imageRectendocues{tloc}(3)+thecuesEx{3}(3), imageRectendocues{tloc}(4)+thecuesEx{3}(4)]);
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
-                    Screen('FrameOval', w,gray, imageRect_circleoffscover, oval_thick, oval_thick);
                     
-                    Screen('FrameOval', w,ContCircEx, [imageRectendocues{tloc}(1)-cueExsize, imageRectendocues{tloc}(2)-cueExsize,imageRectendocues{tloc}(3)+cueExsize, imageRectendocues{tloc}(4)+cueExsize], oval_thickEx, oval_thickEx);
-   
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{3}(1), imageRectendocues{tloc}(2)+thecuesEx{3}(2),imageRectendocues{tloc}(3)+thecuesEx{3}(3), imageRectendocues{tloc}(4)+thecuesEx{3}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
+                    
                 end
                 
             elseif  (eyetime2-trial_time)>precuetime+ifi && (eyetime2-trial_time)<precuetime+cuedir+ifi && fixating>500
@@ -924,16 +909,11 @@ if EyeTracker==1
                     imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
                     
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
-                   % Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{3}(1), imageRectendocues{tloc}(2)+thecuesEx{3}(2),imageRectendocues{tloc}(3)+thecuesEx{3}(3), imageRectendocues{tloc}(4)+thecuesEx{3}(4)]);
-                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
-                                      imageRect_circleoffscover=[imageRectcircles(1)+eccentricity_X(tloc), imageRectcircles(2)+eccentricity_Y(tloc),...
-                        imageRectcircles(3)+eccentricity_X(tloc), imageRectcircles(4)+eccentricity_Y(tloc)]; 
-                  Screen('FrameOval', w,gray, imageRect_circleoffscover, oval_thick, oval_thick);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{3}(1), imageRectendocues{tloc}(2)+thecuesEx{3}(2),imageRectendocues{tloc}(3)+thecuesEx{3}(3), imageRectendocues{tloc}(4)+thecuesEx{3}(4)]);
+                    Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{4}(1), imageRectendocues{tloc}(2)+thecuesEx{4}(2),imageRectendocues{tloc}(3)+thecuesEx{4}(3), imageRectendocues{tloc}(4)+thecuesEx{4}(4)]);
                     
-                    Screen('FrameOval', w,ContCircEx, [imageRectendocues{tloc}(1)-cueExsize, imageRectendocues{tloc}(2)-cueExsize,imageRectendocues{tloc}(3)+cueExsize, imageRectendocues{tloc}(4)+cueExsize], oval_thickEx, oval_thickEx);
-   
                 end
                 
             elseif (eyetime2-trial_time)>=precuetime+cuedir+ifi && (eyetime2-trial_time)<=precuetime+cuedir+ifi+cuetargetISI && fixating>500
@@ -982,11 +962,13 @@ if EyeTracker==1
                     
                     Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecues{whichcue}(1), imageRectendocues{tloc}(2)+thecues{whichcue}(2),imageRectendocues{tloc}(3)+thecues{whichcue}(3), imageRectendocues{tloc}(4)+thecues{whichcue}(4)]);
                 end
-                               
+                
+                
                 cici(trial)=22;
                 stim_start(trial)=GetSecs;
                 stim_star=GetSecs;
-                               
+                
+                
             elseif (eyetime2-trial_time)>precuetime+cuedir+ifi+cuetargetISI+ifi*2 && (eyetime2-trial_time)<precuetime+cuedir+ifi+cuetargetISI+stimdur && fixating>500 && T<3%&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0
 
                 imageRect_offs1=[imageRect1(1)+eccentricity_X(1), imageRect1(2)+eccentricity_Y(1),...
@@ -1085,7 +1067,7 @@ if EyeTracker==1
                 yyeye(trial).ipsi=[yeye];
                 vbltimestamp(trial).ix=[VBL_Timestamp];
                 flipptime(trial).ix=[fliptime];
-    if EyeTracker==1
+                if EyeTracker==1
                     EyeSummary.(TrialNum).EyeData = EyeData;
                     
                     if ~exist('EyeCode','var')
@@ -1116,6 +1098,7 @@ if EyeTracker==1
                             EyeSummary.(TrialNum).cueX = 0;
                             EyeSummary.(TrialNum).cueY = 0;
                         end
+                        
                     else
                         EyeSummary.(TrialNum).cueX = 0;
                         EyeSummary.(TrialNum).cueY = 0;
@@ -1149,21 +1132,14 @@ if EyeTracker==1
             if     newsamplex>fixationwindowRect(3)|| newsampley>fixationwindowRect(4) || newsamplex<fixationwindowRect(1) || newsampley<fixationwindowRect(2)
                 
                 Screen('FillRect', w, gray);
-               if lookaway==1
                 Screen('FrameOval', w,ContCirc2, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc2, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc2, imageRect_circleoffs3, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc2, imageRect_circleoffs4, oval_thick, oval_thick);
-               elseif lookaway==2
-                   Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
-                Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
-                Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
-                Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
-            end
-                fixationscriptW
+                
             else
             end
-            fixationscriptW
+            
             
             
             if ScotomaPresent == 1
@@ -1178,7 +1154,10 @@ if EyeTracker==1
             
             
             VBL_Timestamp=[VBL_Timestamp eyetime2];
-            if EyeTracker==1
+
+        
+            
+                        if EyeTracker==1
                 
                 if site<3
                     GetEyeTrackerData
@@ -1190,10 +1169,10 @@ if EyeTracker==1
                 end
                 GetFixationDecision
                 
-                %                 if EyeData(1)<8000 && stopchecking<0
-                %                     trial_time = GetSecs;
-                %                     stopchecking=10;
-                %                 end
+%                 if EyeData(1)<8000 && stopchecking<0
+%                     trial_time = GetSecs;
+%                     stopchecking=10;
+%                 end
                 
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -1234,6 +1213,10 @@ if EyeTracker==1
 
                     if (thekeys==escapeKey) % esc pressed
                         closescript = 1;
+                        if EyetrackerType==2
+                            Datapixx('DisableSimulatedScotoma')
+                            Datapixx('RegWrRd')
+                        end
                         ListenChar(0);
                         break;
                     end
@@ -1246,31 +1229,31 @@ if EyeTracker==1
                             PsychPortAudio('Start', pahandle2);
                         end
                         respo(trial)=resp;
-                        respTimeSTamp(trial)=GetSecs;
-                        respRT(trial)=GetSecs-stim_start(trial);
+                        respTimeSTamp(trial)=secs;
+                        respRT(trial)=secs-stim_start(trial);
                     elseif trial==2
                         if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants
                             resp = 1;
                             PsychPortAudio('Start', pahandle1);
                             if foo(theans(trial))
                                 respo(trial)=resp;
-                                respTimeSTamp(trial)=GetSecs;
-                                respRT(trial)=GetSecs-stim_start(trial);
+                                respTimeSTamp(trial)=secs;
+                                respRT(trial)=secs-stim_start(trial);
                             elseif  foo(theans(trial-1))
                                 respo(trial-1)=resp;
-                                respTimeSTamp(trial-1)=GetSecs;
-                                respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
                             end
                         else
                             resp = -1;
                             if theans(trial-1)<5
                                 respo(trial-1)=resp;
-                                respTimeSTamp(trial-1)=GetSecs;
-                                respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
                             elseif theans(trial)<5
                                 respo(trial)=resp;
-                                respTimeSTamp(trial)=GetSecs;
-                                respRT(trial)=GetSecs-stim_start(trial);
+                                respTimeSTamp(trial)=secs;
+                                respRT(trial)=secs-stim_start(trial);
                             end
                             PsychPortAudio('Start', pahandle2);
                         end
@@ -1280,62 +1263,49 @@ if EyeTracker==1
                             
                             if foo(theans(trial))
                                 respo(trial)=resp;
-                                respTimeSTamp(trial)=GetSecs;
-%                                 if exist('stim_star')==0
-%                                     stim_start(trial)=GetSecs;
-%                                     skipframe2(trial)=1;
-%                                 end
-if length(stim_start)==trial
-    respRT(trial)=GetSecs-stim_start(trial);
-    resp = 1;
-    PsychPortAudio('Start', pahandle1);
-else
-    wrongcount(trial)=99;
-    PsychPortAudio('Start', pahandle2);
-    
-end
-                                countzeropre(trial)=99;
+                                respTimeSTamp(trial)=secs;
+                                if exist('stim_star')==0
+                                    stim_start(trial)=GetSecs;
+                                    skipframe2(trial)=1;
+                                end
+                                respRT(trial)=secs-stim_start(trial);
+                                resp = 1;
+                                PsychPortAudio('Start', pahandle1);
                             elseif  foo(theans(trial-1)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %one back
                                 respo(trial-1)=resp;
-                                respTimeSTamp(trial-1)=GetSecs;
+                                respTimeSTamp(trial-1)=secs;
                                 
-                                respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                respRT(trial-1)=secs-stim_start(trial-1);
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
-                                countonepre(trial)=99;
                             elseif foo(theans(trial-2)) && sum(contains(fieldnames(Response), ([['Trial' num2str(trial-1)]])))<1 %two back
                                 respo(trial-2)=resp;
-                                respTimeSTamp(trial-2)=GetSecs;
-                                respRT(trial-2)=GetSecs-stim_start(trial-2);
+                                respTimeSTamp(trial-2)=secs;
+                                respRT(trial-2)=secs-stim_start(trial-2);
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
-                                                                counttwopre(trial)=99;
                             end
                             
                         else
                             resp = -1;
                             if theans(trial-2)<5
                                 respo(trial-2)=resp;
-                                respTimeSTamp(trial-2)=GetSecs;
-                                respRT(trial-2)=GetSecs-stim_start(trial-2);
+                                respTimeSTamp(trial-2)=secs;
+                                respRT(trial-2)=secs-stim_start(trial-2);
                             elseif theans(trial-1)<5
                                 respo(trial-1)=resp;
-                                respTimeSTamp(trial-1)=GetSecs;
-                                respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                respTimeSTamp(trial-1)=secs;
+                                respRT(trial-1)=secs-stim_start(trial-1);
                             elseif theans(trial)<5
                                 respo(trial)=resp;
-                                respTimeSTamp(trial)=GetSecs;
+                                respTimeSTamp(trial)=secs;
                                 
-%                                 if exist('stim_star')==0
-%                                     stim_start(trial)=GetSecs;
-%                                     skipframe2(trial)=1;
-%                                 end
-
-if length(stim_start)==trial
-                                respRT(trial)=GetSecs-stim_start(trial);
-else
-    wrongcounter(trial)=99;
-end
+                                if exist('stim_star')==0
+                                    stim_start(trial)=GetSecs;
+                                    skipframe2(trial)=1;
+                                end
+                                respRT(trial)=secs-stim_start(trial);
+                                
                                 %  respo(trial)=resp
                             end
                             PsychPortAudio('Start', pahandle2);
@@ -1367,7 +1337,7 @@ end
     end
 %% Clean up and Save 
     % shut down EyeTracker
-if EyetrackerType==1
+    if EyetrackerType==1
         Eyelink('StopRecording');
         Eyelink('closefile');
         status = Eyelink('ReceiveFile',eyeTrackerFileName,save_dir,1); % this is the eyetracker file that needs to be put in the correct folder with the other files!!!
