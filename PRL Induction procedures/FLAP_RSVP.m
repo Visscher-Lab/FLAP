@@ -174,7 +174,7 @@ try
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+     v_d=57;
         elseif site==3      %UCR VPixx
         initRequired= 1;
         if initRequired>0
