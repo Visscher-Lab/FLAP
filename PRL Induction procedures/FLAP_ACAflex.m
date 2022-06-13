@@ -214,11 +214,11 @@ PRLlocations=str2num(answer{7,:});
         PsychImaging('PrepareConfiguration');
         % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
         
-        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+       oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
-        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-        
-        screencm=[110 30];
+                [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+
+        screencm=[69.8, 35.5];
         %debug window
         %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
         %ScreenParameters=Screen('Resolution', screenNumber); %close all
@@ -975,7 +975,10 @@ end
         clear starfix
         pretrial_time=GetSecs;
         while eyechecked<1
+            
+            if ScotomaPresent == 1
             fixationscriptW
+            end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
@@ -993,7 +996,9 @@ end
                     starfix=98;
                 end
                 %  fixationscript3
-              fixationscriptW
+              if ScotomaPresent == 1
+            fixationscriptW
+            end
             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
                 fixating=1500;
