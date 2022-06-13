@@ -178,7 +178,7 @@ try
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
         elseif site==3      % VPixx
-        initRequired= 0;
+        initRequired= 1;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
