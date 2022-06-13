@@ -11,7 +11,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','0', '1', '3' };
+    defaultanswer={'test','0', '1', '2' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -104,7 +104,7 @@ try
     cue_spatial_offset=2;
     bg_index =round(gray*255); %background color
     
-    
+    test=1;
     if site==0  %UCR bits++
         %% psychtoobox settings
         screencm=[40.6 30];
@@ -166,7 +166,9 @@ try
             %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
             oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
             SetResolution(screenNumber, oldResolution);
-            [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+          %  [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+                         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+
             %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
             %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);         
         end
@@ -344,26 +346,15 @@ try
         % m_nine=m_nine.*pix_deg;
         
         %target contrast
-        Tcontr=0.8;
+        Tcontr=0.38;
         %distractor contrast
         Dcontr=0.38;
         
-        yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
-        xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
-        orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
-        
-        
-        Xoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
-        Yoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
-        
-        Targx= [xfoo; -xfoo];
-        Targy= [yfoo; -yfoo];
-        
-        Targori=[orifoo; orifoo];
-        
-        offsetx= [Xoff; -Xoff];
-        offsety=[Yoff; -Yoff];
-    end
+CIShapes
+end
+
+
+    %end
     
     
     if trainingType>1
@@ -560,10 +551,18 @@ try
     end
     %% TRIAL MATRIX
     
-    if trainingType==1 || trainingType==2
-        conditionOne=1; %only Gabors (training type 1) or shapes (training type 2)
+    if trainingType==1
+        conditionOne=1; %only Gabors 
         conditionTwo=1;
-        trials=250;  %total number of trials per staircase
+        trials=500;  %total number of trials per staircase      
+    elseif trainingType==2
+        shapes=6;
+        conditionOne=shapes; % shapes (training type 2)
+        conditionTwo=1;
+                trials=83;  %total number of trials per staircase
+                        % stimulus parameters
+        JitList = 0:2:90;
+        StartJitter=16;
     elseif trainingType==3
         conditionOne=1; %only landolt C
         conditionTwo=2; % endogenous or exogenous cue
@@ -574,104 +573,137 @@ try
         trials=125;
     end
     
-    if trainingType==1 || trainingType==2 || trainingType==4
-        blocks=10;  %number of blocks in which we want the trials to be divided       
-        %number of cue conditions
-        condlist=fullfact([conditionOne conditionTwo]);
-        numsc=length(condlist);
-        
-        if length (condlist(:,1))<2
-            mixcond=condlist;
-        else
-            mixcond=condlist(randperm(length(condlist)),:);
-        end;
-        n_blocks=round(trials/blocks);   %number of trials per miniblock
-        mixtr=[];
+%     if trainingType==1 || trainingType==2 || trainingType==4
+%         blocks=10;  %number of blocks in which we want the trials to be divided       
+%         %number of conditions
+%         condlist=fullfact([conditionOne conditionTwo]);
+% %         if
+% % numsc=1;
+% %         else
+% %             numsc=length(condlist);
+% % 
+% %         end
+% 
+% if conditionOne==1 &&  conditionOne==2
+%     numsc=1;
+% else
+% numsc=length(condlist);
+% end
+% if length (condlist(:,1))<2
+%             mixcond=condlist;
+%         else
+%             mixcond=condlist(randperm(length(condlist)),:);
+%         end;
+%         n_blocks=round(trials/blocks);   %number of trials per miniblock
+%         mixtr=[];
+%     end
+%     if trainingType==4
+%         %condition matrix gabor and faces
+%         for j=1:blocks
+%             % mixcond=condlist(randperm(length(condlist)),:);
+%             for i=1:numsc
+%                 mixtr=[mixtr;repmat(mixcond(i,:),n_blocks,1)];
+%             end;
+%         end;
+%     elseif trainingType==1 || trainingType==2
+%         for j=1:blocks
+%             % mixcond=condlist(randperm(length(condlist)),:);
+%             for i=1:numsc
+%                 mixtr=[mixtr;repmat(mixcond,n_blocks,1)];
+%             end;
+%         end;
+%     end;
+%     
+    
+    
+    
+    if trainingType<3
+                    mixcond=fullfact([conditionOne conditionTwo]);
+mixtr=[];
+        for ui=1:conditionOne
+           mixtr=[mixtr; repmat(mixcond(ui,:),trials,1) ];
+        end
     end
-    if trainingType==4
-        %condition matrix gabor and faces
-        for j=1:blocks
-            % mixcond=condlist(randperm(length(condlist)),:);
-            for i=1:numsc
-                mixtr=[mixtr;repmat(mixcond(i,:),n_blocks,1)];
-            end;
-        end;
-    elseif trainingType==1 || trainingType==2
-        for j=1:blocks
-            % mixcond=condlist(randperm(length(condlist)),:);
-            for i=1:numsc
-                mixtr=[mixtr;repmat(mixcond,n_blocks,1)];
-            end;
-        end;
-    end;
+    
+    if trainingType==3
+        angolo= [90 45 0 315 270 225 180 135];
+        mixtr=[repmat(1:length(angolo),1,trials)'];
+        mixtr =mixtr(randperm(length(mixtr)),:);
+    end
+%                     mixcond=fullfact([conditionOne conditionTwo]);
+% mixtr=[];
+%         for ui=1:conditionOne
+%            mixtr=[mixtr; repmat(mixcond(ui,:),trials,1) ]
+%         end
+%     end
+%     
+    
     %% STAIRCASE
     
     nsteps=70;
     
     %     if trainingType==1 || trainingType==4
-    StartCont=15;  %15
-    % if expdayeye==0 || expdayeye==1 || expdayeye==numstudydays || expdayeye==numstudydays+1 %|| sum(expdayeye=='test')> 1
-    thresh(1:conditionOne, 1:conditionTwo)=StartCont; %Changed from 10 to have same starting contrast as the smaller Contlist
-    step=5;
-    if site<2
-        %  currentsf=sflist(4);
-        currentsf=4;
-    elseif site==2
-        %   currentsf=sflist(1);
-        currentsf=1;
-        numstudydays=100;
+    
+    if trainingType~=3
+        % stimulus parameters
+        if trainingType==1
+            Contlist = log_unit_down(max_contrast+.122, 0.05, nsteps);
+            Contlist(1)=1;
+            SFthreshmin=0.01;
+            StartCont=15;  %15
+            SFthreshmax=Contlist(StartCont);
+            SFadjust=10;
+            % if expdayeye==0 || expdayeye==1 || expdayeye==numstudydays || expdayeye==numstudydays+1 %|| sum(expdayeye=='test')> 1
+            thresh(1:conditionOne, 1:conditionTwo)=StartCont; %Changed from 10 to have same starting contrast as the smaller Contlist
+            step=5;
+            if site<2
+                %  currentsf=sflist(4);
+                currentsf=4;
+            elseif site==2
+                %   currentsf=sflist(1);
+                currentsf=1;
+                numstudydays=100;
+            end
+        end
+        if trainingType==2
+            thresh(1:conditionOne, 1:conditionTwo)=StartJitter;
+        end
+        reversals(1:conditionOne, 1:conditionTwo)=0;
+        isreversals(1:conditionOne, 1:conditionTwo)=0;
+        staircounter(1:conditionOne, 1:conditionTwo)=0;
+        corrcounter(1:conditionOne, 1:conditionTwo)=0;
+        
+        % Threshold -> 79%
+        sc.up = 1;                          % # of incorrect answers to go one step up
+        sc.down = 3;                        % # of correct answers to go one step down
+        
+        %     else
+        %         d = dir(['./data/' SUBJECT '_DAY_' num2str(expdayeye-1) '*.mat']);
+        %         [dx,dx] = sort([d.datenum]);
+        %         newest = d(dx(end)).name;
+        %         oldthresh=load(['./data/' newest],'thresh');
+        %         currentsfold=load(['./data/' newest],'currentsf');
+        %         if isempty(fieldnames(currentsfold))
+        %             if BITS<2
+        %                 %   currentsf=sflist(4);
+        %                 currentsf=4;
+        %             elseif BITS==2
+        %                 %   currentsf=sflist(1);
+        %                 currentsf=1;
+        %                 numstudydays=100;
+        %             end
+        %         else
+        %             currentsf=currentsfold.currentsf;
+        %         end
+        %
+        %         thresh(1:conditionOne, 1:conditionTwo)=oldthresh.thresh(1:conditionOne, 1:conditionTwo)-2;
+        %         step=1;
+        %     end;
+        
+        
+        stepsizes=[4 4 3 2 1];
+        
     end
-    
-    
-    
-    %     else
-    %         d = dir(['./data/' SUBJECT '_DAY_' num2str(expdayeye-1) '*.mat']);
-    %         [dx,dx] = sort([d.datenum]);
-    %         newest = d(dx(end)).name;
-    %         oldthresh=load(['./data/' newest],'thresh');
-    %         currentsfold=load(['./data/' newest],'currentsf');
-    %         if isempty(fieldnames(currentsfold))
-    %             if BITS<2
-    %                 %   currentsf=sflist(4);
-    %                 currentsf=4;
-    %             elseif BITS==2
-    %                 %   currentsf=sflist(1);
-    %                 currentsf=1;
-    %                 numstudydays=100;
-    %             end
-    %         else
-    %             currentsf=currentsfold.currentsf;
-    %         end
-    %
-    %         thresh(1:conditionOne, 1:conditionTwo)=oldthresh.thresh(1:conditionOne, 1:conditionTwo)-2;
-    %         step=1;
-    %     end;
-    reversals(1:conditionOne, 1:conditionTwo)=0;
-    isreversals(1:conditionOne, 1:conditionTwo)=0;
-    staircounter(1:conditionOne, 1:conditionTwo)=0;
-    corrcounter(1:conditionOne, 1:conditionTwo)=0;
-    
-    % Threshold -> 79%
-    sc.up = 1;                          % # of incorrect answers to go one step up
-    sc.down = 3;                        % # of correct answers to go one step down
-    
-    
-    
-    %contrast list
-    if trainingType==1 || trainingType==4
-        Contlist = log_unit_down(max_contrast+.122, 0.05, nsteps); %Updated contrast possible values
-        Contlist(1)=1;
-        SFthreshmin=0.01;
-        SFthreshmax=Contlist(StartCont);
-        SFadjust=10;
-    end
-    %jitter list
-    if trainingType==2 || trainingType==4
-        JitList = [180 log_unit_down(180, 0.05, nsteps)];
-    end
-    stepsizes=[4 4 3 2 1];
-    
-    
     %      end
     
     %% Trial structure
@@ -744,7 +776,6 @@ try
         
         ecc_r=targetecc*pix_deg;
         
-        angolo= [90 45 0 315 270 225 180 135];
         
         for ui=1:length(angolo)
             %if we want to randomize the angle and the radius of the
@@ -759,8 +790,7 @@ try
             eccentricity_X(ui)=ecc_x;
             eccentricity_Y(ui)=ecc_y;
         end
-        mixtr=[repmat(1:length(angolo),1,trials)'];
-        mixtr =mixtr(randperm(length(mixtr)),:);
+
         
         
         thecuemat=[ones(length(mixtr)/2,1); ones(length(mixtr)/2,1)*2];
@@ -851,7 +881,9 @@ end
     %% main loop
     HideCursor;
     counter = 0;
+    if test==0
     ListenChar(2);
+    end
     fixwindowPix=fixwindow*pix_deg;
     WaitSecs(1);
     % Select specific text font, style and size:
@@ -1034,8 +1066,25 @@ end
                 jitterxci(trial)=0;
                 jitteryci(trial)=0;
             end
-            newTargy= Targy+jitteryci(trial);
-            newTargx= Targx+jitterxci(trial);
+            
+            
+            
+            % here I define the shapes
+            
+           % shapesoftheDay=shapeMatrix{expdayeye};
+            
+            load shapeMat.mat;      
+            shapesoftheDay=shapeMat(:,expdayeye);
+           %R newTargy= Targy{mixtr(trial,1)}+jitteryci(trial);
+           %R newTargx= Targx{mixtr(trial,1)}+jitterxci(trial);
+            
+                        newTargy= Targy(shapesoftheDay{mixtr(trial,1)})+jitteryci(trial);
+
+                        newTargx= Targx(shapesoftheDay{mixtr(trial,1)})+jitterxci(trial);
+
+       newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
+                   newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
+
             
             
             targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
@@ -1055,9 +1104,14 @@ end
             %     yJitLoc(targetcord)=(pix_deg*offsety(theans(trial),:))+yJitLoc(targetcord);
             
             
-            xJitLoc(targetcord)=pix_deg*offsetx(theans(trial),:);%+xJitLoc(targetcord);
-            yJitLoc(targetcord)=pix_deg*offsety(theans(trial),:);%+yJitLoc(targetcord);
+            xJitLoc(targetcord)=pix_deg*shapesoftheDay(offsetx{mixtr(trial,1)}(theans(trial),:));%+xJitLoc(targetcord);
+            yJitLoc(targetcord)=pix_deg*shapesoftheDay(offsety{mixtr(trial,1)}(theans(trial),:));%+yJitLoc(targetcord);
             
+            
+            
+           %R             xJitLoc(targetcord)=pix_deg*offsetx{mixtr(trial,1)}(theans(trial),:);%+xJitLoc(targetcord);
+          %R  yJitLoc(targetcord)=pix_deg*offsety{mixtr(trial,1)}(theans(trial),:);%+yJitLoc(targetcord);
+
             
             theori=180*rand(1,length(eccentricity_XCI));
             %       theori(targetcord)=Targori(theans(trial),:) + (2*rand(1,length(targetcord))-1)*Oscat;
@@ -1067,8 +1121,14 @@ end
             
             %theori(targetcord)=Targori(theans(trial),:) +Orijit + (2*rand(1,length(targetcord))-1)*Oscat;
             
-            theori(targetcord)=Targori(theans(trial),:) +Orijit;
-            
+           %R theori(targetcord)=Targori{mixtr(trial,1)}(theans(trial),:) +Orijit;
+           
+           theori(targetcord)=Targori(shapesoftheDay{mixtr(trial,1)}(theans(trial),:)) +Orijit;
+            if test==1
+                     %      theori(targetcord)=Targori{mixtr(trial,1)}(theans(trial),:);
+           theori(targetcord)=Targori(shapesoftheDay{mixtr(trial,1)}(theans(trial),:));
+
+            end
         end
         
         Priority(0);
@@ -1319,11 +1379,15 @@ end
                                %                      Screen('DrawTexture', w, theTest, [], imageRect_offs, [],[], 1);
                            end
                     
+                if test==0
                     assignedPRLpatch
+                end
                 elseif trainingType==1 || (trainingType==4 && mixtr(trial,1))
                     
                     Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
+                    if test==0
                     assignedPRLpatch
+                end
                     
                 elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
                     if exist('imageRect_offsCI')==0
@@ -1348,7 +1412,9 @@ end
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Tcontr );
                     % here I draw the circle within which I show the contour target
                     Screen('FrameOval', w,gray, imageRect_offsCImask, 12, 60);
+                    if test==0
                     assignedPRLpatch
+                end
                     imagearray{trial}=Screen('GetImage', w);
                     
                     %                                      Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
@@ -1402,11 +1468,15 @@ end
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
             end
             
+            if test==0
+                    
+                
             if penalizeLookaway>0
                 if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                     Screen('FillRect', w, gray);
                 end
                 
+            end
             end
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
