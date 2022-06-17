@@ -2,22 +2,24 @@
 
        % fixating=0;
     
+         if EyetrackerType==1
 error=Eyelink('CheckRecording');
 evt=error;
 if(error~=0)
     error
         return;
 end
+         end
 
 % check for presence of a new sample update
-if Eyelink( 'NewFloatSampleAvailable') > 0
+%if Eyelink( 'NewFloatSampleAvailable') > 0
     % get the sample in the form of an event structure
-    evt = Eyelink( 'NewestFloatSample');
-    % if we do, get current gaze position from sample
-   % x = evt.gx(eye_used+1)-centx; % +1 as we're accessing MATLAB array
-   % y = evt.gy(eye_used+1)-centy;
-    newsamplex=evt.gx(eye_used+1);
-    newsampley=evt.gy(eye_used+1);
+%     evt = Eyelink( 'NewestFloatSample');
+%     % if we do, get current gaze position from sample
+%    % x = evt.gx(eye_used+1)-centx; % +1 as we're accessing MATLAB array
+%    % y = evt.gy(eye_used+1)-centy;
+%     newsamplex=evt.gx(eye_used+1);
+%     newsampley=evt.gy(eye_used+1);
   %  xeye=[xeye x];
   %  yeye=[yeye y];
     xeye2=[xeye2 newsamplex];
@@ -43,4 +45,4 @@ if Eyelink( 'NewFloatSampleAvailable') > 0
         fixating=0;
         counter=counter+0;
     end
-end
+%end
