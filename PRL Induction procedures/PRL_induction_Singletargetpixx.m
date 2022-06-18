@@ -13,14 +13,13 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1'};
+    defaultanswer={'test','1', '3'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
     addpath([cd '/utilities']);
-    eyeOrtrack=1; %0=mouse, 1=eyetracker
     
 
     SUBJECT = answer{1,:}; %Gets Subject Name
@@ -66,7 +65,7 @@ try
     theseed=sum(100*clock);
     rand('twister',theseed); %used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions
     
-    trials=200;%500;
+    trials=350;%500;
         
     KbQueueCreate;
         EyeTracker = 1; %0=mouse, 1=eyetracker
@@ -191,7 +190,7 @@ try
     elseif site==3   %UCR VPixx
         %% psychtoobox settings
         
-        initRequired= 1;
+        initRequired= 0;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
@@ -202,7 +201,7 @@ try
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
-        v_d=57;
+        v_d=80;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -260,7 +259,7 @@ try
         FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
         % note, the eye velocity is already low enough to be considered a "fixation"
         FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
-        
+        PixelsPerDegree=pix_deg;
         
         % old variables
         [winCenter_x,winCenter_y]=RectCenter(wRect);
@@ -691,7 +690,7 @@ try
     waittime=ifi*50; %ifi is flip interval of the screen
     
     
-    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
+    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     
     [xc, yc] = RectCenter(wRect); % coordinate del centro schermo
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
@@ -720,7 +719,7 @@ try
     PRLx=[0 PRLecc 0 -PRLecc];
     PRLy=[-PRLecc 0 PRLecc 0 ];
     PRLxpix=PRLx*pix_deg;
-    PRLypix=PRLy*pix_deg_vert;
+    PRLypix=PRLy*pix_deg;
     
     fixwindow=2;
     fixTime=0.5;
@@ -813,7 +812,7 @@ try
         countertarget=0;
         oval_thick=5;
 
-        imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
+        imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg)*2]], wRect);
         
         %Every 50 trials, pause to allow subject to rest eyes
         if (mod(trial,50))==1
@@ -825,7 +824,15 @@ try
                 %     Screen('TextStyle', w, 1+2);
                 Screen('FillRect', w, gray);
                 colorfixation = white;
-                DrawFormattedText(w, 'Take a short break and rest your eyes \n\n  \n \n \n \n Press any key to start', 'center', 'center', white);
+          %      DrawFormattedText(w, 'Take a short break and rest your eyes \n\n  \n \n \n \n Press any key to start', 'center', 'center', white);
+               
+                percentagecompleted= round(trial/trials);
+textSw=sprintf( 'Take a short break and rest your eyes  \n \n You completed %d percent of the session \n \n \n \n Press any key to start', percentagecompleted);
+
+DrawFormattedText(w, textSw, 'center', 'center', white);
+
+                
+                
                 Screen('Flip', w);
                 KbQueueWait;
             end
@@ -886,7 +893,7 @@ try
             end
             
             neweccentricity_X=target_ecc_x*pix_deg;
-            neweccentricity_Y=target_ecc_y*pix_deg_vert;
+            neweccentricity_Y=target_ecc_y*pix_deg;
         elseif totalelements == 3
             target_ecc_x=posmatrix(targetlocation(trial),1);
             target_ecc_y=posmatrix(targetlocation(trial),2);
@@ -927,7 +934,7 @@ try
         elseif totalelements == 4
             for gg = 1:totalelements-1
                 neweccentricity_Xd(gg)=newecc_xd(gg)*pix_deg;
-                neweccentricity_Yd(gg)=newecc_yd(gg)*pix_deg_vert;
+                neweccentricity_Yd(gg)=newecc_yd(gg)*pix_deg;
                 imageRect_offsDist{gg}= [imageRect(1)+neweccentricity_Xd(gg), imageRect(2)+neweccentricity_Yd(gg),...
                     imageRect(3)+neweccentricity_Xd(gg), imageRect(4)+neweccentricity_Yd(gg)];
                 circlefix2(gg)=0;
@@ -971,25 +978,31 @@ try
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*75 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 fixationscriptrand
-
+stopone(trial)=99;
             elseif  (eyetime2-pretrial_time)>=ifi*75 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-
+stoptwo(trial)=99;
                 IsFixating4
+                stopthree(trial)=99;
                 fixationscriptrand
+                stopfour(trial)=99;
             elseif (eyetime2-pretrial_time)>ifi*75 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
+                stopfive(trial)=99;
                 fixating=1500;
 
             end
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<waittime+ifi*2 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+                stopsix(trial)=99;
 
             end
             
             if (eyetime2-trial_time)>=waittime+ifi*2 && (eyetime2-trial_time)<waittime+ifi*4 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+                stopseven(trial)=99;
 
                 %here i present the stimuli+acoustic cue
             elseif (eyetime2-trial_time)>waittime+ifi*4 && (eyetime2-trial_time)<waittime+ifi*6 && (eyetime2-pretrial_time)<=trialTimeout&& fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
-                
+                                stopeight(trial)=99;
+
                 %  cueonset=GetSecs
                 
                 vbl=GetSecs;
@@ -1242,8 +1255,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
             %    fliptime=[fliptime FlipTimestamp];
             %      mss=[mss Missed];
             
-            if eyeOrtrack==1
-                
+ if EyeTracker==1                
                 if site<3
                     GetEyeTrackerData
                 elseif site ==3
@@ -1254,10 +1266,15 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                 end              
                 GetFixationDecision
                 
-                if EyeData(1)<8000 && stopchecking<0
+%                 if EyeData(1)<8000 && stopchecking<0
+%                     trial_time = GetSecs;
+%                     stopchecking=10;
+%                 end
+                                if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;
                     stopchecking=10;
                 end
+                
                 
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -1343,7 +1360,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
         tutti{trial} =imageRect_offs;
         
         
-        if eyeOrtrack==1
+            if EyeTracker==1
 
             
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -1418,17 +1435,24 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
     end
     
     % shut down EyeTracker
-    if EyeTracker==1
+    if EyetrackerType==1
         Eyelink('StopRecording');
         Eyelink('closefile');
         status = Eyelink('ReceiveFile',eyeTrackerFileName,save_dir,1); % this is the eyetracker file that needs to be put in the correct folder with the other files!!!
         if status < 0, fprintf('Error in receiveing file!\n');
         end
         Eyelink('Shutdown');
+    elseif EyetrackerType==2
+        Datapixx('SetTPxSleep');
+        Datapixx('RegWrRd');
+        Datapixx('Close');
     end
     if trial>1
         comparerisp=[rispoTotal' rispoInTime']; %Marcello - is this for debugging/needed for anything? % it's just a quick summary of the response (correct/incorrect) and the RT per trial
     end
+    
+            TimeSop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
     ListenChar(0);

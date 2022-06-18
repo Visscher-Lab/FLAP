@@ -13,7 +13,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test','1', '1', '1','0', '0', '4' };
+    defaultanswer={'test','1', '3', '0','0', '0', '4' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -197,7 +197,7 @@ PRLlocations=str2num(answer{7,:});
     elseif site==3   %UCR VPixx
         %% psychtoobox settings
         
-        initRequired= 1;
+        initRequired= 0;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
@@ -208,7 +208,7 @@ PRLlocations=str2num(answer{7,:});
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
-        v_d=57;
+        v_d=80;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -330,13 +330,16 @@ PRLlocations=str2num(answer{7,:});
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
-    
+    if v_d==57
     if  mod(length(theCircles)/2,2)==0
         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
     elseif  mod(length(theCircles)/2,2)>0
         theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
     end
-    
+
+    elseif v_d==70
+                theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+    end
 %         if  mod(nrw,2)==0
 %           theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
 %     elseif  mod(nrw,2)>0
@@ -1150,7 +1153,7 @@ end
                 end
                 GetFixationDecision
                 
-                if EyeData(1)<8000 && stopchecking<0
+                if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;
                     stopchecking=10;
                 end

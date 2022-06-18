@@ -10,7 +10,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test', '1', '1','0' };
+    defaultanswer={'test', '1', '3','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -178,7 +178,7 @@ try
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
         elseif site==3      % VPixx
-        initRequired= 1;
+        initRequired= 0;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
@@ -191,7 +191,7 @@ try
         Datapixx('RegWrRd');
         screencm=[69.8, 35.5];
         
-        v_d=57;
+        v_d=80;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
