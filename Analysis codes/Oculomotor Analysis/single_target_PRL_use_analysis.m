@@ -4,9 +4,11 @@
 %single target analysis
 
 clear all
-addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data')
-load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
+%addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data')
+%load ('PD_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_2_9_11_11.mat')
 
+addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/PRL Induction procedures/data/Induction');
+load('MR_DAY_1_PRL_induction_SingleTarget_Assigned_10 deg 22_6_22_14_55');
 subNum=['Sub ' baseName(8:10) ' Sess ' baseName(16) ' ' ];
 
 name=['single target PRL use analysis' subNum ];
