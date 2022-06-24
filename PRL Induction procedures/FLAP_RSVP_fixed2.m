@@ -603,20 +603,20 @@ if EyeTracker==1
         
         
         if trial==1 && newtrialmatrix(trial+1,1)==1
-            switch_task_script_endo
+            switch_task_script_endo2
         end
 
         if trial==1 && newtrialmatrix(trial+1,1)==2
-            switch_task_script_exo
+            switch_task_script_exo2
         end
         
         if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
-            switch_task_script_exo
+            switch_task_script_exo2
         end
         
         
         if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 && trial<length(newtrialmatrix)
-            switch_task_script_endo
+            switch_task_script_endo2
         end
 
 %         if sum(trial==totaltrialbreak)>0

@@ -3,10 +3,11 @@
 % Written by Marcello Maniglia, 2021
 
 close all
-uab=0
+uab=1;
 newdir= [cd '\PilotFigures\'];
 if uab==1
     subj=baseName(51:53);
+    subj=baseName(70:71)
 else
     subj=baseName(8:9);
 
