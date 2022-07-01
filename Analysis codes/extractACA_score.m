@@ -11,6 +11,10 @@ nameOffile = dir(['./acapilotdata/' '*.mat']);
         load(['./acapilotdata/' newest]);
 lenom{iui}=newest
 ACA_analysisTimeOut
-clearvars -except  nameOffile
+
+
+scoretable{iui}=zzzdio;
+scoreothertable{iui}=zzzsummarytable;
+clearvars -except  nameOffile scoretable scoreothertable
 
     end

@@ -2,12 +2,16 @@
 %Visscher and Seitz (JOV, 2020)
 
 clear all
-      nameOffile = dir([ '*.mat']);
+ %     nameOffile = dir([ '*.mat']);
+nameOffile = dir(['./fixationpilotdata/' '*.mat']);
 
  
     for iui=1:length(nameOffile)
         newest = nameOffile(iui).name;
-        load(['./' newest]);
+        
+                load(['./fixationpilotdata/' newest]);
+
+      %  load(['./' newest]);
 lenom{iui}=newest
 Acc(iui)=sum(rispo)/length(rispo);
 RT(iui)=mean(cueendToResp)
@@ -35,12 +39,12 @@ clearvars -except  RT Respt lenom nameOffile
     
 
 clearvars -except RT Respt lenom nameOffile
-      nameOffile = dir([ '*.mat']);
+nameOffile = dir(['./fixationpilotdata/' '*.mat']);
 
  
     for iui=1:length(nameOffile)
         newest = nameOffile(iui).name;
-        load(['./' newest]);
+                load(['./fixationpilotdata/' newest]);
 FLAP_fixation_distribution
 close all
 

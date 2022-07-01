@@ -23,7 +23,7 @@ nameOffile = dir(['*.mat']);
 
 %for ui=1:length(nameOffile)
    % for uix=1:length(nameOffile)
-     for uix=1
+     for uix=3
     
     newest = nameOffile(uix).name;     
     load(['./' newest]);
