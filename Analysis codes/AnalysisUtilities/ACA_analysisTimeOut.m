@@ -3,9 +3,9 @@
 % Written by Marcello Maniglia, 2021
 
 close all
-uab=1;
+%uab=0;
 newdir= [cd '\PilotFigures\'];
-if uab==1
+if length(baseName)>55
     subj=baseName(51:53);
     subj=baseName(70:71)
 else

@@ -15,6 +15,14 @@ ACA_analysisTimeOut
 
 scoretable{iui}=zzzdio;
 scoreothertable{iui}=zzzsummarytable;
-clearvars -except  nameOffile scoretable scoreothertable
+clearvars -except  lenom nameOffile scoretable scoreothertable
 
     end
+    
+    newtable=[];
+    for ui=1:length(scoretable)
+        
+        newtable=[newtable scoretable{1,ui}];
+        
+    end
+        
