@@ -108,6 +108,18 @@ print([newdir subj 'ACAcrowding'], '-dpng', '-r300'); %<-Save as PNG with 300 DP
 %print('crowdingTask','-dpng')
 %print(theName, '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
+
+
+[h p] = ttest2(cleanAttCorrshortCued, cleanAttCorrshortUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
+[h2 p2] = ttest2(cleanAttCorrlongCued, cleanAttCorrlongUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
+
+
+[h3 p3] = ttest2(AttCorrshortCuedPerc, AttCorrshortUncuedPerc,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
+[h4 p4] = ttest2(AttCorrlongCuedPerc, AttCorrlongUncuedPerc,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
+
 figure
 subplot(2,1,1)
 bar(1, AttCorrshortCuedPerc, 'g')
@@ -119,6 +131,8 @@ ylabel('Percentage correct')
 title([  subj ' short ISI Attention %'])
 limits2=max([AttCorrshortCuedPerc AttCorrshortUncuedPerc]);
 limithigh=limits2*1.2;
+text(1,limits2/2, ['p = ' num2str(p3)]);
+
 
 if limithigh>100
     limithigh=100;
@@ -131,9 +145,6 @@ end
 
 %figure
 
-[h p] = ttest2(cleanAttCorrshortCued, cleanAttCorrshortUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
-
-[h2 p2] = ttest2(cleanAttCorrlongCued, cleanAttCorrlongUncued,'tail','left'); % 1 tailed because we expect cued to be smaller than uncued
 
 subplot(2,1,2)
 
@@ -145,7 +156,7 @@ legend ('cued', 'uncued')
 ylabel('Reaction time (s)')
 title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
-text(1,0.5, ['p = ' num2str(p)]);
+text(1,limits/2, ['p = ' num2str(p)]);
 %ylim([limits*0.8 limits*1.2])
 print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([subj 'crowdingTask'],'-dpng')
@@ -165,6 +176,9 @@ legend ('cued', 'uncued')
 ylabel('Percentage correct')
 title([  subj ' long ISI Attention %'])
 limits2=max([AttCorrlongCuedPerc AttCorrlongUncuedPerc]);
+limithigh=limits2*1.2;
+text(1,limits2/2, ['p = ' num2str(p4)]);
+
 limithigh=limits2*1.2;
 
 if limithigh>100
@@ -188,7 +202,7 @@ legend ('cued', 'uncued')
 ylabel('Reaction time (s)')
 title([  subj ' long ISI Attention RT'])
 limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
-text(1,0.5, ['p = ' num2str(p2)]);
+text(1,limits/2, ['p = ' num2str(p2)]);
 
 %ylim([limits*0.8 limits*1.2])
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -712,6 +726,11 @@ if ThreshlistCW(ui,end)==0
     if ThreshlistCW(ui,end)==0
     
     ThreshlistCW(ui,end)=ThreshlistCW(ui,end-2)
+    end
+
+        if ThreshlistCW(ui,end)==0
+    
+    ThreshlistCW(ui,end)=ThreshlistCW(ui,end-3)
 end
 end
 
