@@ -22,8 +22,32 @@ try
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     Isdemo=answer{4,:};
     whicheye=str2num(answer{5,:});
-        ScotomaPresent = str2num(answer{6,:}); % 0 = no scotoma, 1 = scotoma
+    ScotomaPresent = str2num(answer{6,:}); % 0 = no scotoma, 1 = scotoma
+    
 
+        
+    % spatial parameters
+    scotomadeg=6; % scotoma size in deg
+    scotoma_color=[200 200 200];  % scotoma color in rgb
+    oval_thick=10; %thickness of TRL ring in pixels
+    exocuesize=3; % size of the exogenous cue in degrees
+    endocuesize=1; % size of the endogenous cue (little dot) in degrees
+    stimulussize=2; % size of the stimulus (C or O) in degrees
+    circle_size=4.5; % dimension of the TRL rings in degrees
+    fixationwindow=6; % diameter of fixation window in degrees (outside the box the stimuli disappear)
+    color=0; %if we want to use color for TRL rings
+    if color ==1
+        ContCirc= [0 70 0]; % TRL ring color
+        ContCirc2= [70 0 0]; % TRL ring color when fixation is broken
+    elseif color ==0 %if we use grayscale (default)
+        ContCirc= [150 150 150]; % TRL ring color
+        ContCirc2= [225 225 225]; %if we use grayscale (default)
+    end
+    cue_color=[255 255 255]; % cue color in rgb
+    ContCircEx=[255 0 0]; %exogenous cue color
+
+    % background color on line 229
+    
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -39,55 +63,40 @@ try
     
     Screen('Preference', 'SkipSyncTests', 1);
     PC=getComputerName();
-    max_size=10;
-    n_blocks=1;
-    reps=100;
-    color=0;
-    % BITS=site; %0; 1=bits++; 2=display++
-    nope=0;
-    ContCircEx=[255 0 0];
-    randomizzato=0;
-    if color ==1
-        ContCirc= [0 70 0];
-        ContCirc2= [70 0 0];
-    elseif color ==0
-        ContCirc= [150 150 150];
-        ContCirc2= [225 225 225];
-    end
+
     if site>0 && site<3
         ContCirc=ContCirc/255;
-        ContCirc2=ContCirc2/255;
-   % else
-        
+        ContCirc2=ContCirc2/255;     
     end
-        flickeringrate = 0.33; %rate of flickering (in seconds) for task type 3 and 4
-        flickeringrate = 0.4; %rate of flickering (in seconds) for task type 3 and 4
 
-    alphastim=0.8;
+    % Temporal parameters
+    targetAlphaValue=0.8; % transparency of the targets/foils (1:opaque, 0: invisible)
+    flickeringrate = 0.4; %rate of flickering (in seconds) in between trials
+    doesitflicker=1; % do we want the flickering between trials? 1:yes, 2:no
     fixat=1;
-    SOA=0.6;
     closescript=0;
     kk=1;
     stimulus_contingent=1;
-    precuetime=0.1;
+    precuetime=0.1; % time between second to last element in the stream and exo cue if it's an exo cue trial.
     cuedir=0.05;   %.05
-    cuetargetISI=0.05;
-    poststimulustime=0.1;
-    oval_thick=10; %thickness of oval
-        oval_thickEx=20; %thickness of oval
-            cueExsizedeg=3;
-    cue_size=6;
-    endocue=1;
-    stimulussize=2;
-    circle_size=4.5; % dimension of the circles
-    newswitch=1;
-    fixationwindow=6; % diameter
+    cuetargetISIexo=0.05; % ISI between cue and target for exo
+    endocueduration=0.133; % duration of the endo cue
+    exocueduration=0.05; % duration of the endo cue
+    regularpoststimulustime=0.133; % (empty) ISI between stimuli during RSVP
+    trialISI=1.5; % interval between end of one RSVP trial and beginning of next. Trial is here defined as the series of stimuli ending with the target appearing after exo or endo cue
+    stimulusduration=0.3; % duration of the stimuli (Cs and Os)
     lookaway=2; % 0: location rings disappear, 1:location rings increase in brightness, 2: location rings stay the same color
+    
+    
+        blocking= 16;%number of consecutive trials of one type
+
     fixwindow=2;
     fixTime=1.2;
     fixTime2=0.2;
-    
-        EyeTracker = 1; %0=mouse, 1=eyetracker
+       % oval_thickEx=20; %thickness of exo cue ring
+          % cue_size=6; %old exo cue
+
+    EyeTracker = 1; %0=mouse, 1=eyetracker
 
 
     
@@ -108,7 +117,6 @@ try
         %load lut_12bits_pd; Disabled until display is calibrated
         AssertOpenGL;
         oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
         %screenNumber=max(Screen('Screens'));
         screenNumber=0;
         rand('twister', sum(100*clock));
@@ -205,13 +213,11 @@ try
         SetResolution(screenNumber, oldResolution);
         [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0.5,[],32,2);
         
-        screencm=[69.8, 35.5];
         %debug window
         %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
         %ScreenParameters=Screen('Resolution', screenNumber); %close all
         Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        
+        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT        
     end
     Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     struct.sz=[screencm(1), screencm(2)];
@@ -221,7 +227,7 @@ try
     pix_deg_vert=1./((2*atan((screencm(2)/wRect(4))./(2*v_d))).*(180/pi));
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
-    gray=round((white+black)/2);
+    gray=round((white+black)/2); % background color
     if gray == white
         gray=white / 2;
     end;
@@ -317,21 +323,6 @@ if EyeTracker==1
     end
     WaitSecs(1);
     
-    %
-    %     Screen('TextFont',w, 'Arial');
-    % Screen('TextSize',w, 42);
-    % %     Screen('TextStyle', w, 1+2);
-    % Screen('FillRect', w, gray);
-    % colorfixation = white;
-    % DrawFormattedText(w, 'Part I \n\n  report the orientation of the C within the ring \n \n a brief cue will point towards the location \n \n of the upcoming target \n \n \n \n Press any key to start', 'center', 'center', white);
-    %
-    %     %DrawFormattedText(w, 'Please keep your eyes at the center of the screen.\n \nThere will be four circles at right, left, up and down.\n \nThere wont be a visual cue to indicate the next location of the target.\n \nA series of stimuli including Os and Cs will be shown in one of the circles.\n \nPlease indicate the direction of the gap of the C using the arrow keys as quick and accurate as possible.\n \nAs soon as you respond, you will have an auditory feedback. \n\n  \n \n \n \n Press any key to start', 100, 100, [255 255 255]);
-    %     % Screen('TextSize',w, 100);
-    %     % Screen('TextFont',w, 'Sloan');
-    %     % DrawFormattedText(w, 'D \n \n L \n \n \n \n R \n \n C', 'center', 'center', 0);
-    %     Screen('Flip', w);
-    %     KbQueueWait;
-    
     theoris=[0 180 270 90 991 992 993 994 995];
     
     [xc, yc] = RectCenter(wRect); % coordinate del centro schermo
@@ -381,11 +372,7 @@ if EyeTracker==1
     RespType(4) = KbName('DownArrow');
     RespType(5:9) = KbName('w');
     
-    % if str2num(expdayeye)==1
-    % load testAttMat.mat
-    % elseif str2num(expdayeye)==2
-    % load testAttMatpost.mat
-    % end
+
     if str2num(expdayeye)==1
         %load RSVPTrialMat2022-A.mat
                 load RSVPTrialMat2022-B.mat
@@ -415,10 +402,7 @@ if EyeTracker==1
     shortexo=shortexo(3:end,:);
     
     newtrialmatrix=[shortendo;shortexo];
-    
-    
-    blocking= 16;%8;
-    
+   
     blockCounterEndo=[trialcounterEndo(1:blocking:end); length(endo)+1];
     blockCounterExo=[trialcounterExo(1:blocking:end); length(exo)+1];
     counterexo=0;
@@ -450,15 +434,13 @@ if EyeTracker==1
     if str2num(Isdemo)==1
         newtrialmatrix=newnewtrialmatrix;
     end
-    
+       %     newtrialmatrix=soloexo;
+
      if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
-        
-        %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-        %eyeTrackerBaseName = 's00';
+
         eyeTrackerBaseName =[SUBJECT expdayeye];
         
-        %  save_dir= 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
         
         if exist('dataeyet')==0
             mkdir('dataeyet')
@@ -483,39 +465,16 @@ if EyeTracker==1
         % Eyelink('command', 'calibration_type = HV5'); % changed to 5 to correct upper left corner of the screen issue
         % you must send this command with value NO for custom calibration
         % you must also reset it to YES for subsequent experiments
-        %    Eyelink('command', 'generate_default_targets = NO');
-        
-        
+        %    Eyelink('command', 'generate_default_targets = NO');       
         %% Modify target locations
         % due to issues with calibrating the upper left corner of the screen the following lines have been
         % commmented out to change the the sampling from 10 to 5 as
         % listed in line 323
         Eyelink('command','calibration_samples = 10');
         Eyelink('command','calibration_sequence = 0,1,2,3,4,5,6,7,8,9');
-        
-        %             modFactor = 0.183;
-        %
-        %             Eyelink('command','calibration_targets = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor) );
-        
-        %  Eyelink('command','validation_samples = 5');
+
         Eyelink('command','validation_samples = 10'); %changed to make
-        % it 5 samples instead of 10 to deal with upper left corner of
-        % the screem issue
-        %             Eyelink('command','validation_sequence = 0,1,2,3,4,5,6,7,8,9');
-        %             Eyelink('command','validation_targets =  %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor)  );
-        
+
         % make sure that we get gaze data from the Eyelink
         Eyelink('command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
         Eyelink('OpenFile', eyeTrackerFileName); % open file to record data  & calibration
@@ -537,14 +496,11 @@ if EyeTracker==1
     end
     eyetime2=0;
     
-    scotomadeg=6;
+
     scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
-    %scotoma_color=[100 100 100];
-    scotoma_color=[200 200 200];
-    cue_color=[255 255 255];
+
     
-    imageRectcue = CenterRect([0, 0, [cue_size*pix_deg cue_size*pix_deg_vert]], wRect);
     imageRectcircles = CenterRect([0, 0, [circle_size*pix_deg circle_size*pix_deg_vert]], wRect);
     fixationwindowRect = CenterRect([0, 0, [fixationwindow*pix_deg fixationwindow*pix_deg_vert]], wRect);
     
@@ -582,7 +538,7 @@ if EyeTracker==1
     whichLetter(4)=Screen('MakeTexture', w, theLetterd);
     
     imageRect1 = CenterRect([0, 0, [stimulussize*pix_deg stimulussize*pix_deg_vert]], wRect);
-    imageRectendocue = CenterRect([0, 0, [endocue*pix_deg endocue*pix_deg_vert]], wRect);
+    imageRectendocue = CenterRect([0, 0, [endocuesize*pix_deg endocuesize*pix_deg_vert]], wRect);
     
     thecue=imread('ccue2.tiff');
     thecue=thecue(:,:,1);
@@ -696,44 +652,35 @@ kkk3=0;
         stopfixating=0;
         stopfixating2=0;
         T=newtrialmatrix(trial,1);
-                cueExsize=cueExsizedeg*pix_deg;
+                cueExsize=exocuesize*pix_deg;
 
         
-        if T==1 && newtrialmatrix(trial,5)<=5 || T==2 || T==3 %duration foil/non cued stimulus
-            precuetime=.1;
+        if T==1 && newtrialmatrix(trial,5)<=5 || T==2 || T==3 % foil/non cued stimulus
             cuedir=.05;   %.05
             cuetargetISI=.05;
-            %   stimdur=0.133; %.133
-            stimdur=0.333; %.133
-            poststimulustime=.1;
-        elseif T==1 && newtrialmatrix(trial,5)>5   %duration endogenous stimulus
-            precuetime=.1;
+            stimdur=stimulusduration; %.133
+            poststimulustime=regularpoststimulustime;
+        elseif T==1 && newtrialmatrix(trial,5)>5   % endogenous stimulus
             cuedir=.05;   %.05
-            %cuedir=1.05;   %.05
             cuetargetISI=.05;
-            %   stimdur=0.133; %.133
-            stimdur=0.2; %.133
-            %   poststimulustime=.05;
-        elseif T==0                     %duration exogenous stimulus
-            precuetime=.2;
-            cuedir=.05;   %duration of the cue
-            cuetargetISI=.05; %interval between cue disappearance and target appearance
-            %   stimdur=0.133; %.133
-            stimdur=0.333; %.133
-            poststimulustime=.1;
+            stimdur=endocueduration; %.133
+        elseif T==0                     % exogenous stimulus
+         %   precuetime=.2;
+            cuedir=exocueduration;   %duration of the cue
+            cuetargetISI=cuetargetISIexo; %interval between cue disappearance and target appearance
+            stimdur=stimulusduration; %.133
+            poststimulustime=regularpoststimulustime;
         end
         
         
         if trial>1
             if T==0 || newtrialmatrix(trial-1,5)>5
-                poststimulustime=1.5;
+                poststimulustime=trialISI;
             elseif T==1 && newtrialmatrix(trial-1,5)>5
-                precuetime=.1;
                 cuedir=0;   %.05
                 cuetargetISI=0;
-                %   stimdur=0.133; %.133
-                stimdur=0.333; %.133
-                poststimulustime=.1;
+                stimdur=stimulusduration; %.133
+                poststimulustime=regularpoststimulustime;
                 
             end
         end
@@ -819,7 +766,6 @@ kkk3=0;
                         flickswitch=0;
                         flick=1;
                     end
-                %   flicker_time=GetSecs;
                 flicker_time=GetSecs-flicker_time_start;
                 
                 if flicker_time>flickswitch
@@ -831,23 +777,25 @@ if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,
     theSwitcher=theSwitcher+1;
     kkk=kkk+1;
     countfl(trial,kkk)=GetSecs;
-    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-    %                  else
-end   
+    if doesitflicker==1
+    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+    end   
+end
 else
    if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial-1)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial-1)>=flickeringrate
     theSwitcher=theSwitcher+1;
     kkk=kkk+1;
     countfl(trial,kkk)=GetSecs;
-    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
- 
+        if doesitflicker==1
+    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+        end
    end
 end
 
                 elseif (eyetime2-pretrial_time)>prefixwait+28*ifi && (eyetime2-pretrial_time)<prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6)))== 0
                      %target at the beginning of the trial stays on screen
                     %until response (2 frames)
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -862,7 +810,6 @@ end
                         flickswitch=0;
                         flick=1;
                     end
-                %   flicker_time=GetSecs;
                 flicker_time=GetSecs-flicker_time_start;
                 
                 if flicker_time>flickswitch
@@ -875,16 +822,18 @@ end
                         theSwitcher=theSwitcher+1;
                         kkk=kkk+1;
                         countfl(trial,kkk)=GetSecs;
-                        Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-                        %                  else
+                            if doesitflicker==1
+                        Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                            end
                     end
                 else
                     if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
                         theSwitcher=theSwitcher+1;
                         kkk=kkk+1;
                         countfl(trial,kkk)=GetSecs;
-                        Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-                        
+                            if doesitflicker==1
+                        Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                            end
                     end
                 end
 
@@ -905,7 +854,6 @@ end
                         flickswitch=0;
                         flick=1;
                     end
-                %   flicker_time=GetSecs;
                 flicker_time=GetSecs-flicker_time_start;
                 
                 if flicker_time>flickswitch
@@ -917,38 +865,11 @@ if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,
     theSwitcher=theSwitcher+1;
     kkk=kkk+1;
     countfl(trial,kkk)=GetSecs;
-    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-    %                  else
+        if doesitflicker==1
+    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+        end
 end
-
-%                 if trial==1
-%                     if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1))
-%                         theSwitcher=theSwitcher+1;
-%                         kkk=kkk+1;
-%                         countfl(trial,kkk)=GetSecs;
-%                         Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-%                         %                  else
-%                     end
-%                 else
-%                     if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
-%                         theSwitcher=theSwitcher+1;
-%                         kkk=kkk+1;
-%                         countfl(trial,kkk)=GetSecs;
-%                         Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
-%                         
-%                     end
-%                 end
-
-
-
-
-
-
-
-
-
-
-                
+   
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1016,10 +937,11 @@ end
                 end
             end
             
-            %here starts the RSVP stream
+            %here starts the RSVP stream OR it's the end of an exogenous
+            %cue trial so I present the cue and then the last target of the
+            %stream
             
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<precuetime  && fixating>400
-                %   clear respTotrial
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1031,16 +953,16 @@ end
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                 
-                
-                if  T==0                     % Present exo Cue
+                % if it's exogenous cue trial
+                if  T==0                     
                     cueonset=GetSecs; 
                     cueontime=cueonset + (ifi * 0.5);
 
                     
-                    imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
-                        imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
-                    
-                    
+%                     imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
+%                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
+%                     
+%                     
                     cuecounter(trial)=1;
                     
                     
@@ -1053,7 +975,7 @@ end
                     Screen('FrameOval', w,gray, imageRect_circleoffscover, oval_thick, oval_thick);
                          %HERE I present the exo cue 
                 %    Screen('FrameOval', w,ContCircEx, [imageRectendocues{tloc}(1)-cueExsize, imageRectendocues{tloc}(2)-cueExsize,imageRectendocues{tloc}(3)+cueExsize, imageRectendocues{tloc}(4)+cueExsize], oval_thickEx, oval_thickEx);
-                           Screen('FrameRect', w, [255 255 255],imageRect_circleoffscover, oval_thick);
+                           Screen('FrameRect', w, ContCircEx,imageRect_circleoffscover, oval_thick);
 
                 end
                 
@@ -1066,8 +988,8 @@ end
                 
                 if  T==0 
                     % EXO CUE
-                    imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
-                        imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
+%                     imageRect_offscue=[imageRectcue(1)+eccentricity_X(cloc), imageRectcue(2)+eccentricity_Y(cloc),...
+%                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
                     
                   %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
                   %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{2}(1), imageRectendocues{tloc}(2)+thecuesEx{2}(2),imageRectendocues{tloc}(3)+thecuesEx{2}(3), imageRectendocues{tloc}(4)+thecuesEx{2}(4)]);
@@ -1078,7 +1000,7 @@ end
                   Screen('FrameOval', w,gray, imageRect_circleoffscover, oval_thick, oval_thick);
                          %HERE I present the exo cue 
                 %    Screen('FrameOval', w,ContCircEx, [imageRectendocues{tloc}(1)-cueExsize, imageRectendocues{tloc}(2)-cueExsize,imageRectendocues{tloc}(3)+cueExsize, imageRectendocues{tloc}(4)+cueExsize], oval_thickEx, oval_thickEx);
-                           Screen('FrameRect', w, [255 255 255],imageRect_circleoffscover, oval_thick);
+                           Screen('FrameRect', w, ContCircEx,imageRect_circleoffscover, oval_thick);
 
                 end
                 
@@ -1106,14 +1028,14 @@ end
                 imageRect_offs={imageRect_offs1 imageRect_offs2 imageRect_offs3 imageRect_offs4};
                 
                 if newtrialmatrix(trial,5)<5
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                 elseif newtrialmatrix(trial,5)==5
-                    Screen('DrawTexture', w, whichLetter(newtrialmatrix(trial,5)-4), [], imageRect_offs{tloc}, 0,[], alphastim );
+                    Screen('DrawTexture', w, whichLetter(newtrialmatrix(trial,5)-4), [], imageRect_offs{tloc}, 0,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1147,14 +1069,14 @@ end
                 imageRect_offs={imageRect_offs1 imageRect_offs2 imageRect_offs3 imageRect_offs4};
                 
                 if newtrialmatrix(trial,5)<5
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], alphastim );
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                 elseif newtrialmatrix(trial,5)==5
-                    Screen('DrawTexture', w, whichLetter(newtrialmatrix(trial,5)-4), [], imageRect_offs{tloc}, 0,[], alphastim );
+                    Screen('DrawTexture', w, whichLetter(newtrialmatrix(trial,5)-4), [], imageRect_offs{tloc}, 0,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1193,7 +1115,6 @@ end
                     postflickswitch=0;
                     postflick=1;
                 end
-                %   flicker_time=GetSecs;
                 postflicker_time=GetSecs-postflicker_time_start;
                 
                 if postflicker_time>postflickswitch
@@ -1205,10 +1126,9 @@ end
                     posttheSwitcher=posttheSwitcher+1;
                     kkk=kkk+1;
                     countfl(trial,kkk)=GetSecs;
-                    
-                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], alphastim );
-                    
-                    %                  else
+                        if doesitflicker==1
+                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                        end
                 end
                 
             elseif (eyetime2-trial_time)>=precuetime+cuedir+ifi+cuetargetISI+stimdur+ifi*2 && (eyetime2-trial_time)<=precuetime+cuedir+ifi+cuetargetISI+stimdur+poststimulustime && fixating>500 && T<3
@@ -1240,9 +1160,10 @@ end
                     posttheSwitcher=posttheSwitcher+1;
                     kkk2=kkk2+1;
                     countfl2(trial,kkk2)=GetSecs;
-                    cecco(kkk2)=GetSecs
-                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], alphastim );
-                    
+                    cecco(kkk2)=GetSecs;
+                        if doesitflicker==1
+                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                        end
                     %                  else
                 end
             elseif  (eyetime2-trial_time)>precuetime+cuedir+ifi+cuetargetISI+stimdur+poststimulustime && fixating>500 && T<3
@@ -1274,9 +1195,10 @@ end
                     posttheSwitcher=posttheSwitcher+1;
                     kkk2=kkk2+1;
                     countfl2(trial,kkk2)=GetSecs;
-                    cecco(kkk2)=GetSecs
-                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], alphastim );
-                    
+                    cecco(kkk2)=GetSecs;
+                        if doesitflicker==1
+                    Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                        end
                     %                  else
                 end
                 if exist('stim_sto')==0

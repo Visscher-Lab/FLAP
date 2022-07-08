@@ -9,11 +9,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Subject Name', 'day','site (UCR = 1; UAB = 2; UCR Vpixx = 3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)'};
     
-    name= 'Subject Name';
+    name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '0','0', '0', '4' };
+    defaultanswer={'test','1', '1', '1','0', '0', '4', '2' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -26,6 +26,8 @@ try
 scotomavpixx= str2num(answer{5,:});  
     Isdemo=str2num(answer{6,:});
 PRLlocations=str2num(answer{7,:});
+    whicheye=str2num(answer{8,:});
+
     %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -68,11 +70,13 @@ PRLlocations=str2num(answer{7,:});
     practicetrials=5;
     StartSize=2; %for VA
     cueSize=3;
-    circleSize=4.5;
+    circleSize=2.5; % cue size
+        attContr= 0.35; % contrast of the target in the attention task
+
     oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
     fixwindow=3;
     fixTime=1.5/3;
-        trialTimeout=15;
+        effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
 
     PRLecc=7.5;         %7.5; %eccentricity of PRLs
     %PRLecc=5.3;         %7.5; %eccentricity of PRLs
@@ -95,13 +99,12 @@ PRLlocations=str2num(answer{7,:});
     
     closescript=0;
     kk=1;
-    
+    prefixationsquare=0.5;
     cueonset=0; %0.55;
     cueduration=.05;
     cueISI=0.05;
     presentationtime=0.133;
     ScotomaPresent = scotomaoldmode; % 0 = no scotoma, 1 = scotoma
-    
     cue_spatial_offset=2;
     
     
@@ -716,7 +719,14 @@ rep=40;
     %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
     end
     
+    jit=[0.5:0.5:2];
+ %   jitterArray=[ones(length(mixtrAtt(:,1))/5,1)*jit']
     
+    jitterArray=[];
+    for ui=1:length(mixtrAtt(:,1))/4
+tempjitter=jit(randperm(length(jit)))';
+jitterArray=[jitterArray;tempjitter];
+    end
         if Isdemo==0
         mixtrVA=mixtrVA(1:practicetrials,:);
         mixtrCW=mixtrCW(1:practicetrials,:);
@@ -795,7 +805,7 @@ end
             
         end
         
-           % whichTask=2
+            whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         
@@ -824,13 +834,14 @@ end
         yeye2=[];
         
         if whichTask ==1
+            trialTimeout=effectivetrialtimeout;
             %   VAsize = Sizelist(threshVA(mixtrVA(trial,1),mixtrVA(trial,2)));
             theeccentricity_X=eccentricity_X(mixtrVA(trial));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial));
             VAsize = Sizelist(threshVA);
             imageRect = CenterRect([0, 0, VAsize*pix_deg VAsize*pix_deg], wRect);
         elseif whichTask ==2
-            
+            trialTimeout=effectivetrialtimeout;
             VA_thresho=1;
             
             %           if exist('VA_thresho')==1
@@ -852,7 +863,9 @@ end
 %                 VA_thresho=1;
 %             end
             
-            imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
+         %   imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
+                        imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
+
             imageRect11 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             imageRect12 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             sep = Separationtlist(threshCW(mixtrCW(trial,2)));
@@ -936,7 +949,8 @@ end
             angloutp=radtodeg(angolo);
             
         elseif whichTask == 3
-            
+            cueonset=jitterArray(trial);
+            trialTimeout=effectivetrialtimeout+cueonset;
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
             imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
             %             for ui=1:length(eccentricity_X)
@@ -946,13 +960,16 @@ end
             %
             %   VA_thresho=max(cell2mat(PRL_va_thresh));
             %VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
-            if exist('VA_thresho')==0
-                VA_thresho=1;
-            end
-            if VA_thresho<0
-                VA_thresho=1;
-            end
-            imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
+%             if exist('VA_thresho')==0
+%                 VA_thresho=1;
+%             end
+%             if VA_thresho<0
+%                 VA_thresho=1;
+%             end
+VA_thresho=1;
+    %        imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
+                imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
+
             theeccentricity_X=eccentricity_X(mixtrAtt(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrAtt(trial,1));
             imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -985,10 +1002,11 @@ end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-            if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+              %   if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
               %  fixationscript3
            %   fixationscriptW
-            elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+           %else
+               if  (eyetime2-pretrial_time)>=ifi*prefixationsquare && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if site<3
                     IsFixatingSquare
                 elseif site==3
@@ -1029,8 +1047,8 @@ end
                     end
                     if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3
                         %  Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
-                        %     Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
-                        Screen('FrameRect', w, [200 200 200],imageRect_offsCirc, oval_thick);
+                             Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
+                        %Screen('FrameRect', w, [200 200 200],imageRect_offsCirc, oval_thick);
                         
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
@@ -1055,8 +1073,11 @@ end
                 end
                 
                                     Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
-
+                if whichTask<3
                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
+                elseif whichTask==3
+                                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
+                end
                 if exist('stimstar') == 0
                           stimulus_start=GetSecs;
                           stimstar=1;
