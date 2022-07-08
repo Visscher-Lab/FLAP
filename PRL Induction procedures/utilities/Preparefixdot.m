@@ -21,5 +21,6 @@ imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)
 [img, sss, alpha] =imread('neutral21.png');
 img(:, :, 4) = alpha;
 Neutralface=Screen('MakeTexture', w, img);
+                  %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
 
 mask_color= [170 170 170];
