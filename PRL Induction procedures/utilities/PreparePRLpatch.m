@@ -9,8 +9,8 @@ PRLecc=[-7.5 0 ]; %eccentricity of PRLs
 
 PRLx= PRLecc(1);
 PRLy=-PRLecc(2);
-PRLxpix=PRLx*pix_deg;
-PRLypix=PRLy*pix_deg_vert;
+PRLxpix=PRLx*pix_deg*coeffAdj;
+PRLypix=PRLy*pix_deg*coeffAdj;
 PRLsize=5;
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
 
