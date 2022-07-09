@@ -58,7 +58,7 @@ try
    % else
         
     end
-    alphastim=0.8;
+    alphastim=0.35;
     fixat=1;
     SOA=0.6;
     closescript=0;
