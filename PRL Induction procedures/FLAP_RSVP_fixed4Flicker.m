@@ -1359,7 +1359,7 @@ try
                     GetEyeTrackerDatapixx
                 end
                 if ~exist('EyeData','var')
-                    EyeData = ones(1,5)*9001;
+                    EyeData = ones(1,5)*9001; % code review: why 9001?  
                 end
                 GetFixationDecision
                 
