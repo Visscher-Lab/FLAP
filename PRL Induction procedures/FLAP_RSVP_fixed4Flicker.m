@@ -589,9 +589,9 @@ try
         
         
         Response.start=0;
-        kkk=0;
-        kkk2=0;
-        kkk3=0;
+        kj=0;
+        kj2=0;
+        kj3=0;
         
         if trial==1 && newtrialmatrix(trial+1,1)==1
             switch_task_script_endo2
@@ -785,7 +785,7 @@ try
                     if exist('startflickerstar') == 0
                         flicker_time_start=GetSecs;
                         startflickerstar=1;
-                        theSwitcher=0;
+                        theSwitcher=0; % code review: I don't thin theSwitcher is doing anything -- it just gets set to 0 nothing is checking it...
                         flickswitch=0;
                         flick=1;
                     end
@@ -798,8 +798,8 @@ try
                     if trial==1
                         if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1))
                             theSwitcher=theSwitcher+1;
-                            kkk=kkk+1;
-                            countfl(trial,kkk)=GetSecs;
+                            kj=kj+1;
+                            countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
@@ -807,8 +807,8 @@ try
                     else
                         if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial-1)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial-1)>=flickeringrate
                             theSwitcher=theSwitcher+1;
-                            kkk=kkk+1;
-                            countfl(trial,kkk)=GetSecs;
+                            kj=kj+1;
+                            countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
@@ -824,7 +824,9 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
-                    stim_start(trial)=GetSecs;
+                    stim_start(trial)=GetSecs; % kmv July 11, 2022 --
+                    % this needs to be measured based on the flip that puts
+                    % the stimulus onscreen -- delete this line
                     stim_star=GetSecs;
                     if exist('preflickerstar') == 0
                         flicker_time_start=GetSecs;
@@ -843,8 +845,8 @@ try
                     if trial==1
                         if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1))
                             theSwitcher=theSwitcher+1;
-                            kkk=kkk+1;
-                            countfl(trial,kkk)=GetSecs;
+                            kj=kj+1;
+                            countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
@@ -852,8 +854,8 @@ try
                     else
                         if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
                             theSwitcher=theSwitcher+1;
-                            kkk=kkk+1;
-                            countfl(trial,kkk)=GetSecs;
+                            kj=kj+1;
+                            countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
@@ -863,6 +865,8 @@ try
                 elseif (eyetime2-pretrial_time)>prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))== 0
                     %target at the beginning of the trial stays on screen
                     %until response (stimulus duration)
+                    % code review: what are 30 and 80 in the above?
+                    % consider setting these variables early in code
                     if exist('stim_star')==0
                         stim_star=GetSecs;
                         stim_start(trial)=stim_star;
@@ -886,8 +890,8 @@ try
                     
                     if flick==2 && newtrialmatrix(trial,1)==3 || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1))
                         theSwitcher=theSwitcher+1;
-                        kkk=kkk+1;
-                        countfl(trial,kkk)=GetSecs;
+                        kj=kj+1;
+                        countfl(trial,kj)=GetSecs;
                         if doesitflicker==1
                             Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                         end
@@ -964,7 +968,7 @@ try
             %cue trial so I present the cue and then the last target of the
             %stream
             
-            if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<precuetime  && fixating>400
+            if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<precuetime  && fixating>400  % code review -- is 400 a variable that you think should go in variables in the beginning?
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1075,7 +1079,7 @@ try
                 end
                 
                 cici(trial)=22;
-                stim_start(trial)=GetSecs;
+                stim_start(trial)=GetSecs;  %code review -- this doesn't show when the stimulus actually was onscreen.
                 stim_star=GetSecs;
                 
             elseif (eyetime2-trial_time)>precuetime+cuedir+ifi+cuetargetISI+ifi*2 && (eyetime2-trial_time)<precuetime+cuedir+ifi+cuetargetISI+stimdur && fixating>500 && T<3%&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0
@@ -1147,8 +1151,8 @@ try
                 
                 if postflick==2 && newtrialmatrix(trial+1,1)==3 && trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
                     posttheSwitcher=posttheSwitcher+1;
-                    kkk=kkk+1;
-                    countfl(trial,kkk)=GetSecs;
+                    kj=kj+1;
+                    countfl(trial,kj)=GetSecs;
                     if doesitflicker==1
                         Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     end
@@ -1172,8 +1176,8 @@ try
                 postflicker_time=GetSecs-postflicker_time_start;
                 
                 if postflicker_time>postflickswitch
-                    kkk3=kkk3+1;
-                    countpostflick(kkk3)=postflick;
+                    kj3=kj3+1;
+                    countpostflick(kj3)=postflick;
                     postflickswitch= postflickswitch+flickeringrate;
                     postflick=3-postflick;
                 end
@@ -1181,9 +1185,9 @@ try
                 if  postflick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate  || postflick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
                     
                     posttheSwitcher=posttheSwitcher+1;
-                    kkk2=kkk2+1;
-                    countfl2(trial,kkk2)=GetSecs;
-                    cecco(kkk2)=GetSecs;
+                    kj2=kj2+1;
+                    countfl2(trial,kj2)=GetSecs;
+                    cecco(kj2)=GetSecs;
                     if doesitflicker==1
                         Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     end
@@ -1207,8 +1211,8 @@ try
                 postflicker_time=GetSecs-postflicker_time_start;
                 
                 if postflicker_time>postflickswitch
-                    kkk3=kkk3+1;
-                    countpostflick(kkk3)=postflick;
+                    kj3=kj3+1;
+                    countpostflick(kj3)=postflick;
                     postflickswitch= postflickswitch+flickeringrate;
                     postflick=3-postflick;
                 end
@@ -1216,9 +1220,9 @@ try
                 if  postflick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || postflick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
                     
                     posttheSwitcher=posttheSwitcher+1;
-                    kkk2=kkk2+1;
-                    countfl2(trial,kkk2)=GetSecs;
-                    cecco(kkk2)=GetSecs;
+                    kj2=kj2+1;
+                    countfl2(trial,kj2)=GetSecs;
+                    cecco(kj2)=GetSecs;
                     if doesitflicker==1
                         Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     end
@@ -1349,7 +1353,15 @@ try
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
             
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
+            VBL_Timestamp=[VBL_Timestamp eyetime2]; % Code review:  this seems irrelevant, kmv  July 11, 2022
+            if kj==1 % if this is the flip that put the stimulus onscreen, record the time
+                % code review: kmv is not 100% sure this is the way to know
+                % that this is the correct flip for the stimulus to be
+                % onscreen
+                stimulus_time(trial) = eyetime2; % kmv added  july 11, 2022; this is  the relevant time to measure reaction times 
+            end
+            
+            
             if EyeTracker==1
                 
                 if site<3
@@ -1419,19 +1431,22 @@ try
                         end
                         respo(trial)=resp;
                         respTimeSTamp(trial)=GetSecs;
-                        respRT(trial)=GetSecs-stim_start(trial);
+                        respRT(trial)=GetSecs-stim_start(trial); % code review, kmv this reaction time is not correct. it should be based on flip and key code
+                        newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                     elseif trial==2
-                        if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants  % code review: not clear to me exactly what this is going to do.  consider whether it causes an error where participants are getting 'correct' even on trials where they were not correct?
+                        if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants  % code review: not clear to kmv exactly what this is going to do.  consider whether it causes an error where participants are getting 'correct' even on trials where they were not correct?
                             resp = 1;
                             PsychPortAudio('Start', pahandle1);
                             if foo(theans(trial))
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
                                 respRT(trial)=GetSecs-stim_start(trial);
+                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                             elseif  foo(theans(trial-1))
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                             end
                         else
                             resp = -1;
@@ -1439,10 +1454,12 @@ try
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                             elseif theans(trial)<5
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
                                 respRT(trial)=GetSecs-stim_start(trial);
+                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                             end
                             PsychPortAudio('Start', pahandle2);
                         end
@@ -1459,6 +1476,7 @@ try
                                 %                                 end
                                 if length(stim_start)==trial
                                     respRT(trial)=GetSecs-stim_start(trial);
+                                    newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                                     resp = 1;
                                     PsychPortAudio('Start', pahandle1);
                                 else
@@ -1472,6 +1490,7 @@ try
                                 respTimeSTamp(trial-1)=GetSecs;
                                 
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                newRespRT(trial-1) = secs - stimulus_time(trial-1); % code review kmv added this as a new Reaction time
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
                                 countonepre(trial)=99;
@@ -1479,6 +1498,7 @@ try
                                 respo(trial-2)=resp;
                                 respTimeSTamp(trial-2)=GetSecs;
                                 respRT(trial-2)=GetSecs-stim_start(trial-2);
+                                newRespRT(trial-2) = secs - stimulus_time(trial-2); % code review kmv added this as a new Reaction time
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
                                 counttwopre(trial)=99;
@@ -1490,10 +1510,12 @@ try
                                 respo(trial-2)=resp;
                                 respTimeSTamp(trial-2)=GetSecs;
                                 respRT(trial-2)=GetSecs-stim_start(trial-2);
+                                newRespRT(trial-2) = secs - stimulus_time(trial-2); % code review kmv added this as a new Reaction time
                             elseif theans(trial-1)<5
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
+                                newRespRT(trial-1) = secs - stimulus_time(trial-1); % code review kmv added this as a new Reaction time
                             elseif theans(trial)<5
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
@@ -1505,6 +1527,7 @@ try
                                 
                                 if length(stim_start)==trial
                                     respRT(trial)=GetSecs-stim_start(trial);
+                                    newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
                                 else
                                     wrongcounter(trial)=99;
                                 end
