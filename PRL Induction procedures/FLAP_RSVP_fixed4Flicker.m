@@ -119,7 +119,7 @@ try
     EyeTracker = 1; %0=mouse, 1=eyetracker
     
     
-    
+    Ttrial = 0; % which trial we are on, awaiting responses
     KbQueueCreate;
     KbQueueStart;
     
@@ -464,7 +464,6 @@ try
         
         eyeTrackerBaseName =[SUBJECT expdayeye];
         
-        
         if exist('dataeyet')==0
             mkdir('dataeyet')
         end
@@ -518,7 +517,6 @@ try
         location =  zeros(length(newtrialmatrix), 6);
     end
     eyetime2=0;
-    
     
     scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg_vert];
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
@@ -902,7 +900,7 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
-                elseif      (eyetime2-pretrial_time)>prefixwait+30*ifi+ifi*20 && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0
+                elseif  (eyetime2-pretrial_time)>prefixwait+30*ifi+ifi*20 && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0 % code review, why 30*ifi +20*ifi?
                     
                     if exist('stim_star')==0
                         stim_star=GetSecs;
@@ -923,8 +921,10 @@ try
                     if length(thekeys)>1
                         thekeys=thekeys(1);
                     end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
+                    %thetimes=keyCode(thekeys);
+                    %[secs  indfirst]=min(thetimes); % code review --
+                    %removed by kmv.  done BEFORE the if statements,
+                    %instead.
                     
                     foo=(RespType==thekeys);
                     if flick==1
@@ -1354,11 +1354,12 @@ try
             
             
             VBL_Timestamp=[VBL_Timestamp eyetime2]; % Code review:  this seems irrelevant, kmv  July 11, 2022
-            if kj==1 % if this is the flip that put the stimulus onscreen, record the time
+            if newtrialmatrix(trial,1) == 3 % if this is the flip that put the stimulus onscreen, record the time
                 % code review: kmv is not 100% sure this is the way to know
                 % that this is the correct flip for the stimulus to be
                 % onscreen
-                stimulus_time(trial) = eyetime2; % kmv added  july 11, 2022; this is  the relevant time to measure reaction times 
+                Ttrial = Ttrial+1; % this index indicates the trials that could have RTs associated with them
+                stimulus_time(Ttrial) = eyetime2; % kmv added  july 11, 2022; this is  the relevant time to measure reaction times 
             end
             
             
@@ -1398,8 +1399,16 @@ try
                 end
                 
             end
-            [keyIsDown, keyCode] = KbQueueCheck;
-            
+            [keyIsDown, keyCode] = KbQueueCheck; 
+            % identify the key and calculate RT
+            if sum(keyCode(RespType(1:6))
+                    if length(thekeys)>1
+                        thekeys=thekeys(1);
+                    end
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes);
+                    newRespRT(Ttrial) = secs - stimulus_time(Ttrial); % code review kmv added this as a new Reaction time
+            end
             
             
             if sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0 && stopfixating>80   % code review: why 80?  is this a parameter that should be set up top?
@@ -1411,8 +1420,9 @@ try
                         thekeys=thekeys(1);
                     end
                     
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
+                    %thetimes=keyCode(thekeys);
+                    %[secs  indfirst]=min(thetimes);
+                
                     
                     foo=(RespType==thekeys);
                     
@@ -1431,8 +1441,7 @@ try
                         end
                         respo(trial)=resp;
                         respTimeSTamp(trial)=GetSecs;
-                        respRT(trial)=GetSecs-stim_start(trial); % code review, kmv this reaction time is not correct. it should be based on flip and key code
-                        newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+                        
                     elseif trial==2
                         if foo(theans(trial)) || foo(theans(trial-1)) %some leeway for participants  % code review: not clear to kmv exactly what this is going to do.  consider whether it causes an error where participants are getting 'correct' even on trials where they were not correct?
                             resp = 1;
@@ -1441,12 +1450,12 @@ try
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
                                 respRT(trial)=GetSecs-stim_start(trial);
-                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+
                             elseif  foo(theans(trial-1))
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
-                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+
                             end
                         else
                             resp = -1;
@@ -1454,12 +1463,12 @@ try
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
-                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+
                             elseif theans(trial)<5
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
                                 respRT(trial)=GetSecs-stim_start(trial);
-                                newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+
                             end
                             PsychPortAudio('Start', pahandle2);
                         end
@@ -1476,7 +1485,7 @@ try
                                 %                                 end
                                 if length(stim_start)==trial
                                     respRT(trial)=GetSecs-stim_start(trial);
-                                    newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+
                                     resp = 1;
                                     PsychPortAudio('Start', pahandle1);
                                 else
@@ -1490,7 +1499,7 @@ try
                                 respTimeSTamp(trial-1)=GetSecs;
                                 
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
-                                newRespRT(trial-1) = secs - stimulus_time(trial-1); % code review kmv added this as a new Reaction time
+
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
                                 countonepre(trial)=99;
@@ -1498,7 +1507,7 @@ try
                                 respo(trial-2)=resp;
                                 respTimeSTamp(trial-2)=GetSecs;
                                 respRT(trial-2)=GetSecs-stim_start(trial-2);
-                                newRespRT(trial-2) = secs - stimulus_time(trial-2); % code review kmv added this as a new Reaction time
+                                
                                 resp = 1;
                                 PsychPortAudio('Start', pahandle1);
                                 counttwopre(trial)=99;
@@ -1510,12 +1519,12 @@ try
                                 respo(trial-2)=resp;
                                 respTimeSTamp(trial-2)=GetSecs;
                                 respRT(trial-2)=GetSecs-stim_start(trial-2);
-                                newRespRT(trial-2) = secs - stimulus_time(trial-2); % code review kmv added this as a new Reaction time
+                               
                             elseif theans(trial-1)<5
                                 respo(trial-1)=resp;
                                 respTimeSTamp(trial-1)=GetSecs;
                                 respRT(trial-1)=GetSecs-stim_start(trial-1);
-                                newRespRT(trial-1) = secs - stimulus_time(trial-1); % code review kmv added this as a new Reaction time
+                              
                             elseif theans(trial)<5
                                 respo(trial)=resp;
                                 respTimeSTamp(trial)=GetSecs;
@@ -1527,7 +1536,7 @@ try
                                 
                                 if length(stim_start)==trial
                                     respRT(trial)=GetSecs-stim_start(trial);
-                                    newRespRT(trial) = secs - stimulus_time(trial); % code review kmv added this as a new Reaction time
+                                    
                                 else
                                     wrongcounter(trial)=99;
                                 end
