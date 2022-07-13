@@ -1,7 +1,7 @@
 % FLAP Attention task via RSVP streams on 4 peripheral locations
 % Marcello Maniglia 7/21/2021
 
-% troubleshooting notes from kmmv July 9, 2022 (delete when code finalized):
+% troubleshooting notes from kmv July 9, 2022 (delete when code finalized):
 % setting site to UAB at UAB causes psych port audio error.  we may want to
 % fix that.
 % blinking repeatedly during eyetracking seems to cause an error involving
@@ -315,8 +315,10 @@ try
     end
     
     try
-        [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+        % code review -- at UAB on july 12 we get errors for wavread
+        % because it doesn't exist, so commenting the following out
+%         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+%         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
     try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -774,8 +776,9 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
+                    'line779, first if'
                 elseif (eyetime2-pretrial_time)>ifi*11 && (eyetime2-pretrial_time)<=prefixwait+28*ifi
-                    
+                    'line781, elseif'
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -816,6 +819,7 @@ try
                 elseif (eyetime2-pretrial_time)>prefixwait+28*ifi && (eyetime2-pretrial_time)<prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6)))== 0  %
                     %target at the beginning of the trial stays on screen
                     %until response (2 frames)
+                     'line 822, elseif'
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
@@ -861,6 +865,7 @@ try
                     end
                     
                 elseif (eyetime2-pretrial_time)>prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))== 0
+                    'line868, elseif'
                     %target at the beginning of the trial stays on screen
                     %until response (stimulus duration)
                     % code review: what are 30 and 80 in the above?
@@ -901,7 +906,7 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                 elseif  (eyetime2-pretrial_time)>prefixwait+30*ifi+ifi*20 && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0 % code review, why 30*ifi +20*ifi?
-                    
+                     'line909, elseif'
                     if exist('stim_star')==0
                         stim_star=GetSecs;
                         stim_start(trial)=stim_star;
@@ -921,9 +926,9 @@ try
                     if length(thekeys)>1
                         thekeys=thekeys(1);
                     end
-                    %thetimes=keyCode(thekeys);
-                    %[secs  indfirst]=min(thetimes); % code review --
-                    %removed by kmv.  done BEFORE the if statements,
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes); % code review --
+                    %should this be removed? by kmv.  done BEFORE the if statements,
                     %instead.
                     
                     foo=(RespType==thekeys);
@@ -1401,7 +1406,19 @@ try
             end
             [keyIsDown, keyCode] = KbQueueCheck; 
             % identify the key and calculate RT
-            if sum(keyCode(RespType(1:6))
+            % define thekeys kmv
+            thekeys = find(keyCode);
+            if length(thekeys)>1
+                thekeys=thekeys(1);
+            end
+           
+            if (thekeys==escapeKey) % esc pressed
+                closescript = 1;
+                ListenChar(0);
+                break;
+            end
+            
+            if sum(keyCode(RespType(1:6)))
                     if length(thekeys)>1
                         thekeys=thekeys(1);
                     end
