@@ -345,7 +345,6 @@ try
         %generate visual cue
     %    eccentricity_XCI=xlocsCI*pix_deg/2;
     %    eccentricity_YCI=ylocsCI*pix_deg/2;
-        eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
         eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
    %     eccentricity_XCI=xlocsCI*pix_deg/3;
     %    eccentricity_YCI=ylocsCI*pix_deg/3;
