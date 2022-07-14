@@ -180,11 +180,11 @@ try
         end
         
     elseif site==2   %UAB
-        s1=serial('com3');
-        fopen(s1);
-        fprintf(s1, ['$monoPlusPlus' 13])
-        fclose(s1);
-        clear s1;
+%         s1=serial('com3');
+%         fopen(s1);
+%         fprintf(s1, ['$monoPlusPlus' 13])
+%         fclose(s1);
+%         clear s1;
         screencm=[69.8, 40];
         v_d=57;
         AssertOpenGL;
@@ -193,9 +193,9 @@ try
         %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
         screenNumber=max(Screen('Screens'));
         rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+%         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+%         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+%         PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
@@ -230,8 +230,8 @@ try
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+    pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
     try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script

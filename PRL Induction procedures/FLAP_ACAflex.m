@@ -805,7 +805,7 @@ end
             
         end
         
-            whichTask=3
+            %whichTask=3
         
         TrialNum = strcat('Trial',num2str(totaltrial));
         

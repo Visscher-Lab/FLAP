@@ -372,10 +372,11 @@ try
     %[x1,y1]=meshgrid(-8:8,-6:6); %contour integration related
     xlocsCI=x1(:)';
     ylocsCI=y1(:)';
+    ecccoeffCI=3;
     %generate visual cue
-    eccentricity_XCI=xlocsCI*pix_deg/2;
-    eccentricity_YCI=ylocsCI*pix_deg/2;
-
+    eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
+    eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
+coeffCI=ecccoeffCI/2;
     yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
     xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
     orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;

@@ -90,7 +90,7 @@ try
     end
     disp('Setting up temporal parameters')
     %% Temporal parameters
-    targetAlphaValue=0.8; % transparency of the targets/foils (1:opaque, 0: invisible)
+    targetAlphaValue=0.6; % transparency of the targets/foils (1:opaque, 0: invisible)
     flickeringrate = 0.4; %rate of flickering (in seconds) in between trials
     doesitflicker=1; % do we want the flickering between trials? 1:yes, 2:no
     fixat=1;
@@ -104,7 +104,7 @@ try
     exocueduration=0.05; % duration of the endo cue
     regularpoststimulustime=0.133; % (empty) ISI between stimuli during RSVP
     trialISI=1.5; % interval between end of one RSVP trial and beginning of next. Trial is here defined as the series of stimuli ending with the target appearing after exo or endo cue
-    stimulusduration=0.3; % duration of the stimuli (Cs and Os)
+    stimulusduration=0.05; % duration of the stimuli (Cs and Os)
     lookaway=2; % 0: location rings disappear, 1:location rings increase in brightness, 2: location rings stay the same color
     
     
@@ -802,7 +802,7 @@ try
                             kj=kj+1;
                             countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+%                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
                         end
                     else
@@ -811,7 +811,7 @@ try
                             kj=kj+1;
                             countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+%                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
                         end
                     end
