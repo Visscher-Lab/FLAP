@@ -99,7 +99,7 @@ try
     stimulus_contingent=1;
     precuetime=0.1; % time between second to last element in the stream and exo cue if it's an exo cue trial.
     cuedir=0.05;   %.05
-    cuetargetISIexo=0.05; % ISI between cue and target for exo
+    cuetargetISIexo=0.09; % ISI between cue and target for exo
     endocueduration=0.133; % duration of the endo cue
     exocueduration=0.05; % duration of the endo cue
     regularpoststimulustime=0.133; % (empty) ISI between stimuli during RSVP

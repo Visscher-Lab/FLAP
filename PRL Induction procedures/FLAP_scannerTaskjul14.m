@@ -57,7 +57,7 @@ try
     jitterCI=1;
     possibleoffset=[-2:2];
     %ExerTime=0 ; % If this is a 1 then break time will be ignored.
-    JitRat=1; % amount of jit ration the larger the value the less jitter
+    JitRat=4; % amount of jit ration the larger the value the less jitter
     
     gaborcontrast=0.35;
     circularMasking=1; % if we want a circular masking around the contour
@@ -718,7 +718,7 @@ try
         %         fixationscriptW;
         %         DrawFormattedText(w, 'x', 'center', 558, white);
         %         RestTime=Screen('Flip',w);
-        %         save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
+                save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
         %
         %         while GetSecs < RestTime + 15; %  rest for 15 sec
         %
