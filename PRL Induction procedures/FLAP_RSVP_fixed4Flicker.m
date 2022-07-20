@@ -90,7 +90,7 @@ try
     end
     disp('Setting up temporal parameters')
     %% Temporal parameters
-    targetAlphaValue=0.8; % transparency of the targets/foils (1:opaque, 0: invisible)
+    targetAlphaValue=0.35; % transparency of the targets/foils (1:opaque, 0: invisible)
     flickeringrate = 0.4; %rate of flickering (in seconds) in between trials
     doesitflicker=1; % do we want the flickering between trials? 1:yes, 2:no
     fixat=1;
@@ -99,12 +99,12 @@ try
     stimulus_contingent=1;
     precuetime=0.1; % time between second to last element in the stream and exo cue if it's an exo cue trial.
     cuedir=0.05;   %.05
-    cuetargetISIexo=0.05; % ISI between cue and target for exo
+    cuetargetISIexo=0.09; % ISI between cue and target for exo
     endocueduration=0.133; % duration of the endo cue
     exocueduration=0.05; % duration of the endo cue
     regularpoststimulustime=0.133; % (empty) ISI between stimuli during RSVP
     trialISI=1.5; % interval between end of one RSVP trial and beginning of next. Trial is here defined as the series of stimuli ending with the target appearing after exo or endo cue
-    stimulusduration=0.3; % duration of the stimuli (Cs and Os)
+    stimulusduration=0.2; % duration of the stimuli (Cs and Os)
     lookaway=2; % 0: location rings disappear, 1:location rings increase in brightness, 2: location rings stay the same color
     
     
@@ -216,7 +216,7 @@ try
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
         end
-        % elseif EyetrackerType==2
+        % elseif EyetrackerType==2ne 8
         
         %Connect to TRACKPixx3
         Datapixx('Open');
@@ -802,7 +802,7 @@ try
                             kj=kj+1;
                             countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+%                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
                         end
                     else
@@ -811,7 +811,7 @@ try
                             kj=kj+1;
                             countfl(trial,kj)=GetSecs;
                             if doesitflicker==1
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+%                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
                         end
                     end
@@ -865,7 +865,6 @@ try
                     end
                     
                 elseif (eyetime2-pretrial_time)>prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))== 0
-                    'line868, elseif'
                     %target at the beginning of the trial stays on screen
                     %until response (stimulus duration)
                     % code review: what are 30 and 80 in the above?
@@ -906,7 +905,7 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
                     
                 elseif  (eyetime2-pretrial_time)>prefixwait+30*ifi+ifi*20 && stopfixating<80 && sum(keyCode(RespType(1:6))+keyCode(escapeKey))~= 0 % code review, why 30*ifi +20*ifi?
-                     'line909, elseif'
+                     disp('line909, elseif');
                     if exist('stim_star')==0
                         stim_star=GetSecs;
                         stim_start(trial)=stim_star;
@@ -995,9 +994,7 @@ try
                     %                         imageRectcue(3)+eccentricity_X(cloc), imageRectcue(4)+eccentricity_Y(cloc)];
                     %
                     %
-                    cuecounter(trial)=1;
-                    
-                    
+                    cuecounter(trial)=1;                  
                     imageRect_circleoffscover=[imageRectcircles(1)+eccentricity_X(tloc), imageRectcircles(2)+eccentricity_Y(tloc),...
                         imageRectcircles(3)+eccentricity_X(tloc), imageRectcircles(4)+eccentricity_Y(tloc)];
                     %  Screen('FillOval', w, cue_color, [imageRectendocues{tloc}(1)+thecuesEx{1}(1), imageRectendocues{tloc}(2)+thecuesEx{1}(2),imageRectendocues{tloc}(3)+thecuesEx{1}(3), imageRectendocues{tloc}(4)+thecuesEx{1}(4)]);
@@ -1154,7 +1151,7 @@ try
                     postflick=3-postflick;
                 end
                 
-                if postflick==2 && newtrialmatrix(trial+1,1)==3 && trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
+                if postflick==2 && newtrialmatrix(trial+1,1)==3 && trial<=length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate  % code review: I'm getting an error index exceeds matrix dimensions-- trial =82 on a test run
                     posttheSwitcher=posttheSwitcher+1;
                     kj=kj+1;
                     countfl(trial,kj)=GetSecs;
