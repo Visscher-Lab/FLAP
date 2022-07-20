@@ -604,11 +604,15 @@ try
         %         if trial==1 && newtrialmatrix(trial+1,1)==2
         %             switch_task_script_exo2
         %         end
+        
+        if trial<length(newtrialmatrix)
         if trial==1 && newtrialmatrix(trial+1,1)==2 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
             switch_task_script_exo2
         end
-        if trial==1 && newtrialmatrix(trial+1,1)==1 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 && trial<length(newtrialmatrix)
+        if trial==1 && newtrialmatrix(trial+1,1)==1 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 
             switch_task_script_endo2
+        end
+        
         end
         
         TrialNum = strcat('Trial',num2str(trial));
@@ -857,7 +861,9 @@ try
                             end
                         end
                     else
-                        if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3 &&  trial<length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
+                        
+                        if trial<length(newtrialmatrix(:,1))
+                        if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3  && GetSecs-stim_start(trial)>=flickeringrate
                             theSwitcher=theSwitcher+1;
                             kj=kj+1;
                             countfl(trial,kj)=GetSecs;
@@ -865,6 +871,8 @@ try
                                 Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                             end
                         end
+                        
+                    end
                     end
                     
                     
@@ -1049,14 +1057,15 @@ try
                     postflickswitch= postflickswitch+flickeringrate;
                     postflick=3-postflick;
                 end
-                
-                if postflick==2 && newtrialmatrix(trial+1,1)==3 && trial<length(newtrialmatrix(:,1)) && GetSecs-stim_start(trial)>=flickeringrate
+                if trial<length(newtrialmatrix(:,1))
+                if postflick==2 && newtrialmatrix(trial+1,1)==3 && GetSecs-stim_start(trial)>=flickeringrate
                     posttheSwitcher=posttheSwitcher+1;
                     kj=kj+1;
                     countfl(trial,kj)=GetSecs;
                     if doesitflicker==1
                         Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     end
+                end
                 end
                 
             elseif (eyetime2-trial_time)>=precuetime+cuedir+ifi+cuetargetISI+stimdur+ifi*2 && (eyetime2-trial_time)<=precuetime+cuedir+ifi+cuetargetISI+stimdur+poststimulustime && fixating>500 && T<3
