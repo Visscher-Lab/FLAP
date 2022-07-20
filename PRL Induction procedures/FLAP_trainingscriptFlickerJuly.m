@@ -11,7 +11,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '1' , '2'};
+    defaultanswer={'test','1', '3', '2', '1' , '2'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -41,16 +41,11 @@ try
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    
+        EyeTracker = 1; %0=mouse, 1=eyetracker
+
     eyeOrtrack=1; %0=mouse, 1=eyetracker
     
-    if eyeOrtrack==1
-        EyeTracker = 1;
-        EyetrackerType=1;
-        
-    elseif eyeOrtrack==0
-        EyeTracker = 0;
-    end
+
     fixat=1;
     % fixationlength = 40; % pixels
     
@@ -103,8 +98,11 @@ try
     %cueonset=0.55; %time between beginning of trial and cue apparition (when we need a switch cue)
     ISIpre=0.5; %0.05 time between beginning of trial and first even in the trial (fixations, cues or targets)
     forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation
-    stimulusduration=5.25;
-    % FlickerTime=0.133;
+    if test==1
+                stimulusduration=2.133;
+    else
+        stimulusduration=0.133;
+    end% FlickerTime=0.133;
     ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
     
     cue_spatial_offset=2;
@@ -138,7 +136,7 @@ try
         %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
         %    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
         %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    elseif site==1 % UCR + bits
+    elseif site==1  % UCR + bits
         crt=0;
         radius=15.5;   %radius of the circle in which the target can appear
         
@@ -204,6 +202,38 @@ try
         %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
         fixationlengthy=10;
         fixationlengthx=10;
+    elseif site==3   %UCR VPixx
+        %% psychtoobox settings
+                radius=15.5;   %radius of the circle in which the target can appear
+
+        initRequired= 0;
+        if initRequired>0
+            fprintf('\nInitialization required\n\nCalibrating the device...');
+            TPxTrackpixx3CalibrationTestingskip;
+        end
+        % elseif EyetrackerType==2
+        
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('RegWrRd');
+        v_d=80;
+        AssertOpenGL;
+        screenNumber=max(Screen('Screens'));
+        PsychImaging('PrepareConfiguration');
+        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+        
+       oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        SetResolution(screenNumber, oldResolution);
+                [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+
+        screencm=[69.8, 40];
+        %debug window
+        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+        %ScreenParameters=Screen('Resolution', screenNumber); %close all
+        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+        
     end
     Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     struct.sz=[screencm(1), screencm(2)];
@@ -227,11 +257,50 @@ try
     if ifi==0
         ifi=1/75;
     end
+    
+    
+            if EyeTracker==1
+        if site==3
+            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+        else
+            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+        end
+        
+        % eye_used
+        ScreenHeightPix=screencm(2)*pix_deg_vert;
+        ScreenWidthPix=screencm(1)*pix_deg;
+        VelocityThreshs = [250 2000];      	% px/sec
+        VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
+
+        ViewpointRefresh = 1;               % dummy variable
+        driftoffsetx=0;                     % initial x offset for all eyetracker values
+        driftoffsety=0;                     % initial y offset for all eyetracker values
+        driftcorr=0.1;                      % how much to adjust drift correction each trial.
+        % Parameters to identify fixations
+        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
+        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
+        % note, the eye velocity is already low enough to be considered a "fixation"
+        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
+        
+        
+        % old variables
+        [winCenter_x,winCenter_y]=RectCenter(wRect);
+        backgroundEntry = [0.5 0.5 0.5];
+        % height and width of the screen
+        winWidth  = RectWidth(wRect);
+        winHeight = RectHeight(wRect);
+    end
     % SOUND
     InitializePsychSound;
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+       if site<3
+        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+    elseif site==3
+        
+        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    end
     try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -335,7 +404,7 @@ try
                 [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
 
         JitRat=1; % amount of jit ratio (the larger the value the less jitter)
-                JitRat=2; % amount of jit ratio (the larger the value the less jitter)
+                JitRat=4; % amount of jit ratio (the larger the value the less jitter)
 
         Oscat= 0.5; %JitList(thresh(Ts,Tc));
         
@@ -345,6 +414,7 @@ try
         %generate visual cue
     %    eccentricity_XCI=xlocsCI*pix_deg/2;
     %    eccentricity_YCI=ylocsCI*pix_deg/2;
+        eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
         eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
    %     eccentricity_XCI=xlocsCI*pix_deg/3;
     %    eccentricity_YCI=ylocsCI*pix_deg/3;
@@ -475,7 +545,7 @@ try
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
     
-    if EyeTracker==1
+    if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
         %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
@@ -484,34 +554,15 @@ try
         
         %  save_dir= 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
         
-        % eye_used
-        ScreenHeightPix=screencm(2)*pix_deg_vert;
-        ScreenWidthPix=screencm(1)*pix_deg;
-        %VelocityThreshs = [250 2000];      	% px/sec
-        VelocityThreshs = [20*pix_deg 60*pix_deg];      	% px/sec
-        ViewpointRefresh = 1;               % dummy variable
-        driftoffsetx=0;                     % initial x offset for all eyetracker values
-        driftoffsety=0;                     % initial y offset for all eyetracker values
-        driftcorr=0.1;                      % how much to adjust drift correction each trial.
-        % Parameters to identify fixations
-        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
-        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
-        % note, the eye velocity is already low enough to be considered a "fixation"
-        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
-        PixelsPerDegree=pix_deg;
+       
         
         if exist('dataeyet')==0
             mkdir('dataeyet');
         end;
-        save_dir=[cd './dataeyet/'];
+     %   save_dir=[cd './dataeyet/'];
         save_dir=['./dataeyet/'];
         
-        % old variables
-        [winCenter_x,winCenter_y]=RectCenter(wRect);
-        backgroundEntry = [0.5 0.5 0.5];
-        % height and width of the screen
-        winWidth  = RectWidth(wRect);
-        winHeight = RectHeight(wRect);
+       
         % initialize eyelink
         if EyelinkInit()~= 1
             error('Eyelink initialization failed!');
@@ -705,7 +756,7 @@ try
        %         block_n=length(mixtr_gabor)/3;
 
         
-                mixtr=[mixtr_gabor(1:block_n,:);mixtr_shapes(1:block_n,:); mixtr_gabor(block_n+1:block_n*2,:); mixtr_shapes(block_n+1:block_n*2,:);mixtr_gabor(block_n*2+1:end,:);mixtr_shapes(block_n*2+1:end,:)];
+       mixtr=[mixtr_gabor(1:block_n,:);mixtr_shapes(1:block_n,:); mixtr_gabor(block_n+1:block_n*2,:); mixtr_shapes(block_n+1:block_n*2,:);mixtr_gabor(block_n*2+1:end,:);mixtr_shapes(block_n*2+1:end,:)];
 
         
         % mixcond=fullfact([1 shapes conditionTwo]);
@@ -759,8 +810,7 @@ try
         % stimulus parameters
         
         if trainingType==1 || trainingType==4
-            
-            
+           
             if expdayeye==1
                 StartCont=15;  %15
                 currentsf=4;
@@ -772,9 +822,7 @@ try
             SFthreshmax=Contlist(StartCont);
             SFadjust=10;
             % if expdayeye==0 || expdayeye==1 || expdayeye==numstudydays || expdayeye==numstudydays+1 %|| sum(expdayeye=='test')> 1
-            
-            
-            
+         
             if trainingType==1
                 thresh(1:conditionOne, 1:conditionTwo)=StartCont; %Changed from 10 to have same starting contrast as the smaller Contlist
             end
@@ -793,7 +841,7 @@ try
         if trainingType==2 || trainingType==4
             load shapeMat.mat;
             if test==1
-                shapeMat(:,1)= [1 1 3 3 5 5];
+                shapeMat(:,1)= [1 2 3 4 5 6];
             end
             shapesoftheDay=shapeMat(:,expdayeye);
             if expdayeye==1
@@ -1166,15 +1214,17 @@ try
     
     
     % check EyeTracker status
-    if EyeTracker == 1
+    if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
             error(['startrecording error, status: ', status])
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
+        
         location =  zeros(length(mixtr), 6);
     end
+
     
     
     eyetime2=0;
@@ -1374,6 +1424,46 @@ try
 %             xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/1.5;%+xJitLoc(targetcord);
 %             yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/1.5;%+xJitLoc(targetcord);
 %             
+
+% here I adjust the offset of distractors to avoid cluttering the CI shape
+for i=1:length(xJitLoc)
+    if sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0
+        newxJitLoc(i)=abs(xJitLoc(i))*5;    
+        %newxJitLoc(i)=abs(xJitLoc(i));
+
+        replacementcounterx(i)=1;
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0
+        newxJitLoc(i)=- abs(xJitLoc(i))*5;
+        %        newxJitLoc(i)=- abs(xJitLoc(i));
+        replacementcounterx(i)=2;
+    else
+        newxJitLoc(i)=xJitLoc(i);
+        replacementcounterx(i)=99;
+    end    
+    if sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+        newyJitLoc(i)=abs(yJitLoc(i))*5;
+       %         newyJitLoc(i)=abs(yJitLoc(i));
+        replacementcountery(i)=1;
+    elseif sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0 
+        newyJitLoc(i)=- abs(yJitLoc(i))*5;
+     %           newyJitLoc(i)=- abs(yJitLoc(i));
+        replacementcountery(i)=2;
+    else
+        newyJitLoc(i)=yJitLoc(i);
+        replacementcountery(i)=99;
+    end
+end
+
+yJitLoc=newyJitLoc;
+xJitLoc=newxJitLoc;
+
+
+xJitLoc(xJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
+xJitLoc(xJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
+yJitLoc(yJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
+yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+
+
             xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
             yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
             theori=180*rand(1,length(eccentricity_XCI));
@@ -1399,6 +1489,9 @@ try
         newtrialtime=GetSecs;
         % clear temptrial
         while eyechecked<1
+            if EyetrackerType ==2
+                Datapixx('RegWrRd');
+            end
             if trainingType<3
                 fixationscriptW
             end
@@ -1725,7 +1818,11 @@ flickerdone=10;
             
             if EyeTracker==1
                 
-                GetEyeTrackerData
+                if site<3
+                    GetEyeTrackerData
+                elseif site ==3
+                    GetEyeTrackerDatapixx
+                end
                 GetFixationDecision
                 
                 if EyeData(end,1)<8000 && stopchecking<0

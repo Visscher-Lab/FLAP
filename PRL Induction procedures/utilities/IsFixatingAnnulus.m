@@ -2,14 +2,14 @@
 
        % fixating=0;
     
-         if EyetrackerType==1
-error=Eyelink('CheckRecording');
-evt=error;
-if(error~=0)
-    error
-        return;
-end
-         end
+       if EyetrackerType == 1
+           error=Eyelink('CheckRecording');
+           evt=error;
+           if(error~=0)
+               error
+               return;
+           end
+       end
 
 % check for presence of a new sample update
 %if Eyelink( 'NewFloatSampleAvailable') > 0
