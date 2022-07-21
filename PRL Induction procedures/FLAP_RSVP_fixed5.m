@@ -470,7 +470,7 @@ try
     if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
         
-        eyeTrackerBaseName =[SUBJECT expdayeye];
+        eyeTrackerBaseName =['0' SUBJECT '0' num2str(expdayeye)];
         
         if exist('dataeyet')==0
             mkdir('dataeyet')
