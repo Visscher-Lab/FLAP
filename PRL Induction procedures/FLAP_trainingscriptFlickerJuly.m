@@ -11,7 +11,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '1' , '2'};
+    defaultanswer={'test','1', '1', '2', '1' , '2'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -178,11 +178,11 @@ try
         end
         
     elseif site==2   %UAB
-%         s1=serial('com3');
-%         fopen(s1);
-%         fprintf(s1, ['$monoPlusPlus' 13])
-%         fclose(s1);
-%         clear s1;
+        s1=serial('com3');
+        fopen(s1);
+        fprintf(s1, ['$monoPlusPlus' 13])
+        fclose(s1);
+        clear s1;
         screencm=[69.8, 40];
         v_d=57;
         AssertOpenGL;
@@ -191,9 +191,9 @@ try
         %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
         screenNumber=max(Screen('Screens'));
         rand('twister', sum(100*clock));
-%         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-%         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-%         PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
@@ -305,19 +305,12 @@ try
         [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
-    
-    %try
-    %   [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-    %  [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    % end
-    
+
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     bg_index =round(gray*255); %background color
     
-    %
-    %imsize=stimulusSize*pix_deg;
-    
+        
     %% STIMULI
     
     PreparePRLpatch % here I characterize PRL features
@@ -365,7 +358,6 @@ try
         clear a b m f_gabor
         %contour integration gabor dimensions
         sigma_degSmall=0.1;
-         %       sigma_degSmall=0.05;
 
         sfs=3;
         sigma_pixSmall = sigma_degSmall*pix_deg;
@@ -390,18 +382,12 @@ try
         yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
         
         bg_index =round(gray*255); %background color
-        
-        %circular mask
-        %xylim = imsize; %radius of circular mask
-        
+
         % size of the grid for the contour task
         xs=7;%60; 12;
         ys=7; %45;9;
         
-        %density 0.8 deg
-        % [x1,y1]=meshgrid(-xs:0.8:xs,-ys:0.8:ys); %possible positions of Gabors within grid; in degrees of visual angle
-        [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
-                [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
+                      [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
 
         JitRat=1; % amount of jit ratio (the larger the value the less jitter)
                 JitRat=4; % amount of jit ratio (the larger the value the less jitter)
@@ -412,31 +398,19 @@ try
         ylocsCI=y1(:)';
         ecccoeffCI=3;
         %generate visual cue
-    %    eccentricity_XCI=xlocsCI*pix_deg/2;
-    %    eccentricity_YCI=ylocsCI*pix_deg/2;
+
         eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
         eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
-   %     eccentricity_XCI=xlocsCI*pix_deg/3;
-    %    eccentricity_YCI=ylocsCI*pix_deg/3;
-        
+  
         coeffCI=ecccoeffCI/2;
-        % r=1;
-        % C =[0 0];
-        % theta=0:2*pi/12:2*pi;
-        % m=r*[cos(theta')+C(1) sin(theta') + C(2)];
-        % m=[m; 0.8 -1; 0.4 -1.5; 0 -2];
-        % m_six=[-m(:,1) m(:,2)];
-        % m_six=m_six.*pix_deg;
-        %
-        % m_nine=[m(:,1) -m(:,2)];
-        % m_nine=m_nine.*pix_deg;
+
         
         %target contrast
         Tcontr=0.938;
         %distractor contrast
         Dcontr=0.38;
         
-        CIShapes
+        CIShapes % load CI shapes
     end
     
     
@@ -444,14 +418,11 @@ try
     
     
     if trainingType>1
-        %   imsize=(sigma_deg*pix_deg*2.5)/2;
-        %imsize=StartSize*pix_deg;
+
         [x,y]=meshgrid(-imsize/2:imsize/2,-imsize/2:imsize/2);
         %circular mask
-        %   xylim = imsize; %radius of circular mask
         circle = x.^2 + y.^2 <= xylim^2;
         [nrw, ncl]=size(x);
-        %theLetter=imread('letter_c2.tiff');
         theLetter=imread('newletterc22.tiff');
         theLetter=theLetter(:,:,1);
         theLetter=imresize(theLetter,[nrw nrw],'bicubic');
@@ -459,25 +430,7 @@ try
         
         theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
         theLetter=Screen('MakeTexture', w, theLetter);
-        %         if  mod(nrw,2)==0
-        %             theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-        %         elseif mod(nrw,2)>0
-        %             theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2):-1:2);
-        %         end
-        
-        % if  mod(length(theCircles)/2,2)==0
-        %     theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-        % elseif  mod(length(theCircles)/2,2)>0
-        %     theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-        % end
-        
-        %         theArrow=imread('letter_l2.tiff');
-        %         theArrow=theArrow(:,:,1);
-        %         theArrow=imresize(theArrow,[nrw nrw],'bicubic');
-        %
-        %         theArrow = double(circle) .* double(theArrow)+bg_index * ~double(circle);
-        %         theArrow=Screen('MakeTexture', w, theArrow);
-        
+
         theArrow=imread('Arrow.png');
         theArrow=theArrow(:,:,1);
         theArrow=imresize(theArrow,[nrw nrw],'bicubic');
@@ -502,7 +455,6 @@ try
         Neutralface=Screen('MakeTexture', w, img);
     end
     
-    % corrS=zeros(size(errorS));
     load('S096_marl-nyu');
     
     
@@ -550,7 +502,7 @@ try
         
         %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
         %eyeTrackerBaseName = 's00';
-        eyeTrackerBaseName =[SUBJECT expdayeye];
+        eyeTrackerBaseName =['0' SUBJECT '0' num2str(expdayeye)];
         
         %  save_dir= 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
         
@@ -561,7 +513,7 @@ try
         end;
      %   save_dir=[cd './dataeyet/'];
         save_dir=['./dataeyet/'];
-        
+        save_dir=[cd '/dataeyet/'];
        
         % initialize eyelink
         if EyelinkInit()~= 1
@@ -841,7 +793,7 @@ try
         if trainingType==2 || trainingType==4
             load shapeMat.mat;
             if test==1
-                shapeMat(:,1)= [1 2 3 4 5 6];
+                shapeMat(:,1)= [5 4 7 6 2 3];
             end
             shapesoftheDay=shapeMat(:,expdayeye);
             if expdayeye==1
@@ -1426,33 +1378,170 @@ try
 %             
 
 % here I adjust the offset of distractors to avoid cluttering the CI shape
-for i=1:length(xJitLoc)
-    if sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0
-        newxJitLoc(i)=abs(xJitLoc(i))*5;    
-        %newxJitLoc(i)=abs(xJitLoc(i));
 
+
+% for i=1:length(xJitLoc)
+%     if sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+%         %1 down right
+%         newxJitLoc(i)=abs(xJitLoc(i))*5;
+%         newyJitLoc(i)=abs(yJitLoc(i))*5;
+%         
+%         replacementcounterx(i)=1;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+%         %2 up left
+%         newxJitLoc(i)=- abs(xJitLoc(i))*5;
+%         newyJitLoc(i)=- abs(yJitLoc(i))*5;
+%         
+%         replacementcounterx(i)=2;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+%         %3 up
+%         newyJitLoc(i)=abs(yJitLoc(i))*5;
+%         replacementcounterx(i)=3;
+%         
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+%         %4 down
+%         newyJitLoc(i)=- abs(yJitLoc(i))*5;
+%         replacementcounterx(i)=4;
+%         
+%     elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+%         %5 right
+%         newxJitLoc(i)=abs(xJitLoc(i))*5;
+%         replacementcounterx(i)=5;
+%         
+%     elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+%         %6 left
+%         newxJitLoc(i)=- abs(xJitLoc(i))*5;
+%         replacementcounterx(i)=6;
+%         
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+%         %7 up right
+%         newxJitLoc(i)=abs(xJitLoc(i))*5;
+%         newyJitLoc(i)=- abs(yJitLoc(i))*5;
+%         
+%         replacementcounterx(i)=7;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+%         %8 down left
+%         newxJitLoc(i)=- abs(xJitLoc(i))*5;
+%         newyJitLoc(i)= abs(yJitLoc(i))*5;
+%         
+%         replacementcounterx(i)=8;
+%         
+%     else
+%         newxJitLoc(i)=xJitLoc(i);
+%         newyJitLoc(i)=yJitLoc(i);
+%         
+%         replacementcounterx(i)=99;
+%     end
+% end
+
+for i=1:length(xJitLoc)
+    if sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+        %1 down right
+        newxJitLoc(i)=abs(xJitLoc(i))*5;
+        newyJitLoc(i)=abs(yJitLoc(i))*5;
+        
         replacementcounterx(i)=1;
-    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+        %2 up left
         newxJitLoc(i)=- abs(xJitLoc(i))*5;
-        %        newxJitLoc(i)=- abs(xJitLoc(i));
+        newyJitLoc(i)=- abs(yJitLoc(i))*5;
+        
         replacementcounterx(i)=2;
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+        %3 up
+        newyJitLoc(i)=abs(yJitLoc(i))*5;
+        replacementcounterx(i)=3;
+        
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+        %4 down
+        newyJitLoc(i)=- abs(yJitLoc(i))*5;
+        replacementcounterx(i)=4;
+        
+    elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+        %5 right
+        newxJitLoc(i)=abs(xJitLoc(i))*5;
+        replacementcounterx(i)=5;
+        
+    elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+        %6 left
+        newxJitLoc(i)=- abs(xJitLoc(i))*5;
+        replacementcounterx(i)=6;
+        
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+        %7 up right
+        newxJitLoc(i)=abs(xJitLoc(i))*5;
+        newyJitLoc(i)=- abs(yJitLoc(i))*5;
+        
+        replacementcounterx(i)=7;
+    elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+        %8 down left
+        newxJitLoc(i)=- abs(xJitLoc(i))*5;
+        newyJitLoc(i)= abs(yJitLoc(i))*5;
+        
+        replacementcounterx(i)=8;
+        
     else
         newxJitLoc(i)=xJitLoc(i);
-        replacementcounterx(i)=99;
-    end    
-    if sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
-        newyJitLoc(i)=abs(yJitLoc(i))*5;
-       %         newyJitLoc(i)=abs(yJitLoc(i));
-        replacementcountery(i)=1;
-    elseif sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0 
-        newyJitLoc(i)=- abs(yJitLoc(i))*5;
-     %           newyJitLoc(i)=- abs(yJitLoc(i));
-        replacementcountery(i)=2;
-    else
         newyJitLoc(i)=yJitLoc(i);
-        replacementcountery(i)=99;
+        
+        replacementcounterx(i)=99;
     end
 end
+
+
+% for i=1:length(xJitLoc)
+%     if sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+%         %1 down right
+%         newxJitLoc(i)=abs(xJitLoc(i));
+%         newyJitLoc(i)=abs(yJitLoc(i));
+%         
+%         replacementcounterx(i)=1;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+%         %2 up left
+%         newxJitLoc(i)=- abs(xJitLoc(i));
+%         newyJitLoc(i)=- abs(yJitLoc(i));
+%         
+%         replacementcounterx(i)=2;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+%         %3 up
+%         newyJitLoc(i)=abs(yJitLoc(i));
+%         replacementcounterx(i)=3;
+%         
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0 %|| sum((xlocsCI(i)-xlocsCI(targetcord))==0)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0
+%         %4 down
+%         newyJitLoc(i)=- abs(yJitLoc(i));
+%         replacementcounterx(i)=4;
+%         
+%     elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+%         %5 right
+%         newxJitLoc(i)=abs(xJitLoc(i));
+%         replacementcounterx(i)=5;
+%         
+%     elseif sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 || sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 %|| sum((ylocsCI(i)-ylocsCI(targetcord))==0)>0 && sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0
+%         %6 left
+%         newxJitLoc(i)=- abs(xJitLoc(i));
+%         replacementcounterx(i)=6;
+%         
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==-2)>0
+%         %7 up right
+%         newxJitLoc(i)=abs(xJitLoc(i));
+%         newyJitLoc(i)=- abs(yJitLoc(i));
+%         
+%         replacementcounterx(i)=7;
+%     elseif sum((xlocsCI(i)-xlocsCI(targetcord))==-1)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==1)>0 || sum((xlocsCI(i)-xlocsCI(targetcord))==-2)>0 && sum((ylocsCI(i)-ylocsCI(targetcord))==2)>0
+%         %8 down left
+%         newxJitLoc(i)=- abs(xJitLoc(i));
+%         newyJitLoc(i)= abs(yJitLoc(i));
+%         
+%         replacementcounterx(i)=8;
+%         
+%     else
+%         newxJitLoc(i)=xJitLoc(i);
+%         newyJitLoc(i)=yJitLoc(i);
+%         
+%         replacementcounterx(i)=99;
+%     end
+% end
 
 yJitLoc=newyJitLoc;
 xJitLoc=newxJitLoc;
@@ -1462,7 +1551,7 @@ xJitLoc(xJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLoc(xJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLoc(yJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
-
+%sum(replacementcounterx~=99)
 
             xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
             yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
