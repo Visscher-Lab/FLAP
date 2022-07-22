@@ -98,6 +98,7 @@ try
     closescript=0; %escape from main loop on ESC press
     kk=1;
     stimulus_contingent=1;
+    prefixwait=0.4; %inter-trial time 
     precuetime=0.1; % time between second to last element in the stream and exo cue if it's an exo cue trial.
     cuedir=0.05;   %.05
     cuetargetISIexo=0.05; % ISI between cue and target for exo
@@ -259,7 +260,6 @@ try
         ifi=1/75;
     end
     
-    prefixwait=0.4;
     if stimulus_contingent==1
         waittime=0;
         durfix=0;
