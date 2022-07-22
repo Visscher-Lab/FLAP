@@ -26,11 +26,11 @@ close all; clear all; clc; % clear the window
 commandwindow
 
 try
-    prompt={'Participant name', 'day', 'site? UCR(1), UAB(2), Vpixx(3)', 'demo (0) or session (1)', 'eye? left(1) or right(2)', 'Scotoma? yes(1), no(2)', 'square exo cue (1) or circle exo cue(2)'};
+    prompt={'Participant name', 'day', 'site? UCR(1), UAB(2), Vpixx(3)', 'demo (0) or session (1)', 'eye? left(1) or right(2)', 'Scotoma? yes(1), no(2)', 'square exo cue (1) or circle exo cue(2), half square (3)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test', '1', '1','0', '2', '1', '1' };
+    defaultanswer={'test', '1', '1','0', '2', '1', '3' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -465,7 +465,7 @@ try
     if str2num(Isdemo)==1
         newtrialmatrix=newnewtrialmatrix;
     end
-    %     newtrialmatrix=soloexo;
+     %   newtrialmatrix=soloexo;
     
     if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
@@ -580,7 +580,29 @@ try
     cueup=[0 -circle_size*pix_deg/2 0  -circle_size*pix_deg/2 ];
     
     thecues={cueup cueright cuedown cueleft};
+    if exocuetype==3
+        
+        fixationlengthcue=25;
+                                   cornerDim= circle_size/3*1.2;
+                                %   cornerDim=0;
+   xp1x=-cornerDim;
+    xp1y=-cornerDim;
+    xp2x=cornerDim;
+    xp2y=-cornerDim;
+    xp3x=cornerDim;
+    xp3y=cornerDim;
+    xp4x=-cornerDim;
+    xp4y=cornerDim;
     
+    xpunto1x=xp1x*pix_deg;
+    xpunto1y=xp1y*pix_deg;
+    xpunto2x=xp2x*pix_deg;
+    xpunto2y=xp2y*pix_deg;
+    xpunto3x=xp3x*pix_deg;
+    xpunto3y=xp3y*pix_deg;
+    xpunto4x=xp4x*pix_deg;
+    xpunto4y=xp4y*pix_deg;
+    end
     %    thecuesEx=thecues;
     xeye=[];
     yeye=[];
@@ -975,6 +997,22 @@ try
                         Screen('FrameOval', w,ContCircEx, [imageRectendocues{tloc}(1)-cueExsize, imageRectendocues{tloc}(2)-cueExsize,imageRectendocues{tloc}(3)+cueExsize, imageRectendocues{tloc}(4)+cueExsize], oval_thick*2, oval_thick*2);
                     elseif exocuetype==1
                         Screen('FrameRect', w, ContCircEx,imageRect_circleoffscover, oval_thick);
+                    elseif exocuetype==3
+                        
+                        
+
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x+fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, widthfix); % fissazione: verticale
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y+fixationlengthcue, widthfix); % fissazione: orizzontale
+    %aid up right
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRectcircles(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, widthfix); % fissazione: verticale
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y+fixationlengthcue, widthfix); % fissazione: orizzontale
+    %aid down right
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: verticale
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: orizzontale
+    %aid down left
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x+fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: verticale
+    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: orizzontale
+                    
                     end
                     if exist('cueonset')==0
                         cueonset=eyetime2;
