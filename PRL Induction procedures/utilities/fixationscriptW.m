@@ -41,6 +41,11 @@ cornerDist=scotomadeg/2*1.35;
     punto3y=p3y*pix_deg;
     punto4x=p4x*pix_deg;
     punto4y=p4y*pix_deg;
+    
+    
+    
+    
+
     %aid up left
     
     color_w=0.65*white;
