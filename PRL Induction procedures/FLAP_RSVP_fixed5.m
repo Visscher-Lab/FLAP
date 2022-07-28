@@ -98,7 +98,7 @@ try
     closescript=0; %escape from main loop on ESC press
     kk=1;
     stimulus_contingent=1;
-    prefixwait=0.4; %inter-trial time 
+    prefixwait=0.4; %inter-trial time
     precuetime=0.1; % time between second to last element in the stream and exo cue if it's an exo cue trial.
     cuedir=0.05;   %.05
     cuetargetISIexo=0.05; % ISI between cue and target for exo
@@ -228,7 +228,10 @@ try
         v_d=80;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
-        PsychImaging('PrepareConfiguration');
+        
+        
+        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
@@ -465,7 +468,7 @@ try
     if str2num(Isdemo)==1
         newtrialmatrix=newnewtrialmatrix;
     end
-     %   newtrialmatrix=soloexo;
+    %   newtrialmatrix=soloexo;
     
     if EyetrackerType==1
         useEyeTracker = 0; % otherwise will throw error if not UAB run
@@ -583,25 +586,25 @@ try
     if exocuetype==3
         
         fixationlengthcue=25;
-                                   cornerDim= circle_size/3*1.2;
-                                %   cornerDim=0;
-   xp1x=-cornerDim;
-    xp1y=-cornerDim;
-    xp2x=cornerDim;
-    xp2y=-cornerDim;
-    xp3x=cornerDim;
-    xp3y=cornerDim;
-    xp4x=-cornerDim;
-    xp4y=cornerDim;
-    
-    xpunto1x=xp1x*pix_deg;
-    xpunto1y=xp1y*pix_deg;
-    xpunto2x=xp2x*pix_deg;
-    xpunto2y=xp2y*pix_deg;
-    xpunto3x=xp3x*pix_deg;
-    xpunto3y=xp3y*pix_deg;
-    xpunto4x=xp4x*pix_deg;
-    xpunto4y=xp4y*pix_deg;
+        cornerDim= circle_size/3*1.2;
+        %   cornerDim=0;
+        xp1x=-cornerDim;
+        xp1y=-cornerDim;
+        xp2x=cornerDim;
+        xp2y=-cornerDim;
+        xp3x=cornerDim;
+        xp3y=cornerDim;
+        xp4x=-cornerDim;
+        xp4y=cornerDim;
+        
+        xpunto1x=xp1x*pix_deg;
+        xpunto1y=xp1y*pix_deg;
+        xpunto2x=xp2x*pix_deg;
+        xpunto2y=xp2y*pix_deg;
+        xpunto3x=xp3x*pix_deg;
+        xpunto3y=xp3y*pix_deg;
+        xpunto4x=xp4x*pix_deg;
+        xpunto4y=xp4y*pix_deg;
     end
     %    thecuesEx=thecues;
     xeye=[];
@@ -628,13 +631,13 @@ try
         %         end
         
         if trial<length(newtrialmatrix)
-        if trial==1 && newtrialmatrix(trial+1,1)==2 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
-            switch_task_script_exo2
-        end
-        if trial==1 && newtrialmatrix(trial+1,1)==1 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 
-            switch_task_script_endo2
-        end
-        
+            if trial==1 && newtrialmatrix(trial+1,1)==2 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
+                switch_task_script_exo2
+            end
+            if trial==1 && newtrialmatrix(trial+1,1)==1 || trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1
+                switch_task_script_endo2
+            end
+            
         end
         
         TrialNum = strcat('Trial',num2str(trial));
@@ -885,16 +888,16 @@ try
                     else
                         
                         if trial<length(newtrialmatrix(:,1))
-                        if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3  && GetSecs-stim_start(trial)>=flickeringrate
-                            theSwitcher=theSwitcher+1;
-                            kj=kj+1;
-                            countfl(trial,kj)=GetSecs;
-                            if doesitflicker==1
-                                Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                            if flick==2 && newtrialmatrix(trial,1)==3 && GetSecs-stim_start(trial)>=flickeringrate || flick==2 && newtrialmatrix(trial+1,1)==3  && GetSecs-stim_start(trial)>=flickeringrate
+                                theSwitcher=theSwitcher+1;
+                                kj=kj+1;
+                                countfl(trial,kj)=GetSecs;
+                                if doesitflicker==1
+                                    Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                                end
                             end
+                            
                         end
-                        
-                    end
                     end
                     
                     
@@ -981,7 +984,7 @@ try
             elseif  (eyetime2-trial_time)>precuetime && (eyetime2-trial_time)<precuetime+cuedir+ifi && fixating>500
                 
                 
-
+                
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                 Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -1000,19 +1003,19 @@ try
                     elseif exocuetype==3
                         
                         
-
+                        
                         Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x+fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, widthfix); % fissazione: verticale
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y+fixationlengthcue, widthfix); % fissazione: orizzontale
-    %aid up right
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRectcircles(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, widthfix); % fissazione: verticale
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y+fixationlengthcue, widthfix); % fissazione: orizzontale
-    %aid down right
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: verticale
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: orizzontale
-    %aid down left
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x+fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: verticale
-    Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: orizzontale
-                    
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto1x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto1y+fixationlengthcue, widthfix); % fissazione: orizzontale
+                        %aid up right
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRectcircles(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, widthfix); % fissazione: verticale
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto2x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto2y+fixationlengthcue, widthfix); % fissazione: orizzontale
+                        %aid down right
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x-fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: verticale
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto3x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto3y, widthfix); % fissazione: orizzontale
+                        %aid down left
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x+fixationlengthcue, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: verticale
+                        Screen('DrawLine', w, ContCircEx, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y-fixationlengthcue, (imageRect_circleoffscover(1)+imageRect_circleoffscover(3))/2+xpunto4x, (imageRect_circleoffscover(2)+imageRect_circleoffscover(4))/2+xpunto4y, widthfix); % fissazione: orizzontale
+                        
                     end
                     if exist('cueonset')==0
                         cueonset=eyetime2;
@@ -1096,14 +1099,14 @@ try
                     postflick=3-postflick;
                 end
                 if trial<length(newtrialmatrix(:,1))
-                if postflick==2 && newtrialmatrix(trial+1,1)==3 && GetSecs-stim_start(trial)>=flickeringrate
-                    posttheSwitcher=posttheSwitcher+1;
-                    kj=kj+1;
-                    countfl(trial,kj)=GetSecs;
-                    if doesitflicker==1
-                        Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                    if postflick==2 && newtrialmatrix(trial+1,1)==3 && GetSecs-stim_start(trial)>=flickeringrate
+                        posttheSwitcher=posttheSwitcher+1;
+                        kj=kj+1;
+                        countfl(trial,kj)=GetSecs;
+                        if doesitflicker==1
+                            Screen('DrawTexture', w, whichLetter(1), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+                        end
                     end
-                end
                 end
                 
             elseif (eyetime2-trial_time)>=precuetime+cuedir+ifi+cuetargetISI+stimdur+ifi*2 && (eyetime2-trial_time)<=precuetime+cuedir+ifi+cuetargetISI+stimdur+poststimulustime && fixating>500 && T<3
