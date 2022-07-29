@@ -73,7 +73,7 @@ try
     timeflickerallowed=0.4; % time away from flicker in which flicker persists
     timeblackllowed=0.4; % time before flicker starts
     AnnulusTime = 2/3; %how long do they need to keep fixation near the pre-target element   
-    Jitter = [2:0.05:5]/3; %flickering duration for task type 3 and 4
+    Jitter = [2:0.05:15]/3; %flickering duration for task type 3 and 4
     flickeringrate = 0.25; %rate of flickering (in seconds) for task type 3 and 4
     circularAngles=0; % f we want stimulus locations in training type 3 and 4 to be arranged in a circle
     targetecc = 10; %eccentricity of possible target location in training type 3 or 4 (if we want fixed possible locations)
@@ -213,7 +213,8 @@ try
     pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360;
     white=WhiteIndex(screenNumber);
     black=BlackIndex(screenNumber);
-    
+       %     bg_index =round(gray*255); %background color
+
     %white=1;
     %black=0;
     
@@ -352,7 +353,6 @@ try
         xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
         yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
         
-        bg_index =round(gray*255); %background color
         
         % size of the grid for the contour task
         xs=7;%60; 12;
@@ -397,14 +397,14 @@ try
         theLetter=imresize(theLetter,[nrw nrw],'bicubic');
         theCircles=theLetter;
         
-        theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
+        theLetter = double(circle) .* double(theLetter)+gray * ~double(circle);
         theLetter=Screen('MakeTexture', w, theLetter);
         
         theArrow=imread('Arrow.png');
         theArrow=theArrow(:,:,1);
         theArrow=imresize(theArrow,[nrw nrw],'bicubic');
         
-        theArrow = double(circle) .* double(theArrow)+bg_index * ~double(circle);
+        theArrow = double(circle) .* double(theArrow)+gray * ~double(circle);
         theArrow=Screen('MakeTexture', w, theArrow);
         
         if  mod(nrw,2)==0
@@ -413,7 +413,7 @@ try
             theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, round((nrw/2)):-1:1);
         end
         
-        theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
+        theCircles = double(circle) .* double(theCircles)+gray * ~double(circle);
         theCircles=Screen('MakeTexture', w, theCircles);
         
         theTest=imread('target_black.tiff');
@@ -1028,7 +1028,9 @@ try
         elseif trainingType==1 || trainingType==2 || test==1
             FlickerTime=0;
         end
-        
+        if trainingType==3
+        stimulusduration=0.05;
+        end
         
         TrialNum = strcat('Trial',num2str(trial));
         
@@ -1331,7 +1333,7 @@ try
                 % timing for the next events
                 caca=1;
                 if trainingType~=3
-                    if skipforcedfixation==1 % skip the force fixation for training types 1 and 2
+                    if skipforcedfixation==1 % skip the force fixation for training types 1, 2 and 4
                         counterannulus=(AnnulusTime/ifi)+1;
                         skipcounterannulus=1000;
                     else %force fixation for training types 1 and 2
@@ -1339,7 +1341,7 @@ try
                         
                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     end
-                elseif        trainingType==4 %force fixation for training types 3 and 4
+                elseif        trainingType==3 %force fixation for training types 3 
                     
                     if annulusOrPRL==1
                         IsFixatingAnnulus
@@ -1351,6 +1353,8 @@ try
                         if mod(round(eyetime2-trial_time),0.4)
                             cuecontrast=cuecontrast+0.35;
                         end
+                    elseif isendo==0
+                        cuecontrast=0.8;
                     end
                     Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], cuecontrast);
                 end

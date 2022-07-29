@@ -27,8 +27,8 @@ if  stimpresent>0
             % 1:the stimulus should be presented, 2:the eye position is within
             %the limits of the screen but the stimulus is outside the
             % PRL(s)
-                    othercounter(length(EyeData))=1;
-
+            othercounter(length(EyeData))=1;
+            
             blankcounter=blankcounter+1;
             if  blankcounter==1
                 startBlankCounter=GetSecs;
@@ -45,7 +45,7 @@ if  stimpresent>0
                     
                 end
                 Fixationstatus(length(EyeData))=91;
-                            checkerframe(length(EyeData))=1;
+                checkerframe(length(EyeData))=1;
             elseif blankcounter<=blankframeallowed
                 checkerframe(length(EyeData))=11;
                 countertarget=countertarget+1;
@@ -58,41 +58,66 @@ if  stimpresent>0
         else
             %if we have the EyeCode element, which
             %tracks the frames for which we have eye position recorded (even if the eye position is missing)
-                    othercounter(length(EyeData))=1;
-if  exist('EyeCode','var')
+            othercounter(length(EyeData))=1;
+            if  exist('EyeCode','var')
                 if length(EyeCode)>6 %&& circlefix>6
                     circlefix=circlefix+1;
                     %if we have at least 6 frames
                     %within this trial
                     % if  EyeCode(end-1)~=0 && EyeCode(end)~=0
-                    if sum(EyeCode(end-6:end))~=0
-                        %if we don't have 6 consecutive frames with no eye movement (aka, with
+%                     if sum(EyeCode(end-6:end))~=0
+%                         %if we don't have 6 consecutive frames with no eye movement (aka, with
+%                         %fixation)
+%                         
+%                         blankcounter=blankcounter+1;
+%                         
+%                         if blankcounter>blankframeallowed
+%                             if trainingType==3
+%                                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+%                             elseif trainingType==4
+%                                 Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
+%                                 
+%                             end
+%                             Fixationstatus(length(EyeData))=92;
+%                             checkerframe(length(EyeData))=2;
+%                         elseif blankcounter<=blankframeallowed
+%                             
+%                             checkerframe(length(EyeData))=21;
+%                             countertarget=countertarget+1;
+%                             counterflicker=counterflicker+1;
+%                             framefix(countertarget)=length(EyeData(:,1));
+%                             timefix(countertarget)=GetSecs;
+%                         end
+                        
+                    if sum(EyeCode(end-flickerframeallowed:end))~=0
+                        %if we don't have xx consecutive frames with no eye movement (aka, with
                         %fixation)
                         
                         blankcounter=blankcounter+1;
                         
                         if blankcounter>blankframeallowed
-                if trainingType==3
-                    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                elseif trainingType==4
-                    Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
-                    
-                end
-                Fixationstatus(length(EyeData))=92;
-                                                    checkerframe(length(EyeData))=2;
+                            if trainingType==3
+                                Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+                            elseif trainingType==4
+                                Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
+                                
+                            end
+                            Fixationstatus(length(EyeData))=92;
+                            checkerframe(length(EyeData))=27;
                         elseif blankcounter<=blankframeallowed
                             
-                            checkerframe(length(EyeData))=21;
+                            checkerframe(length(EyeData))=71;
                             countertarget=countertarget+1;
                             counterflicker=counterflicker+1;
                             framefix(countertarget)=length(EyeData(:,1));
                             timefix(countertarget)=GetSecs;
                         end
                     elseif sum(EyeCode(end-flickerframeallowed:end))==0
-                        %If we have at least 5
+                        %If we have at least xx
                         %consecutive frames with
                         %fixation
                         %HERE WE SHOW THE TARGET
+                        blankcounter=0;
                         checkerframe(length(EyeData))=3;
                         countertarget=countertarget+1;
                         counterflicker=counterflicker+1;
@@ -102,7 +127,6 @@ if  exist('EyeCode','var')
                             fixind(countertarget)=FixIndex(end,1);
                         end
                         showtarget=100;
-                        blankcounter=0;
                         timeprevioustarget(countertarget)=GetSecs;
                         Fixationstatus(length(EyeData))=11;
                         
@@ -115,14 +139,14 @@ if  exist('EyeCode','var')
                     blankcounter=blankcounter+1;
                     
                     if blankcounter>blankframeallowed
-                if trainingType==3
-                    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                elseif trainingType==4
-                    Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
-                    
-                end
-                Fixationstatus(length(EyeData))=93;
-                                            checkerframe(length(EyeData))=4;
+                        if trainingType==3
+                            Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+                        elseif trainingType==4
+                            Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
+                            
+                        end
+                        Fixationstatus(length(EyeData))=93;
+                        checkerframe(length(EyeData))=4;
                     elseif blankcounter<=blankframeallowed
                         
                         checkerframe(length(EyeData))=31;
@@ -153,16 +177,16 @@ if  exist('EyeCode','var')
         checkerframe(length(EyeData))=5;
         blankcounter=blankcounter+1;
         uncheckerframe(length(EyeData))=2;
-                othercounter(length(EyeData))=2;
-
+        othercounter(length(EyeData))=2;
+        
         if blankcounter>blankframeallowed
-                if trainingType==3
-                    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                elseif trainingType==4
-                    Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
-                    
-                end
-                Fixationstatus(length(EyeData))=95;
+            if trainingType==3
+                Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+            elseif trainingType==4
+                Screen('FillOval', w, fixdotcolor2, imageRect_offs_dot);
+                
+            end
+            Fixationstatus(length(EyeData))=95;
         elseif blankcounter<=blankframeallowed
             
             checkerframe(length(EyeData))=41;
@@ -185,6 +209,7 @@ if  exist('EyeCode','var')
     
 end
 
+countblank(length(EyeData))=blankcounter;
 
 % test_time=[framefix' timefix']
 
