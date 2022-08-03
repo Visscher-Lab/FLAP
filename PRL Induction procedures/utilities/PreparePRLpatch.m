@@ -1,8 +1,4 @@
 %PreparePRLpatch
-oval_thick=3; %thickness of oval
-
-%lateral PRL
-PRLecc=[-7.5 0 ]; %eccentricity of PRLs
 
 %diagonal PRL
 %PRLecc=[-5.3 -5.3 ]; %eccentricity of PRLs
@@ -18,6 +14,8 @@ radiusPRL=(PRLsize/2)*pix_deg;
 circlePixelsPRL=sx.^2 + sy.^2 <= radiusPRL.^2;
 
 imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
+
+% mask to cover the target when outside the TRL (if needed)
 [img, sss, alpha] =imread('neutral21.png');
 img(:, :, 4) = alpha;
 Neutralface=Screen('MakeTexture', w, img);

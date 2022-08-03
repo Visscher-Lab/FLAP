@@ -24,7 +24,7 @@
   %  yeye=[yeye y];
     xeye2=[xeye2 newsamplex];
     yeye2=[yeye2 newsampley];
-    framecounter=framecounter+1
+    framecounter=framecounter+1;
     %  area_eye = evt.pa(eye_used+1);
 %     area_sticker = evt.pa(eye_used+1);
     % do we have valid data and is the pupil visible?
@@ -32,7 +32,7 @@
             if framecounter>1 & (xeye2(framecounter)-xeye2(framecounter-1))<fixwindowPix & (yeye2(framecounter)-yeye2(framecounter-1))<fixwindowPix %subject fixating?
         % if data is valid, draw a circle on the screen at current gaze position
         % using PsychToolbox's Screen function
-        fixating=fixating+1;
+        fixating=fixating2+1;
         counter=counter+1;
     else
         % if data is invalid (e.g. during a blink), clear display

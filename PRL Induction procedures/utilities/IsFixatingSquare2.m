@@ -22,7 +22,7 @@
   %  xeye=[xeye x];
   %  yeye=[yeye y];
 %     xeye2=[xeye2 newsamplex];
-%     yeye2=[yeye2 newsampley];
+    yeye2=[yeye2 newsampley];
     framecounter=framecounter+1;
     %  area_eye = evt.pa(eye_used+1);
 %     area_sticker = evt.pa(eye_used+1);
@@ -37,11 +37,11 @@
                 
                 % if data is valid, draw a circle on the screen at current gaze position
         % using PsychToolbox's Screen function
-        fixating=fixating+1;
+        fixating2=fixating+1;
         counter=counter+1;
     else
         % if data is invalid (e.g. during a blink), clear display
-        fixating=0;
+        fixating2=0;
         counter=counter+0;
     end
 %end

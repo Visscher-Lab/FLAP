@@ -1,6 +1,4 @@
-%function [fixating x y area_eye evt ]=IsFixating(el,eye_used,fixr,rect,driftoffsetx,driftoffsety)
-
-       % fixating=0;
+%counts frames in which the target is seeing through the assigned PRL
        if EyetrackerType == 1
            error=Eyelink('CheckRecording');
            evt=error;
@@ -20,8 +18,8 @@
   %  newsampley=evt.gy(eye_used+1);
   %  xeye=[xeye x];
   %  yeye=[yeye y];
-    xeye2=[xeye2 newsamplex];
-    yeye2=[yeye2 newsampley];
+%     xeye2=[xeye2 newsamplex];
+%     yeye2=[yeye2 newsampley];
     framecounter=framecounter+1;
     %  area_eye = evt.pa(eye_used+1);
 %     area_sticker = evt.pa(eye_used+1);
