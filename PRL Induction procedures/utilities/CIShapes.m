@@ -24,6 +24,7 @@ end
 %set the limit for stimuli position along x and y axis
 xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
 yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
+        imageRectSmall = CenterRect([0, 0, size(x0Small)], wRect);
 
 
 % size of the grid for the contour task

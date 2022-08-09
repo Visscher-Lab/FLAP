@@ -33,3 +33,12 @@
         [img, sss, alpha] =imread('neutral21.png');
         img(:, :, 4) = alpha;
         Neutralface=Screen('MakeTexture', w, img);
+        
+        theDot=imread('thedot2.tiff');
+        theDot=theDot(:,:,1);
+        
+        
+        theDot=imresize(theDot,[nrw nrw],'bicubic');
+        
+        theDot = double(circle) .* double(theDot)+gray * ~double(circle);
+        theDot=Screen('MakeTexture', w, theDot);
