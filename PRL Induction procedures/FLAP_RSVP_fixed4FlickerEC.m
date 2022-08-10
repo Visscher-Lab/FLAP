@@ -25,6 +25,7 @@
 close all; clear all; clc; % clear the window
 commandwindow
 
+
 try
     prompt={'Participant name', 'day', 'site? UCR(1), UAB(2), Vpixx(3)', 'demo (0) or session (1)', 'eye? left(1) or right(2)', 'Scotoma? yes(1), no(2)'};
     
@@ -228,10 +229,13 @@ try
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+%         PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+%         PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
         oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
         SetResolution(screenNumber, oldResolution);
         [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0.5,[],32,2);
+        
+        
         
         %debug window
         %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
@@ -409,7 +413,7 @@ try
         load RSVPTrialMat2022-D.mat
     end
     newtrialmatrix=totalnewnewtrial_incongruent4;
-    
+    ShowCursor();
     exo_index=find(newtrialmatrix(:,1)==2);
     exo_index=exo_index(1)-1;
     endo=newtrialmatrix(1:exo_index-1,:);
@@ -614,7 +618,7 @@ try
         %             interblock_instruction_rsvp;
         %         end
         
-        TrialNum = strcat('Trial',num2str(trial));
+         TrialNum = strcat('Trial',num2str(trial));
         
         clear EyeData
         clear FixIndex
@@ -776,9 +780,7 @@ try
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs4, oval_thick, oval_thick);
-                    'line779, first if'
                 elseif (eyetime2-pretrial_time)>ifi*11 && (eyetime2-pretrial_time)<=prefixwait+28*ifi
-                    'line781, elseif'
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
@@ -819,7 +821,6 @@ try
                 elseif (eyetime2-pretrial_time)>prefixwait+28*ifi && (eyetime2-pretrial_time)<prefixwait+30*ifi && stopfixating<80 && sum(keyCode(RespType(1:6)))== 0  %
                     %target at the beginning of the trial stays on screen
                     %until response (2 frames)
-                     'line 822, elseif'
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
                     Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
