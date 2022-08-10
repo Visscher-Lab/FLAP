@@ -1,11 +1,9 @@
-% Visual Acuity/Crowding/cued-uncued attention task
-% written by Marcello A. Maniglia july 2021 %2017/2021
+% Exogenous/endogenous switch task
+% written by Marcello A. Maniglia August 2022
 close all;
 clear all;
 clc;
 commandwindow
-%addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
-
 
 addpath([cd '/utilities']);
 try
@@ -24,24 +22,21 @@ try
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
     scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:});
-    whicheye=str2num(answer{7,:});
-
-    %load (['../PRLocations/' name]);
+    Isdemo=str2num(answer{6,:}); % full session or demo/practice
+    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
+    
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    %create a folder if it doesn't exist already
+    %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
-    %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-    
     
     if Isdemo==0
         filename='_carrasco_practice';
     elseif Isdemo==1
         filename='_carrasco';
     end
-
+    
     if site==1
         baseName=['./data/' SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -50,15 +45,13 @@ try
         baseName=[cd '\data\' SUBJECT filename 'Pixx_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     
-    c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
-    
+       
     EyeTracker = 1; %0=mouse, 1=eyetracker
-
+    
     %% space parameters
     scotomadeg=6; % scotoma size in deg
-    stimulusSize=2; %stimulus size
+    stimulusSize=2; %stimulus size in deg
     attContr= 0.35; % contrast of the target
     fixwindow=3;  %degrees
     PRLecc=7.5;         %%eccentricity of PRLs
@@ -66,7 +59,7 @@ try
     ylocs=[-PRLecc 0 PRLecc 0 ]; %PRL coordinates
     dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
     dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
-
+    
     %% time parameters
     Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
     cueonset=0.5; % time between first O and the cue
@@ -77,11 +70,10 @@ try
     posttargetcircleduration=0.133;
     posttargetISIduration= 0.233;
     fixTime=0.1/3;
-    effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
-     
+    effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)    
     defineSite % initialize Screen function and features depending on OS/Monitor
-        %% eyetracker initialization (eyelink)
     
+    %% eyetracker initialization (eyelink)   
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
@@ -91,9 +83,7 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     end
     
-   
-        %% Sound
-    
+    %% Sound   
     InitializePsychSound(1); %'optionally providing
     % the 'reallyneedlowlatency' flag set to one to push really hard for low
     % latency'.
@@ -109,36 +99,37 @@ try
     try
         [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
+    end  
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+    
     %% creating stimuli
     bg_index =round(gray*255); %background color
-    [xc, yc] = RectCenter(wRect);
-
+    [xc, yc] = RectCenter(wRect);   
     eccentricity_X=xlocs*pix_deg;
     eccentricity_Y=ylocs*pix_deg;
     imsize=stimulusSize*pix_deg;
-    createO   
-scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];   
-    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);    
-    scotoma_color=[200 200 200];    
+    createO
+    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
+    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
+    scotoma_color=[200 200 200];
     imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
-   %% trial matrixc
- 
-   thelocs=1:length(xlocs); % PRL locations
-   cueconditions =[1:4]; %1= cued exo, 2=uncued exo, 3=cued endo, 4=uncued endo
-   tr_per_condition=16;  %50
- 
-   mixtr= repmat(fullfact([length(thelocs) length(cueconditions)]), tr_per_condition,1);
-   mixtr=mixtr(randperm(length(mixtr)),:);
+        fixwindowPix=fixwindow*pix_deg; % fixation window
 
-   if Isdemo==0
-       mixtr=[2,3;1,1;2,4;3,2;4,1];
-   end
-
-   totalmixtr=length(mixtr);
+    %% trial matrixc
+    
+    thelocs=1:length(xlocs); % PRL locations
+    cueconditions =[1:4]; %1= cued exo, 2=uncued exo, 3=cued endo, 4=uncued endo
+    tr_per_condition=16;  %50
+    
+    mixtr= repmat(fullfact([length(thelocs) length(cueconditions)]), tr_per_condition,1);
+    mixtr=mixtr(randperm(length(mixtr)),:);
+    
+    if Isdemo==0
+        mixtr=[2,3;1,1;2,4;3,2;4,1]; % if it's practice time, just assign random mixtr combination
+    end
+    
+    totalmixtr=length(mixtr);
     %% response
     
     KbName('UnifyKeyNames');
@@ -164,15 +155,13 @@ scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
     KbQueueStart(deviceIndex);
     
     if EyetrackerType==1
-eyelinkCalib
+        eyelinkCalib % calibrate eyetracker, if Eyelink
     end
     
-    'troubleshoot: set up eyetracker, start main loop'
     %% main loop
     HideCursor;
     ListenChar(2);
     counter = 0;
-    fixwindowPix=fixwindow*pix_deg;
     WaitSecs(1);
     % Select specific text font, style and size:
     Screen('TextFont',w, 'Arial');
@@ -181,9 +170,8 @@ eyelinkCalib
     DrawFormattedText(w, 'You will see three stimuli in each trial. \n \n Ignore the first and last O and report the orientation of the gap of the C \n \n using the keyboard arrows \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
-    %Screen('Flip', w);
-    %WaitSecs(1.5);
-
+    WaitSecs(0.5);
+    
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -191,7 +179,7 @@ eyelinkCalib
             error(['startrecording error, status: ', status])
         end
         % mark zero-plot time in data file
-        Eyelink('message' , 'SYNCTIME');        
+        Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(totalmixtr), 6);
     end
     
@@ -199,14 +187,10 @@ eyelinkCalib
     eyetime2=0;
     closescript=0;
     kk=1;
-
+    
     for trial=1:totalmixtr
-        trialTimedout(trial)=0;
-           
-        TrialNum = strcat('Trial',num2str(trial));
-
-        
-        
+        trialTimedout(trial)=0; % count trials that trialed-out        
+        TrialNum = strcat('Trial',num2str(trial));   
         trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
         trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
         
@@ -245,11 +229,11 @@ eyelinkCalib
         yeye=[];
         KbQueueFlush()
         trial_time=-1000;
-        stopchecking=-100;        
+        stopchecking=-100;
         trial_time=100000;
-        clear starfix               
+        clear starfix
         clear EyeData
-        clear FixIndex      
+        clear FixIndex
         
         pretrial_time=GetSecs;
         while eyechecked<1
@@ -263,12 +247,8 @@ eyelinkCalib
             end
             
             if  (eyetime2-pretrial_time)>=0 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                if site<3
-                    IsFixatingSquare
-                elseif site==3
-                    IsFixating7
-                end
-
+                IsFixatingSquare % check for the eyes to stay in the fixation window for enough (fixTime) frames
+                
                 if ScotomaPresent == 1
                     fixationscriptW
                 end
@@ -279,7 +259,7 @@ eyelinkCalib
             currentcueISI=cueISI(mixtr(trial,2));
             currentcueduration=cueduration(mixtr(trial,2));
             clear imageRect_offsCirc
-        
+            
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<trialonsettime+ifi*2 && fixating>400 && stopchecking>1
                 
             elseif (eyetime2-trial_time)>=trialonsettime && (eyetime2-trial_time)<trialonsettime+ifi*2+circleduration && fixating>400 && stopchecking>1
@@ -318,7 +298,7 @@ eyelinkCalib
                 if mixtr(trial,2)== 1 ||  mixtr(trial,2)== 3
                     Screen('FillOval', w, [255  255 255], subimageRect_offs_cue');
                 end
-                clear imageRect_offs 
+                clear imageRect_offs
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % cue-target ISI
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -341,7 +321,7 @@ eyelinkCalib
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
-            
+                
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % O after target and wait for response
                 Screen('FillOval',w, gray,imageRect_offscircle);
@@ -353,13 +333,13 @@ eyelinkCalib
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
-             
+                
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % O after target and no
                 % response
                 Screen('FillOval',w, gray,imageRect_offscircle);
                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, ori,[], attContr);
-             
+                
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 %wait for response after the O after the target
                 thekeys = find(keyCode);
@@ -382,7 +362,7 @@ eyelinkCalib
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
                 fixationlength=10;
-    colorfixation = white;
+                colorfixation = white;
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                 
@@ -515,7 +495,7 @@ eyelinkCalib
             EyeSummary.(TrialNum).EventData = EvtInfo;
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
-            clear ErrorData          
+            clear ErrorData
             if exist('EndIndex')==0
                 EndIndex=0;
             end
@@ -544,8 +524,8 @@ eyelinkCalib
         
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-Screen('Flip', w);
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    Screen('Flip', w);
     KbQueueWait;
     
     % shut down EyeTracker
@@ -569,10 +549,10 @@ Screen('Flip', w);
     ListenChar(0);
     %   Screen('Flip', w);
     ShowCursor;
-
-        Screen('CloseAll');
-        Screen('Preference', 'SkipSyncTests', 0); 
-
+    
+    Screen('CloseAll');
+    Screen('Preference', 'SkipSyncTests', 0);
+    
     
     %% data analysis
     %thresho=permute(Threshlist,[3 1 2]);

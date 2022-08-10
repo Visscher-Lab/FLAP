@@ -46,8 +46,8 @@ elseif site==1  % UCR + bits
         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
         PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
+   %     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+   %     SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     end
     
