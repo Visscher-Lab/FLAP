@@ -64,7 +64,7 @@ try
         ContCirc2= [225 225 225]; %if we use grayscale (default)
     end
     cue_color=[255 255 255]; % cue color in rgb
-    ContCircEx=[255 0 0]; %exogenous cue color
+    ContCircEx=[255 255 255]; %exogenous cue color
     
     % background color on line 229
     
