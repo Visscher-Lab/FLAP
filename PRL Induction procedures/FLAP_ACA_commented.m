@@ -22,29 +22,24 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-      scotomaoldmode= str2num(answer{4,:}); 
+      ScotomaPresent= str2num(answer{4,:}); 
 scotomavpixx= str2num(answer{5,:});  
     Isdemo=str2num(answer{6,:});
 PRLlocations=str2num(answer{7,:});
     whicheye=str2num(answer{8,:});
 
-    %load (['../PRLocations/' name]);
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
-    %baseName=['./data/' SUBJECT '_FLAPcrowdingacuity4sc' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-    
-    
+  
     if Isdemo==0
         filename='_FLAP_ACA_practice';
     elseif Isdemo==1
         filename='_FLAP_ACA';
     end
-    
-    
-    
+     
     if site==1
         baseName=['./data/' SUBJECT filename '_' num2str(PRLlocations) '_' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -53,203 +48,56 @@ PRLlocations=str2num(answer{7,:});
         baseName=[cd '\data\' SUBJECT filename 'Pixx_' num2str(PRLlocations) '_' num2str(expdayeye) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     
-    c=clock;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     
     EyeTracker = 1; %0=mouse, 1=eyetracker
-    
-    %     if EyeTracker==1
-    %         EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
-    %         eTracker = 0; % set to 1 for UAB code testing
-    %     end
-    fixat=1;
-    fixationlength = 10; % pixels
-    
-    red=[255 0 0];
-    practicetrials=5;
-    StartSize=2; %for VA
-    cueSize=3;
-    circleSize=2.5; % cue size
-        attContr= 0.35; % contrast of the target in the attention task
+        oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
 
-    oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
-    fixwindow=3;
-    fixTime=1.5/3;
-        effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
-
-    PRLecc=7.5;         %7.5; %eccentricity of PRLs
-    %PRLecc=5.3;         %7.5; %eccentricity of PRLs
-
-    %   PRLxx=[0 PRLecc 0 -PRLecc];
-    %   PRLyy=[-PRLecc 0 PRLecc 0 ];
-    %PRL_x_axis=-5;
-    %PRL_y_axis=0;
-    %NoPRL_x_axis=5;
-    %NoPRL_y_axis=0;
-    
+    %% space parameters
+    scotomadeg=6; % scotoma size in deg
+            scotoma_color=[200 200 200];
+    attContr= 0.35; % contrast of the target
+    StartSize=2; %starting size for VA
+    fixwindow=3;  %degrees
+    PRLecc=7.5;         %%eccentricity of PRLs
+    if PRLlocations==4
+        xlocs=[0 PRLecc 0 -PRLecc];
+        ylocs=[-PRLecc 0 PRLecc 0 ];
+    elseif PRLlocations==2
+        xlocs=[PRLecc  -PRLecc];
+        ylocs=[0  0];
+    end  
+    dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
+    dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
+    oval_thick=6; %thickness of the cue's oval during the Attention task
     ContCirc= [200 200 200];
-    
-    oval_thick=6; %thickness of oval
-    
-    Screen('Preference', 'SkipSyncTests', 1);
-    PC=getComputerName();
-    n_blocks=1;
-    
-    
-    closescript=0;
-    kk=1;
-    prefixationsquare=0.5;
-    cueonset=0; %0.55;
-    cueduration=.05;
-    cueISI=0.05;
-    presentationtime=0.133;
-    ScotomaPresent = scotomaoldmode; % 0 = no scotoma, 1 = scotoma
-    cue_spatial_offset=2;
-    
-    
-    if site==0  %UCR bits**
-        %% psychtoobox settings
-        screencm=[40.6 30];
-        load gamma197sec;
-        v_d=110;
-        %load lut_12bits_pd; Disabled until display is calibrated
-        AssertOpenGL;
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        PsychColorCorrection('SetLookupTable', window, lookup);
-        oldResolution=Screen( 'Resolution',screenNumber,1280,960);
-        SetResolution(screenNumber, oldResolution);
-        %lut_12bits= repmat((linspace(0,1,4096).^(1/2.2))',1,3);
-        %PsychColorCorrection('SetLookupTable', w, lut_12bits); --Denton-Disabled until calibration is done, moved to before OpenWindow, if initialized afterwards it won't have any effect until after the first flip
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        %if you want to open a small window for debug
-        %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    elseif site==1 %UCR with bits
-        crt=0;
-        %% psychtoobox settings
-      if crt==1  
-          v_d=57;
-        AssertOpenGL;
-        screenNumber=max(Screen('Screens'));
-        PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        
-        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-        screencm=[40.6 30];
-        %debug window
-        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-      else
-          
-           screencm=[69.8, 40];
-        v_d=57;
-        AssertOpenGL;
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-     %   PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
-        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
-          
-      end
-    elseif site==2   %UAB
-        s1=serial('com3');
-        fopen(s1);
-        fprintf(s1, ['$monoPlusPlus' 13]);
-        fclose(s1);
-        clear s1
-        screencm=[69.8, 35.5];
-        v_d=57;
-        AssertOpenGL;
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
-        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
-        fixationlengthy=10;
-        fixationlengthx=10;
-        
-    elseif site==3   %UCR VPixx
-        %% psychtoobox settings
-        
-        initRequired= 0;
-        if initRequired>0
-            fprintf('\nInitialization required\n\nCalibrating the device...');
-            TPxTrackpixx3CalibrationTestingskip;
-        end
-        % elseif EyetrackerType==2
-        
-        %Connect to TRACKPixx3
-        Datapixx('Open');
-        Datapixx('SetTPxAwake');
-        Datapixx('RegWrRd');
-        v_d=80;
-        AssertOpenGL;
-        screenNumber=max(Screen('Screens'));
-        PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        
-       oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-                [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    if oneOrfourCues==4 % for attention part, do we want 4 dots to briefly signal the exo TLR?
+        cueSize=3;
+        cue_spatial_offset=2;
+    end
+  %% time parameters
+    Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
+    cueonset=0.2; % time between start of the trial and the cue
+    cueduration=[0.05 0.05 0.133 0.133]; % cue duration
+    cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
+    presentationtime=0.133; % duration of the C
+    fixTime=0.5/3;
+    effectivetrialtimeout=8; %max time duration for a trial (otherwise it counts as elapsed)    
+    defineSite % initialize Screen function and features depending on OS/Monitor
+ 
+    practicetrials=5;
+    circleSize=2.5; % cue size
 
-        screencm=[69.8, 35.5];
-        %debug window
-        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        
-    end
+
     
-    Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    struct.sz=[screencm(1), screencm(2)];
-    'troubleshoot: defining pix_deg'
-    pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
-    %pix_deg = pi * wRect(3) / atan(screencm(1)/v_d/2) / 360; %pixperdegree
-    pix_deg_vert = pi * wRect(4) / atan(screencm(2)/v_d/2) / 360; %to calculate the limit of target position
-    PixelsPerDegree=pix_deg;
-    white=WhiteIndex(screenNumber);
-    black=BlackIndex(screenNumber);
-    gray=round((white+black)/2);
-    if gray == white
-        gray=white / 2;
-    end
-    inc=1;
-    theseed=sum(100*clock);
-    rand('twister',theseed );
-    ifi = Screen('GetFlipInterval', w);
-    if ifi==0
-        ifi=1/75;
-    end
+
+    prefixationsquare=0.5;
+    
+    
+    defineSite
+
+        %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
         if site==3
@@ -257,117 +105,42 @@ PRLlocations=str2num(answer{7,:});
         else
             EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
         end
-        
-        % eye_used
-        ScreenHeightPix=screencm(2)*pix_deg_vert;
-        ScreenWidthPix=screencm(1)*pix_deg;
-        VelocityThreshs = [250 2000];      	% px/sec
-        VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
-
-        ViewpointRefresh = 1;               % dummy variable
-        driftoffsetx=0;                     % initial x offset for all eyetracker values
-        driftoffsety=0;                     % initial y offset for all eyetracker values
-        driftcorr=0.1;                      % how much to adjust drift correction each trial.
-        % Parameters to identify fixations
-        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
-        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
-        % note, the eye velocity is already low enough to be considered a "fixation"
-        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
-        
-        
-        % old variables
-        [winCenter_x,winCenter_y]=RectCenter(wRect);
-        backgroundEntry = [0.5 0.5 0.5];
-        % height and width of the screen
-        winWidth  = RectWidth(wRect);
-        winHeight = RectHeight(wRect);
+        eyetrackerparameters % set up Eyelink eyetracker
     end
     
-    'troubleshoot: got just before sound'
-    % SOUND
-    InitializePsychSound;
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    %% Sound
     
+    InitializePsychSound(1); %'optionally providing
+    % the 'reallyneedlowlatency' flag set to one to push really hard for low
+    % latency'.
+    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
     if site<3
         pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
         pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3
+    elseif site==3 % Windows
         
         pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
         pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
     end
-    
     try
-        [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
     end
-    
-    %     try
-    %         [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-    %         [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    %     end;
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+   
+       %% creating stimuli
+
     bg_index =round(gray*255); %background color
     
     %
     imsize=StartSize*pix_deg;
+    createO
+    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
+    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
+    fixwindowPix=fixwindow*pix_deg; % fixation window
     
-    %imsize=StartSize*pix_deg;
-    [x,y]=meshgrid(-imsize/2:imsize/2,-imsize/2:imsize/2);
-    %circular mask
-    xylim = imsize; %radius of circular mask
-    circle = x.^2 + y.^2 <= xylim^2;
-    [nrw, ncl]=size(x);
-    
-    %theLetter=imread('letter_c2.tiff');
-    theLetter=imread('newletterc22.tiff');
-    theLetter=theLetter(:,:,1);
-    
-    [sizx sizy]= size(theLetter);
-    
-    theLetter=imresize(theLetter,[nrw nrw],'bicubic');
-    theCircles=theLetter;
-    
-    theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
-    theLetter=Screen('MakeTexture', w, theLetter);
-    
-    if v_d==57
-    if  mod(length(theCircles)/2,2)==0
-        theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-    elseif  mod(length(theCircles)/2,2)>0
-        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    end
-
-    elseif v_d==70
-                theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-    end
-%         if  mod(nrw,2)==0
-%           theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
-%     elseif  mod(nrw,2)>0
-%                   theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, round((nrw/2)):-1:1);
-%     end
-        
-        
-    %    theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
-    theCircles = double(circle) .* double(theCircles)+bg_index * ~double(circle);
-    theCircles=Screen('MakeTexture', w, theCircles);
-    'troubleshoot: got to defining circles'
-    
-    
-    theDot=imread('thedot2.tiff');
-    theDot=theDot(:,:,1);
-    
-    
-    theDot=imresize(theDot,[nrw nrw],'bicubic');
-    
-    theDot = double(circle) .* double(theDot)+bg_index * ~double(circle);
-    theDot=Screen('MakeTexture', w, theDot);
-    
-    
-    % corrS=zeros(size(errorS));
-    load('S096_marl-nyu');
     
     
     %% STAIRCASES:
@@ -547,32 +320,10 @@ PRLlocations=str2num(answer{7,:});
     Screen('Flip', w);
     KbQueueWait;
     %Screen('Flip', w);
-    %WaitSecs(1.5);
+    WaitSecs(0.5);
     
-    [xc, yc] = RectCenter(wRect);
-    %if cardinal
-    xlocs=[0 PRLecc 0 -PRLecc];
-    ylocs=[-PRLecc 0 PRLecc 0 ];
-       %if diagonal
-%     xlocs=[PRLecc  -PRLecc];
-%     ylocs=[-PRLecc  PRLecc ];
-%            
+  
 
-    %   xlocs= [5.3  -5.3 ];
-   % ylocs= [-5.3  5.3 ];
-    %if both lower
-      xlocs=[PRLecc  -PRLecc];
-    ylocs=[PRLecc  PRLecc];
-    %if left and right
-   
-    if PRLlocations==4
-        xlocs=[0 PRLecc 0 -PRLecc];
-        ylocs=[-PRLecc 0 PRLecc 0 ];
-    elseif PRLlocations==2
-        xlocs=[PRLecc  -PRLecc];
-        ylocs=[0  0];
-    end
-    
     eccentricity_X=xlocs*pix_deg;
     eccentricity_Y=ylocs*pix_deg;
     
@@ -754,39 +505,17 @@ jitterArray=[jitterArray;tempjitter];
     
     
     eyetime2=0;
-    waittime=0;
-    scotomadeg=10;
-        scotomadeg=6;
+    closescript=0;
+    kk=1;
 
-    if site<3
-        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
-    elseif site==3
-        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
-    end
-    
-    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
-    
-    %     xeye=[];
-    %     yeye=[];
-    %
-    %     tracktime=[];
-    %     VBL_Timestamp=[];
-    %     stimonset=[ ];
-    %     fliptime=[ ];
-    %     mss=[ ];
-        scotoma_color=[200 200 200];
-     %   scotoma_color=scotoma_color/255;
     FixDotSize=15;
     
     
 
     for totaltrial=1:totalmixtr
                 trialTimedout(totaltrial)=0;
+        TrialNum = strcat('Trial',num2str(totaltrial));
 
-%         if totaltrial== length(mixtrVA)+1 || totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-%             interblock_instruction
-%         end
-       
 if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
     interblock_instruction_crowding
 end
@@ -807,35 +536,12 @@ end
         
             whichTask=3
         
-        TrialNum = strcat('Trial',num2str(totaltrial));
         
-        clear EyeData
-        clear FixIndex
-        xeye=[];
-        yeye=[];
-        pupils=[];
-        tracktime=[];
-        VBL_Timestamp=[];
-        stimonset=[ ];
-        fliptime=[ ];
-        mss=[ ];
-        tracktime=[];
-        FixCount=0;
-        FixatingNow=0;
-        EndIndex=0;
-        
-        fixating=0;
-        counter=0;
-        framecounter=0;
-        x=0;
-        y=0;
-        area_eye=0;
-        xeye2=[];
-        yeye2=[];
+      
+
         
         if whichTask ==1
             trialTimeout=effectivetrialtimeout;
-            %   VAsize = Sizelist(threshVA(mixtrVA(trial,1),mixtrVA(trial,2)));
             theeccentricity_X=eccentricity_X(mixtrVA(trial));
             theeccentricity_Y=eccentricity_Y(mixtrVA(trial));
             VAsize = Sizelist(threshVA);
@@ -843,26 +549,7 @@ end
         elseif whichTask ==2
             trialTimeout=effectivetrialtimeout;
             VA_thresho=1;
-            
-            %           if exist('VA_thresho')==1
-            %             for ui=1:length(eccentricity_X)
-            %                 VA_thresho=mean(ThreshlistVA(end-10:end));
-            %             end
-            %                         else
-            %                              VA_thresho=1;
-            %         end
-            %       VA_thresho=max(cell2mat(PRL_va_thresh));
-            % VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
-            
-%             if exist('ThreshlistVA')==0
-%                 VA_thresho=1;
-%             else
-%                 VA_thresho=mean(ThreshlistVA(end-20:end));               
-%             end            
-%             if VA_thresho<0
-%                 VA_thresho=1;
-%             end
-            
+        
          %   imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
                         imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
 
@@ -884,7 +571,6 @@ end
             elseif radOrtan==2 && mixtrCW(trial,1)==3
                 angolo=atan((eccentricita_v)/(eccentricita_o))-pi/2;
             end
-            [xc, yc] = RectCenter(wRect);
             ecc_r=sep*pix_deg;
             ecc_r_poke=(sep*pix_deg)+pix_deg;
             
@@ -951,23 +637,12 @@ end
         elseif whichTask == 3
             cueonset=jitterArray(trial);
             trialTimeout=effectivetrialtimeout+cueonset;
+            if oneOrfourCues==4
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
-            %             for ui=1:length(eccentricity_X)
-            %                 PRL_va_thresh{ui}=mean(ThreshlistVA(ui,end-10:end));
-            %
-            %             end
-            %
-            %   VA_thresho=max(cell2mat(PRL_va_thresh));
-            %VA_thresho=mean(ThreshlistVA-20:ThreshlistVA)*1.3;
-%             if exist('VA_thresho')==0
-%                 VA_thresho=1;
-%             end
-%             if VA_thresho<0
-%                 VA_thresho=1;
-%             end
+            else
+                imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
+            end
 VA_thresho=1;
-    %        imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
                 imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
 
             theeccentricity_X=eccentricity_X(mixtrAtt(trial,1));
@@ -977,22 +652,33 @@ VA_thresho=1;
             
         end
         
+% compute response for trial
         theoris =[-180 0 -90 90];
-        
         theans(trial)=randi(4);
-        
         ori=theoris(theans(trial));
-        %KbQueueFlush()
         
         Priority(0);
-        buttons=0;
         eyechecked=0;
+                
+        VBL_Timestamp=[];
+        FixCount=0;
+        FixatingNow=0;
+        EndIndex=0;
+        
+        fixating=0;
+        counter=0;
+        framecounter=0;
+        
+        xeye=[];
+        yeye=[];
         KbQueueFlush()
         trial_time=-1000;
-        stopchecking=-100;
-        
+        stopchecking=-100;       
         trial_time=100000;
-        clear starfix
+        clear starfix  
+        clear EyeData
+        clear FixIndex
+        
         pretrial_time=GetSecs;
         while eyechecked<1
             
@@ -1024,17 +710,20 @@ VA_thresho=1;
             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
                 fixating=1500;
+               end
+            if whichTask ==3
+                        currentcueISI=cueISI(mixtrAtt(trial,2));
+            currentcueduration=cueduration(mixtrAtt(trial,2));
+            else
+                currentcueISI=cueISI(1);
+            currentcueduration=cueduration(1);
             end
-            
             clear imageRect_offsCirc
-            if (eyetime2-trial_time)>=waittime+ifi*2+cueonset && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            if (eyetime2-trial_time)>=ifi*2+cueonset && (eyetime2-trial_time)<ifi*2+cueonset+currentcueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if whichTask ==3
-                    if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 2
-                        cueISI= 0.05;
-                    else mixtrAtt(trial,2)== 3 || mixtrAtt(trial,2)== 4
-                        cueISI= 1.5;
-                    end
-                    imageRect_offs_cue =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg),...
+
+                   if oneOrfourCues ==4
+                       imageRect_offs_cue =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg),...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg)];
                     imageRect_offs_cue2 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg),...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg)];
@@ -1042,14 +731,18 @@ VA_thresho=1;
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                                       globalimageRect_offs_cue=[imageRect_offs_cue;imageRect_offs_cue2;imageRect_offs_cue3;imageRect_offs_cue4];
+                   end
+                    
+                    
                     if exist('imageRect_offsCirc')==0
                         imageRect_offsCirc =[imageRectCirc(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                             imageRectCirc(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     end
-                    if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3
-                        %  Screen('DrawTexture',w, theDot, [], imageRect_offs_cue,0,[],1);
+                    
+                    
+                    if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3 % drawing cue 
                              Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
-                        %Screen('FrameRect', w, [200 200 200],imageRect_offsCirc, oval_thick);
                         
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
@@ -1063,10 +756,10 @@ VA_thresho=1;
                 clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
                 clear stimstar
                 %show cue
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+cueonset+currentcueISI && (eyetime2-trial_time)<ifi*2+cueonset+currentcueISI+currentcueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 
                 %no cue
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI && (eyetime2-trial_time)<waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+cueonset+currentcueISI+currentcueISI && (eyetime2-trial_time)<ifi*2+cueonset+currentcueISI+currentcueISI+presentationtime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('imageRect_offs')==0 
                     imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
@@ -1108,10 +801,10 @@ VA_thresho=1;
                 
                 stim_start = GetSecs;
                 
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
+            elseif (eyetime2-trial_time)>=ifi*2+cueonset+currentcueISI+currentcueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
                 %   Screen('Close');
                 
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+cueonset+cueduration+cueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
+            elseif (eyetime2-trial_time)>=ifi*2+cueonset+currentcueISI+currentcueISI+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
                 eyechecked=10^4;
                 
                 thekeys = find(keyCode);
@@ -1485,7 +1178,6 @@ VA_thresho=1;
         xxeye(totaltrial).ics=xeye;
         yyeye(totaltrial).ipsi=yeye;
         vbltimestamp(totaltrial).ix=VBL_Timestamp;
-        flipptime(totaltrial).ix=fliptime;
         
         rispo(kk)=resp;
         fixationdure(totaltrial)=trial_time-startfix;

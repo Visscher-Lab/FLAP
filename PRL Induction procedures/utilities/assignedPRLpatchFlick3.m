@@ -1,6 +1,5 @@
 stimpresent=1;
-flickertimeallowed=1.2;
-blanktimeallowed=1.2;
+
 if  stimpresent>0
     % here to force fixations with the PRL
     

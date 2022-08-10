@@ -1,5 +1,70 @@
+clear a b m f_gabor
+%contour integration gabor dimensions
+sigma_degSmall=0.1; % CI Gabor size in deg
+
+sfs=3; % spatial frequency CI Gabor
+sigma_pixSmall = sigma_degSmall*pix_deg;
+imsizeSmall=sigma_pixSmall*2.5;
+
+[x0Small,y0Small]=meshgrid(-imsizeSmall:imsizeSmall,-imsizeSmall:imsizeSmall);
+G = exp(-((x0Small/sigma_pixSmall).^2)-((y0Small/sigma_pixSmall).^2));
+[r, c] = size(G);
+midgray=0.5;
+%creating gabor images
+rot=0*pi/180; %redundant but theoretically correct
+maxcontrast=1; %0.15; %same
+inc=1;
+for i=1:(length(sfs))  %bpk: note that sfs has only one element
+    f_gabor=(sfs(i)/pix_deg)*2*pi;
+    a=cos(rot)*f_gabor;
+    b=sin(rot)*f_gabor;
+    m=maxcontrast*sin(a*x0Small+b*y0Small+pi).*G;
+    TheGaborsSmall(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
+end
+%set the limit for stimuli position along x and y axis
+xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
+yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
+        imageRectSmall = CenterRect([0, 0, size(x0Small)], wRect);
 
 
+% size of the grid for the contour task
+xs=7;%60; 12;
+ys=7; %45;9;
+
+[x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
+
+JitRat=1; % amount of jit ratio (the larger the value the less jitter)
+JitRat=4; % amount of jit ratio (the larger the value the less jitter)
+
+Oscat= 0.5; %JitList(thresh(Ts,Tc));
+
+xlocsCI=x1(:)';
+ylocsCI=y1(:)';
+ecccoeffCI=3;
+%generate visual cue
+
+eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
+eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
+
+coeffCI=ecccoeffCI/2;
+
+
+Tcontr=0.938;         %target contrast
+Dcontr=0.38;        %distractor contrast
+
+
+        ssf=1;
+        % texture(trial)=TheGabors(sf);
+        Tscat=0; %but we will define the jitter threshold later
+        GoodBlock=0;
+        Tc=1;
+        xmax=2*xs+1; %total number of squares in grid, along x direction (17)
+        ymax=2*ys+1; %total number of squares in grid, along x direction (13)
+        
+        xTrans=round(xmax/2); %Translate target left/right or up/down within grid
+        yTrans=round(ymax/2);
+        
+        
 clear Targori Targx Targy offsetx offsety
 shapeMatrix=[];
 
