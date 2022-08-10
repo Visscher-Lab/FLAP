@@ -160,7 +160,6 @@ try
         StartJitter=16;
     end
     
-    
     %define number of trials per condition
     if trainingType==1
         conditionOne=1; %only Gabors
@@ -376,8 +375,7 @@ try
         ListenChar(2);
     end
     ListenChar(0);
-    
-    
+      
     % general instruction TO BE REWRITTEN
     InstructionFLAP(w,trainingType,gray,white)
     KbQueueWait;
@@ -569,11 +567,7 @@ try
             if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<=FlickerTime/ifi && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout
                 % HERE starts the flicker for training types 3 and 4, if
                 % training type is 1 or 2, this is skipped
-                if trainingType>2
-                elseif trainingType<3 || test==1
-                    counterflicker=1;
-                    flickerdone=10;
-                end
+
                 if exist('flickerstar') == 0 % start flicker timer
                     flicker_time_start=GetSecs; % beginning of the overall flickering period
                     flickerstar=1;
@@ -611,7 +605,7 @@ try
                 end
                 cue_last=GetSecs;
                 
-                if trainingType>2 && counterflicker==round(FlickerTime/ifi)
+                if trainingType>2 && counterflicker==round(FlickerTime/ifi) || trainingType<3 || test==1
                     newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
                     flickerdone=10;
                     flicker_time_stop=eyetime2; % end of the overall flickering period

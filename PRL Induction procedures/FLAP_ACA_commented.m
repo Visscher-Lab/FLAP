@@ -9,7 +9,7 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
@@ -22,24 +22,25 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expdayeye=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-      ScotomaPresent= str2num(answer{4,:}); 
-scotomavpixx= str2num(answer{5,:});  
+    ScotomaPresent= str2num(answer{4,:});
+    scotomavpixx= str2num(answer{5,:});
     Isdemo=str2num(answer{6,:});
-PRLlocations=str2num(answer{7,:});
+    PRLlocations=str2num(answer{7,:});
     whicheye=str2num(answer{8,:});
-
+    calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
-  
+    
     if Isdemo==0
         filename='_FLAP_ACA_practice';
     elseif Isdemo==1
         filename='_FLAP_ACA';
     end
-     
+    
     if site==1
         baseName=['./data/' SUBJECT filename '_' num2str(PRLlocations) '_' expdayeye num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -52,11 +53,11 @@ PRLlocations=str2num(answer{7,:});
     
     
     EyeTracker = 1; %0=mouse, 1=eyetracker
-        oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
-
+    oneOrfourCues=1; % 1= 1 cue, 4= 4 cue
+    
     %% space parameters
     scotomadeg=6; % scotoma size in deg
-            scotoma_color=[200 200 200];
+    scotoma_color=[200 200 200];
     attContr= 0.35; % contrast of the target
     StartSize=2; %starting size for VA
     fixwindow=3;  %degrees
@@ -67,7 +68,7 @@ PRLlocations=str2num(answer{7,:});
     elseif PRLlocations==2
         xlocs=[PRLecc  -PRLecc];
         ylocs=[0  0];
-    end  
+    end
     dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
     dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
     oval_thick=6; %thickness of the cue's oval during the Attention task
@@ -76,28 +77,28 @@ PRLlocations=str2num(answer{7,:});
         cueSize=3;
         cue_spatial_offset=2;
     end
-  %% time parameters
+    %% time parameters
     Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
     cueonset=0.2; % time between start of the trial and the cue
     cueduration=[0.05 0.05 0.133 0.133]; % cue duration
     cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
     presentationtime=0.133; % duration of the C
     fixTime=0.5/3;
-    effectivetrialtimeout=8; %max time duration for a trial (otherwise it counts as elapsed)    
+    effectivetrialtimeout=8; %max time duration for a trial (otherwise it counts as elapsed)
     defineSite % initialize Screen function and features depending on OS/Monitor
- 
+    
     practicetrials=5;
     circleSize=2.5; % cue size
-
-
     
-
+    
+    
+    
     prefixationsquare=0.5;
     
     
     defineSite
-
-        %% eyetracker initialization (eyelink)
+    
+    %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
         if site==3
@@ -129,9 +130,9 @@ PRLlocations=str2num(answer{7,:});
     
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-   
-       %% creating stimuli
-
+    
+    %% creating stimuli
+    
     bg_index =round(gray*255); %background color
     
     %
@@ -322,8 +323,8 @@ PRLlocations=str2num(answer{7,:});
     %Screen('Flip', w);
     WaitSecs(0.5);
     
-  
-
+    
+    
     eccentricity_X=xlocs*pix_deg;
     eccentricity_Y=ylocs*pix_deg;
     
@@ -397,12 +398,12 @@ PRLlocations=str2num(answer{7,:});
     %
     
     if PRLlocations==4
-    mixtrCWa=[mixtrCW(1:16,:); mixtrCW(81:96,:)];
-    mixtrCWb=[ mixtrCW(17:80,:) ;mixtrCW(97:end,:)];
-    
+        mixtrCWa=[mixtrCW(1:16,:); mixtrCW(81:96,:)];
+        mixtrCWb=[ mixtrCW(17:80,:) ;mixtrCW(97:end,:)];
+        
     elseif PRLlocations==2
-       mixtrCWa=[mixtrCW(1:16,:); mixtrCW(49:64,:)];
-    mixtrCWb=[ mixtrCW(17:48,:) ;mixtrCW(65:end,:)];        
+        mixtrCWa=[mixtrCW(1:16,:); mixtrCW(49:64,:)];
+        mixtrCWb=[ mixtrCW(17:48,:) ;mixtrCW(65:end,:)];
     end
     %  mixtrCWc= mixtrCW(17:80,:);
     %   mixtrCWd=mixtrCW(97:end,:);
@@ -446,39 +447,39 @@ PRLlocations=str2num(answer{7,:});
     % mixtrAttrial=mixtrAtt(randperm(length(mixtrAtt)),:);
     
     if PRLlocations==4
-    load('AttMatNew.mat')
-    
-    %numar=size(fields(AttMat));
-    numar=7;
-    dio= [99 99 ];
-    while dio(1) == dio(2)
-        dio=randi(numar(1),1,2);
-    end
-    
-    subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
-    firstPartMat=AttMat.(subMat{dio(1)});
-    secondPartMat=AttMat.(subMat{dio(2)});
-    
-    mixtrAtt= [firstPartMat; secondPartMat];
-    
+        load('AttMatNew.mat')
+        
+        %numar=size(fields(AttMat));
+        numar=7;
+        dio= [99 99 ];
+        while dio(1) == dio(2)
+            dio=randi(numar(1),1,2);
+        end
+        
+        subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
+        firstPartMat=AttMat.(subMat{dio(1)});
+        secondPartMat=AttMat.(subMat{dio(2)});
+        
+        mixtrAtt= [firstPartMat; secondPartMat];
+        
     elseif PRLlocations==2
-%if only two locations
-rep=40;
-     mixtrAtttemp=repmat(fullfact([PRLlocations 4]), rep,1);
-     mixtrAtt=mixtrAtttemp(randperm(length(mixtrAtttemp)),:);
-    
-    %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
+        %if only two locations
+        rep=40;
+        mixtrAtttemp=repmat(fullfact([PRLlocations 4]), rep,1);
+        mixtrAtt=mixtrAtttemp(randperm(length(mixtrAtttemp)),:);
+        
+        %   totalmixtr = [1 1; 2 1; 3 1; 4 1; 1 2; 2 2; 3 2; 4 2];
     end
     
     jit=[0.5:0.5:2];
- %   jitterArray=[ones(length(mixtrAtt(:,1))/5,1)*jit']
+    %   jitterArray=[ones(length(mixtrAtt(:,1))/5,1)*jit']
     
     jitterArray=[];
     for ui=1:length(mixtrAtt(:,1))/4
-tempjitter=jit(randperm(length(jit)))';
-jitterArray=[jitterArray;tempjitter];
+        tempjitter=jit(randperm(length(jit)))';
+        jitterArray=[jitterArray;tempjitter];
     end
-        if Isdemo==0
+    if Isdemo==0
         mixtrVA=mixtrVA(1:practicetrials,:);
         mixtrCW=mixtrCW(1:practicetrials,:);
         % mixtrAtt=mixtrAtt(1:practicetrials,:);
@@ -507,21 +508,21 @@ jitterArray=[jitterArray;tempjitter];
     eyetime2=0;
     closescript=0;
     kk=1;
-
+    
     FixDotSize=15;
     
     
-
+    
     for totaltrial=1:totalmixtr
-                trialTimedout(totaltrial)=0;
+        trialTimedout(totaltrial)=0;
         TrialNum = strcat('Trial',num2str(totaltrial));
-
-if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-    interblock_instruction_crowding
-end
-if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
-    interblock_instruction_attention
-end
+        
+        if totaltrial== length(mixtrVA)+1 %|| totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+            interblock_instruction_crowding
+        end
+        if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
+            interblock_instruction_attention
+        end
         if totaltrial<= length(mixtrVA)
             whichTask=1;
             trial=totaltrial;
@@ -534,11 +535,7 @@ end
             
         end
         
-            whichTask=3
-        
-        
-      
-
+        %      whichTask=3
         
         if whichTask ==1
             trialTimeout=effectivetrialtimeout;
@@ -549,10 +546,10 @@ end
         elseif whichTask ==2
             trialTimeout=effectivetrialtimeout;
             VA_thresho=1;
-        
-         %   imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
-                        imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
-
+            
+            %   imageRect = CenterRect([0, 0, (VA_thresho*pix_deg)*1.4 (VA_thresho*pix_deg)*1.4], wRect);
+            imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
+            
             imageRect11 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             imageRect12 =imageRect; %CenterRect([0, 0, [nrw nrw ]], wRect);
             sep = Separationtlist(threshCW(mixtrCW(trial,2)));
@@ -638,13 +635,13 @@ end
             cueonset=jitterArray(trial);
             trialTimeout=effectivetrialtimeout+cueonset;
             if oneOrfourCues==4
-            imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
+                imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
             else
                 imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
             end
-VA_thresho=1;
-                imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
-
+            VA_thresho=1;
+            imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
+            
             theeccentricity_X=eccentricity_X(mixtrAtt(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrAtt(trial,1));
             imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -652,14 +649,14 @@ VA_thresho=1;
             
         end
         
-% compute response for trial
+        % compute response for trial
         theoris =[-180 0 -90 90];
         theans(trial)=randi(4);
         ori=theoris(theans(trial));
         
         Priority(0);
         eyechecked=0;
-                
+        
         VBL_Timestamp=[];
         FixCount=0;
         FixatingNow=0;
@@ -673,9 +670,9 @@ VA_thresho=1;
         yeye=[];
         KbQueueFlush()
         trial_time=-1000;
-        stopchecking=-100;       
+        stopchecking=-100;
         trial_time=100000;
-        clear starfix  
+        clear starfix
         clear EyeData
         clear FixIndex
         
@@ -683,56 +680,56 @@ VA_thresho=1;
         while eyechecked<1
             
             if ScotomaPresent == 1
-            fixationscriptW
+                fixationscriptW
             end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-              %   if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-              %  fixationscript3
-           %   fixationscriptW
-           %else
-               if  (eyetime2-pretrial_time)>=ifi*prefixationsquare && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            %   if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            %  fixationscript3
+            %   fixationscriptW
+            %else
+            if  (eyetime2-pretrial_time)>=ifi*prefixationsquare && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if site<3
                     IsFixatingSquare
                 elseif site==3
-                  %  IsFixating4pixx
-                                        IsFixating7
+                    %  IsFixating4pixx
+                    IsFixating7
                 end
                 if exist('starfix')==0
                     startfix=GetSecs;
                     starfix=98;
                 end
                 %  fixationscript3
-              if ScotomaPresent == 1
-            fixationscriptW
-            end
+                if ScotomaPresent == 1
+                    fixationscriptW
+                end
             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
                 fixating=1500;
-               end
+            end
             if whichTask ==3
-                        currentcueISI=cueISI(mixtrAtt(trial,2));
-            currentcueduration=cueduration(mixtrAtt(trial,2));
+                currentcueISI=cueISI(mixtrAtt(trial,2));
+                currentcueduration=cueduration(mixtrAtt(trial,2));
             else
                 currentcueISI=cueISI(1);
-            currentcueduration=cueduration(1);
+                currentcueduration=cueduration(1);
             end
             clear imageRect_offsCirc
             if (eyetime2-trial_time)>=ifi*2+cueonset && (eyetime2-trial_time)<ifi*2+cueonset+currentcueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if whichTask ==3
-
-                   if oneOrfourCues ==4
-                       imageRect_offs_cue =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg),...
-                        imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg)];
-                    imageRect_offs_cue2 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg),...
-                        imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg)];
-                    imageRect_offs_cue3 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                    imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                                       globalimageRect_offs_cue=[imageRect_offs_cue;imageRect_offs_cue2;imageRect_offs_cue3;imageRect_offs_cue4];
-                   end
+                    
+                    if oneOrfourCues ==4
+                        imageRect_offs_cue =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg),...
+                            imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-(cue_spatial_offset*pix_deg)];
+                        imageRect_offs_cue2 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg),...
+                            imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+(cue_spatial_offset*pix_deg)];
+                        imageRect_offs_cue3 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X-(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        imageRect_offs_cue4 =[imageRectCue(1)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        globalimageRect_offs_cue=[imageRect_offs_cue;imageRect_offs_cue2;imageRect_offs_cue3;imageRect_offs_cue4];
+                    end
                     
                     
                     if exist('imageRect_offsCirc')==0
@@ -741,8 +738,8 @@ VA_thresho=1;
                     end
                     
                     
-                    if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3 % drawing cue 
-                             Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
+                    if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3 % drawing cue
+                        Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
                         
                         if oneOrfourCues ==4
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue2,0,[],1);
@@ -760,22 +757,22 @@ VA_thresho=1;
                 
                 %no cue
             elseif (eyetime2-trial_time)>=ifi*2+cueonset+currentcueISI+currentcueISI && (eyetime2-trial_time)<ifi*2+cueonset+currentcueISI+currentcueISI+presentationtime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                if exist('imageRect_offs')==0 
+                if exist('imageRect_offs')==0
                     imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
                 end
                 
-                                    Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
+                Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
                 if whichTask<3
-                Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
                 elseif whichTask==3
-                                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
                 end
                 if exist('stimstar') == 0
-                          stimulus_start=GetSecs;
-                          stimstar=1;
-           end
+                    stimulus_start=GetSecs;
+                    stimstar=1;
+                end
                 if whichTask == 2
                     if exist('imageRect_offs_flank1')==0
                         
@@ -784,11 +781,11 @@ VA_thresho=1;
                         
                         imageRect_offs_flank2 =[imageRect_offs11(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offs11(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
                             imageRect_offs11(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offs11(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
-                    
-                                    imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.635*pix_deg) imageRect_offs_flank1(2)-(0.635*pix_deg) imageRect_offs_flank1(3)+(0.635*pix_deg) imageRect_offs_flank1(4)+(0.635*pix_deg) ];
-                                    imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.635*pix_deg) imageRect_offs_flank2(2)-(0.635*pix_deg) imageRect_offs_flank2(3)+(0.635*pix_deg) imageRect_offs_flank2(4)+(0.635*pix_deg) ];
-
-                  
+                        
+                        imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.635*pix_deg) imageRect_offs_flank1(2)-(0.635*pix_deg) imageRect_offs_flank1(3)+(0.635*pix_deg) imageRect_offs_flank1(4)+(0.635*pix_deg) ];
+                        imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.635*pix_deg) imageRect_offs_flank2(2)-(0.635*pix_deg) imageRect_offs_flank2(3)+(0.635*pix_deg) imageRect_offs_flank2(4)+(0.635*pix_deg) ];
+                        
+                        
                     end
                     Screen('FillOval',w, gray,imageRect_offscircle1); % lettera a sx del target
                     Screen('FillOval',w, gray, imageRect_offscircle2); % lettera a sx del target
@@ -816,18 +813,18 @@ VA_thresho=1;
                 
                 [secs  indfirst]=min(thetimes);
                 respTime=GetSecs;
-                            elseif (eyetime2-pretrial_time)>=trialTimeout
+            elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
                 eyechecked=10^4;
             end
-        %    if site <3
-                eyefixation5
-              %  fixationscriptW
-       %     elseif site ==3
-       %         eyefixation4
-         %   end
+            %    if site <3
+            eyefixation5
+            %  fixationscriptW
+            %     elseif site ==3
+            %         eyefixation4
+            %   end
             
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
@@ -894,282 +891,282 @@ VA_thresho=1;
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
-                if trialTimedout(trial)== 0
-
-        foo=(RespType==thekeys);
-        
-        if whichTask == 1
-            staircounterVA=staircounterVA+1;
-            ThreshlistVA(staircounterVA)=VAsize;
-            if foo(theans(trial))
-                resp = 1;
-                nswr(trial)=1;
-                PsychPortAudio('Start', pahandle1);
-                corrcounterVA=corrcounterVA+1;
-                if mixtrVA(trial,2) == 1
-                    
-                    if corrcounterVA>=sc.down
+        if trialTimedout(trial)== 0
+            
+            foo=(RespType==thekeys);
+            
+            if whichTask == 1
+                staircounterVA=staircounterVA+1;
+                ThreshlistVA(staircounterVA)=VAsize;
+                if foo(theans(trial))
+                    resp = 1;
+                    nswr(trial)=1;
+                    PsychPortAudio('Start', pahandle1);
+                    corrcounterVA=corrcounterVA+1;
+                    if mixtrVA(trial,2) == 1
                         
-                        if isreversalsVA==1
-                            reversalsVA=reversalsVA+1;
-                            isreversalsVA=0;
-                            %      reversalcounterVA=reversalcounterVA+1;
+                        if corrcounterVA>=sc.down
+                            
+                            if isreversalsVA==1
+                                reversalsVA=reversalsVA+1;
+                                isreversalsVA=0;
+                                %      reversalcounterVA=reversalcounterVA+1;
+                            end
+                            thestep=min(reversalsVA+1,length(stepsizesVA));
+                            if thestep>5
+                                thestep=5;
+                            end
+                            threshVA=threshVA +stepsizesVA(thestep);
+                            threshVA=min(threshVA,length(Sizelist));
                         end
-                        thestep=min(reversalsVA+1,length(stepsizesVA));
+                        
+                    elseif mixtrVA(trial,2)==2
+                        
+                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
+                            
+                            chec(trial) =99;
+                            if sum(nswr(trial-3:trial))==4
+                                if isreversalsVA==1
+                                    reversalsVA=reversalsVA+1;
+                                    isreversalsVA=0;
+                                    %      reversalcounterVA=reversalcounterVA+1;
+                                end
+                                thestep=min(reversalsVA+1,length(stepsizesVA));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshVA=threshVA +stepsizesVA(thestep);
+                                threshVA=min(threshVA,length(Sizelist));
+                                
+                            elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
+                                threshVA=threshVA;
+                            elseif sum(nswr(trial-3:trial))<2
+                                corrcounterVA=0;
+                                thestep=max(reversalsVA+1,length(stepsizesVA));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshVA=threshVA -stepsizesVA(thestep);
+                                threshVA=max(threshVA);
+                            end
+                        end
+                        
+                    end
+                elseif (thekeys==escapeKey) % esc pressed
+                    closescript = 1;
+                    if EyetrackerType==2
+                        Datapixx('DisableSimulatedScotoma')
+                        Datapixx('RegWrRd')
+                    end
+                    ListenChar(0);
+                    break;
+                else
+                    resp = 0;
+                    
+                    nswr(trial)=0;
+                    PsychPortAudio('Start', pahandle2);
+                    if mixtrVA(trial,2)==1
+                        if  corrcounterVA>=sc.down
+                            isreversalsVA=1;
+                        end
+                        corrcounterVA=0;
+                        thestep=max(reversalsVA+1,length(stepsizesVA));
                         if thestep>5
                             thestep=5;
                         end
-                        threshVA=threshVA +stepsizesVA(thestep);
-                        threshVA=min(threshVA,length(Sizelist));
-                    end
-                    
-                elseif mixtrVA(trial,2)==2
-                    
-                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
+                        threshVA=threshVA -stepsizesVA(thestep);
+                        threshVA=max(threshVA);
+                        if threshVA<1
+                            threshVA=1;
+                        end
                         
-                        chec(trial) =99;
-                        if sum(nswr(trial-3:trial))==4
-                            if isreversalsVA==1
-                                reversalsVA=reversalsVA+1;
-                                isreversalsVA=0;
-                                %      reversalcounterVA=reversalcounterVA+1;
-                            end
-                            thestep=min(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA +stepsizesVA(thestep);
-                            threshVA=min(threshVA,length(Sizelist));
+                    elseif mixtrVA(trial,2)==2
+                        
+                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
                             
-                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
-                            threshVA=threshVA;
-                        elseif sum(nswr(trial-3:trial))<2
-                            corrcounterVA=0;
-                            thestep=max(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
+                            chec(trial) =99;
+                            if sum(nswr(trial-3:trial))==4
+                                if isreversalsVA==1
+                                    reversalsVA=reversalsVA+1;
+                                    isreversalsVA=0;
+                                    %      reversalcounterVA=reversalcounterVA+1;
+                                end
+                                thestep=min(reversalsVA+1,length(stepsizesVA));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshVA=threshVA +stepsizesVA(thestep);
+                                threshVA=min(threshVA,length(Sizelist));
+                                
+                            elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
+                                threshVA=threshVA;
+                            elseif sum(nswr(trial-3:trial))<2
+                                corrcounterVA=0;
+                                thestep=max(reversalsVA+1,length(stepsizesVA));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshVA=threshVA -stepsizesVA(thestep);
+                                threshVA=max(threshVA);
                             end
-                            threshVA=threshVA -stepsizesVA(thestep);
-                            threshVA=max(threshVA);
                         end
-                    end
-                    
-                end
-            elseif (thekeys==escapeKey) % esc pressed
-                closescript = 1;
-                if EyetrackerType==2
-                    Datapixx('DisableSimulatedScotoma')
-                    Datapixx('RegWrRd')
-                end
-                ListenChar(0);
-                break;
-            else
-                resp = 0;
-                
-                nswr(trial)=0;
-                PsychPortAudio('Start', pahandle2);
-                if mixtrVA(trial,2)==1
-                    if  corrcounterVA>=sc.down
-                        isreversalsVA=1;
-                    end
-                    corrcounterVA=0;
-                    thestep=max(reversalsVA+1,length(stepsizesVA));
-                    if thestep>5
-                        thestep=5;
-                    end
-                    threshVA=threshVA -stepsizesVA(thestep);
-                    threshVA=max(threshVA);
-                    if threshVA<1
-                        threshVA=1;
-                    end
-                    
-                elseif mixtrVA(trial,2)==2
-                    
-                    if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
                         
-                        chec(trial) =99;
-                        if sum(nswr(trial-3:trial))==4
-                            if isreversalsVA==1
-                                reversalsVA=reversalsVA+1;
-                                isreversalsVA=0;
-                                %      reversalcounterVA=reversalcounterVA+1;
-                            end
-                            thestep=min(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshVA=threshVA +stepsizesVA(thestep);
-                            threshVA=min(threshVA,length(Sizelist));
+                        
+                    end
+                end
+                
+                
+                
+            elseif whichTask == 2
+                
+                staircounterCW(mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,2))+1;
+                ThreshlistCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=sep;
+                
+                if foo(theans(trial))
+                    resp = 1;
+                    nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=1;
+                    corrcounterCW(mixtrCW(trial,2))=corrcounterCW(mixtrCW(trial,2))+1;
+                    PsychPortAudio('Start', pahandle1);
+                    
+                    if mixtrCW(trial,3) == 1
+                        if corrcounterCW(mixtrCW(trial,2))>=sc.down
                             
-                        elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
-                            threshVA=threshVA;
-                        elseif sum(nswr(trial-3:trial))<2
-                            corrcounterVA=0;
-                            thestep=max(reversalsVA+1,length(stepsizesVA));
-                            if thestep>5
+                            if isreversalsCW(mixtrCW(trial,2))==1
+                                reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
+                                isreversalsCW(mixtrCW(trial,2))=0;
+                            end
+                            thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                            if thestep>5 %Doesn't this negate the step size of 8 in the step size list? --Denton
                                 thestep=5;
                             end
-                            threshVA=threshVA -stepsizesVA(thestep);
-                            threshVA=max(threshVA);
+                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
+                            threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
+                        end
+                        
+                    elseif mixtrCW(trial,3)==2
+                        if mod(staircounterCW(mixtrCW(trial,2)),4)==0%&& ((trial> 17 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==1) || (trial > 97 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==2 || (trial> 17 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==2) || (trial > 97 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==1) )) %(trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 1) || ...
+                            % (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 2 &  mixtrCW(trial,2) == 2) || ...
+                            %  (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 2) || ...
+                            %start with radial; trial >
+                            
+                            %      mixtrCW(:,2)==1,mixtrCW(:,3)==2
+                            % mixtrCW(:,2)==1 rad, mixtrCW(:,2)==2 tan
+                            %mixtrCW(:,3)==1 sc1, mixtrCW(:,3)==2 sc2
+                            
+                            % (trial>(sum(mixtrVA(:,3)==1))+1 && mixtrCW(1,3) == 1 )
+                            checCW(trial) =99;
+                            %   if sum(nswrCW(trial-3:trial))==4
+                            
+                            if sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))==4
+                                if isreversalsCW(mixtrCW(trial,2))==1
+                                    reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
+                                    isreversalsCW(mixtrCW(trial,2))=0;
+                                end
+                                thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
+                                threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
+                                
+                            elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))>2 && sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<4
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
+                            elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<2
+                                corrcounterCW(mixtrCW(trial,2))=0;
+                                thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
+                                threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
+                            end
                         end
                     end
-                    
-                    
-                end
-            end
-            
-            
-            
-        elseif whichTask == 2
-            
-            staircounterCW(mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,2))+1;
-            ThreshlistCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=sep;
-            
-            if foo(theans(trial))
-                resp = 1;
-                nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=1;
-                corrcounterCW(mixtrCW(trial,2))=corrcounterCW(mixtrCW(trial,2))+1;
-                PsychPortAudio('Start', pahandle1);
-                
-                if mixtrCW(trial,3) == 1
-                    if corrcounterCW(mixtrCW(trial,2))>=sc.down
-                        
-                        if isreversalsCW(mixtrCW(trial,2))==1
-                            reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
-                            isreversalsCW(mixtrCW(trial,2))=0;
+                elseif (thekeys==escapeKey) % esc pressed
+                    closescript = 1;
+                    ListenChar(0);
+                    break;
+                else
+                    resp = 0;
+                    nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=0;
+                    corrcounterCW(mixtrCW(trial,2))=0;
+                    PsychPortAudio('Start', pahandle2);
+                    if mixtrCW(trial,3)==1
+                        if  corrcounterCW(mixtrCW(trial,2))>=sc.down
+                            isreversalsCW(mixtrCW(trial,2))=1;
                         end
-                        thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                        if thestep>5 %Doesn't this negate the step size of 8 in the step size list? --Denton
+                        
+                        thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                        if thestep>5
                             thestep=5;
                         end
-                        threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
-                        threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
-                    end
-                    
-                elseif mixtrCW(trial,3)==2
-                    if mod(staircounterCW(mixtrCW(trial,2)),4)==0%&& ((trial> 17 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==1) || (trial > 97 && mixtrCW(1,2) ==1 && mixtrCW(trial,2) ==2 || (trial> 17 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==2) || (trial > 97 && mixtrCW(1,2) ==2 && mixtrCW(trial,2) ==1) )) %(trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 1) || ...
-                        % (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 2 &  mixtrCW(trial,2) == 2) || ...
-                        %  (trial>(sum(mixtrCW(:,3)==1))+1 && mixtrCW(1,3) == 1 &  mixtrCW(trial,2) == 2) || ...
-                        %start with radial; trial >
+                        threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
+                        threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
+                    elseif mixtrCW(trial,3)==2
                         
-                        %      mixtrCW(:,2)==1,mixtrCW(:,3)==2
-                        % mixtrCW(:,2)==1 rad, mixtrCW(:,2)==2 tan
-                        %mixtrCW(:,3)==1 sc1, mixtrCW(:,3)==2 sc2
-                        
-                        % (trial>(sum(mixtrVA(:,3)==1))+1 && mixtrCW(1,3) == 1 )
-                        checCW(trial) =99;
-                        %   if sum(nswrCW(trial-3:trial))==4
-                        
-                        if sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))==4
-                            if isreversalsCW(mixtrCW(trial,2))==1
-                                reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
-                                isreversalsCW(mixtrCW(trial,2))=0;
+                        if mod(staircounterCW(mixtrCW(trial,2)),4)==0
+                            checCW(trial) =99;
+                            if sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))==4
+                                if isreversalsCW(mixtrCW(trial,2))==1
+                                    reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
+                                    isreversalsCW(mixtrCW(trial,2))=0;
+                                end
+                                thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
+                                threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
+                                
+                            elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))>2 && sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<4
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
+                            elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<2
+                                corrcounterCW(mixtrCW(trial,2))=0;
+                                thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
+                                if thestep>5
+                                    thestep=5;
+                                end
+                                threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
+                                threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
                             end
-                            thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
-                            threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
-                            
-                        elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))>2 && sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<4
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
-                        elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<2
-                            corrcounterCW(mixtrCW(trial,2))=0;
-                            thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
-                            threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
                         end
                     end
                 end
-            elseif (thekeys==escapeKey) % esc pressed
-                closescript = 1;
-                ListenChar(0);
-                break;
-            else
-                resp = 0;
-                nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=0;
-                corrcounterCW(mixtrCW(trial,2))=0;
-                PsychPortAudio('Start', pahandle2);
-                if mixtrCW(trial,3)==1
-                    if  corrcounterCW(mixtrCW(trial,2))>=sc.down
-                        isreversalsCW(mixtrCW(trial,2))=1;
-                    end
-                    
-                    thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                    if thestep>5
-                        thestep=5;
-                    end
-                    threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
-                    threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
-                elseif mixtrCW(trial,3)==2
-                    
-                    if mod(staircounterCW(mixtrCW(trial,2)),4)==0
-                        checCW(trial) =99;
-                        if sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))==4
-                            if isreversalsCW(mixtrCW(trial,2))==1
-                                reversalsCW(mixtrCW(trial,2))=reversalsCW(mixtrCW(trial,2))+1;
-                                isreversalsCW(mixtrCW(trial,2))=0;
-                            end
-                            thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
-                            threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
-                            
-                        elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))>2 && sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<4
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2));
-                        elseif sum(nswrCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2))-3:staircounterCW(mixtrCW(trial,2))))<2
-                            corrcounterCW(mixtrCW(trial,2))=0;
-                            thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                            if thestep>5
-                                thestep=5;
-                            end
-                            threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) -stepsizesCW(thestep);
-                            threshCW(mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,2)),1);
-                        end
-                    end
-                end
-            end
-            
-        elseif whichTask == 3
-            
-            if foo(theans(trial))
-                resp = 1;
-                PsychPortAudio('Start', pahandle1);
                 
-            elseif (thekeys==escapeKey) % esc pressed
-                closescript = 1;
-                break;
-            else
-                resp = 0;
-                PsychPortAudio('Start', pahandle2);
+            elseif whichTask == 3
                 
-            end
-        end
-        %   stim_stop=secs;
-        
-        
-        
-        
+                if foo(theans(trial))
+                    resp = 1;
+                    PsychPortAudio('Start', pahandle1);
+                    
+                elseif (thekeys==escapeKey) % esc pressed
+                    closescript = 1;
+                    break;
                 else
+                    resp = 0;
+                    PsychPortAudio('Start', pahandle2);
+                    
+                end
+            end
+            %   stim_stop=secs;
+            
+            
+            
+            
+        else
             
             resp = 0;
             respTime=0;
             PsychPortAudio('Start', pahandle2);
-    end
-                if trialTimedout(trial)==0
+        end
+        if trialTimedout(trial)==0
             stim_stop=secs;
             cheis(kk)=thekeys;
-                end
+        end
         
         if exist('stim_start')==0
-                stim_start=0;
-                stimnotshowed(totaltrial)=99;
+            stim_start=0;
+            stimnotshowed(totaltrial)=99;
         end
         time_stim(kk) = respTime - stim_start;
         totale_trials(kk)=trial;
@@ -1188,21 +1185,21 @@ VA_thresho=1;
             separation(kk)=sep;
             refsizeCrSti(kk)=VA_thresho;
             if exist('imageRect_offs')
-            sizeCrSti(kk)=imageRect_offs(3)-imageRect_offs(1);
+                sizeCrSti(kk)=imageRect_offs(3)-imageRect_offs(1);
             end
         elseif whichTask ==3
             correx(kk)=resp;
-                        if exist('imageRect_offs')
-            SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
-                        end
+            if exist('imageRect_offs')
+                SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
+            end
             Att_RT(kk) = respTime - stim_start;
         end
         
         if exist('thekeys')
-        cheis(kk)=thekeys;
+            cheis(kk)=thekeys;
         else
-                    cheis(kk)=99;
-
+            cheis(kk)=99;
+            
         end
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -1258,11 +1255,11 @@ VA_thresho=1;
         %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         
     end
-            DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-Screen('Flip', w);
+    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
-        KbQueueWait;
-
+    KbQueueWait;
+    
     % shut down EyeTracker
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1276,14 +1273,14 @@ Screen('Flip', w);
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-
+    
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     ListenChar(0);
- %   Screen('Flip', w);
+    %   Screen('Flip', w);
     ShowCursor;
     
     if site==1

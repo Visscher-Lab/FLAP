@@ -7,7 +7,7 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
@@ -24,6 +24,7 @@ try
     scotomavpixx= str2num(answer{5,:});
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
@@ -46,7 +47,7 @@ try
     end
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-       
+    
     EyeTracker = 1; %0=mouse, 1=eyetracker
     
     %% space parameters
@@ -70,10 +71,10 @@ try
     posttargetcircleduration=0.133;
     posttargetISIduration= 0.233;
     fixTime=0.1/3;
-    effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)    
+    effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
     defineSite % initialize Screen function and features depending on OS/Monitor
     
-    %% eyetracker initialization (eyelink)   
+    %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
@@ -83,7 +84,7 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     end
     
-    %% Sound   
+    %% Sound
     InitializePsychSound(1); %'optionally providing
     % the 'reallyneedlowlatency' flag set to one to push really hard for low
     % latency'.
@@ -99,13 +100,13 @@ try
     try
         [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
         [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end  
+    end
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     
     %% creating stimuli
     bg_index =round(gray*255); %background color
-    [xc, yc] = RectCenter(wRect);   
+    [xc, yc] = RectCenter(wRect);
     eccentricity_X=xlocs*pix_deg;
     eccentricity_Y=ylocs*pix_deg;
     imsize=stimulusSize*pix_deg;
@@ -114,8 +115,8 @@ try
     scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     scotoma_color=[200 200 200];
     imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
-        fixwindowPix=fixwindow*pix_deg; % fixation window
-
+    fixwindowPix=fixwindow*pix_deg; % fixation window
+    
     %% trial matrixc
     
     thelocs=1:length(xlocs); % PRL locations
@@ -189,8 +190,8 @@ try
     kk=1;
     
     for trial=1:totalmixtr
-        trialTimedout(trial)=0; % count trials that trialed-out        
-        TrialNum = strcat('Trial',num2str(trial));   
+        trialTimedout(trial)=0; % count trials that trialed-out
+        TrialNum = strcat('Trial',num2str(trial));
         trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
         trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
         
