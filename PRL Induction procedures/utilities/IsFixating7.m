@@ -32,11 +32,11 @@ framecounter=framecounter+1;
 if framecounter>1 & (xeye(end)-xeye(end-1))<fixwindowPix & (yeye(end)-yeye(end-1))<fixwindowPix %subject fixating?
     % if data is valid, draw a circle on the screen at current gaze position
     % using PsychToolbox's Screen function
-    fixating2x=fixating2x+1;
-    counterx=counterx+1;
+    fixating2=fixating2+1;
+    counter=counter+1;
 else
     % if data is invalid (e.g. during a blink), clear display
-    fixating2x=0;
-    counterx=counterx+0;
+    fixating2=0;
+    counter=counter+0;
 end
 %end
