@@ -215,7 +215,7 @@ try
         for ui=1:conditionTwo
             mixtr=[mixtr; repmat(mixcond(ui,:),trials,1) ];
         end
-        mixtr=[ones(length(mixtr(:,1)),1) mixtr];
+        mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
         mixtr =mixtr(randperm(length(mixtr)),:);
     elseif trainingType==4 % more complex structure, we have type of shapes
         %(for Gabor it's always the same, for shapes it will have 6 types per
@@ -311,11 +311,18 @@ try
         
         if expDay==1
             
-            sizeArray=log_unit_down(1.65, 0.008, nsteps);
-            
+            sizeArray=log_unit_down(1.65, 0.008, nsteps); % array of TRL size: the larger, the easier the task (keeping the target within the PRL)
+            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps); % array of flickering persistence: the lower, the easier the task (keeping the target within the PRL for tot time)
             %higher pointer=more difficult
+            % TRL size parameter
             sizepointer=15;
             coeffAdj=sizeArray(sizepointer); % possible list of TRL size (proportion of TRL size) that allows frames to be counted as 'within the TRL'
+            % flcikering time parameter
+            flickerpointerPre=15;
+                        flickerpointerPost=15;
+            timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
+            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
+
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
             
@@ -479,8 +486,8 @@ try
             fixating=1500;
             
             if trainingType>2 && trial>1 %if it's training 3 or 4 trial, we evaluate whether it's a cue trial
-                if mixtr(trial,3)~=mixtr(trial-1,3) || mixtr(trial,3)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
-                    if mixtr(trial,3)==1 %if it's endogenous cue
+                if mixtr(trial,2)~=mixtr(trial-1,2) || mixtr(trial,2)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
+                    if mixtr(trial,2)==1 %if it's endogenous cue
                         %calculations for arrow pointing to the next location (endo cue)
                         nexcoordx=(imageRect_offs(1)+imageRect_offs(3))/2;
                         nexcoordy=(imageRect_offs(2)+imageRect_offs(4))/2;
@@ -489,11 +496,12 @@ try
                         delta=[previouscoordx-nexcoordx previouscoordy-nexcoordy];
                         oriArrow(trial)=atan2d(delta(2), delta(1));
                         oriArrow(trial)=oriArrow(trial)-90;
-                        ExoEndoCueDuration=0.133;
-                    elseif mixtr(trial,3)==2 %if it's exogenous cue (circle flashing to the next location)
-                        ExoEndoCueDuration=0.05;
+                    elseif mixtr(trial,2)==2 %if it's exogenous cue (circle flashing to the next location)
                     end
                 end
+                currentExoEndoCueDuration=mixtr(trial,2);
+            else
+                currentExoEndoCueDuration=ExoEndoCueDuration(1);
             end
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -504,7 +512,7 @@ try
                     counterflicker=-10000;
                 end
                 
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+ExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
                     startrial=1;
                     trialstart(trial)=GetSecs;
@@ -530,7 +538,7 @@ try
                 elseif trainingType>2 && trial==1
                     isendo=0;
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+ExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
                 % here I need to reset the trial time in order to preserve
                 % timing for the next events (first fixed fixation event)
                 
@@ -557,7 +565,7 @@ try
                     end
                 end
                 
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+ExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1 && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1 && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
                 % HERE I exit the script if I press ESC
                 thekeys = find(keyCode);
                 closescript=1;
@@ -569,12 +577,12 @@ try
                 % training type is 1 or 2, this is skipped
 
                 if exist('flickerstar') == 0 % start flicker timer
-                    flicker_time_start=GetSecs; % beginning of the overall flickering period
+                    flicker_time_start(trial)=GetSecs; % beginning of the overall flickering period
                     flickerstar=1;
                     flickswitch=0;
                     flick=1;
                 end
-                flicker_time=GetSecs-flicker_time_start;     % timer for the flicker decision
+                flicker_time=GetSecs-flicker_time_start(trial);     % timer for the flicker decision
                 if flicker_time>flickswitch % time to flicker?
                     flickswitch= flickswitch+flickeringrate;
                     flick=3-flick; % flicker/non flicker
@@ -608,7 +616,7 @@ try
                 if trainingType>2 && counterflicker==round(FlickerTime/ifi) || trainingType<3 || test==1
                     newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
                     flickerdone=10;
-                    flicker_time_stop=eyetime2; % end of the overall flickering period
+                    flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
                 end
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
                 % HERE I PRESENT THE TARGET
@@ -828,7 +836,9 @@ try
         if trainingType > 2 % if it's a training type with flicker
             %   fixDuration(trial)=flicker_time_start-trial_time;
             if flickerdone>1
-                movieDuration(trial)=flicker_time_stop-flicker_time_start;
+                flickertimetrial(trial)=FlickerTime;
+                movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial);
+                Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3);
             end
         end
         totale_trials(kk)=trial;
@@ -845,7 +855,7 @@ try
         if exist('endExp')
             totalduration=(endExp-startExp)/60;
         end
-        
+
         %% record eyelink-related variables
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -896,26 +906,29 @@ try
         end
         if (mod(trial,50))==1 && trial>1
             if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-                %for trainng type 3, to be verified
-                if mean(movieDuration(trial-49:trial))>3
+                %for training type 3, to be verified
+                if mean(Timeperformance(end-20:end))>3
                     if trial==100 || trial==200 || trial==300 || trial==400 || trial==500
+                        %here we implement staircase on flicker time
+                    %flickerpointerPre=flickerpointerPre-1;
+%flickerpointerPost=flickerpointerPost+1;
                     elseif trial==150 || trial==250 || trial==350 || trial==450 || trial==50
-                        sizepointer=sizepointer-1;
+                        sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                     end
-                elseif mean(movieDuration(trial-49:trial))<2
+                elseif mean(Timeperformance(end-20:end))<3
                     if trial==100 || trial==200 || trial==300 || trial==400 || trial==500
+                        %here we implement staircase on flicker time
+                                          %flickerpointerPre=flickerpointerPre+1;
+%flickerpointerPost=flickerpointerPost-1;
+
                     elseif trial==150 || trial==250 || trial==350 || trial==450 || trial==50
-                        sizepointer=sizepointer+1;
+                        sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                     end
                 end
-                
-                if  trialTimedout(trial-49:trial)>5
-                    if trial==100 || trial==200 || trial==300 || trial==400 || trial==500
-                    elseif trial==150 || trial==250 || trial==350 || trial==450 || trial==50
-                        sizepointer=sizepointer-1;
-                    end
-                end
+
                 coeffAdj=sizeArray(sizepointer);
+                % timeflickerallowed=persistentflickerArray(flickerpointerPre) time before flicker starts
+                        %flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
             end
         end
         if closescript==1
@@ -931,7 +944,7 @@ try
     KbQueueWait;
     
     %% shut down EyeTracker and screen functions
-    if EyeTracker==1
+    if EyetrackerType==1
         Eyelink('StopRecording');
         Eyelink('closefile');
         status = Eyelink('ReceiveFile',eyeTrackerFileName,save_dir,1); % this is the eyetracker file that needs to be put in the correct folder with the other files!!!

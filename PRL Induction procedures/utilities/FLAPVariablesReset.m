@@ -1,5 +1,3 @@
-clear EyeData
-clear FixIndex
 xeye=[]; %x coordinates from eyetracker
 yeye=[];   %y coordinates from eyetracker
 VBL_Timestamp=[]; %array to collect frame time stamp
@@ -30,6 +28,8 @@ flickerdone=0;
 pretrial_time=GetSecs; % trial timing
 trial_time=GetSecs;  % trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
 newtrialtime=GetSecs; % real value to be assigned later, after flicker is done
+clear EyeData
+clear FixIndex
 clear circlestar
 clear flickerstar
 clear imageRect_offsCirc
