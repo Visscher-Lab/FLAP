@@ -88,8 +88,8 @@ elseif site==3   %UCR VPixx
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     %
-    oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-    SetResolution(screenNumber, oldResolution);
+%     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+%     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
     screencm=[69.8, 40];
