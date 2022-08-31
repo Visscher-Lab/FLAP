@@ -1,4 +1,4 @@
-function [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
+function [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlickerAnnulus(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,circlePixels,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
 % function to count the frames that satisfy the fixation request
 % (fixation within the TRL). It is called during Training type 3.
 %When fixation is outside the TRL, the flickering O will stop. During
@@ -9,13 +9,13 @@ function [countgt framecont countblank blankcounter counterflicker turnFlickerOn
 turnFlickerOn(length(EyeData))=1; % by default flicker is active, unless something happens below
 
 % distance target-PRL
-codey=round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y))+PRLypix);
-codex=round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X))+PRLxpix);
+codey=round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y)));
+codex=round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X)));
 
 % is the PRL within the limits of the screen?
 if   codey<wRect(4) && codey>0 && codex<wRect(3) && codex>0
     %is the target outside the PRL?
-    if   circlePixelsPRL(codey, codex)<0.81
+    if   circlePixels(codey, codex)<0.81
         blankcounter=blankcounter+1;
         if  blankcounter==1
             startBlankCounter=GetSecs;
