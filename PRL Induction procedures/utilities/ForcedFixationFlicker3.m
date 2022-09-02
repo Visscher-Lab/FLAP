@@ -1,4 +1,4 @@
-function [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, theCircles, imageRect_offs, imageRect_offs_dot,fixdotcolor2, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,trainingType,eyetime2,EyeCode,turnFlickerOn)
+function [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
 % function to count the frames that satisfy the fixation request
 % (fixation within the TRL). It is called during Training type 3.
 %When fixation is outside the TRL, the flickering O will stop. During

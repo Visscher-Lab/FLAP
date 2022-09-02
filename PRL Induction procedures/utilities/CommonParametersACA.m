@@ -1,6 +1,7 @@
 %% general visual parameters
 scotomadeg=6; % scotoma size in deg
 scotoma_color=[200 200 200];
+red=[255 0 0];
 attContr= 0.35; % contrast of the target
 StartSize=2; %starting size for VA
 fixwindow=3;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)

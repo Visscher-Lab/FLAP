@@ -157,6 +157,7 @@ try
     if trainingType==2 || trainingType==4
         shapes=6; % how many shapes per day?
         JitList = 0:2:90;
+                JitList = 0:2:90;
         StartJitter=16;
     end
     
@@ -541,7 +542,8 @@ try
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
                 % here I need to reset the trial time in order to preserve
                 % timing for the next events (first fixed fixation event)
-                
+                % HERE interval between cue disappearance and beginning of
+                % next stream of flickering stimuli
                 if skipforcedfixation==1 % skip the force fixation
                     counterannulus=(AnnulusTime/ifi)+1;
                     skipcounterannulus=1000;
@@ -588,7 +590,7 @@ try
                     flick=3-flick; % flicker/non flicker
                 end
                 if trainingType>2 && test==2  % Force flicker here (training type 3 and 4)
-                    [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, theCircles, imageRect_offs, imageRect_offs_dot,fixdotcolor2, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,trainingType,eyetime2,EyeCode,turnFlickerOn)
+[countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
                 end
                 
                 % from ForcedFixationFlicker3, should I show the flicker or not?
@@ -836,9 +838,9 @@ try
         if trainingType > 2 % if it's a training type with flicker
             %   fixDuration(trial)=flicker_time_start-trial_time;
             if flickerdone>1
-                flickertimetrial(trial)=FlickerTime;
-                movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial);
-                Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3);
+                flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
+                movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
+                Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
             end
         end
         totale_trials(kk)=trial;

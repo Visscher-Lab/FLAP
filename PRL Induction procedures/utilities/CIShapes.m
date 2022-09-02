@@ -122,7 +122,7 @@ offsetx{3}= [-Xoff; -Xoff];
 offsety{3}=[-Yoff; -Yoff];
 
 
-% b vs d
+% d vs b
 
 Targx{4}= [-2    -2    -2    -1    -1     0     0     1     1     2     2     2     2     2    2
     -2    -2    -2    -1    -1     0     0     1     1     2     2     2     -2     -2    -2];
