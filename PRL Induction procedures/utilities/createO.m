@@ -43,3 +43,13 @@
         theDot = double(circle) .* double(theDot)+gray * ~double(circle);
         theDot=Screen('MakeTexture', w, theDot);
                     [xc, yc] = RectCenter(wRect);
+
+                    
+                    [img, sss, alpha]=imread('happyface.png');
+                    img(:, :, 4) = alpha;
+                    theHappyface=Screen('MakeTexture', w, img);
+                    
+                                        [img, sss, alpha]=imread('sadface.png');
+                    img(:, :, 4) = alpha;
+                    theSadface=Screen('MakeTexture', w, img);
+                    

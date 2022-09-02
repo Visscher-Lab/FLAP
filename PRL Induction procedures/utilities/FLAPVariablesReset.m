@@ -42,3 +42,4 @@ clear startrial
 clear stimstar
 clear checktrialstart
 clear targetflickerstar
+clear starfix

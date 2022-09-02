@@ -11,7 +11,7 @@ thresho=permute(Threshlist,[3 1 2]);
 
 
  name = baseName(8:10);
- 
+ theadd= baseName(37:end);
  session = baseName(34:38);
 %feat=ones(1,length(totale_trials))*4;
 %% graph stats
@@ -31,7 +31,7 @@ scatter(1:sz(1),thresho(:,ui), 'filled')
 
 end
 
-      print([name session 'training2'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+      print([name session 'training2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 
@@ -82,8 +82,8 @@ ylim([0 20])
  set(gca, 'XTick', 1, 'XTickLabel', Labels);
 title([name ' ' session 'Trials timed out T2'])
 
-      print([name session 'graphsT2'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-
+      print([name session 'graphsT2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+close all
  %%
   
  %spatf2array1=find(spatf2==min(spatf2)+0.02) %gives me empty matrix

@@ -10,7 +10,7 @@ thresho=permute(Threshlist,[3 1 2]);
 
 
  name = baseName(8:10);
- 
+  theadd= baseName(37:end);
  session = baseName(34:38);
 %feat=ones(1,length(totale_trials))*4;
 %% graph stats
@@ -237,7 +237,7 @@ end
  
  ylim([min(lowt)*.8 max(lowt)*1.6])
 
-      print([name session 'thresh'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+      print([name session 'thresh' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 %Reaction time graph
  figure
@@ -267,8 +267,8 @@ ylim([0 20])
  set(gca, 'XTick', 1, 'XTickLabel', Labels);
 title([name ' ' session 'Trials timed out'])
 
-      print([name session 'graphs'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-
+      print([name session 'graphs' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+close all
  %%
   
  %spatf2array1=find(spatf2==min(spatf2)+0.02) %gives me empty matrix

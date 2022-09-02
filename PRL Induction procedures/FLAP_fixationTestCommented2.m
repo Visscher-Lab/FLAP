@@ -202,10 +202,6 @@ createO
         
         Priority(0);
         KbQueueFlush()
-        stopchecking=-100;
-                skipcounterannulus=1;
-        clear starfix
-             showtarget=0;
 FLAPVariablesReset
         while eyechecked<1
             if EyetrackerType ==2
@@ -237,7 +233,7 @@ FLAPVariablesReset
                 IsFixatingAnnulus
                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
                 if exist('circlestar')==0
-                    circle_start = GetSecs;
+                    circle_start = eyetime2;
                     circlestar=1;
                 end
                 if counterannulus==round(AnnulusTime/ifi)
@@ -433,9 +429,9 @@ FLAPVariablesReset
             clear EndIndex
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            EyeSummary.(TrialNum).TimeStamps.Fixation = circle_start;
-            EyeSummary.(TrialNum).TimeStamps.StimulusStart = flicker_time_start;
-            EyeSummary.(TrialNum).TimeStamps.StimulusEnd = flicker_time_stop;
+            EyeSummary.(TrialNum).TimeStamps.Fixation = circle_start; % stimulus appearance
+            EyeSummary.(TrialNum).TimeStamps.StimulusStart = flicker_time_start; % flicker start
+            EyeSummary.(TrialNum).TimeStamps.StimulusEnd = flicker_time_stop; % flicker end
             EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             clear ErrorInfo
             
