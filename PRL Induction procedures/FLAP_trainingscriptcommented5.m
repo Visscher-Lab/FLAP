@@ -41,7 +41,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '1' , '2', '1', '1', '1', '1'};
+    defaultanswer={'test','1', '3', '2', '2' , '2', '0', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -53,6 +53,7 @@ try
     site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
     trainingType=str2num(answer{4,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     demo=str2num(answer{5,:}); % are we testing in debug mode?
+    test=demo;
     whicheye=str2num(answer{6,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
     calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
@@ -401,23 +402,8 @@ try
     
     %% HERE starts trial loop
     for trial=1:length(mixtr)
-        if trial==1
-            startExp=GetSecs; %time at the beginning of the session
-        end
-        if trial==length(mixtr)
-            endExp=GetSecs; %time at the end of the session
-        end
-       
-        if demo==2
-            if mod(trial,round(length(mixtr)/8))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
-                interblock_instruction
-            end
-            
-        end
-        if trainingType==2 && (trial==1) || mixtr(trial,1)~=mixtr(trial-1,1)
-            InstructionShape
-        end
-        %% training type-specific staircases
+        
+                %% training type-specific staircases
         
         if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
             ssf=sflist(currentsf);
@@ -440,7 +426,17 @@ try
         elseif trainingType==1 || trainingType==2 || demo==1 %if it's a training type 1 or 2 trial, no flicker
             FlickerTime=0;
         end
-        %% target location calculation
+                %% generate answer for this trial (training type 3 has no button response)
+        
+        if trainingType==1 ||  (trainingType==4 && mixtr(trial,3)==1)
+            theoris =[-45 45];
+            theans(trial)=randi(2);
+            ori=theoris(theans(trial));
+        elseif trainingType==2 || (trainingType==4 && mixtr(trial,3)==2)
+            theans(trial)=randi(2);
+            CIstimuliMod % add the offset/polarity repulsion
+        end
+                %% target location calculation
         if trainingType==1 || trainingType==2 % if training type 1 or 2, stimulus always presented in the center
             theeccentricity_X=0;
             theeccentricity_Y=0;
@@ -461,7 +457,29 @@ try
                 theeccentricity_Y=ecc_y;
             end
         end
-        
+        if trial==1
+            startExp=GetSecs; %time at the beginning of the session
+        end
+        if trial==length(mixtr)
+            endExp=GetSecs; %time at the end of the session
+        end
+       
+        if demo==2
+            if mod(trial,round(length(mixtr)/8))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+                interblock_instruction
+            end
+            
+        end
+        if trainingType==2
+            if trial==1
+                InstructionShape
+            elseif trial>1
+                if mixtr(trial,1)~=mixtr(trial-1,1)
+                    InstructionShape
+                end
+            end
+        end
+  
         %  destination rectangle for the target stimulus
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
@@ -469,16 +487,7 @@ try
         %  destination rectangle for the fixation dot
         imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
             imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
-        %% generate answer for this trial (training type 3 has no button response)
-        
-        if trainingType==1 ||  (trainingType==4 && mixtr(trial,3)==1)
-            theoris =[-45 45];
-            theans(trial)=randi(2);
-            ori=theoris(theans(trial));
-        elseif trainingType==2 || (trainingType==4 && mixtr(trial,3)==2)
-            theans(trial)=randi(2);
-            CIstimuliMod % add the offset/polarity repulsion
-        end
+
         %% Initialization/reset of several trial-based variables
         FLAPVariablesReset % reset some variables used in each trial
         
