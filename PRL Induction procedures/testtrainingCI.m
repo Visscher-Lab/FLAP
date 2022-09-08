@@ -257,7 +257,7 @@ try
             if demo==1
                 shapeMat(:,1)= [5 4 7 6 2 3];
             end
-                            shapeMat(:,1)= [7 4 7 6 2 3];
+                            shapeMat(:,1)= [5 4 1 6 2 3];
 
             shapesoftheDay=shapeMat(:,expDay);
         end
