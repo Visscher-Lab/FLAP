@@ -18,7 +18,7 @@ thresho=permute(Threshlist,[3 1 2]);
 
 
 shapes_type={ '9 vs 6','2 vs 5', 'q vs p', 'b vs d', 'eggs', 'diagonal line', 'horizontal vs vertical line'};
-
+shapesoftheDay
 sz=size(thresho);
 
 for ui=1:sz(2)
@@ -27,7 +27,7 @@ scatter(1:sz(1),thresho(:,ui), 'filled')
  xlabel('jitter', 'fontsize', 10);
 
  ylabel('n trials', 'fontsize', 10);
- title(shapes_type{ui})
+ title(shapes_type{shapesoftheDay(ui)})
 
 end
 

@@ -33,6 +33,6 @@ Screen('Preference', 'SkipSyncTests', 1);
  
 screenNumber = 2; %3 originally
 
-TPxCalibrationTesting(1,screenNumber)
+TPxCalibrationTesting(1,screenNumber)                      y y
 
 end
