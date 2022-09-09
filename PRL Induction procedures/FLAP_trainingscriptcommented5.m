@@ -356,7 +356,7 @@ try
             for i=1:length(mixtr) % clone trials from original trial matrix
                 %to have a series of stimuli presented in the same location
                 newfirstone=mixtr(i,:);
-                repnum=randi(4)+2;
+                repnum=randi(3)+1;
                 tempmat=repmat([newfirstone],repnum,1);
                 newmat=[newmat;tempmat];
             end
@@ -567,8 +567,8 @@ try
                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
                         if isendo==1 % if is endo trial we slowly increase the visibility of the cue
-                            if mod(round(eyetime2-trial_time),0.4)
-                                realcuecontrast=cuecontrast*0.1+0.35;
+                            if mod(round(eyetime2-trial_time),0.2)
+                                realcuecontrast=(cuecontrast*0.1)+0.1;
                             end
                         elseif isendo==0
                             realcuecontrast=cuecontrast;

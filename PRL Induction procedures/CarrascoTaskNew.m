@@ -64,8 +64,13 @@ try
     %% time parameters
     Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
     cueonset=0.5; % time between first O and the cue
-    cueduration=[0.05 0.05 0.133 0.133]; % cue duration
-    cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
+%     cueduration=[0.05 0.05 0.133 0.133]; % cue duration
+%         cueduration=[0.05 0.05 1.133 1.133]; % cue duration
+%     cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
+
+    cueduration=[0.05  0.133]; % cue duration
+    cueISI=[ 0.05 0.133]; % cue to target ISI
+
     circleduration=0.133; % duration of the first O
     presentationtime=0.133; % duration of the C
     posttargetcircleduration=0.133;
@@ -270,8 +275,8 @@ try
                 trial_time = GetSecs;
                 fixating=1500;
             end
-            currentcueISI=cueISI(mixtr(trial,2));
-            currentcueduration=cueduration(mixtr(trial,2));
+            currentcueISI=cueISI(mixtr(trial,3));
+            currentcueduration=cueduration(mixtr(trial,3));
             clear imageRect_offsCirc
             clear cuegenerator
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<trialonsettime+ifi*2 && fixating>400 && stopchecking>1
@@ -293,6 +298,7 @@ try
                         newlocincogruent=inconexocuearray(inconexocuearray~=inconexocuearray(mixtr(trial,2)));
                         if exist('cuegenerator')==0
                             thisnewlocincogruent=newlocincogruent(randi(length(newlocincogruent)));
+                                         cuegenerator=9;
                         end
                         subimageRect_offs_cue=imageRect_offs_cue(thisnewlocincogruent:thisnewlocincogruent+3,:);
                         
@@ -334,6 +340,7 @@ if mixtr(trial,3)== 2 %endo cue
         newlocincogruent=(endoinc(endoinc~=diffLoc))-1;
          if exist('cuegenerator')==0
              Dotloc=whichDot+newlocincogruent(randi(length(newlocincogruent)));
+             cuegenerator=9;
          end
     end
             subimageRect_offs_cue=imageRect_offs_cue(Dotloc,:);
