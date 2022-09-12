@@ -158,7 +158,6 @@ try
     if trainingType==2 || trainingType==4
         shapes=6; % how many shapes per day?
         JitList = 0:2:90;
-                JitList = 0:2:90;
         StartJitter=16;
     end
     
@@ -790,6 +789,8 @@ try
                             isreversals(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                 % if we want to prevent streaking, uncomment below      
+                 %corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     end
                 end
                 if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
