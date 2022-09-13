@@ -256,7 +256,9 @@ try
                 shapeMat(:,1)= [5 4 7 6 2 3];
             end
                 shapeMat(:,1)= [1 5 2 3 4 6];
-                shapeMat(:,1)= [5 1 2 3 4 6];
+                %shapeMat(:,1)= [5 1 2 3 4 6];
+                
+               shapeMat(:,1)= [1 5 3 4 6 7];
 
                 shapesoftheDay=shapeMat(:,expDay);
         end
@@ -407,9 +409,9 @@ try
 
     Orijit=0;
     %% HERE starts trial loop
-   % for trial=1:length(mixtr)
+   for trial=1:length(mixtr)
         
-        for trial=1:83
+      %  for trial=1:332
         
                 %% training type-specific staircases
         
