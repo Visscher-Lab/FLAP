@@ -1,6 +1,7 @@
 close all
 figure
-scatter(1:trial-1,Timeperformance())
-xlabel('trial')
-ylabel('trial duration (sec)')
-ylim([0 10])
+scatter(1:trial-1,Timeperformance(), 50,'filled')
+xlabel('trial','FontSize',15,'FontWeight','bold')
+ylabel('trial duration (sec)','FontSize',15,'FontWeight','bold')
+title('Training Type 3','FontSize',18,'FontWeight','bold')
+%ylim([0 10])

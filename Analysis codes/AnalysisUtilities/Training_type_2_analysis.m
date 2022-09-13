@@ -24,9 +24,9 @@ sz=size(thresho);
 for ui=1:sz(2)
 subplot(2,3,ui)
 scatter(1:sz(1),thresho(:,ui), 'filled')
- xlabel('jitter', 'fontsize', 10);
+ xlabel('n trials', 'fontsize', 10);
 
- ylabel('n trials', 'fontsize', 10);
+ ylabel('jitter', 'fontsize', 10);
  title(shapes_type{shapesoftheDay(ui)})
 
 end
