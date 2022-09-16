@@ -1,10 +1,10 @@
 %extract RSVP
 
 
-clear all
-addpath([cd '/AnalysisUtilities'])
-
-nameOffile = dir(['./trainingdatanew/' '*.mat']);
+% clear all
+% addpath([cd '/AnalysisUtilities'])
+% 
+% nameOffile = dir(['./trainingdatanew/' '*.mat']);
 
  
    for iui=1:length(nameOffile)
