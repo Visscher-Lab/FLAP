@@ -23,8 +23,10 @@ postCueISI=0.1; % time interval between cue disappearance and next event (forced
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
 if test==1
     stimulusduration=2.133; % stimulus duration during debugging
-else
+elseif trainingType~=3
     stimulusduration=0.133; % stimulus duration during actual sessions
+else
+        stimulusduration=0.133; % stimulus duration during actual sessions
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
@@ -43,6 +45,7 @@ jitterCI=1; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
 
 % training type 3/4
+updatecounter=0; % counts the number of times we update something in training type 3, either the TRL size or the flicker persitence
 holdtrial = 1; %for training type 3 and 4: we force a series of consecutive trials to be in the same location
 annulusOrPRL = 2; % in training types in which we force fixation before target appearance, do we want fixation within an annulus (1) or within the assigned PRL (2)? default is PRL
 timeflickerallowed=0.2; % time before flicker starts

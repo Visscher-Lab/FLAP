@@ -1,6 +1,6 @@
 function [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
 % function to count the frames that satisfy the fixation request
-% (fixation within the TRL). It is called during Training type 3.
+% (fixation within the TRL). It is called during Training type 3 and 4.
 %When fixation is outside the TRL, the flickering O will stop. During
 %Training type 4, the fixation dot turns black. There is a leeway for
 %both the start and the end of the flickering, as defined by the
@@ -26,6 +26,7 @@ if   codey<wRect(4) && codey>0 && codex<wRect(3) && codex>0
         
         if blankcounter>blankframeallowed
             turnFlickerOn(length(EyeData))=0;
+            % here stop getsecs 
         elseif blankcounter<=blankframeallowed % eyes away from target but target still visible
             counterflicker=counterflicker+1;
             framefix(counterflicker)=length(EyeData(:,1));

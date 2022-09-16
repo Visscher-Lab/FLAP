@@ -1,5 +1,4 @@
 close all
-thresho=permute(Threshlist,[3 1 2]);
 
 %to get the final value for each staircase
 %final_threshold=thresho(numel(thresho(:,:,1)),1:length(thresho(1,:,1)),1:length(thresho(1,1,:)))
@@ -17,6 +16,7 @@ thresho=permute(Threshlist,[3 1 2]);
 %% graph stats
 
 
+thresho=permute(Threshlist,[3 1 2]);
 
 shapes_type={ '9 vs 6','2 vs 5', 'q vs p', 'b vs d', 'eggs', 'diagonal line', 'horizontal vs vertical line'};
 shapesoftheDay
@@ -25,11 +25,13 @@ sz=size(thresho);
 for ui=1:sz(2)
 subplot(2,3,ui)
 scatter(1:sz(1),thresho(:,ui), 'filled')
+thresh(ui)=mean(thresho(end-10:end, ui));
  ylabel('presentation time', 'fontsize', 10);
-
+text( 50, max(thresho(:,ui))*0.8, num2str(thresh(ui)))
  xlabel('n trials', 'fontsize', 10);
  title(shapes_type{shapesoftheDay(ui)})
- ylim([0 0.9])
+ 
+ %ylim([0 0.9])
 
 end
 
@@ -85,7 +87,7 @@ ylim([0 20])
 title([name ' ' session 'Trials timed out T2'])
 
       print([name session 'graphsT2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-close all
+%close all
  %%
   
  %spatf2array1=find(spatf2==min(spatf2)+0.02) %gives me empty matrix

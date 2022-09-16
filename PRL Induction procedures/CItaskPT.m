@@ -320,7 +320,7 @@ try
         
         if expDay==1
             
-            sizeArray=log_unit_down(1.65, 0.008, nsteps); % array of TRL size: the larger, the easier the task (keeping the target within the PRL)
+            sizeArray=log_unit_down(1.99, 0.008, nsteps); % array of TRL size: the larger, the easier the task (keeping the target within the PRL)
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps); % array of flickering persistence: the lower, the easier the task (keeping the target within the PRL for tot time)
             %higher pointer=more difficult
             % TRL size parameter
@@ -884,6 +884,40 @@ try
                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
             end
         end
+        % here to assign 'wrong response' to trial timed out
+        if trialTimedout(trial)==1
+                            resp = 0; % if wrong response
+                PsychPortAudio('Start', pahandle2); % sound feedback
+                if trainingType~=3
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                        isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                    end
+                    corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                end
+                if trainingType==1 || trainingType == 4 && mixtr(trial,3)==1
+                    if contr>SFthreshmax && currentsf>1
+                        currentsf=max(currentsf-1,1);
+                        thresh(:,:)=StartCont+SFadjust;
+                        corrcounter(:,:)=0;
+                        thestep=3;
+                    else
+                        thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) -stepsizes(thestep);
+                        thresh(mixtr(trial,1),mixtr(trial,3))=max(thresh(mixtr(trial,1),mixtr(trial,3)),1);
+                    end
+                end
+                if trainingType==2 || trainingType == 4 && mixtr(trial,3)==2
+                    thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) -stepsizes(thestep);
+                    thresh(mixtr(trial,1),mixtr(trial,3))=max(thresh(mixtr(trial,1),mixtr(trial,3)),1);
+                end
+            end
+            
+   
+     %   end
+        
+        
+        
+        
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
@@ -947,24 +981,24 @@ try
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
             end
         end
-        if (mod(trial,50))==1 && trial>1
+        if (mod(trial,10))==1 && trial>1
+            updatecounter=updatecounter+1;
             if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
                 %for training type 3, to be verified
                 if mean(Timeperformance(end-20:end))>3
-                    if trial==100 || trial==200 || trial==300 || trial==400 || trial==500
+                    if mod(updatecounter,2)==0
                         %here we implement staircase on flicker time
-                    %flickerpointerPre=flickerpointerPre-1;
+                    flickerpointerPre=flickerpointerPre-1;
 %flickerpointerPost=flickerpointerPost+1;
-                    elseif trial==150 || trial==250 || trial==350 || trial==450 || trial==50
+                    else
                         sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                     end
                 elseif mean(Timeperformance(end-20:end))<3
-                    if trial==100 || trial==200 || trial==300 || trial==400 || trial==500
+                    if mod(updatecounter,2)==0
                         %here we implement staircase on flicker time
                                           %flickerpointerPre=flickerpointerPre+1;
 %flickerpointerPost=flickerpointerPost-1;
-
-                    elseif trial==150 || trial==250 || trial==350 || trial==450 || trial==50
+                    else
                         sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                     end
                 end

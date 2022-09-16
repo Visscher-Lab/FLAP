@@ -1,4 +1,4 @@
-function TPxCalibrationTesting(isTPX,screenNumber)
+function TPxCalibrationTestingMM(isTPX,screenNumber, baseName)
 % TPxCalibrationTesting()
 %
 % This demo calibrates the current session for the TRACKPixx(TPx) or 
@@ -1178,7 +1178,9 @@ while (1)
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                imwrite(imageArray, [ baseName 'PolyResponse_R.jpg'])
+         %                       imwrite(imageArray, [  '0PolyResponse_R.jpg'])
+titlename=[baseName(8:9) ' PolyResponse_R.jpg'];
+                imwrite(imageArray,  titlename)
             end
             [secs, keyCode, deltaSecs] = KbWait;
             if keyCode(KbName('Y'))
@@ -1207,7 +1209,9 @@ while (1)
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
+          %      imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
+                titlename=[baseName(8:9) ' PolyResponse_L.jpg'];
+                imwrite(imageArray,  titlename)
             end
             [~, keyCode, ~] = KbWait;
             if keyCode(KbName('Y'))

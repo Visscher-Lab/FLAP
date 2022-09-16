@@ -1,4 +1,4 @@
-function TPxTrackpixx3CalibrationTesting()
+function TPxTrackpixx3CalibrationTestingMM(baseName)
 % TPxTrackpixx3CalibrationTesting()
 %
 % This demo calibrates the current session for the TRACKPixx tracker and 
@@ -33,6 +33,6 @@ Screen('Preference', 'SkipSyncTests', 1);
  
 screenNumber = 2; %3 originally
 
-TPxCalibrationTestingMM(1,screenNumber)
+TPxCalibrationTestingMM(1,screenNumber, baseName)
 
 end
