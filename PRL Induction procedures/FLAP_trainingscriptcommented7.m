@@ -573,7 +573,10 @@ try
                     if trainingType~=3
                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
-                        if isendo==1 % if is endo trial we slowly increase the visibility of the cue
+                         if exist('isendo') == 0
+                             isendo=0;
+                         end
+                         if isendo==1 % if is endo trial we slowly increase the visibility of the cue
                             if mod(round(eyetime2-trial_time),0.2)
                                 realcuecontrast=(cuecontrast*0.1)+0.1;
                             end
