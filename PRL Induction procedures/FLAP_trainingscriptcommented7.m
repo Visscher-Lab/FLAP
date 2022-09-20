@@ -41,7 +41,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '2' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1', '3', '3', '2' , '2', '1', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -156,9 +156,9 @@ try
     
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
-        shapes=6; % how many shapes per day?
+        shapes=3; % how many shapes per day?
         JitList = 0:2:90;
-        StartJitter=16;
+        StartJitter=1;
     end
     
     %define number of trials per condition
@@ -176,7 +176,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=83;  %total number of trials per staircase (per shape)
+            trials=166;  %total number of trials per staircase (per shape)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -253,9 +253,13 @@ try
         SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
         if trainingType==2 || trainingType==4
             load NewShapeMat.mat;         % shape parameters
+            shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
-                shapeMat(:,1)= [5 4 7 6 2 3];
+                shapeMat(:,1)= [5 4 7];
             end
+            
+                            shapeMat(:,1)= [5 6 4];
+
             shapesoftheDay=shapeMat(:,expDay);
         end
         
@@ -438,7 +442,6 @@ try
         end
                 %% target location calculation
                 if trainingType==1 || trainingType==2 % if training type 1 or 2, stimulus always presented in the center
-                    theeccentricity_X=0;
                     theeccentricity_Y=0;
                     theeccentricity_X=PRLx*pix_deg;
                     eccentricity_X(trial)= theeccentricity_X;
@@ -457,8 +460,8 @@ try
                         theeccentricity_Y=ecc_y;
                         xlimit=[-8:0.5:8]*pix_deg;
                         ylimit=xlimit;
-                        theeccentricity_X=xlimit(randi(xlimit));
-                        theeccentricity_Y=ylimit(randi(ylimit));
+                        theeccentricity_X=xlimit(randi(length(xlimit)));
+                        theeccentricity_Y=ylimit(randi(length(xlimit)));
                     end
                 end
         if trial==1
@@ -518,7 +521,7 @@ try
                     elseif mixtr(trial,2)==2 %if it's exogenous cue (circle flashing to the next location)
                     end
                 end
-                currentExoEndoCueDuration=mixtr(trial,2);
+                currentExoEndoCueDuration=ExoEndoCueDuration(mixtr(trial,2));
             else
                 currentExoEndoCueDuration=ExoEndoCueDuration(1);
             end
@@ -574,12 +577,10 @@ try
                             if mod(round(eyetime2-trial_time),0.2)
                                 realcuecontrast=(cuecontrast*0.1)+0.1;
                             end
-                                                    Screen('FillOval', w, realcuecontrast, imageRect_offs_dot);
-
+                            Screen('FillOval', w, realcuecontrast, imageRect_offs_dot);                            
                         elseif isendo==0
                             realcuecontrast=cuecontrast;
-                                                    Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], realcuecontrast);
-
+                            Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], realcuecontrast);                            
                         end
                     end
                     if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
@@ -877,8 +878,53 @@ try
                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
                 movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
+           unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
             end
         end
+        
+        
+        
+                if trainingType==2
+            trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
+            threshperday(expDay,:)=trackthresh;
+        end
+        
+        if (mod(trial,150))==1
+            if trial==1
+            else
+                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+            end
+        end
+        if (mod(trial,10))==1 && trial>1
+            updatecounter=updatecounter+1;
+            if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
+                %for training type 3, to be verified
+                if mean(unadjustedTimeperformance(end-9:end))>3
+                    if mod(updatecounter,2)==0
+                        %here we implement staircase on flicker time
+                        flickerpointerPre=flickerpointerPre-1;
+                        flickerpointerPost=flickerpointerPost+1;
+                    else
+                        sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+                    end
+                elseif mean(unadjustedTimeperformance(end-9:end))<3
+                    if mod(updatecounter,2)==0
+                        %here we implement staircase on flicker time
+                        flickerpointerPre=flickerpointerPre+1;
+                        flickerpointerPost=flickerpointerPost-1;
+                    else
+                        sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+                    end
+                end
+                timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
+                flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
+                coeffAdj=sizeArray(sizepointer);
+            end
+        end
+        
+        TRLsize(trial)=coeffAdj;
+        flickOne(trial)=timeflickerallowed;
+        flickTwo(trial)=flickerpersistallowed;
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
@@ -902,7 +948,7 @@ try
             clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).FixationIndices = FixIndex;
             clear FixIndex
             EyeSummary.(TrialNum).TotalEvents = CheckCount;
@@ -917,7 +963,7 @@ try
             clear ErrorData
             if exist('EndIndex')==0
                 EndIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
             clear EndIndex
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
@@ -929,45 +975,6 @@ try
                 EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             end
             clear ErrorInfo
-        end
-        
-        if trainingType==2
-            trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
-            threshperday(expDay,:)=trackthresh;
-        end
-        
-        if (mod(trial,150))==1
-            if trial==1
-            else
-                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-            end
-        end
-  if (mod(trial,10))==1 && trial>1
-            updatecounter=updatecounter+1;
-            if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-                %for training type 3, to be verified
-                if mean(Timeperformance(end-20:end))>3
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                    flickerpointerPre=flickerpointerPre-1;
-%flickerpointerPost=flickerpointerPost+1;
-                    else
-                        sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
-                elseif mean(Timeperformance(end-20:end))<3
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                                          %flickerpointerPre=flickerpointerPre+1;
-%flickerpointerPost=flickerpointerPost-1;
-                    else
-                        sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
-                end
-
-                coeffAdj=sizeArray(sizepointer);
-                % timeflickerallowed=persistentflickerArray(flickerpointerPre) time before flicker starts
-                        %flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
-            end
         end
         if closescript==1
             break;

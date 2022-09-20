@@ -12,6 +12,8 @@ nameOffile = dir(['./CIdata/' '*.mat']);
         newest = nameOffile(iui).name;
         load(['./CIdata/' newest]);
 CI_analysis
-clearvars -except  nameOffile lenom newest iui
+totalthresh{iui}=thresh
+
+clearvars -except  nameOffile lenom newest iui totalthresh
 
     end

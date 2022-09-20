@@ -1173,13 +1173,14 @@ while (1)
             DrawFormattedText(windowPtr, '\n Calibration results 2 of 4. \n Showing calibration dots and screen from polynomial for right eye. \n If the dots are off or the lines are not well connected, calibration for this eye might be off. \n Press any key to continue. Y to accept, N to restart.', 'center', 100, 255);
             Screen('DrawDots', windowPtr, [xy(1,:)' xy(2,:)']', [30]', [255 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval' y_eval']', [20]', [255 0 255]', [], 1);
-            Screen('DrawDots', windowPtr, interpolated_dots, [8]', [255 0 0]', [], 1);
+            Screen('DrawDots', windowPtr, interpolated_dots, [8]', [0 0 255]', [], 1);
             Screen('Flip', windowPtr);
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
          %                       imwrite(imageArray, [  '0PolyResponse_R.jpg'])
-titlename=[baseName(8:9) ' PolyResponse_R.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_R.jpg'];
+
                 imwrite(imageArray,  titlename)
             end
             [secs, keyCode, deltaSecs] = KbWait;
@@ -1204,13 +1205,13 @@ titlename=[baseName(8:9) ' PolyResponse_R.jpg'];
             DrawFormattedText(windowPtr, '\n Calibration results 3 of 4. \n Showing calibration dots and screen from polynomial for left eye. \n If the dots are off or the lines are not well connected, calibration for this eye might be off. \n Press any key to continue. Y to accept, N to restart.', 'center', 100, 255);
             Screen('DrawDots', windowPtr, [xy(1,:)' xy(2,:)']', [30]', [255 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval_L' y_eval_L']', [20]', [0 255 255]', [], 1);
-            Screen('DrawDots', windowPtr, interpolated_dots_L, [8]', [0 0 255]', [], 1);
+            Screen('DrawDots', windowPtr, interpolated_dots_L, [8]', [255 0 0]', [], 1);
             Screen('Flip', windowPtr);
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
           %      imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
-                titlename=[baseName(8:9) ' PolyResponse_L.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_L.jpg'];
                 imwrite(imageArray,  titlename)
             end
             [~, keyCode, ~] = KbWait;

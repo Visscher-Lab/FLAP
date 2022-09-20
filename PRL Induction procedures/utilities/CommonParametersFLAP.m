@@ -23,10 +23,11 @@ postCueISI=0.1; % time interval between cue disappearance and next event (forced
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
 if test==1
     stimulusduration=2.133; % stimulus duration during debugging
-elseif trainingType~=3
-    stimulusduration=0.133; % stimulus duration during actual sessions
+end
+if trainingType==2
+    stimulusduration=0.250; % stimulus duration during actual sessions (CI)
 else
-        stimulusduration=0.133; % stimulus duration during actual sessions
+    stimulusduration=0.133; % stimulus duration during actual sessions (other tasks)
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
@@ -34,6 +35,7 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
     eyetime2=0; % trial-based timer, will later be populated with eyetracker data 
     closescript=0; % to allow ESC use
     kk=1; % trial counter
+    practicePassed=0; % prepare the practice blocks and is overwritten when practice is successful
 %% training type-specific parameters
 
 % training type 1

@@ -10,10 +10,12 @@
             end
             
             % here I define the shapes
-            
-            newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
+  %          if practicePassed==0 % if it's practice loop
+          
+  %          else % if it's proper session
+                  newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
             newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
-            
+ %           end
             targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
 
 

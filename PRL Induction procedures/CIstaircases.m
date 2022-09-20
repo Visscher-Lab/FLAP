@@ -261,7 +261,7 @@ try
          
       %  shapes_type={ '9 vs 6','2 vs 5', 'q vs p', 'b vs d', 'eggs', 'diagonal line', 'horizontal vs vertical line'};
 
-        
+
         shapeMat(:,1)= [2 3 4 5 6 7];
         shapesoftheDay=shapeMat(:,expDay);
         end

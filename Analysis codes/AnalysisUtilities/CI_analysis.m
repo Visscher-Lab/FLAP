@@ -25,11 +25,15 @@ sz=size(thresho);
 for ui=1:sz(2)
 subplot(2,3,ui)
 scatter(1:sz(1),thresho(:,ui), 'filled')
-thresh(ui)=mean(thresho(end-10:end, ui));
+thresharray=thresho(end-10:end, ui);
+if sum(thresharray==0)>0
+thresharray(thresharray==0)=nan; 
+end
+thresh(ui)=nanmean(thresharray);
  ylabel('presentation time', 'fontsize', 10);
 text( 50, max(thresho(:,ui))*0.8, num2str(thresh(ui)))
  xlabel('n trials', 'fontsize', 10);
- title(shapes_type{shapesoftheDay(ui)})
+ title([ name ' ' shapes_type{shapesoftheDay(ui)}])
  
  %ylim([0 0.9])
 
@@ -38,56 +42,56 @@ end
       print([name session 'CI' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
-
-%Reaction Time    
-ReactionT = mixtr;
-ReactionT(1:numel(totale_trials'),3) = totale_trials';
-ReactionT(1:numel(feat'),4) = feat';
-%ReactionT(1:numel(contrcir'),5) = contrcir;
-% ReactionT(1:numel(coordinatex'),6) = coordinatex';
-% ReactionT(1:numel(coordinatey'),7) = coordinatey';
-ReactionT(1:numel(time_stim'),8) = time_stim';
-ReactionT(1:numel(rispo'),9) = rispo';
-
-
-
-
-
-%RT divided by cue visibility (correct trials only)
- RT_correct= find(ReactionT(:,9) == 1);
- stair_correct=ReactionT(RT_correct,:); 
- RT_value_stair= mean(stair_correct(:,8))
- STD_value_stair= std(stair_correct(:,8)); 
- 
-
-%Reaction time graph
- figure
- subplot(2,1,1)
- % labels and title
- grafici= [RT_value_stair ];
-   errore= [STD_value_stair];
- scala= [1,5,10];
- bar(grafici);
- hold on
- errorbar(1,grafici(:,1), errore(:,1), 'k', 'linestyle', 'none');
- 
- 
- Labels = {'Training type 2'};
- set(gca, 'XTick', 1, 'XTickLabel', Labels);
- %xlabel(' cpd', 'fontsize', 10);
- ylabel('RT (seconds)', 'fontsize', 10);
- title([name ' ' session 'Trial reaction time'], 'fontsize', 10);
-
-subplot(2,1,2)
-bar(trialTimeout)
-ylim([0 20])
- ylabel('n trials', 'fontsize', 10);
- Labels = {'Training type 2'};
- set(gca, 'XTick', 1, 'XTickLabel', Labels);
-title([name ' ' session 'Trials timed out T2'])
-
-      print([name session 'graphsT2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-%close all
+% 
+% %Reaction Time    
+% ReactionT = mixtr;
+% ReactionT(1:numel(totale_trials'),3) = totale_trials';
+% ReactionT(1:numel(feat'),4) = feat';
+% %ReactionT(1:numel(contrcir'),5) = contrcir;
+% % ReactionT(1:numel(coordinatex'),6) = coordinatex';
+% % ReactionT(1:numel(coordinatey'),7) = coordinatey';
+% ReactionT(1:numel(time_stim'),8) = time_stim';
+% ReactionT(1:numel(rispo'),9) = rispo';
+% 
+% 
+% 
+% 
+% 
+% %RT divided by cue visibility (correct trials only)
+%  RT_correct= find(ReactionT(:,9) == 1);
+%  stair_correct=ReactionT(RT_correct,:); 
+%  RT_value_stair= mean(stair_correct(:,8))
+%  STD_value_stair= std(stair_correct(:,8)); 
+%  
+% 
+% %Reaction time graph
+%  figure
+%  subplot(2,1,1)
+%  % labels and title
+%  grafici= [RT_value_stair ];
+%    errore= [STD_value_stair];
+%  scala= [1,5,10];
+%  bar(grafici);
+%  hold on
+%  errorbar(1,grafici(:,1), errore(:,1), 'k', 'linestyle', 'none');
+%  
+%  
+%  Labels = {'Training type 2'};
+%  set(gca, 'XTick', 1, 'XTickLabel', Labels);
+%  %xlabel(' cpd', 'fontsize', 10);
+%  ylabel('RT (seconds)', 'fontsize', 10);
+%  title([name ' ' session 'Trial reaction time'], 'fontsize', 10);
+% 
+% subplot(2,1,2)
+% bar(trialTimeout)
+% ylim([0 20])
+%  ylabel('n trials', 'fontsize', 10);
+%  Labels = {'Training type 2'};
+%  set(gca, 'XTick', 1, 'XTickLabel', Labels);
+% title([name ' ' session 'Trials timed out T2'])
+% 
+%       print([name session 'graphsT2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+% %close all
  %%
   
  %spatf2array1=find(spatf2==min(spatf2)+0.02) %gives me empty matrix

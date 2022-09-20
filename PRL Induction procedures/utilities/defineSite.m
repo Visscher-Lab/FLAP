@@ -84,7 +84,7 @@ TPxCalibrationTesting(1,screenNumber)
     Datapixx('Open');
     Datapixx('SetTPxAwake');
     Datapixx('RegWrRd');
-    v_d=57; %70;
+    v_d=67; %70;
   
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
