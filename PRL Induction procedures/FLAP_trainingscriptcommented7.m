@@ -902,7 +902,7 @@ try
             updatecounter=updatecounter+1;
             if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
                 %for training type 3, to be verified
-                if mean(unadjustedTimeperformance(end-9:end))>3
+                if mean(unadjustedTimeperformance(end-9:end))>8
                     if mod(updatecounter,2)==0
                         %here we implement staircase on flicker time
                         flickerpointerPre=flickerpointerPre-1;
@@ -910,7 +910,7 @@ try
                     else
                         sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                     end
-                elseif mean(unadjustedTimeperformance(end-9:end))<3
+                elseif mean(unadjustedTimeperformance(end-9:end))<5
                     if mod(updatecounter,2)==0
                         %here we implement staircase on flicker time
                         flickerpointerPre=flickerpointerPre+1;
