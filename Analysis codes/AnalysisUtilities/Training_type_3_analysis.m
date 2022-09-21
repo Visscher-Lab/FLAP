@@ -12,9 +12,9 @@ session= baseName(35);
 theadd =baseName(end-4:end);
 name=baseName(8:9);
 if (trial)==length(Timeperformance)
-    scatter(1:trial,unadjustedTimeperformance, 50,'filled')
+    scatter(1:trial,movieDuration, 50,'filled')
 else
-    scatter(1:trial-1,unadjustedTimeperformance,50,'filled')
+    scatter(1:trial-1,movieDuration,50,'filled')
 end
 hold on
 bar(flickertimetrial)

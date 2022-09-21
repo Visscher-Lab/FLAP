@@ -16,8 +16,12 @@
                   newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
             newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
  %           end
-            targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
-
+ 
+ if practicePassed==0
+     targetcord =newTargy(theans(practicetrial),:)+yTrans  + (newTargx(theans(practicetrial),:)+xTrans - 1)*ymax;
+ else
+     targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
+ end
 
             xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
             yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
@@ -93,12 +97,17 @@
             yJitLoc(yJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
             yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
             %sum(replacementcounterx~=99)
-            
-            xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
-            yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
-            theori=180*rand(1,length(eccentricity_XCI));
-            
-            theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+            if practicePassed==0
+                xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:))/coeffCI;%+xJitLoc(targetcord);
+                yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:))/coeffCI;%+xJitLoc(targetcord);
+                theori=180*rand(1,length(eccentricity_XCI));
+                theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:) +Orijit;
+            else
+                xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
+                yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
+                theori=180*rand(1,length(eccentricity_XCI));
+                theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+            end
             
             if test==1
                 theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);

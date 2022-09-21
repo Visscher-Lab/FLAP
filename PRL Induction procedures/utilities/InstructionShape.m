@@ -15,7 +15,9 @@ elseif shapesoftheDay(mixtr(trial,1))==6
 elseif shapesoftheDay(mixtr(trial,1))==7
     DrawFormattedText(w, 'Press the left arrow key if the line is horizontal \n \n Press  the right arrow key if the line is vertical  \n \n \n \n Press any key to start', 'center', 'center', white);
 end
-
+% if practicePassed==0
+%        DrawFormattedText(w, 'Practice', 'center', 'up', white);
+% end
 
 %                 CIexample1=Targori{shapesoftheDay(mixtr(trial,1))}(1,:);
 %                CIexample2=Targori{shapesoftheDay(mixtr(trial,1))}(2,:);
