@@ -1,25 +1,38 @@
 %FLAPpractice
-
+if trainingType==1
+ssf=sflist(currentsf);
+            fase=randi(4);
+            texture(trial)=TheGabors(currentsf, fase);
+            practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25];
+            stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
+            practicetrialnum=length(practicecontrastarray);
+elseif trainingType==2
 Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
 stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
-targethighercontrast=[1 1 0 1 0 0 1 0 0];
+targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
 FlickerTime=0;
 Tscat=0;
 performanceThresh=0.75;
+practicetrialnum=length(targethighercontrast);
+end
 trialTimeout=20;
-for practicetrial=1:length(Jitpracticearray)
+for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
-    
+        theans(practicetrial)=randi(2);
+
+    if trainingType ==1
+                    ori=theoris(theans(practicetrial));
+    elseif trainingType ==2   
     Orijit=Jitpracticearray(practicetrial);
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
-    theans(practicetrial)=randi(2);
-    CIstimuliMod % add the offset/polarity repulsion
+        CIstimuliMod % add the offset/polarity repulsion
+    end
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg; % if training type 1 or 2, stimulus always presented in the center
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     
-    if practicetrial==1
+    if practicetrial==1 &&  trainingType ==2   
         InstructionShape
     end
     
@@ -82,7 +95,9 @@ for practicetrial=1:length(Jitpracticearray)
         %% target loop
         if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET
-            
+            if trainingType==1
+                                Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
+            elseif trainingType==2
             if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
                 imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
                     imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
@@ -105,6 +120,8 @@ for practicetrial=1:length(Jitpracticearray)
             if skipmasking==0
                 assignedPRLpatch
             end
+            end
+            
             imagearray{practicetrial}=Screen('GetImage', w);
             if exist('stimstar')==0
                 stim_start = GetSecs;
