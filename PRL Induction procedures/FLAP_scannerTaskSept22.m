@@ -337,6 +337,7 @@ try
     %     imageRect_offsCImask2=[imageRectMask(1)+theeccentricity_XCI2, imageRectMask(2)+theeccentricity_YCI2,...
     %         imageRectMask(3)+theeccentricity_XCI2, imageRectMask(4)+theeccentricity_YCI2]; % mask location to the left stimulus
     %% draw everything on the instruction page
+    CIstimuliMod;
     InstructionFLAPscanner(w,wRect,eccentricity_X,eccentricity_Y,TRLlocation,pix_deg,pix_deg_vert,gray,white)
     %     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr ); % background of stimulus 9 for the instruction slide on the right side
     %     imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
