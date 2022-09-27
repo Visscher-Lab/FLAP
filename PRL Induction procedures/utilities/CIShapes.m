@@ -40,7 +40,7 @@ Oscat= 0.5; %JitList(thresh(Ts,Tc));
 
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
-ecccoeffCI=3;
+ecccoeffCI=3; %adjust for grid location-to-degrees of visual angle
 %generate visual cue
 
 eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;

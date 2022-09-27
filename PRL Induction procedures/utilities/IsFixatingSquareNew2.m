@@ -11,7 +11,7 @@ function [counterannulus framecounter ]=IsFixatingSquareNew2(wRect,newsamplex,ne
 %     end
 % end
 framecounter=framecounter+1;
-if   framecounter>1 & round(wRect(4)/2+(newsampley(end)-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(xeye(end)-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
+if   framecounter>1 & round(wRect(4)/2+(newsampley(end)-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(newsamplex(end)-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
         && round(wRect(4)/2+(newsampley(end)-(wRect(4)/2)))<(wRect(4)/2+fixwindowPix) && round(wRect(3)/2+(newsamplex(end)-(wRect(3)/2)))<= (wRect(3)/2+fixwindowPix)
     
     % if eyes are within fixation window; we count the frame
