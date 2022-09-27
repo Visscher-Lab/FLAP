@@ -30,7 +30,7 @@ elseif site==1  % UCR + bits
         % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
         oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
         SetResolution(screenNumber, oldResolution);
-        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2); % identifying the pixel resolution of the screen and stereo 
         screencm=[40.6 30];
         %debug window
         %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
@@ -92,17 +92,17 @@ TPxCalibrationTesting(1,screenNumber)
     %
     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
     SetResolution(screenNumber, oldResolution);
-    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2); %(0.5-bg colour, []-, 32-,2-)
     
     screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
-    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3); % defining RGB values of the screen
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     
 end
-Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); %PTB fnc that combines color values of pixels in the window with new values
 struct.sz=[screencm(1), screencm(2)];
 
 % pixels per degree

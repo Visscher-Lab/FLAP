@@ -59,7 +59,7 @@ Dcontr=0.38;        %distractor contrast
         GoodBlock=0;
         Tc=1;
         xmax=2*xs+1; %total number of squares in grid, along x direction (17)
-        ymax=2*ys+1; %total number of squares in grid, along x direction (13)
+        ymax=2*ys+1; %total number of squares in grid, along y direction (13)
         
         xTrans=round(xmax/2); %Translate target left/right or up/down within grid
         yTrans=round(ymax/2);

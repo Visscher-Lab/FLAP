@@ -77,9 +77,9 @@ try
     
     if EyeTracker==1
         if site==3
-            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
-            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end

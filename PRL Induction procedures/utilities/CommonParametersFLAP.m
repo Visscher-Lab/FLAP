@@ -43,7 +43,7 @@ sigma_deg = stimulusSize/2.5; % sigma of the Gabor in degrees of visual angle
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 
 % training type 2
-jitterCI=1; % jitter for countour stimuli of training type 2 and 4
+jitterCI=1; % jitter for contour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
 
 % training type 3/4
