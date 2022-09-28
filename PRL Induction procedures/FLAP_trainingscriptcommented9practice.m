@@ -1000,11 +1000,12 @@ try
             break;
         end
         kk=kk+1;
-        
+        if trial>11
         if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
             DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
             Screen('Flip', w);
             KbQueueWait;
+        end
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
