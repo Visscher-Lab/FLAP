@@ -587,7 +587,7 @@ try
                 else %force fixation for training types 1 and 2
                 %   [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     
-                  [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counter,fixwindowPix);
+                  [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
                     
                     if trainingType~=3
                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
