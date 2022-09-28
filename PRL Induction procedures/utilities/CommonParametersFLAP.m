@@ -56,7 +56,7 @@ AnnulusTime = 1; %how long do they need to keep fixation near the pre-target ele
 Jitter = [3:0.05:7]/3; %flickering duration for task type 3 and 4
 flickeringrate = 0.25; %rate of flickering (in seconds) for task type 3 and 4
 coeffAdj=1; % size of the fixation window for training task 3 and 4 (100% of the TRL size, it is adaptive in training type 3) NOT FULLY IMPLEMENTED YET, DETAILS STILL TO BE DECIDED
-CircConts=[0.51,1]*255; %low/high contrast circular cue
+CircConts=[0.51,1]*255; %low/high contrast circular cue - ring around the target for training type 4
 radius=12.5;   %radius of the circle in which the target can appear (training type 3 and 4)
 cuecontrast=1; % contrast of the cue (0-1)
 % trial type-specific time parameters

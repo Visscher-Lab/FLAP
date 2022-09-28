@@ -24,7 +24,7 @@ elseif site==1  % UCR + bits
     
     %% psychtoobox settings
     if crt==1
-        v_d=57; %viewing distance
+        v_d=70; %viewing distance
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
         % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
@@ -39,7 +39,7 @@ elseif site==1  % UCR + bits
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     else
         screencm=[69.8, 40];
-        v_d=57; %viewing distance
+        v_d=70; %viewing distance
         oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
@@ -58,7 +58,7 @@ elseif site==2   %UAB
     fclose(s1);
     clear s1;
     screencm=[69.8, 40];
-    v_d=57; %viewing distance
+    v_d=70; %viewing distance
     oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
@@ -84,7 +84,7 @@ TPxCalibrationTesting(1,screenNumber)
     Datapixx('Open');
     Datapixx('SetTPxAwake');
     Datapixx('RegWrRd');
-    v_d=67; %70;
+    v_d=70; %70;
   
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
@@ -102,7 +102,7 @@ TPxCalibrationTesting(1,screenNumber)
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     
 end
-Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); %PTB fnc that combines color values of pixels in the window with new values
+Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); %PTB fnc that combines color values of pixels in the window with new values. Drwa with transparency to manipulate contrast
 struct.sz=[screencm(1), screencm(2)];
 
 % pixels per degree
@@ -120,9 +120,9 @@ end
 
 theseed=sum(100*clock);
 rand('twister',theseed );
-ifi = Screen('GetFlipInterval', w); %refresh rate
+ifi = Screen('GetFlipInterval', w); %refresh rate, time to frame conversions
 if ifi==0
-    ifi=1/100;
+    ifi=1/100; %100 - refresh rate of the monitor
 end
 
 %end

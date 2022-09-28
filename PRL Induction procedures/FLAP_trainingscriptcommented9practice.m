@@ -145,7 +145,7 @@ try
         end
     end
     
-    KbQueueCreate(deviceIndex);
+    KbQueueCreate(deviceIndex); %checks for keyboard inputs
     KbQueueStart(deviceIndex);
     
     %% calibrate eyetracker, if Eyelink
@@ -164,7 +164,7 @@ try
     %define number of trials per condition
     if trainingType==1
         conditionOne=1; %only Gabors
-        conditionTwo=1;
+        conditionTwo=1; %currently not needed for this training type
         if demo==1
             trials=5; %total number of trials per staircase
         else
@@ -172,7 +172,7 @@ try
         end
     elseif trainingType==2
         conditionOne=shapes; % shapes (training type 2)
-        conditionTwo=1;
+        conditionTwo=1; %currently not needed for this training type
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
@@ -204,7 +204,7 @@ try
     if trainingType<3 % trial matrix for training type 1 and 2 are structurally similar,
         %with Training type 2 having multiple stimulus types (shapes) per
         %session
-        mixcond=fullfact([conditionOne conditionTwo]);
+        mixcond=fullfact([conditionOne conditionTwo]); %full factorial design
         mixtr=[];
         for ui=1:conditionOne
             mixtr=[mixtr; repmat(mixcond(ui,:),trials,1) ];
@@ -252,7 +252,7 @@ try
         SFthreshmax=0.2; % contrast value above which we decrease SF
         SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
         if trainingType==2 || trainingType==4
-            load NewShapeMat.mat;         % shape parameters
+            load NewShapeMat.mat;         % shape parameters for each session of training
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
                 shapeMat(:,1)= [5 4 7];
@@ -896,7 +896,8 @@ try
             cueendToResp(kk)=stim_stop-cue_last;
             cuebeginningToResp(kk)=stim_stop-circle_start;
         end
-        if trainingType > 2 % if it's a training type with flicker
+        if trainingType > 2 % if it's a
+            training type with flicker
             %   fixDuration(trial)=flicker_time_start-trial_time;
             if flickerdone>1
                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker

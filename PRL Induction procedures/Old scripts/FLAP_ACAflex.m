@@ -211,7 +211,11 @@ PRLlocations=str2num(answer{7,:});
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
+<<<<<<< Updated upstream:PRL Induction procedures/Old scripts/FLAP_ACAflex.m
         v_d=80;
+=======
+        v_d=70;
+>>>>>>> Stashed changes:PRL Induction procedures/FLAP_ACAflex.m
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -333,6 +337,7 @@ PRLlocations=str2num(answer{7,:});
     theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
     theLetter=Screen('MakeTexture', w, theLetter);
     
+<<<<<<< Updated upstream:PRL Induction procedures/Old scripts/FLAP_ACAflex.m
     if v_d==57
     if  mod(length(theCircles)/2,2)==0
         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
@@ -343,6 +348,15 @@ PRLlocations=str2num(answer{7,:});
     elseif v_d==70
                 theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
     end
+=======
+    
+%     if  mod(length(theCircles)/2,2)==0
+%         theCircles(1:nrw, round(nrw/2):nrw)=theCircles(nrw:-1:1, round(nrw/2):-1:1);
+%     elseif  mod(length(theCircles)/2,2)>0
+        theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
+%     end
+    
+>>>>>>> Stashed changes:PRL Induction procedures/FLAP_ACAflex.m
 %         if  mod(nrw,2)==0
 %           theCircles(1:nrw, nrw/2:nrw)=theCircles(nrw:-1:1, (nrw/2+1):-1:1);
 %     elseif  mod(nrw,2)>0
