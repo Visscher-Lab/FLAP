@@ -4,7 +4,7 @@ CardinalOrdiagonal=1;
 
 inward=1;
 fixationlength = 40;
-widthWag=6;
+widthWag=10;
 widthfix=7;
 squaresize=10;
 wsquaresize=20;
@@ -13,7 +13,7 @@ distWag=0;
 imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 
-cornerDist=scotomadeg/2*1.35;
+cornerDist=scotomadeg/2*1.20;
 p1x=-cornerDist;
 p1y=-cornerDist;
 p2x=cornerDist;
