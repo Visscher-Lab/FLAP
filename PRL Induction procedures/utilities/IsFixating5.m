@@ -22,7 +22,7 @@ if Eyelink( 'NewFloatSampleAvailable') > 0
   %  yeye=[yeye y];
     xeye2=[xeye2 newsamplex];
     yeye2=[yeye2 newsampley];
-    framecounter=framecounter+1
+    framecounter=framecounter+1;
     %  area_eye = evt.pa(eye_used+1);
 %     area_sticker = evt.pa(eye_used+1);
     % do we have valid data and is the pupil visible?
@@ -31,7 +31,7 @@ if Eyelink( 'NewFloatSampleAvailable') > 0
         % if data is valid, draw a circle on the screen at current gaze position
         % using PsychToolbox's Screen function
         fixating2=fixating2+1;
-        counter2=counter2+1
+        counter2=counter2+1;
     else
         % if data is invalid (e.g. during a blink), clear display
         fixating2=0;

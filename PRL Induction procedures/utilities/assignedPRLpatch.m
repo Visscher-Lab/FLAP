@@ -2,9 +2,12 @@
 
 
 if trainingType==2 || (trainingType==4 && mixtr(trial,2))
-     imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg PRLsize*pix_deg]], wRect);
-imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg), imageRectMaskscotoma(2)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg),...
-    imageRectMaskscotoma(3)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg), imageRectMaskscotoma(4)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg)];  
+    %imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg PRLsize*pix_deg]], wRect);
+          imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg*1.08 PRLsize*pix_deg*1.08]], wRect);
+
+imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(2)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2),...
+    imageRectMaskscotoma(3)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(4)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2)];  
+
 end
 stimpresent=1;
 if  stimpresent>0
@@ -20,7 +23,6 @@ if  stimpresent>0
     else
         codey= 1; %round(1025/2); %
         codex= 1; %round(1281/2);%
-        activePRLT = 0;
         activePRLT = 0;
         
     end
@@ -111,14 +113,14 @@ if  stimpresent>0
         
     elseif stimpresent>0 && round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y))+PRLypix)>wRect(4) || round(wRect(4)/2+(newsampley-(wRect(4)/2+theeccentricity_Y))+PRLypix)<0 || round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X)+PRLxpix))>wRect(3) || round(wRect(3)/2+(newsamplex-(wRect(3)/2+theeccentricity_X)+PRLxpix))<0 %...
         
-                    if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
+        if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
             %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, mask_color, imageRect_offs);
-
-            elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
-          %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma); 
-                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
-            end    
+            Screen('FillOval', w, mask_color, imageRect_offs);
+            
+        elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
+            %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
+            Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
+        end
         circlefix=0;
         % If this texture is active it will make the target visible only if all the PRLs are within the screen. If one of themis outside the target won't be visible
         %       Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
