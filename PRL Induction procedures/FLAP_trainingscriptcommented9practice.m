@@ -916,10 +916,9 @@ try
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
             end
         end
-        if (mod(trial,10))==1 && trial>1
-            updatecounter=updatecounter+1;
-            if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-                %for training type 3, to be verified
+        if (mod(trial,10))==1 && trial>1 && trainingType==3
+                     updatecounter=updatecounter+1;
+%some adaptive measures for the TRL size that counts as 'fixation within the TRL'
                 if mean(unadjustedTimeperformance(end-9:end))>8
                     if mod(updatecounter,2)==0
                         %here we implement staircase on flicker time
@@ -940,7 +939,6 @@ try
                 timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
                 flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
                 coeffAdj=sizeArray(sizepointer);
-            end
         end
         
         TRLsize(trial)=coeffAdj;
