@@ -13,7 +13,7 @@ distWag=0;
 imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 
-cornerDist=scotomadeg/2*1.20;
+cornerDist=scotomadeg/2*1.05; %Controls the fixation box corners 
 p1x=-cornerDist;
 p1y=-cornerDist;
 p2x=cornerDist;

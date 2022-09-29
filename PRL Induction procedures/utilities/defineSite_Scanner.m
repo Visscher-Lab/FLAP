@@ -5,7 +5,7 @@ AssertOpenGL;
 
 
     if site==0  % UAB lab
-            addpath([pwd '\utilities2']);%this is for pc
+            addpath([pwd '\utilities']);%this is for pc
             %screencm=[69.8, 35.5]; %lab1 with eye link
             screencm=[69.7, 40]; % lab2 with datapixx
             v_d=57;
