@@ -3,9 +3,9 @@ if trainingType==1
 ssf=sflist(currentsf);
             fase=randi(4);
             texture(trial)=TheGabors(currentsf, fase);
-            practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25];
+            practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25]; %predefined contrast values for practice trials
             stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
-            practicetrialnum=length(practicecontrastarray);
+            practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
 Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
 stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
@@ -13,7 +13,7 @@ targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
 FlickerTime=0;
 Tscat=0;
 performanceThresh=0.75;
-practicetrialnum=length(targethighercontrast);
+practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
 trialTimeout=20;
 for practicetrial=1:practicetrialnum
@@ -21,7 +21,7 @@ for practicetrial=1:practicetrialnum
         theans(practicetrial)=randi(2);
 
     if trainingType ==1
-                    ori=theoris(theans(practicetrial));
+                    ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2   
     Orijit=Jitpracticearray(practicetrial);
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
@@ -45,11 +45,11 @@ for practicetrial=1:practicetrialnum
         imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
     %% Initialization/reset of several practicetrial-based variables
     FLAPVariablesReset % reset some variables used in each practicetrial
-    currentExoEndoCueDuration=ExoEndoCueDuration(1);
+    currentExoEndoCueDuration=ExoEndoCueDuration(1); % only for training types 3 & 4
     
     while eyechecked<1
         if EyetrackerType ==2
-            Datapixx('RegWrRd');
+            Datapixx('RegWrRd'); %inbuilt DataPixx function
         end
         fixationscriptW % visual aids on screen
         
@@ -79,7 +79,7 @@ for practicetrial=1:practicetrialnum
                 skipcounterannulus=1000;
             else %force fixation for training types 1 and 2
                 [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
-                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                     newtrialtime=GetSecs;
                     skipcounterannulus=1000;
