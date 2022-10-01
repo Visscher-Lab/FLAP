@@ -67,7 +67,7 @@ end
 % newmixtr=[mixtr(:,1) ones(length(mixtr(:,1)),1)];
 % 
 % newmixtr2=[mixtr2(:,1) ones(length(mixtr2(:,1)),1)*2];
-totalmatrix=[newmixtr;newmixtr2];
+%totalmatrix=[newmixtr;newmixtr2];
 
 %%
 
