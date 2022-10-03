@@ -82,7 +82,7 @@ elseif site==3   %UCR VPixx
     Datapixx('Open');
     Datapixx('SetTPxAwake');
     Datapixx('RegWrRd');
-    v_d=80;
+    v_d=80; % viewing distance
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');

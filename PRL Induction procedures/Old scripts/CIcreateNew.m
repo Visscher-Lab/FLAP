@@ -178,7 +178,7 @@ imageRect_offs =[imageRect(1)+eccentricity_X', imageRect(2)+eccentricity_Y',...
 %     end
 Ex=eccentricity_X+wRect(3)/2;
 Ey=eccentricity_Y+wRect(4)/2;
-
+ KbName('UnifyKeyNames');
 RespType(1) = KbName('RightArrow');
 RespType(2) = KbName('LeftArrow');
 
