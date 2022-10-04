@@ -133,7 +133,7 @@ try
     mixtr2= [mixtr ones(length(mixtr),1)*2];
         mixtr=[mixtr1;mixtr2];
 
-         load  CarrascoMixtrII.mat
+         load  CarrascoMatrixII.mat
 
     if Isdemo==0
       %  mixtr=[2,3;1,1;2,4;3,2;4,1]; % if it's practice time, just assign random mixtr combination
