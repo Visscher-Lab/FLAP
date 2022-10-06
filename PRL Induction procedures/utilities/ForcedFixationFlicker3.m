@@ -28,8 +28,8 @@ if   codey<wRect(4) && codey>0 && codex<wRect(3) && codex>0
             turnFlickerOn(length(EyeData))=0;
         elseif blankcounter<=blankframeallowed % eyes away from target but target still visible
             counterflicker=counterflicker+1;
-            framefix(counterflicker)=length(EyeData(:,1));
-            timefix(counterflicker)=GetSecs;
+      %      framefix(counterflicker)=length(EyeData(:,1));
+      %      timefix(counterflicker)=GetSecs;
         end        
     else         %is the target inside the PRL?
         

@@ -1,3 +1,9 @@
+
+
+% PRL location (local)
+%  cueconditions =[1:4]; %1= cued exo, 2=uncued exo, 3=cued endo, 4=uncued endo
+
+
 % matrix with conditions, reaction time and accuracy
 fulltt=[mixtr time_stim' correx'];
 

@@ -43,6 +43,7 @@ jitterCI=1; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
 
 % training type 3/4
+updatecounter = 0; % starts the counter for the blocks in which we evaluate whether it's time to update the TRL size or the persistent flickering duration
 holdtrial = 1; %for training type 3 and 4: we force a series of consecutive trials to be in the same location
 annulusOrPRL = 2; % in training types in which we force fixation before target appearance, do we want fixation within an annulus (1) or within the assigned PRL (2)? default is PRL
 timeflickerallowed=0.2; % time before flicker starts

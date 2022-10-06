@@ -13,7 +13,7 @@ distWag=0;
 imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 
-cornerDist=scotomadeg/2*1;
+cornerDist=scotomadeg/2*1; % to make the fixation brackets smaller or larger. >1 - larger, <1 - smaller
 p1x=-cornerDist;
 p1y=-cornerDist;
 p2x=cornerDist;
@@ -34,7 +34,7 @@ punto4y=p4y*pix_deg;
 
 %aid up left
 
-color_w=0.65*white;
+color_w=0.65*white; % color of the wedges
 if CardinalOrdiagonal==1
     diagon=45;
 else
@@ -67,7 +67,7 @@ else
     Screen('FillArc',w,color_w,imageRectRight,270-(widthWag/2)-diagon,widthWag)
 end
 
-Screen('DrawLine', w, white, xc+punto1x, yc+punto1y, xc+punto1x+fixationlength, yc+punto1y, widthfix); % fissazione: verticale
+Screen('DrawLine', w, white, xc+punto1x, yc+punto1y, xc+punto1x+fixationlength, yc+punto1y, widthfix); % fixation: verticale
 Screen('DrawLine', w, white, xc+punto1x, yc+punto1y, xc+punto1x, yc+punto1y+fixationlength, widthfix); % fissazione: orizzontale
 %aid up right
 Screen('DrawLine', w, white, xc+punto2x-fixationlength, yc+punto2y, xc+punto2x, yc+punto2y, widthfix); % fissazione: verticale

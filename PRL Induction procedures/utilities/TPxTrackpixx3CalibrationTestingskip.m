@@ -29,7 +29,7 @@ close all;
 
 %Sets to which screen the calibration will be done, if the platform supports
 %multi screen.
-Screen('Preference', 'SkipSyncTests', 1); 
+ Screen('Preference', 'SkipSyncTests', 1); 
  
 screenNumber = 2; %3 originally
 

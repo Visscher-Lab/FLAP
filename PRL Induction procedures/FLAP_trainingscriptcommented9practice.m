@@ -156,7 +156,7 @@ try
     
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
-        shapes=3; % how many shapes per day?
+        shapes=3; % how many shapes per day? % 1
         JitList = 0:2:90;
         StartJitter=1;
     end
@@ -261,6 +261,7 @@ try
             shapeMat(:,1)= [5 6 4];
             
             shapesoftheDay=shapeMat(:,expDay);
+% shapesoftheDay = 2; % Sam's testing
         end
         
         if expDay==1
@@ -476,7 +477,7 @@ try
                 theeccentricity_Y=ylimit(randi(length(xlimit)));
             end
         end
-
+        
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
@@ -541,9 +542,7 @@ try
             end
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                
                 % pre-event empty space, allows for some cleaning
-                
                 if trainingType==1 || trainingType==2 % no flicker type of training trial
                     counterflicker=-10000;
                 end
@@ -581,14 +580,15 @@ try
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
-                if skipforcedfixation==1 % skip the force fixation
+                if skipforcedfixation==1 % skip the forced fixation
                     counterannulus=(AnnulusTime/ifi)+1;
                     skipcounterannulus=1000;
                 else %force fixation for training types 1 and 2
-                %   [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
-                    
-                  [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
-                    
+                    if trainingType<3
+                        [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    elseif trainingType>2
+                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                    end
                     if trainingType~=3
                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
@@ -610,7 +610,7 @@ try
                         newtrialtime=GetSecs;
                         skipcounterannulus=1000;
                     end
-                end               
+                end
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1 && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
                 % HERE I exit the script if I press ESC
                 thekeys = find(keyCode);
@@ -623,7 +623,7 @@ try
                 % training type is 1 or 2, this is skipped
                 
                 if exist('flickerstar') == 0 % start flicker timer
-                    flicker_time_start(trial)=GetSecs; % beginning of the overall flickering period
+                    flicker_time_start(trial)=eyetime2; % beginning of the overall flickering period
                     flickerstar=1;
                     flickswitch=0;
                     flick=1;
@@ -745,9 +745,9 @@ try
             eyefixation5
             if ScotomaPresent == 1 % do we want the scotoma? (default is yes)
                 Screen('FillOval', w, scotoma_color, scotoma);
-               if trainingType>2
-                   visiblePRLring
-               end
+                if trainingType>2
+                    visiblePRLring
+                end
             else % else we get a fixation cross and no scotoma
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
@@ -897,7 +897,7 @@ try
             cuebeginningToResp(kk)=stim_stop-circle_start;
         end
         if trainingType > 2 % if it's a
-            training type with flicker
+            %   training type with flicker
             %   fixDuration(trial)=flicker_time_start-trial_time;
             if flickerdone>1
                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
@@ -905,42 +905,37 @@ try
                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
                 unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
             end
-        end       
+        end
         if trainingType==2
             trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
             threshperday(expDay,:)=trackthresh;
-        end        
-        if (mod(trial,150))==1
-            if trial==1
-            else
-                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-            end
         end
-        if (mod(trial,10))==1 && trial>1
+        if (mod(trial,150))==1 && trial>1
+                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+        end
+        if (mod(trial,10))==1 && trial>1 && trainingType==3
             updatecounter=updatecounter+1;
-            if trainingType==3 %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-                %for training type 3, to be verified
-                if mean(unadjustedTimeperformance(end-9:end))>8
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                        flickerpointerPre=flickerpointerPre-1;
-                        flickerpointerPost=flickerpointerPost+1;
-                    else
-                        sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
-                elseif mean(unadjustedTimeperformance(end-9:end))<5
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                        flickerpointerPre=flickerpointerPre+1;
-                        flickerpointerPost=flickerpointerPost-1;
-                    else
-                        sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
+            %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
+            if mean(unadjustedTimeperformance(end-9:end))>8
+                if mod(updatecounter,2)==0
+                    %here we implement staircase on flicker time
+                    flickerpointerPre=flickerpointerPre-1;
+                    flickerpointerPost=flickerpointerPost+1;
+                else
+                    sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                 end
-                timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
-                flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
-                coeffAdj=sizeArray(sizepointer);
+            elseif mean(unadjustedTimeperformance(end-9:end))<5
+                if mod(updatecounter,2)==0
+                    %here we implement staircase on flicker time
+                    flickerpointerPre=flickerpointerPre+1;
+                    flickerpointerPost=flickerpointerPost-1;
+                else
+                    sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+                end
             end
+            timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
+            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
+            coeffAdj=sizeArray(sizepointer);
         end
         
         TRLsize(trial)=coeffAdj;
@@ -959,7 +954,7 @@ try
         rectimage{kk}=imageRect_offs;
         if exist('endExp')
             totalduration=(endExp-startExp)/60;
-        end       
+        end
         %% record eyelink-related variables
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -1001,11 +996,11 @@ try
         end
         kk=kk+1;
         if trial>11
-        if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
-            DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
-            Screen('Flip', w);
-            KbQueueWait;
-        end
+            if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
+                DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
+                Screen('Flip', w);
+                KbQueueWait;
+            end
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);

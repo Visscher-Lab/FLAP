@@ -24,7 +24,7 @@ elseif site==1  % UCR + bits
     
     %% psychtoobox settings
     if crt==1
-        v_d=57; %viewing distance
+        v_d=70; %viewing distance
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
         % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
@@ -39,7 +39,7 @@ elseif site==1  % UCR + bits
         Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
     else
         screencm=[69.8, 40];
-        v_d=57; %viewing distance
+        v_d=70; %viewing distance
         oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
@@ -58,7 +58,7 @@ elseif site==2   %UAB
     fclose(s1);
     clear s1;
     screencm=[69.8, 40];
-    v_d=57; %viewing distance
+    v_d=70; %viewing distance
     oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
@@ -82,7 +82,7 @@ elseif site==3   %UCR VPixx
     Datapixx('Open');
     Datapixx('SetTPxAwake');
     Datapixx('RegWrRd');
-    v_d=80;
+    v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');

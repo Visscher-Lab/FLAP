@@ -3,11 +3,11 @@
 
 if trainingType==2 || (trainingType==4 && mixtr(trial,2))
     %imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg PRLsize*pix_deg]], wRect);
-          imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg*1.08 PRLsize*pix_deg*1.08]], wRect);
-
-imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(2)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2),...
-    imageRectMaskscotoma(3)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(4)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2)];  
-
+    imageRectMaskscotoma = CenterRect([0, 0, [ PRLsize*pix_deg*1.08 PRLsize*pix_deg*1.08]], wRect);
+    
+    imageRect_offsMaskscotoma=[imageRectMaskscotoma(1)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(2)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2),...
+        imageRectMaskscotoma(3)+eccentricity_X(trial)+(jitterxci(trial)*pix_deg/2), imageRectMaskscotoma(4)+eccentricity_Y(trial)+(jitteryci(trial)*pix_deg_vert/2)];
+    
 end
 stimpresent=1;
 if  stimpresent>0
@@ -41,12 +41,12 @@ if  stimpresent>0
             % screen but the stimulus is outside the
             % PRL(s)
             if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
-                        %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, mask_color, imageRect_offs);
+                %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                Screen('FillOval', w, mask_color, imageRect_offs);
             elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
-%            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
-                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
-
+                %            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
+                Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
+                
             end
             
             circlefix=0;
@@ -63,14 +63,14 @@ if  stimpresent>0
                     if sum(EyeCode(end-6:end))~=0
                         %if we don't have 6 consecutive frames with no eye movement (aka, with
                         %fixation)
-            if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
-                        %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-                        Screen('FillOval', w, mask_color, imageRect_offs);
-            elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
-%            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);   
-                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
-
-            end                        
+                        if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
+                            %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                            Screen('FillOval', w, mask_color, imageRect_offs);
+                        elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
+                            %            Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
+                            Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
+                            
+                        end
                     elseif sum(EyeCode(end-5:end))==0
                         %If we have at least 5
                         %consecutive frames with
@@ -88,23 +88,23 @@ if  stimpresent>0
                 elseif length(EyeCode)<=5 %&& circlefix<=6
                     %if we don't have at least 5 frames
                     %per trial
-            if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
-            %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                    if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
+                        %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                         Screen('FillOval', w, mask_color, imageRect_offs);
-            elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
-         %   Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);   
-            Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
-            end                    
+                    elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
+                        %   Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
+                        Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
+                    end
                     circlefix=circlefix+1;
                 elseif length(EyeCode)>5 %&& circlefix<=6
-            if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
-            %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                    if trainingType==1 || trainingType==3 || (trainingType==4 && mixtr(trial,1))
+                        %Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
                         Screen('FillOval', w, mask_color, imageRect_offs);
-
-            elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
-          %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma); 
+                        
+                    elseif trainingType==2 || (trainingType==4 && mixtr(trial,2))
+                        %  Screen('DrawTexture', w, Neutralface, [], imageRect_offsMaskscotoma);
                         Screen('FillOval', w, mask_color, imageRect_offsMaskscotoma);
-            end                    
+                    end
                     circlefix=circlefix+1;
                 end
             end
