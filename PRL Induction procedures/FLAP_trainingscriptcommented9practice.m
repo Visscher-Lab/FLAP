@@ -156,7 +156,7 @@ try
     
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
-        shapes=3; % how many shapes per day?
+        shapes=3; % how many shapes per day? % 1
         JitList = 0:2:90;
         StartJitter=1;
     end
@@ -261,6 +261,7 @@ try
             shapeMat(:,1)= [5 6 4];
             
             shapesoftheDay=shapeMat(:,expDay);
+% shapesoftheDay = 2; % Sam's testing
         end
         
         if expDay==1

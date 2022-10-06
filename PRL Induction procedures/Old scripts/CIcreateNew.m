@@ -12,8 +12,7 @@ defaultanswer={'test' };
 answer=inputdlg(prompt,name,numlines,defaultanswer);
 if isempty(answer)
     return;
-end;
-
+end
 SUBJECT = answer{1,:}; %Gets Subject Name
 
 c = clock; %Current date and time as date vector. [year month day hour minute seconds]
@@ -29,7 +28,7 @@ max_contrast=.8;
 n_blocks=2;
 reps=10;
         screencm=[40.6 30];
-v_d=57;
+v_d=70;
 sigma_deg = .1; %4;
 sfs=6;
 BITS=0; %0;
@@ -351,3 +350,14 @@ end;
 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
 
 
+%% Identifying the x and y coordinates for shape "2"
+
+newTargx = Targx{1,1}(Targx{1,1} > -8);
+newTargy = Targy{1,1}(Targy{1,1} > -8);
+newoffsetx = offsetx{1,1}(Targx{1,1} > -8);
+newoffsety = offsety{1,1}(Targy{1,1} > -8);
+
+xmat = newTargx + newoffsetx;
+ymat = newTargy + newoffsety;
+
+scatter(xmat,ymat)
