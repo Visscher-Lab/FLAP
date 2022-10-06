@@ -23,10 +23,9 @@ function TPxTrackpixx3CalibrationTesting()
 % data will be calibrated.
 
 
-
-clear all;
-close all;
-
+% clear all;
+% close all;
+% Screen('CloseAll');
 %Sets to which screen the calibration will be done, if the platform supports
 %multi screen.
  Screen('Preference', 'SkipSyncTests', 1); 
