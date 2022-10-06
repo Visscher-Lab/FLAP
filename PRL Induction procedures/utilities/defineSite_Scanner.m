@@ -5,7 +5,6 @@ AssertOpenGL;
 
 
     if site==0  % UAB lab
-            addpath([pwd '\utilities2']);%this is for pc
             %screencm=[69.8, 35.5]; %lab1 with eye link
             screencm=[69.7, 40]; % lab2 with datapixx
             v_d=57;
@@ -45,7 +44,6 @@ AssertOpenGL;
             Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
         elseif site==2   %UAB scanner
             screencm=[69.7, 39.2];
-            addpath([pwd '/utilities']);
             v_d=57;
             AssertOpenGL;
             oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
