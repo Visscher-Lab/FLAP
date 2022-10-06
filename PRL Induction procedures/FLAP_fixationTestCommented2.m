@@ -6,11 +6,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'session', 'site? UCR(1), UAB(2), Vpixx(3)', 'scotoma old mode','scotoma Vpixx active', 'demo (0) or session (1)','eye? left(1) or right(2)'};
+    prompt={'Participant name', 'session', 'site? UCR(1), UAB(2), Vpixx(3)', 'scotoma old mode','scotoma Vpixx active', 'demo (0) or session (1)','eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','test', '1','1', '0', '0','1' };
+    defaultanswer={'test','1', '3','1', '0', '0','1','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -24,7 +24,7 @@ try
     scotomavpixx=str2num(answer{5,:});
     Isdemo=str2num(answer{6,:});
     whicheye=str2num(answer{7,:});
-
+    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -43,16 +43,16 @@ try
         baseName=[cd '\data\' SUBJECT filename '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     elseif site==3
         baseName=[cd '\data\' SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-    end    
+    end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     EyeTracker = 1; %0=mouse, 1=eyetracker
-        defineSite % initialize Screen function and features depending on OS/Monitor
-       CommonParametersFixation % load parameters for time and space
-
-
-
-        %% eyetracker initialization (eyelink)
+    defineSite % initialize Screen function and features depending on OS/Monitor
+    CommonParametersFixation % load parameters for time and space
+    
+    
+    
+    %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
         if site==3
@@ -85,14 +85,14 @@ try
     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     
-
-   %% creating stimuli 
-        imsize=stimulusSize*pix_deg;
-createO
-  
-
     
-     %% Keys definition/kb initialization
+    %% creating stimuli
+    imsize=stimulusSize*pix_deg;
+    createO
+    
+    
+    
+    %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
     
@@ -116,7 +116,7 @@ createO
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
     
-         %% calibrate eyetracker, if Eyelink
+    %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
@@ -142,7 +142,7 @@ createO
     
     mixtr=[repmat(1:length(angl),1,tr)'];
     mixtr =mixtr(randperm(length(mixtr)),:);
-  
+    
     %% main loop
     HideCursor;
     ListenChar(2);
@@ -152,7 +152,7 @@ createO
     DrawFormattedText(w, 'Keep the scotoma near the stimulus for 2 seconds \n \n the stimulus will start flickering \n \n Press  after some time, the trial will end automatically \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
-
+    
     
     % check EyeTracker status
     if EyetrackerType == 1
@@ -167,7 +167,7 @@ createO
     end
     
     waittime=0;
-
+    
     FixDotSize=15;
     
     
@@ -179,14 +179,14 @@ createO
         if trial== length(mixtr)/8 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
             interblock_instruction
         end
-
+        
         
         FlickerTime=JitterFlicker(randi(length(JitterFlicker)));
         actualtrialtimeout=realtrialTimeout;
         trialTimeout=400000;
         
-      
-     
+        
+        
         theeccentricity_X=eccentricity_X(mixtr(trial,1));
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
         
@@ -202,7 +202,7 @@ createO
         
         Priority(0);
         KbQueueFlush()
-FLAPVariablesReset
+        FLAPVariablesReset
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
@@ -224,12 +224,12 @@ FLAPVariablesReset
                 clear flickerstar
                 clear theSwitcher
                 fixating=1500;
-            end    
+            end
             
             if (eyetime2-trial_time)>= ifi*2+precircletime && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && counterflicker<FlickerTime/ifi && flickerdone<1 && keyCode(escapeKey) ==0 && (eyetime2-trial_time)<=trialTimeout
                 
-                                % 2: force fixation within 2 degrees of the
-                                % scotoma. No flicker yet
+                % 2: force fixation within 2 degrees of the
+                % scotoma. No flicker yet
                 IsFixatingAnnulus
                 Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
                 if exist('circlestar')==0
@@ -246,8 +246,8 @@ FLAPVariablesReset
                 closescript=1;
                 break;
             elseif (eyetime2-newtrialtime)>= ifi*2+precircletime && fixating>400 && stopchecking>1 &&  skipcounterannulus>10  && counterflicker<FlickerTime/ifi && (eyetime2-trial_time)<=trialTimeout && keyCode(escapeKey) ==0
-               % 3: flickering start, only flicker if within 2 degrees of the scotoma
-               if exist('flickerstar') == 0
+                % 3: flickering start, only flicker if within 2 degrees of the scotoma
+                if exist('flickerstar') == 0
                     flicker_time_start(trial)=eyetime2;
                     flickerstar=1;
                     theSwitcher=0;
@@ -277,15 +277,15 @@ FLAPVariablesReset
                 clear targetstar
                 clear stimstar
                 
-               % annuluspatchFlick2
-[countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,0,0,circlePixels,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn)
-
+                % annuluspatchFlick2
+                [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,0,0,circlePixels,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
+                
                 if counterflicker>=round(FlickerTime/ifi)
                     
                     newtrialtime=GetSecs;
                     flickerdone=10;
-                                        flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
-
+                    flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
+                    
                 end
             elseif (eyetime2-newtrialtime)>= ifi*2+precircletime && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<FlickerTime/ifi && (eyetime2-trial_time)<=trialTimeout && keyCode(escapeKey) ~=0
                 closescript = 1;
@@ -293,11 +293,11 @@ FLAPVariablesReset
                 % ESC pressed
                 break
             elseif (eyetime2-newtrialtime)>= ifi*2+precircletime && fixating>400 && skipcounterannulus>10 && counterflicker>=FlickerTime/ifi &&   keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-trial_time)<=trialTimeout %present pre-stimulus and stimulus %keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3))+ keyCode(RespType(4)) + keyCode(RespType(5))
-% trial completed
-             
-                                    eyechecked=10^6;
-                           PsychPortAudio('Start', pahandle1); % sound feedback
-
+                % trial completed
+                
+                eyechecked=10^6;
+                PsychPortAudio('Start', pahandle1); % sound feedback
+                
             elseif (eyetime2-pretrial_time)>=trialTimeout % trial timed out
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
@@ -369,7 +369,7 @@ FLAPVariablesReset
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
-
+        
         
         if closescript==1
             %  if         thekeys==escapeKey
@@ -383,10 +383,10 @@ FLAPVariablesReset
             stim_stop=GetSecs;
         end
         stim_stop=GetSecs;
-        annulustrialduration(trial)=flicker_time_start-circle_start;
+        annulustrialduration(trial)=flicker_time_start(1,trial)-circle_start;
         flickertriaduration(trial)=FlickerTime;
         trialflickerduration(trial)=flicker_time_stop(trial)-flicker_time_start(trial);
-
+        
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
@@ -399,7 +399,7 @@ FLAPVariablesReset
         SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
         cueendToResp(kk)=stim_stop-cue_last;
         cuebeginningToResp(kk)=stim_stop-circle_start;
-      %  intervalBetweenFlickerandTrget(trial)=target_time_start-flicker_time_start;
+        %  intervalBetweenFlickerandTrget(trial)=target_time_start-flicker_time_start;
         
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
