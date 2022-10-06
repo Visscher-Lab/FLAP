@@ -23,8 +23,6 @@ function TPxTrackpixx3CalibrationTesting()
 % data will be calibrated.
 
 
-close all
-clear all
 % clear all;
 % close all;
 % Screen('CloseAll');
