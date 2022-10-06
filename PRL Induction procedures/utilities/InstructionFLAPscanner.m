@@ -5,13 +5,13 @@ Screen('TextFont',w, 'Arial');
 %create orientation discrimination task stimulus for instructions
 trainingType=0;
 CommonParametersFLAP
-createGabors
- CIShapes
+createGabors_Scanner
+ CIShapes_Scanner
 theeccentricity_X=eccentricity_X(1,2);
 theeccentricity_Y=eccentricity_Y(1,2);
 theeccentricity_X2=-theeccentricity_X;
 theeccentricity_Y2=-theeccentricity_Y;
-imageRect_Big = CenterRect([0, 0, size(x0Big)], wRect);
+imageRect_Big = CenterRect([0, 0, size(ax)], wRect);
 theoris =[-45 45];
 imageRect_offs_Big =[imageRect_Big(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect_Big(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+250,...
     imageRect_Big(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect_Big(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+250];
@@ -26,7 +26,7 @@ theeccentricity_YCI2=-theeccentricity_YCI;
 %Oscat= 0.5; %JitList(thresh(Ts,Tc));
 
 
-imageRect_Small = CenterRect([0, 0, size(x0Small)], wRect);
+imageRect_Small = CenterRect([0, 0, size(ax)], wRect);
 % These are the individual rectangles for each Gabor within the array
 imageRect_offs_Small =[imageRect_Small(1)+eccentricity_XCI', imageRect_Small(2)+eccentricity_YCI',...
     imageRect_Small(3)+eccentricity_XCI', imageRect_Small(4)+eccentricity_YCI'];
