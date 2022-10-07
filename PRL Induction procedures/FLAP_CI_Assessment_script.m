@@ -29,13 +29,13 @@ try
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
     site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
-    demo=str2num(answer{5,:}); % are we testing in debug mode?
+    demo=str2num(answer{4,:}); % are we testing in debug mode?
     test=demo;
-    whicheye=str2num(answer{6,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
-    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
-    EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    TRLlocations = 1;
+    whicheye=str2num(answer{5,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
+    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
+    EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
+    TRLlocation = 1;
     
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -44,10 +44,10 @@ try
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPCIAssessment_' num2str(trainingType) '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT '_FLAPCIAssessment_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
-    CommonParametersFLAP % define common parameters
+    CommonParametersCIAssessmentFLAP % define common parameters
     
     PRLecc=[0 7.5 0 -7.5; -7.5 0 7.5 0]; %eccentricity of PRL in deg
     %% eyetracker initialization (eyelink)
@@ -85,22 +85,7 @@ try
     
     %% Stimuli creation
     
-    % This part characterizes the PRL ------------------------------------
-    PRLx= PRLecc(1,:);
-    PRLy=-PRLecc(2,:);
-    PRLxpix=PRLx*pix_deg*coeffAdj;
-    PRLypix=PRLy*pix_deg*coeffAdj;
-    PRLsize=5;
-    [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
-    radiusPRL=(PRLsize/2)*pix_deg;
-    circlePixelsPRL=sx.^2 + sy.^2 <= radiusPRL.^2;
-    imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
-    % mask to cover the target when outside the TRL (if needed)
-    [img, sss, alpha] =imread('neutral21.png');
-    img(:, :, 4) = alpha;
-    Neutralface=Screen('MakeTexture', w, img);
-    mask_color= [170 170 170];
-    % ---------------------------------------------------------------------
+    PreparePRLpatch
     
     CIAssessmentShapes % Isolating the 2 shapes using which we want to perform the assessment
     
@@ -149,7 +134,7 @@ try
         for ui=1:conditionOne
             mixtr=[mixtr; repmat(mixcond(ui,:),trials,1) ];
         end
-        mixtr=[mixtr ones(length(mixtr(:,1)),1)];
+        mixtr=[mixtr ones(length(mixtr(:,1)),1)]; % incorrect, think about it!!!
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     stepsizes=[4 4 3 2 1]; % step sizes for staircases
@@ -191,7 +176,7 @@ try
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-    InstructionCIAssessment(w,shapesoftheDay,gray,white) % Probably need to change it for the assessment type
+%     InstructionCIAssessment %(w,shapesoftheDay,gray,white) % Probably need to change it for the assessment type
     
     %% HERE starts trial loop
     for trial=1:length(mixtr)
