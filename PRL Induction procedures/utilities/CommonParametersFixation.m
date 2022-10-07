@@ -23,7 +23,6 @@ AnnulusTime=AnnulusDuration/3;
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
 kk=1; % trial counter
-
 timeflickerallowed=0.2; % time before flicker starts
 flickerpersistallowed=0.2; % time away from flicker in which flicker persists
 framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts

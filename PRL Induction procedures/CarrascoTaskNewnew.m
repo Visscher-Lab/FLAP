@@ -67,7 +67,7 @@ try
     cueduration=[0.05 0.05 0.133 0.133]; % cue duration
     cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
     circleduration=0.133; % duration of the first O
-    presentationtime=0.133; % duration of the C
+    presentationtime=1.133; % duration of the C
     posttargetcircleduration=0.133;
     posttargetISIduration= 0.233;
     fixTime=0.1/3;
@@ -353,7 +353,29 @@ end
                 end
                 Screen('FillOval',w, gray,imageRect_offscircle);
                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
-                
+                if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                    % wait for response
+                    thekeys = find(keyCode);
+                    if length(thekeys)>1
+                        thekeys=thekeys(1);
+                    end
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes);
+                    respTime=secs;
+                mao(trial)=99;
+                                                            foo=(RespType==thekeys);
+            
+            if foo(theans(trial))
+                resp = 1;
+                PsychPortAudio('Start', pahandle1);
+            elseif (thekeys==escapeKey) % esc pressed
+                closescript = 1;
+                break;
+            else
+                resp = 0;
+                PsychPortAudio('Start', pahandle2);
+            end
+                end
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % wait for response
                 thekeys = find(keyCode);
@@ -363,7 +385,18 @@ end
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
-                
+                                            foo=(RespType==thekeys);
+            
+            if foo(theans(trial))
+                resp = 1;
+                PsychPortAudio('Start', pahandle1);
+            elseif (thekeys==escapeKey) % esc pressed
+                closescript = 1;
+                break;
+            else
+                resp = 0;
+                PsychPortAudio('Start', pahandle2);
+            end
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % O after target and wait for response
                 Screen('FillOval',w, gray,imageRect_offscircle);
@@ -375,7 +408,18 @@ end
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
-                
+                            foo=(RespType==thekeys);
+            
+            if foo(theans(trial))
+                resp = 1;
+                PsychPortAudio('Start', pahandle1);
+            elseif (thekeys==escapeKey) % esc pressed
+                closescript = 1;
+                break;
+            else
+                resp = 0;
+                PsychPortAudio('Start', pahandle2);
+            end
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % O after target and no
                 % response
@@ -384,7 +428,8 @@ end
                 
             elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 %wait for response after the O after the target
-                thekeys = find(keyCode);
+                           
+                            thekeys = find(keyCode);
                 
                 if length(thekeys)>1
                     thekeys=thekeys(1);
@@ -393,11 +438,17 @@ end
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
                 eyechecked=10^4;
+                
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+            if mao(trial)==99
+                     eyechecked=10^4;       
+            end
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
             end
+
             eyefixation5
             
             if ScotomaPresent == 1
@@ -468,8 +519,9 @@ end
         end
         
         % response processing
-        if trialTimedout(trial)== 0
-            
+        if trialTimedout(trial)== 0 && mao(trial)<99
+                        stim_stop=secs;
+            cheis(kk)=thekeys;
             foo=(RespType==thekeys);
             
             if foo(theans(trial))
@@ -482,16 +534,12 @@ end
                 resp = 0;
                 PsychPortAudio('Start', pahandle2);
             end
-        else
-            
+        elseif trialTimedout(trial)== 1           
             resp = 0;
             respTime=0;
             PsychPortAudio('Start', pahandle2);
         end
-        if trialTimedout(trial)==0
-            stim_stop=secs;
-            cheis(kk)=thekeys;
-        end
+
         
         if exist('stim_start')==0
             stim_start=0;

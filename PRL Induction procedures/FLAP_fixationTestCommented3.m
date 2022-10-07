@@ -174,18 +174,13 @@ try
         FlickerTime=JitterFlicker(randi(length(JitterFlicker))); % define the flicker time duration (movie duration) for this trial
         actualtrialtimeout=realtrialTimeout;
         trialTimeout=400000;
-        
-        
-        
+   
         theeccentricity_X=eccentricity_X(mixtr(trial,1)); % target location x
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1)); % target location y
         
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-        
-        
-        Priority(0);
-        KbQueueFlush()
+
         FLAPVariablesReset
         while eyechecked<1
             if EyetrackerType ==2
@@ -272,13 +267,13 @@ try
             elseif (eyetime2-newtrialtime)>= ifi*2+pretargettime && fixating>400 && skipcounterannulus>10 && counterflicker>=FlickerTime/ifi &&   keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-trial_time)<=trialTimeout %present pre-stimulus and stimulus %keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3))+ keyCode(RespType(4)) + keyCode(RespType(5))
                 % trial completed
                 
-                eyechecked=10^6;
+                eyechecked=10^4;
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 
             elseif (eyetime2-pretrial_time)>=trialTimeout % trial timed out
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
-                eyechecked=10^6;
+                eyechecked=10^4;
             end
             
             eyefixation5
