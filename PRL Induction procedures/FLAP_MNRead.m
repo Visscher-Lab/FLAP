@@ -130,7 +130,7 @@ createMNRead
   
     %%
     
-    DrawFormattedText(w, 'Reading test  \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'This is a Reading test. \n \n  Please read the sentences out loud and clear. \n \n  Once you are done reading, another sentence \n will appear with a smaller font size. \n \n \n  Do not press any key using the keyboard', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
     WaitSecs(1.5);
