@@ -8,7 +8,6 @@ ssf=sflist(currentsf);
             practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
 Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
-% stimulusdurationpracticearray=ones(1,9); % Sam's testing
 stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
 targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
 FlickerTime=0;
@@ -70,7 +69,7 @@ for practicetrial=1:practicetrialnum
                 trialstart_frame(practicetrial)=eyetime2;
             end
             
-        elseif (eyetime2-trial_time)>=ifi*2+ preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
+        elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
             % here I need to reset the practicetrial time in order to preserve
             % timing for the next events (first fixed fixation event)
             % HERE interval between cue disappearance and beginning of
@@ -79,11 +78,7 @@ for practicetrial=1:practicetrialnum
                 counterannulus=(AnnulusTime/ifi)+1;
                 skipcounterannulus=1000;
             else %force fixation for training types 1 and 2
-                if trainingType<3
-                        [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
-                    elseif trainingType>2
-                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
-                    end
+                [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                 Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                     newtrialtime=GetSecs;
