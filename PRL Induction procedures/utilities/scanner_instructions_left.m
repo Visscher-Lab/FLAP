@@ -1,1 +1,0 @@
-Screen('TextFont',w, 'Arial');Screen('TextSize',w, 42);%     Screen('TextStyle', w, 1+2);Screen('FillRect', w, gray);colorfixation = white;DrawFormattedText(w, 'Pay attention to the left stimulus, ignore the right  \n \n \n \n Press any key to start', 'center', 'center', white);Screen('Flip', w);KbQueueWait;

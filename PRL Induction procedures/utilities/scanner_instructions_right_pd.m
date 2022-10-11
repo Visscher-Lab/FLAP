@@ -1,1 +1,0 @@
-Screen('TextFont',w, 'Arial');Screen('TextSize',w, 42);%     Screen('TextStyle', w, 1+2);Screen('FillRect', w, gray);colorfixation = white;DrawFormattedText(w, '>', 'center', 'center', white);InstructionOnsetTime=Screen('Flip',w);WaitSecs(presentationtime);% Screen('Flip', w);% KbQueueWait;
