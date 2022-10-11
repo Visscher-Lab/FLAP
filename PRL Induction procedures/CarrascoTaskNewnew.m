@@ -67,7 +67,7 @@ try
     cueduration=[0.05 0.05 0.133 0.133]; % cue duration
     cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
     circleduration=0.133; % duration of the first O
-    presentationtime=1.133; % duration of the C
+    presentationtime=0.133; % duration of the C
     posttargetcircleduration=0.133;
     posttargetISIduration= 0.233;
     fixTime=0.1/3;
@@ -273,7 +273,7 @@ try
             end
             currentcueISI=cueISI(mixtr(trial,2));
             currentcueduration=cueduration(mixtr(trial,2));
-            
+             mao(trial)=0;
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<trialonsettime+ifi*2 && fixating>400 && stopchecking>1
                 clear imageRect_offsCirc
                 clear cuegenerator
@@ -376,7 +376,7 @@ try
                         PsychPortAudio('Start', pahandle2);
                     end
                 end
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration+presentationtime && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % wait for response
                 thekeys = find(keyCode);
                 if length(thekeys)>1

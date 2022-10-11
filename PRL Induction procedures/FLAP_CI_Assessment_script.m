@@ -155,20 +155,20 @@ try
     
     %% Trial structure
     
-    if annulusOrPRL==1 % annulus for pre-target fixation (default is NOT this)
-        % here I define the annulus around the scotoma which allows for a
-        % fixation to count as 'valid', i.e., the flickering is on when a
-        % fixation is within this region
-        [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
-        smallradiusannulus=(scotomadeg/2)*pix_deg; % inner circle: scotoma eccentricity
-        largeradiusannulus=smallradiusannulus+3*pix_deg; %outer circle (3 degrees from the border of the scotoma
-        circlePixels=sx.^2 + sy.^2 <= largeradiusannulus.^2;
-        circlePixels2=sx.^2 + sy.^2 <= smallradiusannulus.^2;
-        d=(circlePixels2==1);
-        newfig=circlePixels;
-        newfig(d==1)=0;
-        circlePixelsPRL=newfig;
-    end
+%     if annulusOrPRL==1 % annulus for pre-target fixation (default is NOT this)
+%         % here I define the annulus around the scotoma which allows for a
+%         % fixation to count as 'valid', i.e., the flickering is on when a
+%         % fixation is within this region
+%         [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
+%         smallradiusannulus=(scotomadeg/2)*pix_deg; % inner circle: scotoma eccentricity
+%         largeradiusannulus=smallradiusannulus+3*pix_deg; %outer circle (3 degrees from the border of the scotoma
+%         circlePixels=sx.^2 + sy.^2 <= largeradiusannulus.^2;
+%         circlePixels2=sx.^2 + sy.^2 <= smallradiusannulus.^2;
+%         d=(circlePixels2==1);
+%         newfig=circlePixels;
+%         newfig(d==1)=0;
+%         circlePixelsPRL=newfig;
+%     end
     
     %% Initialize trial loop
     HideCursor;

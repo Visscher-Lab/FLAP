@@ -44,20 +44,25 @@ for practicetrial=1:practicetrialnum
         fixating=1500;
         
         %% here is where the first time-based practicetrial loop starts (until first forced fixation is satisfied)
-%         if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-%             
-%             % pre-event empty space, allows for some cleaning
-%             
-%             counterflicker=-10000;
-%         else %force fixation
-%             [counterannulus, framecounter]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus);
-%             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
-%             if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
-%                 newtrialtime=GetSecs;
-%                 skipcounterannulus=1000;
-%                 flickerdone=10;
-%             end
-%         end
+        if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            
+            % pre-event empty space, allows for some cleaning
+            
+            counterflicker=-10000;
+        elseif (eyetime2-trial_time)>=ifi*2+pretrial_time + fixation_onset && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout %force fixation
+            if skipforcedfixation==1 % skip the force fixation
+                counterannulus=(AnnulusTime/ifi)+1;
+                skipcounterannulus=1000;
+            else %force fixation for training types 1 and 2
+                [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
+                if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
+                    newtrialtime=GetSecs;
+                    skipcounterannulus=1000;
+                    flickerdone=10;
+                end
+            end
+        end
         %% target loop
         if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET

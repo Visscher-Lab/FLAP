@@ -70,7 +70,7 @@ for practicetrial=1:practicetrialnum
                 trialstart_frame(practicetrial)=eyetime2;
             end
             
-        elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
+        elseif (eyetime2-trial_time)>=ifi*2+ preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
             % here I need to reset the practicetrial time in order to preserve
             % timing for the next events (first fixed fixation event)
             % HERE interval between cue disappearance and beginning of
@@ -79,7 +79,11 @@ for practicetrial=1:practicetrialnum
                 counterannulus=(AnnulusTime/ifi)+1;
                 skipcounterannulus=1000;
             else %force fixation for training types 1 and 2
-                [counterannulus, framecounter]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus);
+                if trainingType<3
+                        [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    elseif trainingType>2
+                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                    end
                 Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                     newtrialtime=GetSecs;
