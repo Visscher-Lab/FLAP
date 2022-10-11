@@ -143,7 +143,7 @@ try
     WaitSecs(1);
     
     Screen('FillRect', w, gray);
-    DrawFormattedText(w, 'Keep the scotoma near the stimulus for 2 seconds \n \n the stimulus will start flickering \n \n Press  after some time, the trial will end automatically \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'Keep the scotoma near the stimulus until it start flickering \n \n  after some time, the trial will end automatically \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
     WaitSecs(0.5);
@@ -372,7 +372,7 @@ try
         
         SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
         cueendToResp(kk)=stim_stop-cue_last;
-        cuebeginningToResp(kk)=stim_stop-circle_start(1,trial);
+        cuebeginningToResp(kk)=stim_stop-circle_start;
         %  intervalBetweenFlickerandTrget(trial)=target_time_start-flicker_time_start;
         
         if EyeTracker==1

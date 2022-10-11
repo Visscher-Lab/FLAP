@@ -8,7 +8,6 @@ ssf=sflist(currentsf);
             practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
 Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
-% stimulusdurationpracticearray=ones(1,9); % Sam's testing
 stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
 targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
 FlickerTime=0;

@@ -19,7 +19,7 @@ inc=1;
     a=cos(rot)*f_gabor;
     b=sin(rot)*f_gabor;
     m=maxcontrast*sin(a*x0Small+b*y0Small+pi).*G;
-    TheGaborsSmall=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
+    TheGaborsSmall(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
 
 %set the limit for stimuli position along x and y axis
 xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
@@ -76,12 +76,12 @@ twoorifoo= [ -35     0    35   -50    45   -55    55   -65    70    90    90    
 Xoff=[   -0.2198   -0.0122   -0.1954   -0.0855   -0.0488   -0.0122    0.0244         0    0.0367   0         0   -0.0611         0    0.1221    0.0122    0.1587];
 Yoff=[   -0.1832   -0.0367    0.0244    0.0977   -0.2320   -0.2198    0.1466   -0.0488   -0.0122    0         0   -0.1221    0.0855    0.0244    0.0122   -0.0732];
 
-Targx= [xfoo; -xfoo];
-Targy= [yfoo; yfoo];
-Targori=[orifoo;twoorifoo];
+Targx{5}= [xfoo; -xfoo];
+Targy{5}= [yfoo; yfoo];
+Targori{5}=[orifoo;twoorifoo];
 
-offsetx= [-Xoff; Xoff];
-offsety=[-Yoff; -Yoff];
+offsetx{5}= [-Xoff; Xoff];
+offsety{5}=[-Yoff; -Yoff];
 
   %     xs=7;
     %     ys=7;

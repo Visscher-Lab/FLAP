@@ -105,8 +105,8 @@ try
     
     
     %% creating stimuli
-createMNRead
-            %% Keys definition/kb initialization
+    createMNRead
+    %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
     
@@ -127,10 +127,10 @@ createMNRead
     %% main loop
     HideCursor(0);
     counter = 0;
-  
+    
     %%
     
-    DrawFormattedText(w, 'This is a Reading test. \n \n  Please read the sentences out loud and clear. \n \n  Once you are done reading, another sentence \n will appear with a smaller font size. \n \n \n  Do not press any key using the keyboard', 'center', 'center', white);
+    DrawFormattedText(w, 'Reading test  \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
     WaitSecs(1.5);
@@ -151,8 +151,8 @@ createMNRead
         
         
         TrialNum = strcat('Trial',num2str(trial));
-            FLAPVariablesReset
-
+        FLAPVariablesReset
+        
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
@@ -166,8 +166,8 @@ createMNRead
             elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
                 
                 if exist('stimstar')==0
-                                stim_start=GetSecs;
-                                stimstar=1;
+                    stim_start=GetSecs;
+                    stimstar=1;
                 end
                 %Draw Target
                 Screen('DrawTexture', w, TheSentence(trial), [], [], 0 ,0);
@@ -179,12 +179,12 @@ createMNRead
                 thekeys = find(keyCode);
                 thetimes=keyCode(thekeys);
                 [secs  indfirst]=min(thetimes);
-          
+                
                 eyechecked=10^4;
                 % code the response
                 
                 if thekeys==corrkey
-                    resp = 1;                
+                    resp = 1;
                 elseif (thekeys==escapeKey) % esc pressed
                     resp=-1;
                     closescript = 1;
@@ -199,13 +199,13 @@ createMNRead
             end
             eyefixation5
             
-                        if EyetrackerType==2
+            if EyetrackerType==2
                 
                 if scotomavpixx==1
                     Datapixx('EnableSimulatedScotoma')
                     Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
                     scotomaradiuss=round(pix_deg*6);
-                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);                  
+                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
                     mode=Datapixx('GetSimulatedScotomaMode');
                     status= Datapixx('IsSimulatedScotomaEnabled');
                     radius= Datapixx('GetSimulatedScotomaRadius');
@@ -219,9 +219,9 @@ createMNRead
             end
             
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-           
+            
             VBL_Timestamp=[VBL_Timestamp eyetime2];
-        
+            
             if EyeTracker==1
                 
                 if site<3
@@ -250,8 +250,8 @@ createMNRead
                         end
                         FixIndex(FixCount,2) = CheckCount-1;
                         FixatingNow = 0;
-                    end                   
-                end                
+                    end
+                end
             end
             [keyIsDown, keyCode] = KbQueueCheck;
             
@@ -271,10 +271,10 @@ createMNRead
             [keyIsDown, keyCode] = KbQueueCheck;
             DrawFormattedText(w, '++++++++++++++++', 'center', 'center', white);
             Screen('Flip',w);
-            while sum(keyCode)==0                
+            while sum(keyCode)==0
                 [keyIsDown, keyCode] = KbQueueCheck;
                 WaitSecs(0.001);
-            end            
+            end
             thekeys = find(keyCode);
             if thekeys==escapeKey
                 Screen('Flip',w);
@@ -282,20 +282,27 @@ createMNRead
                 closescript = 1;
                 %     return;
             elseif thekeys==wrongkey
+                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
                 Screen('Flip',w);
                 save(baseName)
                 closescript = 1;
                 %    return
-            else thekeys~=wrongkey & thekeys~=escapeKey                
+            else thekeys~=wrongkey & thekeys~=escapeKey
                 err=KbName(thekeys);
             end
-         
+            
+            
+        elseif thekeys==wrongkey
+            DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+            Screen('Flip',w);
+            save(baseName)
+            closescript = 1;
         else
             Screen('Flip',w);
             save(baseName)
             closescript = 1;
         end
-
+        
         time_stim(kk) = stim_stop - stim_start;
         total_trials(kk)=trial;
         
@@ -305,13 +312,16 @@ createMNRead
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
+        if err>1
+            err=err(1);
+        end
         theerrors(kk)=err;
         
-        if EyeTracker==1           
+        if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
-            clear EyeCode          
+            clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
             end;
@@ -321,7 +331,7 @@ createMNRead
             clear CheckCount
             EyeSummary.(TrialNum).TotalFixations = FixCount;
             clear FixCount
-
+            
             EyeSummary.(TrialNum).EventData = EvtInfo;
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
@@ -330,20 +340,22 @@ createMNRead
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             EyeSummary.(TrialNum).TimeStamps.Stimulus = stim_start;
-            EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;            
+            EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             clear ErrorInfo
-        end        
+        end
         kk=kk+1;
         clear PKnew2
         if closescript==1
             break
             %return
         end
-       
+        
     end
     
-    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    DrawFormattedText(w, 'Task completed', 'center', 'center', white);
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     ListenChar(0);
+    KbQueueWait;
     Screen('Flip', w);
     % shut down EyeTracker
     if EyetrackerType==1
@@ -358,7 +370,6 @@ createMNRead
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
     
