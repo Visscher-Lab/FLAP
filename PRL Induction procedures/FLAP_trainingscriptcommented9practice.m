@@ -261,7 +261,7 @@ try
             shapeMat(:,1)= [5 6 4];
             
             shapesoftheDay=shapeMat(:,expDay);
-% shapesoftheDay = 2; % Sam's testing
+ %shapesoftheDay = 1; % Sam's testing
         end
         
         if expDay==1
