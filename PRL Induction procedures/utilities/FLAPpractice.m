@@ -1,30 +1,30 @@
 %FLAPpractice
 if trainingType==1
-ssf=sflist(currentsf);
-            fase=randi(4);
-            texture(trial)=TheGabors(currentsf, fase);
-            practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25]; %predefined contrast values for practice trials
-            stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
-            practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
+    ssf=sflist(currentsf);
+    fase=randi(4);
+    texture(trial)=TheGabors(currentsf, fase);
+    practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25]; %predefined contrast values for practice trials
+    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
+    practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
-Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
-stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
-targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
-FlickerTime=0;
-Tscat=0;
-performanceThresh=0.75;
-practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
+    Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
+    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
+    targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
+    FlickerTime=0;
+    Tscat=0;
+    performanceThresh=0.75;
+    practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
 trialTimeout=20;
 for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
-        theans(practicetrial)=randi(2);
-
+    theans(practicetrial)=randi(2);
+    
     if trainingType ==1
-                    ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
-    elseif trainingType ==2   
-    Orijit=Jitpracticearray(practicetrial);
-    stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
+        ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
+    elseif trainingType ==2
+        Orijit=Jitpracticearray(practicetrial);
+        stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
         CIstimuliMod % add the offset/polarity repulsion
     end
     theeccentricity_Y=0;
@@ -32,7 +32,7 @@ for practicetrial=1:practicetrialnum
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     
-    if practicetrial==1 &&  trainingType ==2   
+    if practicetrial==1 &&  trainingType ==2
         InstructionShape
     end
     
@@ -78,7 +78,11 @@ for practicetrial=1:practicetrialnum
                 counterannulus=(AnnulusTime/ifi)+1;
                 skipcounterannulus=1000;
             else %force fixation for training types 1 and 2
-                [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                if trainingType<3
+                    [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                elseif trainingType>2
+                    [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                end
                 Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                     newtrialtime=GetSecs;
@@ -96,30 +100,30 @@ for practicetrial=1:practicetrialnum
         if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET
             if trainingType==1
-                                Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
+                Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
             elseif trainingType==2
-            if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
-                imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
-                    imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
-                imageRect_offsCI2=imageRect_offsCI;
-                imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
-                    imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
-                created(practicetrial)=99;
-            end
-            created2(practicetrial)=99;
-            
-            %here I draw the target contour
-            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-            imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-            if targethighercontrast(practicetrial)==1
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
-            end
-            % here I draw the circle within which I show the contour target
-            Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-            if skipmasking==0
-                assignedPRLpatch
-            end
+                if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
+                    imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
+                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
+                    imageRect_offsCI2=imageRect_offsCI;
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
+                        imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
+                    created(practicetrial)=99;
+                end
+                created2(practicetrial)=99;
+                
+                %here I draw the target contour
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                if targethighercontrast(practicetrial)==1
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                end
+                % here I draw the circle within which I show the contour target
+                Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+                if skipmasking==0
+                    assignedPRLpatch
+                end
             end
             
             imagearray{practicetrial}=Screen('GetImage', w);
