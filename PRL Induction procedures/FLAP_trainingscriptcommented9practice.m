@@ -1,4 +1,4 @@
-% FLAP Training
+f% FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Training script for FLAP. This script runs 4 types of visual/oculomotor
 % training in conditions of gaze-contingent, simulated central vision loss.
