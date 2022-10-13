@@ -156,7 +156,7 @@ try
     
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
-        shapes=3; % how many shapes per day? % 1
+        shapes=3; % how many shapes per day?
         JitList = 0:2:90;
         StartJitter=1;
     end
@@ -261,7 +261,6 @@ try
             shapeMat(:,1)= [5 6 4];
             
             shapesoftheDay=shapeMat(:,expDay);
-% shapesoftheDay = 2; % Sam's testing
         end
         
         if expDay==1
@@ -392,8 +391,9 @@ try
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-    InstructionFLAP(w,trainingType,gray,white)
-    
+   if trainingType~=3
+       InstructionFLAP(w,trainingType,gray,white)
+   end
     
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
@@ -419,7 +419,10 @@ try
                 FLAPpractice
             end
         end
-        
+        if practicePassed==2
+           closescript=1;
+           break
+        end
         %% training type-specific staircases
         
         if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
@@ -589,8 +592,8 @@ try
                     elseif trainingType>2
                         [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     end
-                    if trainingType~=3
-                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                    if trainingType~=3 % no more dots!
+               %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
                         if exist('isendo') == 0
                             isendo=0;
@@ -995,7 +998,7 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11 && trainingType ~= 3
+        if trial>11
             if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);
