@@ -268,75 +268,75 @@ try
                 end
             end
           %% here is where the second time-based trial loop starts
-%             if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<=FlickerTime/ifi && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout
-%                 % HERE starts the flicker for training types 3 and 4, if
-%                 % training type is 1 or 2, this is skipped
-%                 
-%                 
-%                 
-%                 if exist('circlestar')==0
-%                     circle_start = GetSecs;
-%                     circlestar=1;
-%                 end
-%                 cue_last=GetSecs;
-%                 newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
-%                 flickerdone=10;
-%                 flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
-%             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
-%                 % HERE I PRESENT THE TARGET
-%                 
-%                 if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
-%                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
-%                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
-%                     imageRect_offsCI2=imageRect_offsCI;
-%                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-%                     imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
-%                         imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
-%                 end
-%                 %here I draw the target contour
-%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-%                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-%                 if demo==1
-%                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
-%                 end
-%                 % here I draw the circle within which I show the contour target
-%                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-%                 if skipmasking==0
-%                     assignedPRLpatch
-%                 end
-%                 imagearray{trial}=Screen('GetImage', w);
-%                 
-%                 if exist('stimstar')==0
-%                     stim_start = GetSecs;
-%                     stim_start_frame=eyetime2;
-%                     stimstar=1;
-%                 end
-%                 
-%             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
-%                 eyechecked=10^4; % exit loop for this trial
-%                 thekeys = find(keyCode);
-%                 if length(thekeys)>1
-%                     thekeys=thekeys(1);
-%                 end
-%                 thetimes=keyCode(thekeys);
-%                 [secs  indfirst]=min(thetimes);
-%                 respTime=GetSecs;
-%                 
-%             elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
-%                 eyechecked=10^4; % exit loop for this trial
-%                 thekeys = find(keyCode);
-%                 if length(thekeys)>1
-%                     thekeys=thekeys(1);
-%                 end
-%                 thetimes=keyCode(thekeys);
-%                 [secs  indfirst]=min(thetimes);
-%                 respTime=GetSecs;
-%             elseif (eyetime2-pretrial_time)>=trialTimeout
-%                 stim_stop=GetSecs;
-%                 trialTimedout(trial)=1;
-%                 %    [secs  indfirst]=min(thetimes);
-%                 eyechecked=10^4; % exit loop for this trial
-%             end
+            if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<=FlickerTime/ifi && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout
+                % HERE starts the flicker for training types 3 and 4, if
+                % training type is 1 or 2, this is skipped
+                
+                
+                
+                if exist('circlestar')==0
+                    circle_start = GetSecs;
+                    circlestar=1;
+                end
+                cue_last=GetSecs;
+                newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
+                flickerdone=10;
+                flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+                % HERE I PRESENT THE TARGET
+                
+                if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
+                    imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
+                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
+                    imageRect_offsCI2=imageRect_offsCI;
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
+                        imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
+                end
+                %here I draw the target contour
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                if demo==1
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                end
+                % here I draw the circle within which I show the contour target
+                Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+                if skipmasking==0
+                    assignedPRLpatch
+                end
+                imagearray{trial}=Screen('GetImage', w);
+                
+                if exist('stimstar')==0
+                    stim_start = GetSecs;
+                    stim_start_frame=eyetime2;
+                    stimstar=1;
+                end
+                
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
+                eyechecked=10^4; % exit loop for this trial
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs  indfirst]=min(thetimes);
+                respTime=GetSecs;
+                
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
+                eyechecked=10^4; % exit loop for this trial
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs  indfirst]=min(thetimes);
+                respTime=GetSecs;
+            elseif (eyetime2-pretrial_time)>=trialTimeout
+                stim_stop=GetSecs;
+                trialTimedout(trial)=1;
+                %    [secs  indfirst]=min(thetimes);
+                eyechecked=10^4; % exit loop for this trial
+            end
             %% here I draw the scotoma, elements below are called every frame
             eyefixation5
             if ScotomaPresent == 1 % do we want the scotoma? (default is yes)
