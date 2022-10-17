@@ -267,7 +267,7 @@ try
     %     FixDotSize=15;
     %     xeye=[];%needed for eyefixation5 function
     %     yeye=[];%needed for eyefixation5 function
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+%    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     %% first instructions
     %    eyefixation5
     %     Screen('TextFont',w, 'Arial');
@@ -628,17 +628,17 @@ imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
             break;
         end
         clear responsekey;
-        %         Screen('TextFont',w, 'Arial');
-        %         Screen('TextSize',w, 42);
-        %         Screen('FillRect', w, gray);
-        %         fixationscriptW;
-        %         DrawFormattedText(w, 'x', 'center', 558, white);
-        %         RestTime=Screen('Flip',w);
-        %         save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
-        %
-        %         while GetSecs < RestTime + 15; %  rest for 15 sec
-        %
-        %         end
+                Screen('TextFont',w, 'Arial');
+                Screen('TextSize',w, 42);
+                Screen('FillRect', w, gray);
+                fixationscriptW;
+                DrawFormattedText(w, 'x', 'center', 558, white);
+                RestTime=Screen('Flip',w);
+             %   save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
+        
+                while GetSecs < RestTime + 15; %  rest for 15 sec
+        
+                end
     end
 
 
