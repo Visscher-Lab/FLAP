@@ -9,7 +9,7 @@
 % '5'
 
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -35,7 +35,7 @@ try
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
-    TRLlocation = 1;
+    TRLlocation = 2;
     
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -85,7 +85,7 @@ try
     
     %% Stimuli creation
     
-    PreparePRLpatch
+    PreparePRLpatchCIAssessment
     
     CIAssessmentShapes % Isolating the 2 shapes using which we want to perform the assessment
     
@@ -300,11 +300,11 @@ try
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
                 end
                 % here I draw the circle within which I show the contour target
-                Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-                if skipmasking==0
-                    assignedPRLpatch
-                end
-                imagearray{trial}=Screen('GetImage', w);
+%                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+%                 if skipmasking==0
+%                     assignedPRLpatchCIAssessment
+%                 end
+%                 imagearray{trial}=Screen('GetImage', w);
                 
                 if exist('stimstar')==0
                     stim_start = GetSecs;

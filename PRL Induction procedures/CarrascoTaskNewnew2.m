@@ -1,7 +1,7 @@
 % Exogenous/endogenous switch task
 % written by Marcello A. Maniglia August 2022
 close all;
-clear all;
+clear;
 clc;
 commandwindow
 

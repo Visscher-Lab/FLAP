@@ -1,6 +1,6 @@
 % PRL evaluation/Fixation task
 % written by Marcello A. Maniglia August 2022 %2017/2022
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -166,7 +166,7 @@ try
         trialTimedout(trial)=0;
         
         flickk=0;
-        if trial== length(mixtr)/8
+        if mod(trial,20)==0
             interblock_instruction
         end
         
