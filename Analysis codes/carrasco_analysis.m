@@ -5,9 +5,9 @@
 
 
 % matrix with conditions, reaction time and accuracy
-fulltt=[mixtr time_stim' correx'];
+fulltt=[mixtr(1:length(correx),:) time_stim' correx'];
 
-name=baseName(8:9);
+name=baseName(70:71);
 
 % remove timed out trials
 
@@ -58,8 +58,9 @@ bar(graf)
 hold on
 errors=[endocongrRTste endoincongrRTste];
 errorbar(graf, errors, 'k', 'linestyle','none')
-ylim([0 1.1]);
+ylim([0.45 0.6]);
 ylabel('reaction time (sec)', 'fontsize', 14)
+xticklabels({'Congruent', 'Incongruent'})
 title([name ' Endo congruent vs incongruent'], 'fontsize', 19)
 
 subplot(2,1,2)
@@ -68,8 +69,9 @@ bar(graf)
 hold on
 errors=[exocongrRTste exoincongrRTste];
 errorbar(graf, errors, 'k', 'linestyle','none')
-ylim([0 1.1]);
+ylim([0.45 0.7]);
 ylabel('reaction time (sec)', 'fontsize', 14)
+xticklabels({'Congruent', 'Incongruent'})
 title([name ' Exo congruent vs incongruent'], 'fontsize', 19)
 
 print([name ' carrasco RT'], '-dpng', '-r300')
@@ -80,15 +82,17 @@ subplot(2,1,1)
 graf=[endocongracc endoincongracc];
 bar(graf)
 
-ylim([0 1.1]);
+ylim([0.8 1.05]);
 ylabel('Accuracy', 'fontsize', 14)
+xticklabels({'Congruent', 'Incongruent'})
 title([name ' Endo congruent vs incongruent'], 'fontsize', 19)
 
 subplot(2,1,2)
 graf=[exocongracc exoincongracc];
 bar(graf)
-ylim([0 1.1]);
+ylim([0.9 1.05]);
 ylabel('Accuracy', 'fontsize', 14)
+xticklabels({'Congruent', 'Incongruent'})
 title( [name ' Exo congruent vs incongruent'], 'fontsize', 19)
 
 

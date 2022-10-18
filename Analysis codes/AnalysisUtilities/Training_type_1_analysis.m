@@ -268,7 +268,7 @@ ylim([0 20])
 title([name ' ' session 'Trials timed out'])
 
       print([name session 'graphs' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
-close all
+%close all
  %%
   
  %spatf2array1=find(spatf2==min(spatf2)+0.02) %gives me empty matrix
