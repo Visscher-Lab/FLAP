@@ -998,7 +998,7 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11
+        if trial>11 && trainingType~=3
             if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);
