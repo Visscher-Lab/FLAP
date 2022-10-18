@@ -1,4 +1,4 @@
-f% FLAP Training
+% FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Training script for FLAP. This script runs 4 types of visual/oculomotor
 % training in conditions of gaze-contingent, simulated central vision loss.
@@ -21,7 +21,7 @@ f% FLAP Training
 %then the O will start flickering for an amount of time defined by the
 %variable flickertime. If the participant moves the TRL away from the O, it
 % will stop flickering (and the flicker timer will stop as well).
-%The trial ends when the overall flickering time is fulfilled, thus the more
+%The trial ends when the overall flickering tn.ime is fulfilled, thus the more
 %the participant keeps the O within their TRL, the shorter the trial duration
 %Few consecutive trials are at the same location, then an endogenous (arrow) or an
 %exogenous (briefly appearing O) indicates the location of the next series
@@ -31,8 +31,9 @@ f% FLAP Training
 %contour (contour integration).
 
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
+
 
 
 addpath([cd '/utilities']); %add folder with utilities files
@@ -998,7 +999,7 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11
+        if trial>11 && trainingType~=3
             if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);

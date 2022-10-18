@@ -19,5 +19,5 @@
                 m=m+midgray;
                 m = double(circle) .* double(m)+midgray * ~double(circle);
                 TheGabors(i,g)=Screen('MakeTexture', w, m,[],[],2);
-            end;
-        end;
+            end
+        end
