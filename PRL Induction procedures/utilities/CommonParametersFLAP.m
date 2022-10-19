@@ -1,8 +1,13 @@
 %% general visual parameters
 
-stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
-scotomadeg=10; % size of the scotoma in degrees of visual angle
+if sum(filename(5:12)== 'carrasco')>3
+scotomadeg=6; % size of the scotoma in degrees of visual angle
+    stimulusSize=2; %stimulus size in deg
+else
+    scotomadeg=10; % size of the scotoma in degrees of visual angle
+    stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
+end
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 if exist('TRLlocation', 'var')
     possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
