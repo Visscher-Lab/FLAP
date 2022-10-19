@@ -195,7 +195,7 @@ try
         end
 %         mixtr=[mixtr ones(length(mixtr(:,1)),1)];
     else 
-        mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
+        mixcond{1,1} = [2 1; 1 2; 2 2; 2 1];
         mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
         mixcond{3,1} = [2 1; 2 2; 1 2; 1 1];
         mixcond{4,1} = [2 2; 2 1; 1 1; 1 2];
