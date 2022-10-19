@@ -4,8 +4,10 @@ stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 scotomadeg=10; % size of the scotoma in degrees of visual angle
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
-possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
+if exist('TRLlocation', 'var')
+    possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(TRLlocation) 0 ]; %eccentricity of PRL in deg
+end
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
@@ -21,10 +23,12 @@ preCueISI=0.75; % time between beginning of trial and first event in the trial (
 ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
 postCueISI=0.1; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
-if test==1
-    stimulusduration=2.133; % stimulus duration during debugging
-else
-    stimulusduration=0.133; % stimulus duration during actual sessions
+if exist('test', 'var')
+    if test==1
+        stimulusduration=2.133; % stimulus duration during debugging
+    else
+        stimulusduration=0.133; % stimulus duration during actual sessions
+    end
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
@@ -56,9 +60,11 @@ CircConts=[0.51,1]*255; %low/high contrast circular cue
 radius=12.5;   %radius of the circle in which the target can appear (training type 3 and 4)
 cuecontrast=1; % contrast of the cue (0-1)
 % trial type-specific time parameters
-if trainingType==3 || trainingType==4
+if exist('test', 'var')
+    if trainingType==3 || trainingType==4
     framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts
     blankframeallowed=flickerpersistallowed/ifi; % frames away from flicker in which flicker persists
+    end
 end
 %% visual stimuli common parameters
 imsize=(stimulusSize*pix_deg)/2; %Gabor mask (effective stimulus size)
@@ -72,6 +78,3 @@ fixwindowPix=fixwindow*pix_deg;
 
 midgray=0.5;
 
-% Select specific text font, style and size:
-Screen('TextFont',w, 'Arial');
-Screen('TextSize',w, 42);

@@ -1,6 +1,6 @@
 %function [w, wRect]=defineSite(site)
-Screen('Preference', 'SkipSyncTests', 1);
-    PC=getComputerName();
+%Screen('Preference', 'SkipSyncTests', 1);
+PC=getComputerName();
 AssertOpenGL;
 
 if site==0  %UCR bits++
@@ -46,8 +46,8 @@ elseif site==1  % UCR + bits
         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
         PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
         %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-   %     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-   %     SetResolution(screenNumber, oldResolution);
+        %     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+        %     SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     end
     
@@ -119,8 +119,34 @@ end
 theseed=sum(100*clock);
 rand('twister',theseed );
 ifi = Screen('GetFlipInterval', w); %refresh rate
-if ifi==0
-    ifi=1/100;
-end
+% if ifi==0
+%     ifi=1/120;
+% end
 
 %end
+
+% Select specific text font, style and size:
+Screen('TextFont',w, 'Arial');
+Screen('TextSize',w, 42);
+%% Sound
+InitializePsychSound(1); %'optionally providing
+% the 'reallyneedlowlatency' flag set to one to push really hard for low
+% latency'.
+%   pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+if site<3
+    pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+    pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+elseif site==3 % Windows
+    pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+end
+try
+    [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+    [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+end
+
+
+pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
