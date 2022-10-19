@@ -6,7 +6,7 @@ if AssessmentType==1
     practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25]; %predefined contrast values for practice trials
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
-elseif AssessmentType==2
+else
     Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
     targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
@@ -22,7 +22,7 @@ for practicetrial=1:practicetrialnum
     
     if AssessmentType ==1
         ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
-    elseif AssessmentType ==2
+    else
         Orijit=Jitpracticearray(practicetrial);
         stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
@@ -32,7 +32,7 @@ for practicetrial=1:practicetrialnum
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     
-    if practicetrial==1 &&  AssessmentType ==2
+    if practicetrial==1 && AssessmentType ==2
         InstructionCIAssessment
     end
     
@@ -69,7 +69,7 @@ for practicetrial=1:practicetrialnum
                 trialstart_frame(practicetrial)=eyetime2;
             end
             
-        elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
+        elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout %&& counterflicker<FlickerTime/ifi
             % here I need to reset the practicetrial time in order to preserve
             % timing for the next events (first fixed fixation event)
             % HERE interval between cue disappearance and beginning of
@@ -97,11 +97,11 @@ for practicetrial=1:practicetrialnum
             break;
         end
         %% target loop
-        if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+        if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET
             if AssessmentType==1
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
-            elseif AssessmentType==2
+            else
                 if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
@@ -132,7 +132,7 @@ for practicetrial=1:practicetrialnum
                 stim_start_frame=eyetime2;
                 stimstar=1;
             end
-        elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
+        elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus && flickerdone>1
             eyechecked=10^4; % exit loop for this practicetrial
             thekeys = find(keyCode);
             if length(thekeys)>1
@@ -141,7 +141,7 @@ for practicetrial=1:practicetrialnum
             thetimes=keyCode(thekeys);
             [secs  indfirst]=min(thetimes);
             respTime=GetSecs;
-        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
+        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
             eyechecked=10^4; % exit loop for this practicetrial
             thekeys = find(keyCode);
             if length(thekeys)>1

@@ -13,7 +13,7 @@ nameOffile = dir(['./fixationpilotdata/' '*.mat']);
 
       %  load(['./' newest]);
 lenom{iui}=newest
-Acc(iui)=sum(rispo)/length(rispo);
+Acc(iui)=sum(rispo)/length(rispo); %rispo is not a value given in new fixation task outputs. consider skipping items that use this variable.
 RT(iui)=mean(cueendToResp)
 
 name=['Fixation task ' baseName(8:9)]

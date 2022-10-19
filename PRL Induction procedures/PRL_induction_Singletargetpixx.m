@@ -1,7 +1,7 @@
 % PRL induction procedure with simulated scotoma, single target
 % written by Marcello A. Maniglia 2017/2021
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 try
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -9,11 +9,11 @@ try
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
     
     prompt={'Subject Number:'...
-        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)'};
+        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3'};
+    defaultanswer={'test','1', '3','2'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -26,7 +26,7 @@ try
     expday = str2num(answer{2,:});
     expdayeye = answer{2,:};
     site= str2num(answer{3,:});
-
+whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -811,7 +811,7 @@ try
         mostratarget=0;
         countertarget=0;
         oval_thick=5;
-
+fixating2=0;
         imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg)*2]], wRect);
         
         %Every 50 trials, pause to allow subject to rest eyes
