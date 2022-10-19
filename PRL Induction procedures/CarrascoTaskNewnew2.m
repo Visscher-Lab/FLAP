@@ -1,7 +1,7 @@
 % Exogenous/endogenous switch task
 % written by Marcello A. Maniglia August 2022
 close all;
-clear;
+clear all;
 clc;
 commandwindow
 
@@ -198,7 +198,8 @@ try
         FLAPVariablesReset
         
         while eyechecked<1
-            
+                DrawFormattedText(w, num2str(trial), (wRect(3)/2)-150, (wRect(4)/2)-150, white);
+
             if ScotomaPresent == 1
                 fixationscriptW
                 CarrascoStimuli
