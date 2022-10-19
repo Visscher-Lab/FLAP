@@ -1,7 +1,7 @@
 % Exogenous/endogenous switch task
 % written by Marcello A. Maniglia August 2022
 close all;
-clear all;
+clear;
 clc;
 commandwindow
 
@@ -51,10 +51,7 @@ try
     EyeTracker = 1; %0=mouse, 1=eyetracker
     
     %% space parameters
-    scotomadeg=6; % scotoma size in deg
-    stimulusSize=2; %stimulus size in deg
     attContr= 0.35; % contrast of the target
-    fixwindow=3;  %degrees
     PRLecc=7.5;         %%eccentricity of PRLs
     xlocs=[0 PRLecc 0 -PRLecc]; %PRL coordinates
     ylocs=[-PRLecc 0 PRLecc 0 ]; %PRL coordinates
