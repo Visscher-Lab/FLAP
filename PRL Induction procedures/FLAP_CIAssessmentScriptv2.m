@@ -92,25 +92,25 @@ try
     
     %% Sound
     
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+%     InitializePsychSound(1); %'optionally providing
+%     % the 'reallyneedlowlatency' flag set to one to push really hard for low
+%     % latency'.
+%     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+%     if site<3
+%         pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+%         pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+%     elseif site==3 % Windows
+%         
+%         pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+%         pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+%     end
+%     try
+%         [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+%         [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+%     end
+%     
+%     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+%     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     
     %% Stimuli creation
     
@@ -348,13 +348,22 @@ try
             endExp=GetSecs; %time at the end of the session
         end
 % -------------------------------------------------------------------------        
-%         if demo==2
-%             if mod(trial,round(length(mixtr)/40))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
-%                 interblock_instruction
-%             end
-%             
-%         end
+        if demo==2
+            if mod(trial,round(length(mixtr)/40))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+                interblock_instruction
+            end
+            
+        end
 % -------------------------------------------------------------------------
+        if AssessmentType == 1
+            if trial == 1
+                Instruction_Contrast_Assessment
+            elseif trial >1
+                if mixtr(trial,2) ~= mixtr(trial-1,2)
+                    Instruction_Contrast_Assessment
+                end
+            end
+        end
         if AssessmentType==2
             if trial==1
                 InstructionCIAssessment
