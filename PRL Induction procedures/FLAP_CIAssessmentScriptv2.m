@@ -349,7 +349,7 @@ try
         end
 % -------------------------------------------------------------------------        
         if demo==2
-            if mod(trial,round(length(mixtr)/40))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            if mod(trial,40)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
             
