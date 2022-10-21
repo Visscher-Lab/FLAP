@@ -21,7 +21,7 @@
 %then the O will start flickering for an amount of time defined by the
 %variable flickertime. If the participant moves the TRL away from the O, it
 % will stop flickering (and the flicker timer will stop as well).
-%The trial ends when the overall flickering tn.ime is fulfilled, thus the more
+%The trial ends when the overall flickering time is fulfilled, thus the more
 %the participant keeps the O within their TRL, the shorter the trial duration
 %Few consecutive trials are at the same location, then an endogenous (arrow) or an
 %exogenous (briefly appearing O) indicates the location of the next series
@@ -31,9 +31,8 @@
 %contour (contour integration).
 
 
-close all; clear; clc;
+close all; clear all; clc;
 commandwindow
-
 
 
 addpath([cd '/utilities']); %add folder with utilities files
@@ -66,9 +65,9 @@ try
         mkdir('data')
     end
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    filename='training_type';
+    
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAP' filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
@@ -84,29 +83,6 @@ try
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end
-    
-    %% Sound
-    
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    
     %% Stimuli creation
     
     PreparePRLpatch % here I characterize PRL features
@@ -392,7 +368,7 @@ try
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-   if trainingType~=3
+   if trainingType~=2
        InstructionFLAP(w,trainingType,gray,white)
    end
     
@@ -999,7 +975,7 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11 && trainingType~=3
+        if trial>11 & trainingType~=3
             if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);
@@ -1008,11 +984,9 @@ try
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     
     ListenChar(0);
     Screen('Flip', w);
-    KbQueueWait;
     
     %% shut down EyeTracker and screen functions
     if EyetrackerType==1
@@ -1026,7 +1000,9 @@ try
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    KbQueueWait;
+
     ShowCursor;
     Screen('CloseAll');
     PsychPortAudio('Close', pahandle);

@@ -71,7 +71,7 @@ cueonset=0.5; % time between first O and the cue
     effectivetrialtimeout=8; %max time duration for a trial (otherwise it counts as elapsed)
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersFLAP % define common parameters
-            Jitter=0.25; %jitter array for trial start in seconds
+        Jitter=0.25; %jitter array for trial start in seconds
 
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
@@ -331,13 +331,7 @@ cueonset=0.5; % time between first O and the cue
                     end
                 end
                 timetgt(trial)=eyetime2;
-                %                 if exist('imageRect_offs')==0
-                %                     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                %                         imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-                % tr                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                %                     stim_start=eyetime2;
-                %                     targetpres(trial)=eyetime2;
-                %                 end
+
                 Screen('FillOval',w, gray,imageRect_offscircle);
                 
                 Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
@@ -349,105 +343,12 @@ cueonset=0.5; % time between first O and the cue
                 %            Screen('FillOval',w, white,imageRect-100);
                 posttargetpres(trial)=eyetime2;
                 imagearray{trial,tk}=Screen('GetImage', w);
-                
-%                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
-%                     % wait for response
-%                     thekeys = find(keyCode);
-%                     if length(thekeys)>1
-%                         thekeys=thekeys(1);
-%                     end
-%                     thetimes=keyCode(thekeys);
-%                     [secs  indfirst]=min(thetimes);
-%                     respTime=secs;
-%                     mao(trial)=99;
-%                     foo=(RespType==thekeys);
-%                     
-%                     if foo(theans(trial))
-%                         resp = 1;
-%                         PsychPortAudio('Start', pahandle1);
-%                     elseif (thekeys==escapeKey) % esc pressed
-%                         closescript = 1;
-%                         break;
-%                     else
-%                         resp = 0;
-%                         PsychPortAudio('Start', pahandle2);
-%                     end
-%                 end
+
                 imagearrayT{trial,tk}=Screen('GetImage', w);
-                
-            elseif (eyetime2-trial_time)>trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
-                % time after target presentation
-                gap(trial)=99;
-                if exist('gaps')==0
-                    gaptime(trial)=eyetime2;
-                    gaps=44;
-                end
-          %      if a key was pressed check response
-%                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
-%                     thekeys = find(keyCode);
-%                     if length(thekeys)>1
-%                         thekeys=thekeys(1);
-%                     end
-%                     thetimes=keyCode(thekeys);
-%                     [secs  indfirst]=min(thetimes);
-%                     respTime=secs;
-%                     mao(trial)=99;
-%                     foo=(RespType==thekeys);
-%                     
-%                     if foo(theans(trial))
-%                         resp = 1;
-%                         PsychPortAudio('Start', pahandle1);
-%                     elseif (thekeys==escapeKey) % esc pressed
-%                         closescript = 1;
-%                         break;
-%                     else
-%                         resp = 0;
-%                         PsychPortAudio('Start', pahandle2);
-%                     end
-%                     
-%                     
-%                 end
-                
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
-                % mask circle after target
-                showdi(trial)=99;
-                Screen('FillOval',w, gray,imageRect_offscircle);
-                Screen('DrawTexture', w, theCircles, [], imageRect_offs, ori,[], attContr);
-                %       Screen('DrawTexture', w, theCircles, [], imageRect_offs, ori,[], 255);
-                
-                imagearrayD{trial}=Screen('GetImage', w);
-                % check for button press
-                if mao(trial)<99
-                if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
-                    
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime=secs;
-                    foo=(RespType==thekeys);
-                    
-                    if foo(theans(trial))
-                        resp = 1;
-                        PsychPortAudio('Start', pahandle1);
-                    elseif (thekeys==escapeKey) % esc pressed
-                        closescript = 1;
-                        break;
-                    else
-                        resp = 0;
-                        PsychPortAudio('Start', pahandle2);
-                    end
-                else
-                    % O after target and no
-                    % response
-                    showdi2(trial)=99;
-                end
-            end
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 %wait for response after the O after the target
-                if mao(trial)<99
+                
                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     
                     thekeys = find(keyCode);
@@ -464,7 +365,7 @@ cueonset=0.5; % time between first O and the cue
                         eyechecked=10^4;
                     end
                 end
-            end
+                
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
