@@ -1,7 +1,7 @@
 % Visual Acuity/Crowding/cued-uncued attention task
 % written by Marcello A. Maniglia july 2021 %2017/2021
 close all;
-clear all;
+clear;
 clc;
 commandwindow
 %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
