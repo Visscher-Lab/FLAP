@@ -339,7 +339,7 @@ try
     %% draw everything on the instruction page
     
     stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
-    CIstimuliMod_Scanner;
+    CIstimuliMod_ScannerIns;
     theeccentricity_Y=0;
             theeccentricity_X=PRLx*pix_deg;
             eccentricity_X(1)= theeccentricity_X;
@@ -456,7 +456,7 @@ theoris =[-45 45];
 %                             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
 %                         imageRect_offsCI2=imageRect_offsCI;
 %                         
-
+CIstimuliMod_Scanner
            imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)]; 
            imageRect_offsCIleft2=imageRect_offsCIleft;  
