@@ -184,7 +184,7 @@ try
     
     %create trial matrix
     if AssessmentType == 1 
-        mixcond{1,1}=[1 1; 1 2]; %full factorial design
+        mixcond{1,1}=[1 2; 1 1]; %full factorial design
         mixcond{2,1} = [1 2; 1 1];
         for cond = 1:length(mixcond)
             dummy = [];
