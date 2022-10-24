@@ -75,7 +75,7 @@ elseif site==3   %UCR VPixx
     initRequired= calibration; %do we want vpixx calibration?
     if initRequired>0
         fprintf('\nInitialization required\n\nCalibrating the device...');
-        TPxTrackpixx3CalibrationTestingskip;
+        TPxTrackpixx3CalibrationTesting;
     end
     
     %Connect to TRACKPixx3

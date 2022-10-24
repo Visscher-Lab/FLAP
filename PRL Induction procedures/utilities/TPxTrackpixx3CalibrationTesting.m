@@ -24,7 +24,7 @@ function TPxTrackpixx3CalibrationTesting()
 
 
 
-clear all;
+clear;
 close all;
 % Screen('Preference', 'SkipSyncTests', 1)
 %Sets to which screen the calibration will be done, if the platform supports

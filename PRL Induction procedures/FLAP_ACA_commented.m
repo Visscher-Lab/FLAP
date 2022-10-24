@@ -1,7 +1,7 @@
 % Visual Acuity/Crowding/cued-uncued attention task
 % written by Marcello A. Maniglia july 2021 %2017/2021
 close all;
-clear all;
+clear;
 clc;
 commandwindow
 %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
@@ -14,7 +14,7 @@ try
     name= 'Parameters';
     numlines=1;
     defaultanswer={'test','1', '1', '1','0', '0', '4', '2', '1' };
-
+    
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -23,11 +23,11 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:});
+    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
     scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:});
+    Isdemo=str2num(answer{6,:}); % full session or demo/practice
     PRLlocations=str2num(answer{7,:});
-    whicheye=str2num(answer{8,:});
+    whicheye=str2num(answer{8,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
@@ -52,14 +52,12 @@ try
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    
     EyeTracker = 1; %0=mouse, 1=eyetracker
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     CommonParametersACA % load parameters for time and space
     
-
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
@@ -71,29 +69,7 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     end
     
-    %% Sound
-    
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    
-    %% creating stimuli 
+    %% creating stimuli
     createO
     
     %% STAIRCASES:
@@ -112,7 +88,7 @@ try
     Sizelist=log_unit_down(StartSize, 0.01, 90);
     
     stepsizesVA=[4 4 4 4 4];
-
+    
     % Crowding
     ca=2; % conditions: radial and tangential
     threshCW(1, 1:ca)=33; %25;
@@ -122,13 +98,13 @@ try
     corrcounterCW(1, 1:ca)=0;
     
     max_separation=8; %max deg for crowding
-   
+    
     Separationtlist=log_unit_down(max_separation, 0.015, 90);
-
+    
     stepsizesCW=[4 4 4 4 4];
-            tr_per_condition=16;  %50
-
-  %% Keys definition/kb initialization
+    tr_per_condition=16;  %50
+    
+    %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
     
@@ -152,15 +128,14 @@ try
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
     
-      %% calibrate eyetracker, if Eyelink
+    %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
+    %% Trial structure
     
-        %% Trial structure
- 
-        % acuity
-mixtrVAsc1=[];
+    % acuity
+    mixtrVAsc1=[];
     
     for  ui=1:(tr_per_condition/PRLlocations)
         b=randperm(PRLlocations);
@@ -176,9 +151,9 @@ mixtrVAsc1=[];
     mixtrVA=[ mixtrVAsc1' ones(length(mixtrVAsc1),1); mixtrVAsc2' ones(length(mixtrVAsc2),1)*2];
     
     %Crowding
-  
+    
     %radial
-   
+    
     mixtrCWsc1r=[];
     
     for  ui=1:(tr_per_condition/PRLlocations)
@@ -220,21 +195,19 @@ mixtrVAsc1=[];
     end
     
     mixtrCW =[mixtrCW(:,1) mixtrCW(:,3) mixtrCW(:,2)];
-
+    
     if PRLlocations==4
-        mixtrCWa=[mixtrCW(1:16,:); mixtrCW(81:96,:)];
-        mixtrCWb=[ mixtrCW(17:80,:) ;mixtrCW(97:end,:)];
-        
+        mixtrCWa=[mixtrCW(1:16,:); mixtrCW(81:96,:)]; % 16 trials of 'a' sc type
+        mixtrCWb=[ mixtrCW(17:80,:) ;mixtrCW(97:end,:)]; % 64 trials of 'b' sc type
     elseif PRLlocations==2
         mixtrCWa=[mixtrCW(1:16,:); mixtrCW(49:64,:)];
         mixtrCWb=[ mixtrCW(17:48,:) ;mixtrCW(65:end,:)];
     end
-
+    
     mixtrCWa=mixtrCWa(randperm(length(mixtrCWa)),:);
     mixtrCWb= mixtrCWb(randperm(length(mixtrCWb)),:);
-
+    
     mixtrCW=[mixtrCWa; mixtrCWb];
-
     
     if PRLlocations==4
         load('AttMatNew.mat')
@@ -248,17 +221,13 @@ mixtrVAsc1=[];
         subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
         firstPartMat=AttMat.(subMat{tt(1)});
         secondPartMat=AttMat.(subMat{tt(2)});
-        
         mixtrAtt= [firstPartMat; secondPartMat];
-        
     elseif PRLlocations==2
         %if only two locations
         rep=40;
         mixtrAtttemp=repmat(fullfact([PRLlocations 4]), rep,1);
         mixtrAtt=mixtrAtttemp(randperm(length(mixtrAtttemp)),:);
-        
     end
-    
     
     % for attention: create array of jittered trial onset
     jit=[0.5:0.5:1.5];
@@ -275,25 +244,20 @@ mixtrVAsc1=[];
             mixtrAtt=[2,3;1,1;2,4;1,2;1,1];
         elseif  PRLlocations==4
             mixtrAtt=[2,3;1,1;2,4;3,2;4,1];
-            
         end
     end
-    
     totalmixtr=length(mixtrVA)+length(mixtrCW)+length(mixtrAtt);
     %% main loop
     HideCursor;
     ListenChar(2);
     counter = 0;
-
+    
     Screen('FillRect', w, gray);
     DrawFormattedText(w, 'report the orientation of the gap of the C \n \n using the keyboard arrows \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
-    %Screen('Flip', w);
     WaitSecs(0.5);
-
     
-   
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -301,16 +265,15 @@ mixtrVAsc1=[];
             error(['startrecording error, status: ', status])
         end
         % mark zero-plot time in data file
-        Eyelink('message' , 'SYNCTIME');        
+        Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(totalmixtr), 6);
     end
-
-
+    
     for totaltrial=1:totalmixtr
         trialTimedout(totaltrial)=0;
         TrialNum = strcat('Trial',num2str(totaltrial));
         
-        if totaltrial== length(mixtrVA)+1 
+        if totaltrial== length(mixtrVA)+1
             interblock_instruction_crowding
         end
         if totaltrial== (length(mixtrVA)+length(mixtrCW))+1
@@ -325,10 +288,9 @@ mixtrVAsc1=[];
         elseif totaltrial<=(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)) && totaltrial> length(mixtrVA)+length(mixtrCW)
             whichTask=3;
             trial=totaltrial-(length(mixtrVA)+length(mixtrCW));
-            
         end
         
-      %        whichTask=3;
+        %        whichTask=3;
         
         if whichTask ==1
             trialTimeout=realtrialTimeout;
@@ -341,9 +303,8 @@ mixtrVAsc1=[];
             VA_thresho=1;
             
             imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
-            
-            imageRectFlankOne =imageRect; 
-            imageRectFlankTwo =imageRect; 
+            imageRectFlankOne =imageRect;
+            imageRectFlankTwo =imageRect;
             sep = Separationtlist(threshCW(mixtrCW(trial,2)));
             
             horizontal_eccentricity=eccentricity_X(mixtrCW(trial,1));
@@ -370,7 +331,7 @@ mixtrVAsc1=[];
             ecc_y=xxyy(2);
             eccentricity_X1=ecc_x;
             eccentricity_Y1=ecc_y;
-          
+            
             %Compute flank two
             ecc_t2=-crowding_angle;
             cs= [cos(ecc_t2), sin(ecc_t2)];
@@ -380,7 +341,6 @@ mixtrVAsc1=[];
             eccentricity_X2=ecc_x2;
             eccentricity_Y2=ecc_y2;
             
-  
             theeccentricity_X=eccentricity_X(mixtrCW(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrCW(trial,1));
             
@@ -399,17 +359,17 @@ mixtrVAsc1=[];
         elseif whichTask == 3
             cueonset=jitterArray(trial); % cue onset for this trial, from jittered array
             trialTimeout=realtrialTimeout+cueonset;
-
-                imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-                imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
-
+            
+            imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
+            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
+            
             VA_thresho=1;
             imageRect = CenterRect([0, 0, (VA_thresho*pix_deg) (VA_thresho*pix_deg)], wRect);
             
             theeccentricity_X=eccentricity_X(mixtrAtt(trial,1));
             theeccentricity_Y=eccentricity_Y(mixtrAtt(trial,1));
             imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];          
+                imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
         end
         
         % compute response for trial
@@ -417,9 +377,8 @@ mixtrVAsc1=[];
         theans(trial)=randi(4);
         ori=theoris(theans(trial));
         
-        Priority(0);
-      
- FLAPVariablesReset
+        
+        FLAPVariablesReset
         
         while eyechecked<1
             
@@ -429,17 +388,17 @@ mixtrVAsc1=[];
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-
+            
             % constrained fixation loop
             if  (eyetime2-pretrial_time)>=prefixationsquare && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-   
-             %   IsFixatingSquare
-[fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix)
+                
+                %   IsFixatingSquare
+                [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix)
                 if exist('starfix')==0
-                    startfix=GetSecs;
+                    startfix(trial)=eyetime2;
                     starfix=98;
                 end
-
+                
             elseif (eyetime2-pretrial_time)>prefixationsquare && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
                 fixating=1500;
@@ -469,12 +428,12 @@ mixtrVAsc1=[];
                             imageRectCue(3)+(newsamplex-wRect(3)/2)+theeccentricity_X+(cue_spatial_offset*pix_deg), imageRectCue(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                         globalimageRect_offs_cue=[imageRect_offs_cue;imageRect_offs_cue2;imageRect_offs_cue3;imageRect_offs_cue4];
                     end
-                                    
+                    
                     if exist('imageRect_offsCirc')==0
                         imageRect_offsCirc =[imageRectCirc(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                             imageRectCirc(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectCirc(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     end
-                
+                    
                     if mixtrAtt(trial,2)==  1 || mixtrAtt(trial,2)== 3 % drawing cue
                         
                         if oneOrfourCues ==4
@@ -483,11 +442,10 @@ mixtrVAsc1=[];
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue3,0,[],1);
                             Screen('DrawTexture',w, theDot, [], imageRect_offs_cue4,0,[],1);
                         else
-                                                  Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);  
+                            Screen('FrameOval', w,ContCirc, imageRect_offsCirc, oval_thick, oval_thick);
                         end
                     end
                 end
-                
                 
                 clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
                 clear stimstar
@@ -496,8 +454,8 @@ mixtrVAsc1=[];
                 
                 %no cue
             elseif (eyetime2-trial_time)>=cueonset+currentcueISI+currentcueduration && (eyetime2-trial_time)<cueonset+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-              % show target
-              if exist('imageRect_offs')==0
+                % show target
+                if exist('imageRect_offs')==0
                     imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
@@ -510,7 +468,7 @@ mixtrVAsc1=[];
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
                 end
                 if exist('stimstar') == 0
-                    stim_start=eyetime2;
+                    stim_start(trial)=eyetime2;
                     stimstar=1;
                 end
                 if whichTask == 2 % show flankers for crowding
@@ -518,46 +476,40 @@ mixtrVAsc1=[];
                         
                         imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y1,...
                             imageRect_offsFlankOne(3)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y1];
-                        
                         imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
                             imageRect_offsFlankOne(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
-                        
                         imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.635*pix_deg) imageRect_offs_flank1(2)-(0.635*pix_deg) imageRect_offs_flank1(3)+(0.635*pix_deg) imageRect_offs_flank1(4)+(0.635*pix_deg) ];
                         imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.635*pix_deg) imageRect_offs_flank2(2)-(0.635*pix_deg) imageRect_offs_flank2(3)+(0.635*pix_deg) imageRect_offs_flank2(4)+(0.635*pix_deg) ];
-                        
                         
                     end
                     Screen('FillOval',w, gray,imageRect_offscircle1); % letter to the left of target
                     Screen('FillOval',w, gray, imageRect_offscircle2); % letter to the right of target
-                     
+                    
                     Screen('DrawTexture',w, theCircles, [],imageRect_offs_flank1,anglout,[],1 ); % letter to the left of target
                     Screen('DrawTexture',w, theCircles, [], imageRect_offs_flank2,anglout,[],1); % letter to the right of target
                 end
-                                
+                
             elseif (eyetime2-trial_time)>=cueonset+currentcueISI+currentcueduration+stimulusduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 %after target presentation and no key pressed
                 
             elseif (eyetime2-trial_time)>=cueonset+currentcueISI+currentcueduration+stimulusduration && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
-                                %after target presentation and a key is pressed
-
-                                eyechecked=10^4;
+                %after target presentation and a key is pressed
                 
+                eyechecked=10^4;
                 thekeys = find(keyCode);
                 if length(thekeys)>1
                     thekeys=thekeys(1);
                 end
                 thetimes=keyCode(thekeys);
-                
-                
                 [secs  indfirst]=min(thetimes);
-                respTime=GetSecs;
+                respTime(trial)=secs;
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
             end
             eyefixation5
-           
+            
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
@@ -595,13 +547,11 @@ mixtrVAsc1=[];
                 elseif site ==3
                     GetEyeTrackerDatapixx
                 end
-                GetFixationDecision
-                
+                GetFixationDecision                
                 if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;
                     stopchecking=10;
-                end
-                
+                end               
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -616,17 +566,15 @@ mixtrVAsc1=[];
                         end
                         FixIndex(FixCount,2) = CheckCount-1;
                         FixatingNow = 0;
-                    end
-                    
-                end
-                
+                    end                   
+                end               
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         if trialTimedout(trial)== 0
             
             foo=(RespType==thekeys);
-            
+           
             if whichTask == 1
                 staircounterVA=staircounterVA+1;
                 ThreshlistVA(staircounterVA)=VAsize;
@@ -635,14 +583,11 @@ mixtrVAsc1=[];
                     nswr(trial)=1;
                     PsychPortAudio('Start', pahandle1);
                     corrcounterVA=corrcounterVA+1;
-                    if mixtrVA(trial,2) == 1
-                        
-                        if corrcounterVA>=sc.down
-                            
+                    if mixtrVA(trial,2) == 1                       
+                        if corrcounterVA>=sc.down                        
                             if isreversalsVA==1
                                 reversalsVA=reversalsVA+1;
                                 isreversalsVA=0;
-                                %      reversalcounterVA=reversalcounterVA+1;
                             end
                             thestep=min(reversalsVA+1,length(stepsizesVA));
                             if thestep>5
@@ -650,12 +595,9 @@ mixtrVAsc1=[];
                             end
                             threshVA=threshVA +stepsizesVA(thestep);
                             threshVA=min(threshVA,length(Sizelist));
-                        end
-                        
-                    elseif mixtrVA(trial,2)==2
-                        
-                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
-                            
+                        end                        
+                    elseif mixtrVA(trial,2)==2                        
+                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1                            
                             chec(trial) =99;
                             if sum(nswr(trial-3:trial))==4
                                 if isreversalsVA==1
@@ -681,8 +623,7 @@ mixtrVAsc1=[];
                                 threshVA=threshVA -stepsizesVA(thestep);
                                 threshVA=max(threshVA);
                             end
-                        end
-                        
+                        end                       
                     end
                 elseif (thekeys==escapeKey) % esc pressed
                     closescript = 1;
@@ -694,7 +635,6 @@ mixtrVAsc1=[];
                     break;
                 else % wrong response
                     resp = 0;
-                    
                     nswr(trial)=0;
                     PsychPortAudio('Start', pahandle2);
                     if mixtrVA(trial,2)==1
@@ -710,12 +650,9 @@ mixtrVAsc1=[];
                         threshVA=max(threshVA);
                         if threshVA<1
                             threshVA=1;
-                        end
-                        
-                    elseif mixtrVA(trial,2)==2
-                        
-                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1
-                            
+                        end                        
+                    elseif mixtrVA(trial,2)==2                        
+                        if mod(trial,4)==0 && trial>(sum(mixtrVA(:,2)==1))+1                            
                             if sum(nswr(trial-3:trial))==4
                                 if isreversalsVA==1
                                     reversalsVA=reversalsVA+1;
@@ -726,8 +663,7 @@ mixtrVAsc1=[];
                                     thestep=5;
                                 end
                                 threshVA=threshVA +stepsizesVA(thestep);
-                                threshVA=min(threshVA,length(Sizelist));
-                                
+                                threshVA=min(threshVA,length(Sizelist));                                
                             elseif sum(nswr(trial-3:trial))>2 && sum(nswr(trial-3:trial))<4
                                 threshVA=threshVA;
                             elseif sum(nswr(trial-3:trial))<2
@@ -740,14 +676,9 @@ mixtrVAsc1=[];
                                 threshVA=max(threshVA);
                             end
                         end
-                        
-                        
-                    end
+                   end
                 end
-                
-                
-                
-            elseif whichTask == 2
+          elseif whichTask == 2
                 
                 staircounterCW(mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,2))+1;
                 ThreshlistCW(mixtrCW(trial,2),staircounterCW(mixtrCW(trial,2)))=sep;
@@ -766,13 +697,12 @@ mixtrVAsc1=[];
                                 isreversalsCW(mixtrCW(trial,2))=0;
                             end
                             thestep=min(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
-                            if thestep>5 
+                            if thestep>5
                                 thestep=5;
                             end
                             threshCW(mixtrCW(trial,2))=threshCW(mixtrCW(trial,2)) +stepsizesCW(thestep);
-                            threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));
-                        end
-                        
+                            threshCW(mixtrCW(trial,2))=min( threshCW(mixtrCW(trial,2)),length(Separationtlist));            
+                        end                       
                     elseif mixtrCW(trial,3)==2
                         if mod(staircounterCW(mixtrCW(trial,2)),4)==0
                             
@@ -813,8 +743,7 @@ mixtrVAsc1=[];
                     if mixtrCW(trial,3)==1
                         if  corrcounterCW(mixtrCW(trial,2))>=sc.down
                             isreversalsCW(mixtrCW(trial,2))=1;
-                        end
-                        
+                        end                       
                         thestep=max(reversalsCW(mixtrCW(trial,2))+1,length(stepsizesCW));
                         if thestep>5
                             thestep=5;
@@ -850,10 +779,8 @@ mixtrVAsc1=[];
                             end
                         end
                     end
-                end
-                
-            elseif whichTask == 3
-                
+                end               
+            elseif whichTask == 3                
                 if foo(theans(trial))
                     resp = 1;
                     PsychPortAudio('Start', pahandle1);
@@ -867,15 +794,10 @@ mixtrVAsc1=[];
                     
                 end
             end
-            %   stim_stop=secs;
-            
-            
-            
-            
-        else
-            
+            %   stim_stop=secs;        
+        else          
             resp = 0;
-            respTime=0;
+            respTime(trial)=0;
             PsychPortAudio('Start', pahandle2);
         end
         if trialTimedout(trial)==0
@@ -883,11 +805,11 @@ mixtrVAsc1=[];
             cheis(kk)=thekeys;
         end
         
-        if exist('stim_start')==0
-            stim_start=0;
+        if exist('stimstar')==0
+            stim_start(trial)=0;
             stimnotshowed(totaltrial)=99;
         end
-        time_stim(kk) = respTime - stim_start;
+        time_stim(kk) = respTime(trial) - stim_start(trial);
         totale_trials(kk)=trial;
         coordinate(totaltrial).x=theeccentricity_X/pix_deg;
         coordinate(totaltrial).y=theeccentricity_Y/pix_deg;
@@ -896,7 +818,6 @@ mixtrVAsc1=[];
         vbltimestamp(totaltrial).ix=VBL_Timestamp;
         
         rispo(kk)=resp;
-        fixationdure(totaltrial)=trial_time-startfix;
         if whichTask==1
             lettersize(kk)=VAsize;
             tles(kk) = threshVA;
@@ -911,7 +832,7 @@ mixtrVAsc1=[];
             if exist('imageRect_offs')
                 SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
             end
-            Att_RT(kk) = respTime - stim_start;
+            Att_RT(kk) = respTime(trial) - stim_start(trial);
         end
         
         if exist('thekeys')
@@ -953,7 +874,7 @@ mixtrVAsc1=[];
             clear EndIndex
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
+            EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
             clear ErrorInfo
             
         end
@@ -973,10 +894,9 @@ mixtrVAsc1=[];
         
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-Screen('Flip', w);
+    Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
-    KbQueueWait;
+   
     
     % shut down EyeTracker
     if EyetrackerType==1
@@ -995,13 +915,14 @@ Screen('Flip', w);
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    KbQueueWait;
     ListenChar(0);
     %   Screen('Flip', w);
     ShowCursor;
-            Screen('CloseAll');
-        Screen('Preference', 'SkipSyncTests', 0);
-   
+    Screen('CloseAll');
+    Screen('Preference', 'SkipSyncTests', 0);
+    
     
     %% data analysis
     %thresho=permute(Threshlist,[3 1 2]);
@@ -1009,9 +930,7 @@ Screen('Flip', w);
     %to get the final value for each staircase
     %final_threshold=thresho(10,1:length(thresho(1,:,1)),1:length(thresho(1,1,:)));
     %total_thresh= [final_threshold(:,:,1) final_threshold(:,:,2)];
-    %%
-    
-    
+    %%    
 catch ME
     'There was an error caught in the main program.'
     psychlasterror()

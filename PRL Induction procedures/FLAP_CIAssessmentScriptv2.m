@@ -195,7 +195,7 @@ try
         end
 %         mixtr=[mixtr ones(length(mixtr(:,1)),1)];
     else 
-        mixcond{1,1} = [2 1; 1 2; 2 2; 2 1];
+        mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
         mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
         mixcond{3,1} = [2 1; 2 2; 1 2; 1 1];
         mixcond{4,1} = [2 2; 2 1; 1 1; 1 2];
@@ -349,7 +349,7 @@ try
         end
 % -------------------------------------------------------------------------        
         if demo==2
-            if mod(trial,round(length(mixtr)/40))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            if mod(trial,40)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
             

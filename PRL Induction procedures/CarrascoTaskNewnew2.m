@@ -1,7 +1,7 @@
 % Exogenous/endogenous switch task
 % written by Marcello A. Maniglia August 2022
 close all;
-clear;
+clear all;
 clc;
 commandwindow
 
@@ -59,20 +59,20 @@ try
     dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
     
     %% time parameters
-   % Jitter=[0.5:0.1:1]; %jitter array for trial start in seconds
-    Jitter=0.25; %jitter array for trial start in seconds
-    cueonset=0.5; % time between first O and the cue
+    % Jitter=[0.5:0.1:1]; %jitter array for trial start in seconds
+        precuetime=0.133; % time interval between cue appearance
+cueonset=0.5; % time between first O and the cue
     cueduration=[0.05 0.05 0.133 0.133]; % cue duration
     cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
-    circleduration=0.133; % duration of the first O
     presentationtime=0.133; % duration of the C
     posttargetcircleduration=0.133;
-    posttargetISIduration= 0.233;
+    posttargetISIduration= 0.133;
     fixTime=0.1/3;
     effectivetrialtimeout=8; %max time duration for a trial (otherwise it counts as elapsed)
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersFLAP % define common parameters
-    
+            Jitter=0.25; %jitter array for trial start in seconds
+
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
@@ -168,6 +168,18 @@ try
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(totalmixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
     
     exocuearray=[1, 5, 9, 13];
@@ -197,15 +209,23 @@ try
         
         FLAPVariablesReset
         
+        if EyetrackerType ==2
+            %start logging eye data
+            Datapixx('RegWrRd');
+            Pixxstruct(trial).TrialStart = Datapixx('GetTime');
+            Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
+        end
+      
         while eyechecked<1
-            
+            if EyetrackerType ==2
+                Datapixx('RegWrRd');
+            end
             if ScotomaPresent == 1
                 fixationscriptW
                 CarrascoStimuli
             end
-            if EyetrackerType ==2
-                Datapixx('RegWrRd');
-            end
+            DrawFormattedText(w, num2str(trial), (wRect(3)/2)-150, (wRect(4)/2)-150, white);
+            
             
             if  (eyetime2-pretrial_time)>=0 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 IsFixatingSquare % check for the eyes to stay in the fixation window for enough (fixTime) frames
@@ -215,7 +235,15 @@ try
                 end
             elseif (eyetime2-pretrial_time)>ifi && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = GetSecs;
+                if EyetrackerType ==2
+                    Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        Pixxstruct(trial).TrialOnset = Datapixx('GetMarker'); 
+                end
                 fixating=1500;
+                
             end
             currentcueISI=cueISI(mixtr(trial,2));
             currentcueduration=cueduration(mixtr(trial,2));
@@ -229,7 +257,7 @@ try
                 clear gaps
                 clear Dotloc
                 clear subimageRect_offs_cue
-            elseif (eyetime2-trial_time)>=trialonsettime && (eyetime2-trial_time)<trialonsettime+ifi*2+circleduration && fixating>400 && stopchecking>1
+            elseif (eyetime2-trial_time)>=trialonsettime && (eyetime2-trial_time)<trialonsettime+ifi*2+precuetime && fixating>400 && stopchecking>1
                 %    Screen('DrawTexture', w, theCircles, [], imageRect_offso, ori,[], attContr);
                 % compute cue
                 if mixtr(trial,3)== 1 %exo cue
@@ -272,7 +300,7 @@ try
                         end
                     end
                 end
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+circleduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+precuetime && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+precuetime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % present cue
                 Screen('FillOval', w, [255  255 255], subimageRect_offs_cue');
                 if exist('cueon')==0
@@ -281,10 +309,10 @@ try
                 end
                 imagearrayCC{trial}=Screen('GetImage', w);
                 
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+precuetime && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+precuetime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % cue-target ISI
                 tk=0;
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+circleduration && (eyetime2-trial_time)<=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+precuetime && (eyetime2-trial_time)<=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % show target
                 tk=tk+1;
                 showt(trial)=99;
@@ -292,6 +320,15 @@ try
                     targetpres(trial)=eyetime2;
                     targeton=99;
                     stim_start=eyetime2;
+                    if EyetrackerType ==2
+                        %set a marker to get the exact time the screen flips
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
+                        Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                    end
                 end
                 timetgt(trial)=eyetime2;
                 %                 if exist('imageRect_offs')==0
@@ -313,63 +350,65 @@ try
                 posttargetpres(trial)=eyetime2;
                 imagearray{trial,tk}=Screen('GetImage', w);
                 
-                if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
-                    % wait for response
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime=secs;
-                    mao(trial)=99;
-                    foo=(RespType==thekeys);
-                    
-                    if foo(theans(trial))
-                        resp = 1;
-                        PsychPortAudio('Start', pahandle1);
-                    elseif (thekeys==escapeKey) % esc pressed
-                        closescript = 1;
-                        break;
-                    else
-                        resp = 0;
-                        PsychPortAudio('Start', pahandle2);
-                    end
-                end
+%                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+%                     % wait for response
+%                     thekeys = find(keyCode);
+%                     if length(thekeys)>1
+%                         thekeys=thekeys(1);
+%                     end
+%                     thetimes=keyCode(thekeys);
+%                     [secs  indfirst]=min(thetimes);
+%                     respTime=secs;
+%                     mao(trial)=99;
+%                     foo=(RespType==thekeys);
+%                     
+%                     if foo(theans(trial))
+%                         resp = 1;
+%                         PsychPortAudio('Start', pahandle1);
+%                     elseif (thekeys==escapeKey) % esc pressed
+%                         closescript = 1;
+%                         break;
+%                     else
+%                         resp = 0;
+%                         PsychPortAudio('Start', pahandle2);
+%                     end
+%                 end
                 imagearrayT{trial,tk}=Screen('GetImage', w);
                 
-            elseif (eyetime2-trial_time)>trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+            elseif (eyetime2-trial_time)>trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % time after target presentation
                 gap(trial)=99;
                 if exist('gaps')==0
                     gaptime(trial)=eyetime2;
                     gaps=44;
                 end
-                % if a key was pressed check response
-                if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime=secs;
-                    mao(trial)=99;
-                    foo=(RespType==thekeys);
-                    
-                    if foo(theans(trial))
-                        resp = 1;
-                        PsychPortAudio('Start', pahandle1);
-                    elseif (thekeys==escapeKey) % esc pressed
-                        closescript = 1;
-                        break;
-                    else
-                        resp = 0;
-                        PsychPortAudio('Start', pahandle2);
-                    end
-                end
+          %      if a key was pressed check response
+%                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+%                     thekeys = find(keyCode);
+%                     if length(thekeys)>1
+%                         thekeys=thekeys(1);
+%                     end
+%                     thetimes=keyCode(thekeys);
+%                     [secs  indfirst]=min(thetimes);
+%                     respTime=secs;
+%                     mao(trial)=99;
+%                     foo=(RespType==thekeys);
+%                     
+%                     if foo(theans(trial))
+%                         resp = 1;
+%                         PsychPortAudio('Start', pahandle1);
+%                     elseif (thekeys==escapeKey) % esc pressed
+%                         closescript = 1;
+%                         break;
+%                     else
+%                         resp = 0;
+%                         PsychPortAudio('Start', pahandle2);
+%                     end
+%                     
+%                     
+%                 end
                 
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetISIduration && (eyetime2-trial_time)<trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 % mask circle after target
                 showdi(trial)=99;
                 Screen('FillOval',w, gray,imageRect_offscircle);
@@ -378,6 +417,7 @@ try
                 
                 imagearrayD{trial}=Screen('GetImage', w);
                 % check for button press
+                if mao(trial)<99
                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     
                     thekeys = find(keyCode);
@@ -404,9 +444,10 @@ try
                     % response
                     showdi2(trial)=99;
                 end
-            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+circleduration+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
+            end
+            elseif (eyetime2-trial_time)>=trialonsettime+ifi*2+cueonset+currentcueduration+currentcueISI+presentationtime+precuetime+posttargetcircleduration+posttargetISIduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%
                 %wait for response after the O after the target
-                
+                if mao(trial)<99
                 if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     
                     thekeys = find(keyCode);
@@ -423,7 +464,7 @@ try
                         eyechecked=10^4;
                     end
                 end
-                
+            end
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
@@ -459,7 +500,11 @@ try
             %                 Screen('FillRect', w, gray);
             %             end
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            
+
+            if exist('realstarttime')==0
+                trialOnset(trial)=eyetime2;
+                realstarttime=88;
+            end
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             % eyetracker fixation calcuation
             if EyeTracker==1
@@ -544,9 +589,7 @@ try
             ks(kk)=thekeys;
         else
             ks(kk)=99;
-            
         end
-        
         
         ResponseTime(kk)=respTime;
         StartStmulus(kk)=stim_start;
@@ -579,7 +622,53 @@ try
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
             clear ErrorInfo
+        end
+        if EyetrackerType==2
+            %read in eye data
+            Datapixx('RegWrRd');
+            status = Datapixx('GetTPxStatus');
+            toRead = status.newBufferFrames;
+            [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
             
+            %bufferData is formatted as follows:
+            %1      --- Timetag (in seconds)
+            %2      --- Left Eye X (in pixels)
+            %3      --- Left Eye Y (in pixels)
+            %4      --- Left Pupil Diameter (in pixels)
+            %5      --- Right Eye X (in pixels)
+            %6      --- Right Eye Y (in pixels)
+            %7      --- Right Pupil Diameter (in pixels)
+            %8      --- Digital Input Values (24 bits)
+            %9      --- Left Blink Detection (0=no, 1=yes)
+            %10     --- Right Blink Detection (0=no, 1=yes)
+            %11     --- Digital Output Values (24 bits)
+            %12     --- Left Eye Fixation Flag (0=no, 1=yes)
+            %13     --- Right Eye Fixation Flag (0=no, 1=yes)
+            %14     --- Left Eye Saccade Flag (0=no, 1=yes)
+            %15     --- Right Eye Saccade Flag (0=no, 1=yes)
+            %16     --- Message code (integer)
+            %17     --- Left Eye Raw X (in pixels)
+            %18     --- Left Eye Raw Y (in pixels)
+            %19     --- Right Eye Raw X (in pixels)
+            %20     --- Right Eye Raw Y (in pixels)
+            
+            %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
+            %in the console overlay. In tabletop and MEG setups, this view is
+            %inverted. This means "RIGHT" in our labelling convention corresponds
+            %to the participant's left eye. Similarly "LEFT" in our convention
+            %refers to left on the screen, which corresponds to the participant's
+            %right eye.
+            
+            %If you are using an MRI setup with an inverting mirror, "RIGHT" will
+            %correspond to the participant's right eye.
+            
+            %save eye data from trial as a table in the trial structure
+            Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
+                'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
+                'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
+            %interim save
+            % save(baseName, 'Pixxstruct');
+            % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
         end
         
         if (mod(trial,50))==1
@@ -598,9 +687,7 @@ try
         
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    Screen('Flip', w);
-    KbQueueWait;
+    
     
     % shut down EyeTracker
     if EyetrackerType==1
@@ -611,12 +698,17 @@ try
         end
         Eyelink('Shutdown');
     elseif EyetrackerType==2
+        Datapixx('StopTPxSchedule');
+        Datapixx('RegWrRd');
+        finish_time = Datapixx('GetTime');
         Datapixx('SetTPxSleep');
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     
-    
+    Screen('Flip', w);
+    KbQueueWait;
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
