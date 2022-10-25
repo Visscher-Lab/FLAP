@@ -31,7 +31,7 @@
 %contour (contour integration).
 
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -65,9 +65,9 @@ try
         mkdir('data')
     end
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    
+ filename='_FLAPtraining_type';
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     

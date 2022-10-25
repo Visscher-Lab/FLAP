@@ -221,7 +221,7 @@ try
         subMat={'one', 'two', 'five', 'seven', 'eight', 'nine', 'ten'};
         firstPartMat=AttMat.(subMat{tt(1)});
         secondPartMat=AttMat.(subMat{tt(2)});
-        mixtrAtt= [firstPartMat; secondPartMat];
+        mixtrAtt= [firstPartMat; secondPartMat(1:80,:)];
     elseif PRLlocations==2
         %if only two locations
         rep=40;
@@ -233,7 +233,7 @@ try
     jit=[0.5:0.5:1.5];
     
     jitterArray=[];
-    for ui=1:length(mixtrAtt(:,1))/4
+    for ui=1:length(mixtrAtt(:,1))/3
         tempjitter=jit(randperm(length(jit)))';
         jitterArray=[jitterArray;tempjitter];
     end
