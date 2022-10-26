@@ -678,7 +678,7 @@ try
                 Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=contr;
             end
             if AssessmentType==2 
-                Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
+                Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
             end
             if foo(theans(trial)) % if correct response
                 resp = 1;
