@@ -230,8 +230,7 @@ try
     end
     
     % for attention: create array of jittered trial onset
-    jit=[0.5:0.5:1.5];
-    
+    jit=[0.5:0.3:1.5];
     jitterArray=[];
     for ui=1:length(mixtrAtt(:,1))/4
         tempjitter=jit(randperm(length(jit)))';
