@@ -178,7 +178,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=80;  %total number of trials per staircase (per shape) % trials = 10; debugging
+            trials=20;  %total number of trials per staircase (per shape) % trials = 10; debugging
         end
     end
     
