@@ -261,12 +261,20 @@ try
                 AllShapes=size((Targy));
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
-        else % load thresholds from previous days
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-            [dx,dx] = sort([d.datenum]);
-            newest = d(dx(end)).name;
-            lasttrackthresh=load(['./data/' newest],'trackthresh');
-            trackthresh=lasttrackthresh.trackthresh;
+        else
+            if trainingType==2 || trainingType==4 % load thresholds from previous days
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'trackthresh');
+                trackthresh=lasttrackthresh.trackthresh;
+            elseif trainingType==1
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'thresh');
+                trackthresh=lasttrackthresh.thresh;
+            end
         end
         if trainingType==2
             thresh=trackthresh(shapesoftheDay);
