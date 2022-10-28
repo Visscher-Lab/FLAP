@@ -231,6 +231,10 @@ try
     
     % for attention: create array of jittered trial onset
     jit=[0.5:0.3:1.5];
+<<<<<<< HEAD
+=======
+    
+>>>>>>> c812844217c3abf24d307d1ae2f04e286f21b03b
     jitterArray=[];
     for ui=1:length(mixtrAtt(:,1))/4
         tempjitter=jit(randperm(length(jit)))';
@@ -936,4 +940,4 @@ try
 catch ME
     'There was an error caught in the main program.'
     psychlasterror()
-end
+    endh

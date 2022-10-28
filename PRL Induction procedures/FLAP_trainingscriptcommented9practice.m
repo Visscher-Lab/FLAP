@@ -276,7 +276,8 @@ try
                 thresh=lasttrackthresh.thresh;
                 Contlist2=load(['./data/' newest],'Contlist');
                 Contlist = Contlist2.Contlist;
-                currentsf=4;
+                lasttracksf=load(['./data/' newest],'currentsf');
+                currentsf=lasttracksf;
             end
         end
         if trainingType==2
