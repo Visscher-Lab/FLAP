@@ -621,6 +621,9 @@ try
                                 end
                                 threshVA=threshVA -stepsizesVA(thestep);
                                 threshVA=max(threshVA);
+                                if threshVA<1
+                                threshVA=1;
+                                end
                             end
                         end                       
                     end

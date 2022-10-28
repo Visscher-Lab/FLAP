@@ -178,7 +178,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=80;  %total number of trials per staircase (per shape) % trials = 10; debugging
+            trials=20;  %total number of trials per staircase (per shape) % trials = 10; debugging
         end
     end
     
@@ -678,7 +678,7 @@ try
                 Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=contr;
             end
             if AssessmentType==2 
-                Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
+                Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
             end
             if foo(theans(trial)) % if correct response
                 resp = 1;
@@ -871,10 +871,20 @@ try
         end
         kk=kk+1;
         if trialcounter>11 && mixtr(trial,2) == mixtr(trial-1,2)
-            if sum(Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2))-10:staircounter(mixtr(trial,1),mixtr(trial,2))))==0
-                DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
-                Screen('Flip', w);
-                KbQueueWait;
+            if AssessmentType == 1
+                if sum(Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2))-10:staircounter(mixtr(trial,1),mixtr(trial,2))))==0
+                    DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
+                    Screen('Flip', w);
+                    KbQueueWait;
+                end
+            else
+                if AssessmentType == 2
+                    if sum(Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))-10:Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))))==0
+                        DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
+                        Screen('Flip', w);
+                        KbQueueWait;
+                    end
+                end
             end
         end
     end

@@ -1,6 +1,6 @@
 % MNRead task
 % written by Marcello A. Maniglia October 2022 %2017/2022
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 

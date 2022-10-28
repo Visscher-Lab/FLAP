@@ -31,7 +31,7 @@
 %contour (contour integration).
 
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -65,9 +65,9 @@ try
         mkdir('data')
     end
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    
+ filename='_FLAPtraining_type';
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
@@ -261,12 +261,23 @@ try
                 AllShapes=size((Targy));
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
-        else % load thresholds from previous days
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-            [dx,dx] = sort([d.datenum]);
-            newest = d(dx(end)).name;
-            lasttrackthresh=load(['./data/' newest],'trackthresh');
-            trackthresh=lasttrackthresh.trackthresh;
+        else
+            if trainingType==2 || trainingType==4 % load thresholds from previous days
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'trackthresh');
+                trackthresh=lasttrackthresh.trackthresh;
+            elseif trainingType==1
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'thresh');
+                thresh=lasttrackthresh.thresh;
+                Contlist2=load(['./data/' newest],'Contlist');
+                Contlist = Contlist2.Contlist;
+                currentsf=4;
+            end
         end
         if trainingType==2
             thresh=trackthresh(shapesoftheDay);
@@ -307,21 +318,32 @@ try
             
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
+            sizeArray=log_unit_down(1.99, 0.008, nsteps)
+            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps)
             
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+            d = dir(['./data/' 'AR' '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
             
             [dx,dx] = sort([d.datenum]);
             newest = d(dx(end)).name;
             %  oldthresh=load(['./data/' newest],'thresh');
-            previousFixTime=load(['./data/' newest],'movieDuration');
-            previousresp=load(['./data/' newest],'rispo');
-            previoustrials=load(['./data/' newest],'trials');
-            
-            if sum(previousresp)/previoustrials< 0.8
-                coeffAdj=1.3;
-            elseif  sum(previousresp)/previoustrials> 0.8
-                coeffAdj=1;
-            end
+            previousFixTime2=load(['./data/' newest],'movieDuration');
+            %previousresp=load(['./data/' newest],'rispo');
+            previoustrials2=load(['./data/' newest],'trials');
+            coeffAdj2=load(['./data/' newest],'coeffAdj'); 
+            sizepointer2=load(['./data/' newest],'sizepointer');
+            flickerpointerPre2 = load(['./data/' newest],'flickerpointerPre');
+            flickerpointerPost2 = load(['./data/' newest],'flickerpointerPost');
+            coeffAdj = coeffAdj2.coeffAdj;
+            previousFixTime = previousFixTime2.movieDuration;
+            previoustrials = previoustrials2.trials;
+            sizepointer = sizepointer2.sizepointer;
+            flickerpointerPre = flickerpointerPre2.flickerpointerPre;
+            flickerpointerPost = flickerpointerPost2.flickerpointerPost;
+%             if sum(previousresp)/previoustrials< 0.8
+%                 coeffAdj=1.3;
+%             elseif  sum(previousresp)/previoustrials> 0.8
+%                 coeffAdj=1;
+%             end
         end
     end
     

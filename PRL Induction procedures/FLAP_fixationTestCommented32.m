@@ -1,6 +1,6 @@
 % PRL evaluation/Fixation task
 % written by Marcello A. Maniglia August 2022 %2017/2022
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -109,10 +109,15 @@ try
         eccentricity_X(ui)=ecc_x;
         eccentricity_Y(ui)=ecc_y;
     end
-    tr=10; % trials per target location
-    
-    mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
-    mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+    if Isdemo==0
+        tr=2;
+        mixtr=[repmat(1:length(angl),1,tr)'];
+        mixtr =mixtr(randperm(length(mixtr)),:);
+    elseif Isdemo==1
+        tr=10; % trials per target location
+        mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
+        mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+    end
     
     %% main loop
     HideCursor;

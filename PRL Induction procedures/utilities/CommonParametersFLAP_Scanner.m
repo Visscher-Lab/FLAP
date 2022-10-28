@@ -38,23 +38,7 @@ dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 jitterCI=1; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
 
-% training type 3/4
-holdtrial = 1; %for training type 3 and 4: we force a series of consecutive trials to be in the same location
-annulusOrPRL = 2; % in training types in which we force fixation before target appearance, do we want fixation within an annulus (1) or within the assigned PRL (2)? default is PRL
-timeflickerallowed=0.2; % time before flicker starts
-flickerpersistallowed=0.2; % time away from flicker in which flicker persists
-AnnulusTime = 2/3; %how long do they need to keep fixation near the pre-target element
-Jitter = [3:0.05:7]/3; %flickering duration for task type 3 and 4
-flickeringrate = 0.25; %rate of flickering (in seconds) for task type 3 and 4
-coeffAdj=1; % size of the fixation window for training task 3 and 4 (100% of the TRL size, it is adaptive in training type 3) NOT FULLY IMPLEMENTED YET, DETAILS STILL TO BE DECIDED
-CircConts=[0.51,1]*255; %low/high contrast circular cue
-radius=12.5;   %radius of the circle in which the target can appear (training type 3 and 4)
-cuecontrast=1; % contrast of the cue (0-1)
-% trial type-specific time parameters
-if trainingType==3 || trainingType==4
-    framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts
-    blankframeallowed=flickerpersistallowed/ifi; % frames away from flicker in which flicker persists
-end
+
 %% visual stimuli common parameters
 imsize=(stimulusSize*pix_deg)/2; %Gabor mask (effective stimulus size)
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
@@ -62,7 +46,7 @@ scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wR
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
 imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
 [xc, yc] = RectCenter(wRect);
-r_lim=((radius*pix_deg)-(imsize))/pix_deg; % visual space limits within which random locations are chosen
+%r_lim=((radius*pix_deg)-(imsize))/pix_deg; % visual space limits within which random locations are chosen
 fixwindowPix=fixwindow*pix_deg;
 
 midgray=0.5;
@@ -70,3 +54,13 @@ midgray=0.5;
 % Select specific text font, style and size:
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
+    %% scanner task related variables
+    startdatetime = datestr(now); %Current date and time as date vector. [year month day hour minute seconds]
+    interTrialIntervals1=[1 4 1 2 7 2 2 8 2 1; 3 7 1 1 3 4 1 4 5 1; 1 5 3 1 7 1 3 1 6 2; 2 5 1 2 1 8 3 4 1 3];
+    interTrialIntervals2=[4 1 1 2 8 2 3 1 6 2; 1 7 1 5 2 2 3 2 6 1; 2 1 5 2 8 1 3 4 2 2; 3 1 7 2 6 2 1 4 2 2];
+    activeblockcue=[2 2 1 2 1 1 2 2 2 1; 1 1 2 1 2 2 1 2 2 1; 1 1 2 2 2 1 2 1 1 1; 1 2 2 1 1 2 1 2 1 2]; %attention location (cue direction) 1:left, 2:right
+    activeblockstimulus1=[2 1;1 1;2 2;2 2;1 2;2 1;1 2;2 2;1 2;2 2];activeblockstimulus2=[2 1;1 2;2 1;2 1;1 1;1 2;1 1;1 1;1 1;2 1];activeblockstimulus3=[1 2;1 1;2 2;2 1;2 2;2 2;1 2;2 1;2 2;1 2];activeblockstimulus4=[1 1;1 2;1 2;2 1;1 2;2 1;1 2;2 2;1 1;2 1];%orientation of gabors/6 or 9 for left and right stimuli
+    activeblocktype=[2 2 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for CI stimulus
+    totalactiveblock=4;
+    TR=1.5;
+    totaltrialtime=TR*2;
