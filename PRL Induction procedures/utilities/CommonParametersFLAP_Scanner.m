@@ -46,7 +46,7 @@ scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wR
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
 imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
 [xc, yc] = RectCenter(wRect);
-r_lim=((radius*pix_deg)-(imsize))/pix_deg; % visual space limits within which random locations are chosen
+%r_lim=((radius*pix_deg)-(imsize))/pix_deg; % visual space limits within which random locations are chosen
 fixwindowPix=fixwindow*pix_deg;
 
 midgray=0.5;

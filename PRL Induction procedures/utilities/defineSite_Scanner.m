@@ -4,62 +4,56 @@ PC=getComputerName();
 AssertOpenGL;
 
 
-%     if site==0  % UAB lab
-%             addpath([pwd '\utilities2']);%this is for pc
-%             %screencm=[69.8, 35.5]; %lab1 with eye link
-%             screencm=[69.7, 40]; % lab2 with datapixx
-%             v_d=57;
-%             AssertOpenGL;
-%             oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-%             %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-%             screenNumber=max(Screen('Screens'));
-%             rand('twister', sum(100*clock));
-%             PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-%             %PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-%             %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-%             %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-%             oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-%             SetResolution(screenNumber, oldResolution);
-%             [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-%             %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
-%             %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
-%             fixationlengthy=10;
-%             fixationlengthx=10;
-%             EyeTracker =0;
-%             EyetrackerType=0;
-%         elseif site==1 %UCR no bits
-%             v_d=57;
-%             AssertOpenGL;
-%             screenNumber=max(Screen('Screens'));
-%             PsychImaging('PrepareConfiguration');
-%             % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-%     
-%             oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-%             SetResolution(screenNumber, oldResolution);
-%             [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-%             screencm=[40.6 30];
-%             %debug window
-%             [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-%             ScreenParameters=Screen('Resolution', screenNumber); %close all
-%             Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-%             Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-%         elseif site==2   %UAB scanner
-if site==2            
-screencm=[69.7, 39.2];
-            addpath([pwd '/utilities']);
-            v_d=57;
-            AssertOpenGL;
-            oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-            screenNumber=max(Screen('Screens'));
-            rand('twister', sum(100*clock));
-            PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-            [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-            fixationlengthy=10;
-            fixationlengthx=10;
-            EyeTracker =0;
-            EyetrackerType=0;
-       
-        end
+if site==0  % UAB lab
+    screencm=[69.8, 40]; % lab2 with datapixx
+    v_d=70;
+    screenNumber=max(Screen('Screens'));
+    PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+    %PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+    PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+    %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
+    oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
+    SetResolution(screenNumber, oldResolution);
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);
+    %             fixationlengthy=10;
+    %             fixationlengthx=10;
+    %             EyeTracker =0;
+    %             EyetrackerType=0;
+    %          elseif site==1 %UCR no bits
+    %             v_d=57;
+    %             AssertOpenGL;
+    %             screenNumber=max(Screen('Screens'));
+    %             PsychImaging('PrepareConfiguration');
+    %             % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+    %
+    %             oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+    %             SetResolution(screenNumber, oldResolution);
+    %             [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+    %             screencm=[40.6 30];
+    %             %debug window
+    %             [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    %             ScreenParameters=Screen('Resolution', screenNumber); %close all
+    %             Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    %             Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+    %         elseif site==2   %UAB scanner
+else site==2
+    screencm=[69.7, 39.2];
+    addpath([pwd '/utilities']);
+    v_d=70;
+    AssertOpenGL;
+    oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    screenNumber=max(Screen('Screens'));
+    rand('twister', sum(100*clock));
+    PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    %             fixationlengthy=10;
+    %             fixationlengthx=10;
+    %             EyeTracker =0;
+    %             EyetrackerType=0;
+    
+end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
 
@@ -96,22 +90,19 @@ InitializePsychSound(1); %'optionally providing
 %     pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
 %     pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
 % elseif site==3 % Windows
-if site==2
+%if site==2
     pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
     pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-end
+%end
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
     [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
 end
 
-
-pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    %% Trigger Setup
-   if site==2
+%% Trigger Setup
+if site==2
     a                               = cd;
     if a(1)=='/' % mac or linux
         a                           = PsychHID('Devices');
@@ -124,4 +115,4 @@ PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     end
     tChar = {'t'};
     rChar = {'r' 'g' 'b' 'y'};
-   end
+end

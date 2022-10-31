@@ -6,7 +6,7 @@
             
                   newTargy=Targy+jitteryci;
             newTargx=Targx+jitterxci;
-
+targetcord =newTargy(1)+yTrans  + (newTargx(1)+xTrans - 1)*ymax;
 
             xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
             yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
@@ -83,16 +83,16 @@
             yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
             %sum(replacementcounterx~=99)
 
-                xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
-                yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
+                xJitLoc(targetcord)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
+                yJitLoc(targetcord)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
                 theori=180*rand(1,length(eccentricity_XCI));
-                theori(targetcord)=Targori(1,:) +Orijit;
-            
+                %theori(targetcord)=Targori(1,:) +Orijit;
+            theori(targetcord)=Targori(1,:);
             
             %this is for the instructions
             
-                        examplenewTargy=Targy{shapesoftheDay(mixtr(trial,1))};
-            examplenewTargx=Targx{shapesoftheDay(mixtr(trial,1))};
+                        examplenewTargy=Targy;
+            examplenewTargx=Targx;
 
             exampletargetcord =examplenewTargy(1,:)+yTrans  + (examplenewTargx(1,:)+xTrans - 1)*ymax;
             exampletargetcord2 =examplenewTargy(2,:)+yTrans  + (examplenewTargx(2,:)+xTrans - 1)*ymax;

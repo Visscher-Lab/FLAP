@@ -261,12 +261,24 @@ try
                 AllShapes=size((Targy));
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
-        else % load thresholds from previous days
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-            [dx,dx] = sort([d.datenum]);
-            newest = d(dx(end)).name;
-            lasttrackthresh=load(['./data/' newest],'trackthresh');
-            trackthresh=lasttrackthresh.trackthresh;
+        else
+            if trainingType==2 || trainingType==4 % load thresholds from previous days
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'trackthresh');
+                trackthresh=lasttrackthresh.trackthresh;
+            elseif trainingType==1
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'thresh');
+                thresh=lasttrackthresh.thresh;
+                Contlist2=load(['./data/' newest],'Contlist');
+                Contlist = Contlist2.Contlist;
+                lasttracksf=load(['./data/' newest],'currentsf');
+                currentsf=lasttracksf;
+            end
         end
         if trainingType==2
             thresh=trackthresh(shapesoftheDay);
@@ -307,21 +319,32 @@ try
             
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
+            sizeArray=log_unit_down(1.99, 0.008, nsteps)
+            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps)
             
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+            d = dir(['./data/' 'AR' '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
             
             [dx,dx] = sort([d.datenum]);
             newest = d(dx(end)).name;
             %  oldthresh=load(['./data/' newest],'thresh');
-            previousFixTime=load(['./data/' newest],'movieDuration');
-            previousresp=load(['./data/' newest],'rispo');
-            previoustrials=load(['./data/' newest],'trials');
-            
-            if sum(previousresp)/previoustrials< 0.8
-                coeffAdj=1.3;
-            elseif  sum(previousresp)/previoustrials> 0.8
-                coeffAdj=1;
-            end
+            previousFixTime2=load(['./data/' newest],'movieDuration');
+            %previousresp=load(['./data/' newest],'rispo');
+            previoustrials2=load(['./data/' newest],'trials');
+            coeffAdj2=load(['./data/' newest],'coeffAdj'); 
+            sizepointer2=load(['./data/' newest],'sizepointer');
+            flickerpointerPre2 = load(['./data/' newest],'flickerpointerPre');
+            flickerpointerPost2 = load(['./data/' newest],'flickerpointerPost');
+            coeffAdj = coeffAdj2.coeffAdj;
+            previousFixTime = previousFixTime2.movieDuration;
+            previoustrials = previoustrials2.trials;
+            sizepointer = sizepointer2.sizepointer;
+            flickerpointerPre = flickerpointerPre2.flickerpointerPre;
+            flickerpointerPost = flickerpointerPost2.flickerpointerPost;
+%             if sum(previousresp)/previoustrials< 0.8
+%                 coeffAdj=1.3;
+%             elseif  sum(previousresp)/previoustrials> 0.8
+%                 coeffAdj=1;
+%             end
         end
     end
     
@@ -897,7 +920,7 @@ try
             updatecounter=updatecounter+1;
             %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
             if mean(unadjustedTimeperformance(end-9:end))>8
-                if mod(updatecounter,2)==0
+                if mod(updatecounter,2)==0 && flickerpointerPre ~= 0 && flickerpointerPre ~= 1
                     %here we implement staircase on flicker time
                     flickerpointerPre=flickerpointerPre-1;
                     flickerpointerPost=flickerpointerPost+1;
@@ -905,7 +928,7 @@ try
                     sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                 end
             elseif mean(unadjustedTimeperformance(end-9:end))<5
-                if mod(updatecounter,2)==0
+                if mod(updatecounter,2)==0 && flickerpointerPost ~= 0 && flickerpointerPost ~= 1 
                     %here we implement staircase on flicker time
                     flickerpointerPre=flickerpointerPre+1;
                     flickerpointerPost=flickerpointerPost-1;
