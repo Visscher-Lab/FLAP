@@ -405,10 +405,11 @@ try
         location =  zeros(length(mixtr), 6);
     end
     
-    
+   checkcounter = 0;
+   currentsf = currentsf.currentsf;
     %% HERE starts trial loop
     for trial=1:length(mixtr)
-        
+        checkcounter = checkcounter + 1;
         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
             practicePassed=0;
@@ -814,20 +815,29 @@ try
                 resp = 1;
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 if trainingType~=3
+%                     count1 = count1 + 1; % first stage staircase counter
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=corrcounter(mixtr(trial,1),mixtr(trial,3))+1;
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                             reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
                             isreversals(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            if isreversals(mixtr(trial,1),mixtr(trial,3))==1
+                                reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                                isreversals(mixtr(trial,1),mixtr(trial,3))=0;
+                            end
+                            thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                        end
                         % if we want to prevent streaking, uncomment below
-                        %corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+%                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     end
                 end
                 if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
                     
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down % if we have enough consecutive correct responses to
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3 % if we have enough consecutive correct responses to
                         %update stimulus intensity
                         if contr<SFthreshmin && currentsf<length(sflist)
                             currentsf=min(currentsf+1,length(sflist));
@@ -838,6 +848,22 @@ try
                         else
                             thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
                             thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
+                        end
+                        corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            %update stimulus intensity
+                            if contr<SFthreshmin && currentsf<length(sflist)
+                                currentsf=min(currentsf+1,length(sflist));
+                                foo=find(Contlist>=SFthreshmin);
+                                thresh(:,:)=foo(end)-SFadjust;
+                                corrcounter(:,:)=0;
+                                thestep=3;
+                            else
+                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                                thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
+                            end
+                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                     end
                 end
@@ -855,8 +881,14 @@ try
                 resp = 0; % if wrong response
                 PsychPortAudio('Start', pahandle2); % sound feedback
                 if trainingType~=3
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                        reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                            reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                        end
                     end
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
@@ -933,8 +965,10 @@ try
                     flickerpointerPre=flickerpointerPre+1;
                     flickerpointerPost=flickerpointerPost-1;
                 else
+                    if sizepointer~=length(sizeArray)
                     sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                end
+                    end
+                    end
             end
             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
@@ -998,8 +1032,8 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11 & trainingType~=3
-            if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
+        if trial>11 && trainingType~=3
+            if mod(checkcounter,10) == 0 && sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);
                 KbQueueWait;
@@ -1028,7 +1062,7 @@ try
 
     ShowCursor;
     Screen('CloseAll');
-    PsychPortAudio('Close', pahandle);
+    PsychPortAudio('Close', pahandle1);
     
 catch ME
     psychlasterror()

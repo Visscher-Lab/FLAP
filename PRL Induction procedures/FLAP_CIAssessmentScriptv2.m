@@ -294,7 +294,9 @@ try
     mixtr = mixtr{1,1};% this is just for debugging, for the actual study, this needs to be the mod of 
         %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
         trialcounter = 0;
-    for trial=1:length(mixtr)    
+        checkcounter = 0;
+    for trial=1:length(mixtr)  
+        checkcounter = checkcounter + 1;
         if trial > 1 && mixtr(trial,2) == mixtr(trial-1,2) && mixtr(trial,1) == mixtr(trial-1,1)
             trialcounter = trialcounter + 1;
         else
@@ -303,11 +305,11 @@ try
             end
         end
         % practice
-        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && AssessmentType==2
+        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && (AssessmentType==2 || AssessmentType == 1)
             practicePassed=0;
         end
         
-        if AssessmentType==2
+        if AssessmentType==2 || AssessmentType == 1
             while practicePassed==0
                 FLAPpracticeAssessment
             end
@@ -872,14 +874,14 @@ try
         kk=kk+1;
         if trialcounter>11 && mixtr(trial,2) == mixtr(trial-1,2)
             if AssessmentType == 1
-                if sum(Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2))-10:staircounter(mixtr(trial,1),mixtr(trial,2))))==0
+                if mod(checkcounter,10) == 0 && sum(Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2))-10:staircounter(mixtr(trial,1),mixtr(trial,2))))==0
                     DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                     Screen('Flip', w);
                     KbQueueWait;
                 end
             else
                 if AssessmentType == 2
-                    if sum(Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))-10:Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))))==0
+                    if mod(checkcounter,10) == 0 && sum(Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))-10:Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))))==0
                         DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                         Screen('Flip', w);
                         KbQueueWait;
