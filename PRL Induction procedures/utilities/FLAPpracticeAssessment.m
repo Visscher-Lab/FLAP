@@ -35,6 +35,9 @@ for practicetrial=1:practicetrialnum
     if practicetrial==1 && AssessmentType ==2
         InstructionCIAssessment
     end
+    if practicetrial == 1 && AssessmentType == 1
+        Instruction_Contrast_Assessment
+    end
     
     %  destination rectangle for the target stimulus
     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
