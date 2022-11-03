@@ -868,9 +868,16 @@ try
                     end
                 end
                 if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
                         thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
+                        corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                            thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
+                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                        end
                     end
                 end
             elseif (thekeys==escapeKey) % esc pressed
@@ -971,7 +978,7 @@ try
                     end
             end
             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
-            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
+            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
             coeffAdj=sizeArray(sizepointer);
         end
         

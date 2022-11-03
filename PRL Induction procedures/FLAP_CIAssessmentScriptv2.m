@@ -687,19 +687,27 @@ try
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 if AssessmentType~=3
                     corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,2))==1
                             reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
                             isreversals(mixtr(trial,1),mixtr(trial,2))=0;
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                            if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                                reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                                isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                            end
+                            thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                        end
                         % if we want to prevent streaking, uncomment below
-                        %corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                        %                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     end
                 end
                 if AssessmentType==1 
                     
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down % if we have enough consecutive correct responses to
+                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3 % if we have enough consecutive correct responses to
                         %update stimulus intensity
                         if contr<SFthreshmin && currentsf<length(sflist)
                             currentsf=min(currentsf+1,length(sflist));
@@ -711,12 +719,35 @@ try
                             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
                             thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
                         end
+                        corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                            %update stimulus intensity
+                            if contr<SFthreshmin && currentsf<length(sflist)
+                                currentsf=min(currentsf+1,length(sflist));
+                                foo=find(Contlist>=SFthreshmin);
+                                thresh(:,:)=foo(end)-SFadjust;
+                                corrcounter(:,:)=0;
+                                thestep=3;
+                            else
+                                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                                thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                            end
+                            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                        end
                     end
                 end
                 if AssessmentType==2
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+                        corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                            thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+                            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                        end
                     end
                 end
             elseif (thekeys==escapeKey) % esc pressed
@@ -727,8 +758,14 @@ try
                 resp = 0; % if wrong response
                 PsychPortAudio('Start', pahandle2); % sound feedback
                 if AssessmentType~=3
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+                        reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                            isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                        end
                     end
                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
