@@ -1,7 +1,7 @@
 
 Screen('FillRect', w, gray);
 
-    DrawFormattedText(w, 'Before each trial, a cue will indicate the location \n \n of the stimulus to attend (right: > or left: < ) \n \n Please look at the center of the screen during the experiment\n \n Index finger for 6 or left oriented stimulus \n Middle finger for 9 or right oriented stimulus \n \n','center', 100, white');
+    DrawFormattedText(w, 'Before each trial, a cue will indicate the location \n \n of the stimulus to attend (right: > or left: < ) \n \n Please look at the center of the screen during the experiment\n \n Index finger for the left oriented stimulus \n Middle finger for the right oriented stimulus \n \n','center', 560, white');
 
 
 

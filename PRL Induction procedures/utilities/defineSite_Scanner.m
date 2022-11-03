@@ -1,58 +1,31 @@
 %function [w, wRect]=defineSite(site)
-%Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
 PC=getComputerName();
 AssertOpenGL;
 
 
-if site==0  % UAB lab
-    screencm=[69.8, 40]; % lab2 with datapixx
+if site==1  % Windows @UAB Lab
+    screencm=[69.8, 40];
     v_d=70;
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-    %PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-    %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
     oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);
-    %             fixationlengthy=10;
-    %             fixationlengthx=10;
-    %             EyeTracker =0;
-    %             EyetrackerType=0;
-    %          elseif site==1 %UCR no bits
-    %             v_d=57;
-    %             AssertOpenGL;
-    %             screenNumber=max(Screen('Screens'));
-    %             PsychImaging('PrepareConfiguration');
-    %             % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-    %
-    %             oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-    %             SetResolution(screenNumber, oldResolution);
-    %             [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-    %             screencm=[40.6 30];
-    %             %debug window
-    %             [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-    %             ScreenParameters=Screen('Resolution', screenNumber); %close all
-    %             Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-    %             Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    %         elseif site==2   %UAB scanner
+    baseName=['.\data\' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
 else site==2
-    screencm=[69.7, 39.2];
-    addpath([pwd '/utilities']);
-    v_d=70;
+    screencm=[70.8, 39.8];
+    v_d=123;
     AssertOpenGL;
     oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));
     rand('twister', sum(100*clock));
     PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    %             fixationlengthy=10;
-    %             fixationlengthx=10;
-    %             EyeTracker =0;
-    %             EyetrackerType=0;
-    
+    baseName=['./data/' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -72,12 +45,7 @@ end
 
 theseed=sum(100*clock);
 rand('twister',theseed );
-% ifi = Screen('GetFlipInterval', w); %refresh rate
-% if ifi==0
-%     ifi=1/100;
-% end
 
-%end
 % Select specific text font, style and size:
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
@@ -85,15 +53,8 @@ Screen('TextSize',w, 42);
 InitializePsychSound(1); %'optionally providing
 % the 'reallyneedlowlatency' flag set to one to push really hard for low
 % latency'.
-%   pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-% if site<3
-%     pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-%     pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-% elseif site==3 % Windows
-%if site==2
-    pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-%end
+pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
     [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script

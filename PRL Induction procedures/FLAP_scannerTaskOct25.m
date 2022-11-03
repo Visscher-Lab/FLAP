@@ -6,11 +6,10 @@ clear;
 clc;
 commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
-
 %% take information from the user
 try
     prompt={'Subject Name', 'Pre or Post Scan','Run Number','site Mac Laptop(2)','demo (0) or session (1)', 'left (1) or right (2) TRL?'};
-    
+
     name= 'Subject Name';
     numlines=1;
     defaultanswer={'test','1', '1', '2','1','1'};
@@ -18,27 +17,24 @@ try
     if isempty(answer)
         return;
     end
-    
+
     SUBJECT = answer{1,:}; %Gets Subject Name
     prepost=str2num(answer{2,:});
     runnumber= str2num(answer{3,:});
     site= str2num(answer{4,:});  % 0=UAB disp++;1=UCR;2=Anymac;3=Datapixx
     Isdemo=answer{5,:};
     TRLlocation= str2num(answer{6,:}); %1=left, 2=right
-    
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data');
     end
-    
-    
-    baseName=['.\data\' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
     defineSite_Scanner %Screen parameters
     trainingType=0;
     CommonParametersFLAP_Scanner % define common parameters
-    
+
     %     StartSize=2; %for VA
     %     sigma_degBig=2;
     %     sigma_degSmall=.1;
@@ -59,14 +55,14 @@ try
     %     PC=getComputerName();
     %     %closescript=0;
     %     kk=1;
-    
+
     %% Stimuli creation
     coeffAdj=1;
     PreparePRLpatch % here I characterize PRL features
-    
+
     % Gabor stimuli
     createGabors_Scanner
-    
+
     % CI stimuli
     CIShapes_Scanner
     %     %% defining circles
@@ -94,16 +90,16 @@ try
     %     theDot = double(circle) .* double(theDot)+bg_index * ~double(circle);
     %     theDot=Screen('MakeTexture', w, theDot);
     %     rand('twister', sum(100*clock));
-    
+
     %% response
-    
+
     KbName('UnifyKeyNames');
-    
-    indexfingerresp = KbName('y');% left oriented gabor or six
-    middlefingerresp = KbName('g');% right oriented gabor or nine
+
+    indexfingerresp = KbName('b');% left oriented gabor or six
+    middlefingerresp = KbName('r');% right oriented gabor or nine
     %middlefingerresp = KbName('RightArrow');
     %indexfingerresp = KbName('LeftArrow');
-    
+
     escapeKey = KbName('ESCAPE');	% quit key
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % get keyboard for the key recording
@@ -117,14 +113,14 @@ try
         end
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
     %% main loop
     HideCursor;
     %      ListenChar(2);
     %      ListenChar(0);
-    
-    
-    
+
+
+
     %     colorfixation = white;
     %     [xc, yc] = RectCenter(wRect);
     %     eccentricity_X=[PRL1x PRL2x]*pix_deg;
@@ -134,7 +130,7 @@ try
     %
     %     eccentricity_Xdeg=[PRL1x PRL2x];
     %     eccentricity_Ydeg=[PRL1y PRL2y];
-    
+
     %% settings for individual small gabors for contour integration stimulus
     %    %stimulusSize = 2.5;
     %     %sigma_deg = stimulusSize/2.5;
@@ -221,7 +217,7 @@ try
     %     FixDotSize=15;
     %     xeye=[];%needed for eyefixation5 function
     %     yeye=[];%needed for eyefixation5 function
-    %    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     %% first instructions
     %    eyefixation5
     %     Screen('TextFont',w, 'Arial');
@@ -291,14 +287,14 @@ try
     %     imageRect_offsCImask2=[imageRectMask(1)+theeccentricity_XCI2, imageRectMask(2)+theeccentricity_YCI2,...
     %         imageRectMask(3)+theeccentricity_XCI2, imageRectMask(4)+theeccentricity_YCI2]; % mask location to the left stimulus
     %% draw everything on the instruction page
-    
+
     stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
     CIstimuliMod_ScannerIns;
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg;
     eccentricity_X(1)= theeccentricity_X;
     eccentricity_Y(1) =theeccentricity_Y ;
-    InstructionShape_Scanner
+    InstructionShapeScanner
     %InstructionFLAPscanner(w,wRect,eccentricity_X,eccentricity_Y,TRLlocation,pix_deg,pix_deg_vert,gray,white)
     %     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr ); % background of stimulus 9 for the instruction slide on the right side
     %     imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
@@ -317,7 +313,7 @@ try
     %     DrawFormattedText(w, 'or',950, 700, white);
     %
     %     FirstInstructionOnsetTime=Screen('Flip',w);
-    
+
     %% get trigger t
     ListenChar(2);
     soundsc(sin(1:.5:1000)); % play 'ready' tone
@@ -325,7 +321,7 @@ try
     commandwindow;
     startTime = wait4T(tChar);  %wait for 't' from scanner.
     disp(['Trigger received - ' startdatetime]);
-    
+
     fixationlength=10;
     fixationscriptW;
     WaitSecs(TR);
@@ -349,9 +345,9 @@ try
             fixationscriptW;
             cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
             if cue==1
-                DrawFormattedText(w, '<', 'center', 560', white);
+                DrawFormattedText(w, '<', 'center',540, white);
             else
-                DrawFormattedText(w, '>', 'center',560, white);
+                DrawFormattedText(w, '>', 'center',540, white);
             end
             CueOnsetTime=Screen('Flip',w);
             WaitSecs(0.250);
@@ -375,13 +371,13 @@ try
                 %                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X2, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y2];
                 if stimulusdirection_leftstim==1 %1 means right
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(2),[], gaborcontrast);
-                    
+
                 else
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
                 end
                 if stimulusdirection_rightstim==1 %1 means right
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
-                    
+
                 else
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(1),[], gaborcontrast);
                 end
@@ -399,7 +395,7 @@ try
                 %                 end
                 fixationscriptW;
             else %numbers
-                
+
                 %                 jitterxci(1)=possibleoffset(randi(length(possibleoffset)));
                 %                 jitteryci(1)=possibleoffset(randi(length(possibleoffset)));
                 %                 newTargy= Targy+jitteryci(1);
@@ -410,7 +406,7 @@ try
                 %                             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
                 %                         imageRect_offsCI2=imageRect_offsCI;
                 %
-                CIstimuliMod_Scanner
+                %                 CIstimuliMod_Scanner
                 imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                     imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                 imageRect_offsCIleft2=imageRect_offsCIleft;
@@ -418,8 +414,8 @@ try
                     imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                 imageRect_offsCIright2=imageRect_offsCIright;
                 imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
-                    imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
+                %imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
+                %    imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
                 % imageRect_offsCI =[imageRect_Small(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect_Small(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
                 %                     imageRect_Small(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect_Small(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
                 %                 imageRect_offsCII =[imageRect_Small(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect_Small(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
@@ -430,8 +426,8 @@ try
                 %                 imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
                 %                 imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
                 %                             imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
-                
-                
+
+
                 %                 if stimulusdirection_rightstim==1 % nine is shown in right side
                 %                     targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
                 %                     xJitLoc=pix_deg*(rand(1,length(imageRect_offs_Small))-.5)/JitRat; %plus or minus .25 deg
@@ -482,14 +478,8 @@ try
                 %                     xJitLoc2(targetcord2)=(pix_deg*offsetx(2,:))+xJitLoc2(targetcord2);
                 %                     yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
                 %                 end
-                
-                if stimulusdirection_leftstim==1 %1 means right
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr);
-                    imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord),:)=0;
-                else
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr);
-                    imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord),:)=0;
-                end
+
+
                 if stimulusdirection_rightstim==1 %1 means right
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr);
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
@@ -497,8 +487,14 @@ try
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr);
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
                 end
-                
-                
+                if stimulusdirection_leftstim==1 %1 means right
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Dcontr);
+                    imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
+                else
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Dcontr);
+                    imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
+                end
+
                 %                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 %                     imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
                 %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr ); % background of left stimulus
@@ -511,15 +507,15 @@ try
                 %Screen('FrameOval', w,gray, imageRect_offsCImask1, 22, 22);
                 fixationscriptW; %fixation aids
                 if cue==1 % we are showing cue during the stimulus presentation
-                    DrawFormattedText(w, '<', 'center', 560', white);
+                    DrawFormattedText(w, '<', 'center',540, white);%560
                 else
-                    DrawFormattedText(w, '>', 'center',560, white);
+                    DrawFormattedText(w, '>', 'center',540, white);
                 end
-                
+
             end
-            
+
             StimulusOnsetTime=Screen('Flip',w); %show stimulus
-            WaitSecs(0.200);
+            WaitSecs(10); %0.200
             fixationscriptW; %fixation aids
             ResponseFixationOnsetTime=Screen('Flip',w); %start of response time
             MaximumResponseTime=totaltrialtime-(ResponseFixationOnsetTime-trialstarttime); % maximum time to response
@@ -545,10 +541,10 @@ try
                         FlushEvents;
                         break;
                     end
-                    
+
                     if((keyTime-ResponseFixationOnsetTime)>MaximumResponseTime),timedout=true;
                     end
-                    
+
                 end
             elseif site==0
                 while ~timedout
@@ -573,7 +569,7 @@ try
                 end
             end
             % Begin the rest block jittered times between trials
-            
+
             itiforrun=eval(['interTrialIntervals' runnum]);
             iti=itiforrun(totalblock,trial)*TR;
             WaitSecs(iti);
@@ -586,42 +582,29 @@ try
         Screen('TextSize',w, 42);
         Screen('FillRect', w, gray);
         fixationscriptW;
-        DrawFormattedText(w, 'x', 'center', 558, white);
+        DrawFormattedText(w, 'x', 'center', 550, white);%558
         RestTime=Screen('Flip',w);
-        %   save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
-        
+        save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
+
         while GetSecs < RestTime + 15; %  rest for 15 sec
-            
+
         end
     end
-    
-    
+
+
     %% Clean up
-    DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
+    DrawFormattedText(w, 'Task completed', 'center', 'center', white);
+    ListenChar(0);
     Screen('Flip', w);
-    Screen('TextFont', w, 'Arial');
+
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    ListenChar(0);
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     ShowCursor;
-    
-    if site==1
-        Screen('CloseAll');
-        Screen('Preference', 'SkipSyncTests', 0);
-        PsychPortAudio('Close', pahandle);
-    else
-        Screen('Preference', 'SkipSyncTests', 0);
-        Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
-        Screen('Flip', w);
-        Screen('CloseAll');
-        if site<3
-            PsychPortAudio('Close', pahandle);
-        elseif site ==3
-            PsychPortAudio('Close', pahandle1);
-        end
-    end
-    
-    
+    Screen('CloseAll');
+    PsychPortAudio('Close', pahandle1);
+    PsychPortAudio('Close', pahandle2);
+
 catch ME
     'There was an error caught in the main program.'
     psychlasterror()

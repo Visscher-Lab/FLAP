@@ -60,7 +60,7 @@ Screen('TextSize',w, 42);
     interTrialIntervals2=[4 1 1 2 8 2 3 1 6 2; 1 7 1 5 2 2 3 2 6 1; 2 1 5 2 8 1 3 4 2 2; 3 1 7 2 6 2 1 4 2 2];
     activeblockcue=[2 2 1 2 1 1 2 2 2 1; 1 1 2 1 2 2 1 2 2 1; 1 1 2 2 2 1 2 1 1 1; 1 2 2 1 1 2 1 2 1 2]; %attention location (cue direction) 1:left, 2:right
     activeblockstimulus1=[2 1;1 1;2 2;2 2;1 2;2 1;1 2;2 2;1 2;2 2];activeblockstimulus2=[2 1;1 2;2 1;2 1;1 1;1 2;1 1;1 1;1 1;2 1];activeblockstimulus3=[1 2;1 1;2 2;2 1;2 2;2 2;1 2;2 1;2 2;1 2];activeblockstimulus4=[1 1;1 2;1 2;2 1;1 2;2 1;1 2;2 2;1 1;2 1];%orientation of gabors/6 or 9 for left and right stimuli
-    activeblocktype=[2 2 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for CI stimulus
+    activeblocktype=[2 1 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for CI stimulus
     totalactiveblock=4;
     TR=1.5;
     totaltrialtime=TR*2;
