@@ -250,7 +250,7 @@ try
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 
             elseif (eyetime2-pretrial_time)>=trialTimeout % trial timed out
-                stim_stop=GetSecs;
+                stim_stop(trial)=GetSecs;
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
             end
@@ -326,15 +326,15 @@ try
         end
         
         if trialTimedout(trial)==0
-            stim_stop=GetSecs;
+            stim_stop(trial)=GetSecs;
         end
         if closescript~=1
             movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
+            flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
+            Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
+            unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
+            totaltrialduration(trial)=flicker_time_start(trial)-circle_start(trial); % overall trial duration from stimulus appearance (static + flickering target)
         end
-        flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
-        Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
-        unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
-        totaltrialduration(trial)=flicker_time_start(trial)-circle_start(trial); % overall trial duration from stimulus appearance (static + flickering target)
         
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
@@ -346,8 +346,8 @@ try
         fixationdure(trial)=trial_time-startfix;
         
         SizeAttSti(kk) =imageRect_offs(3)-imageRect_offs(1);
-        cueendToResp(kk)=stim_stop-cue_last;
-        cuebeginningToResp(kk)=stim_stop-circle_start(trial);
+        cueendToResp(kk)=stim_stop(trial)-cue_last;
+        cuebeginningToResp(kk)=stim_stop(trial)-circle_start(trial);
         %  intervalBetweenFlickerandTrget(trial)=target_time_start-flicker_time_start;
         
         if EyeTracker==1
@@ -378,10 +378,10 @@ try
             clear EndIndex
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            EyeSummary.(TrialNum).TimeStamps.Fixation = circle_start; % stimulus appearance
-            EyeSummary.(TrialNum).TimeStamps.StimulusStart = flicker_time_start; % flicker start
-            EyeSummary.(TrialNum).TimeStamps.StimulusEnd = flicker_time_stop; % flicker end
-            EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
+            EyeSummary.(TrialNum).TimeStamps.Fixation = circle_start(trial); % stimulus appearance
+            EyeSummary.(TrialNum).TimeStamps.StimulusStart = flicker_time_start(trial); % flicker start
+            EyeSummary.(TrialNum).TimeStamps.StimulusEnd = flicker_time_stop(trial); % flicker end
+            EyeSummary.(TrialNum).TimeStamps.Response = stim_stop(trial);
             clear ErrorInfo
         end
         if (mod(trial,50))==1
