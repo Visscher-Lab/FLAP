@@ -32,7 +32,7 @@
 %contour (contour integration).
 
 
-close all; clear all; clc;
+close all; clear; clc;
 commandwindow
 
 
@@ -66,9 +66,9 @@ try
         mkdir('data')
     end
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    
+ filename='_FLAPtraining_type';
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
@@ -84,29 +84,6 @@ try
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end
-    
-    %% Sound
-    
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    
     %% Stimuli creation
     
     PreparePRLpatch % here I characterize PRL features
@@ -285,12 +262,24 @@ try
                 AllShapes=size((Targy));
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
-        else % load thresholds from previous days
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-            [dx,dx] = sort([d.datenum]);
-            newest = d(dx(end)).name;
-            lasttrackthresh=load(['./data/' newest],'trackthresh');
-            trackthresh=lasttrackthresh.trackthresh;
+        else
+            if trainingType==2 || trainingType==4 % load thresholds from previous days
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'trackthresh');
+                trackthresh=lasttrackthresh.trackthresh;
+            elseif trainingType==1
+                d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                [dx,dx] = sort([d.datenum]);
+                newest = d(dx(end)).name;
+                lasttrackthresh=load(['./data/' newest],'thresh');
+                thresh=lasttrackthresh.thresh;
+                Contlist2=load(['./data/' newest],'Contlist');
+                Contlist = Contlist2.Contlist;
+                lasttracksf=load(['./data/' newest],'currentsf');
+                currentsf=lasttracksf;
+            end
         end
         if trainingType==2
             thresh=trackthresh(shapesoftheDay);
@@ -331,21 +320,32 @@ try
             
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
+            sizeArray=log_unit_down(1.99, 0.008, nsteps)
+            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps)
             
-            d = dir(['./data/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+            d = dir(['./data/' 'AR' '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
             
             [dx,dx] = sort([d.datenum]);
             newest = d(dx(end)).name;
             %  oldthresh=load(['./data/' newest],'thresh');
-            previousFixTime=load(['./data/' newest],'movieDuration');
-            previousresp=load(['./data/' newest],'rispo');
-            previoustrials=load(['./data/' newest],'trials');
-            
-            if sum(previousresp)/previoustrials< 0.8
-                coeffAdj=1.3;
-            elseif  sum(previousresp)/previoustrials> 0.8
-                coeffAdj=1;
-            end
+            previousFixTime2=load(['./data/' newest],'movieDuration');
+            %previousresp=load(['./data/' newest],'rispo');
+            previoustrials2=load(['./data/' newest],'trials');
+            coeffAdj2=load(['./data/' newest],'coeffAdj'); 
+            sizepointer2=load(['./data/' newest],'sizepointer');
+            flickerpointerPre2 = load(['./data/' newest],'flickerpointerPre');
+            flickerpointerPost2 = load(['./data/' newest],'flickerpointerPost');
+            coeffAdj = coeffAdj2.coeffAdj;
+            previousFixTime = previousFixTime2.movieDuration;
+            previoustrials = previoustrials2.trials;
+            sizepointer = sizepointer2.sizepointer;
+            flickerpointerPre = flickerpointerPre2.flickerpointerPre;
+            flickerpointerPost = flickerpointerPost2.flickerpointerPost;
+%             if sum(previousresp)/previoustrials< 0.8
+%                 coeffAdj=1.3;
+%             elseif  sum(previousresp)/previoustrials> 0.8
+%                 coeffAdj=1;
+%             end
         end
     end
     
@@ -392,8 +392,9 @@ try
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-    InstructionFLAP(w,trainingType,gray,white)
-    
+   if trainingType~=2
+       InstructionFLAP(w,trainingType,gray,white)
+   end
     
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
@@ -405,10 +406,11 @@ try
         location =  zeros(length(mixtr), 6);
     end
     
-    
+   checkcounter = 0;
+   currentsf = currentsf.currentsf;
     %% HERE starts trial loop
     for trial=1:length(mixtr)
-        
+        checkcounter = checkcounter + 1;
         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
             practicePassed=0;
@@ -419,7 +421,10 @@ try
                 FLAPpractice
             end
         end
-        
+        if practicePassed==2
+           closescript=1;
+           break
+        end
         %% training type-specific staircases
         
         if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
@@ -477,7 +482,7 @@ try
                 theeccentricity_Y=ylimit(randi(length(xlimit)));
             end
         end
-
+        
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
@@ -542,9 +547,7 @@ try
             end
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                
                 % pre-event empty space, allows for some cleaning
-                
                 if trainingType==1 || trainingType==2 % no flicker type of training trial
                     counterflicker=-10000;
                 end
@@ -582,16 +585,17 @@ try
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
-                if skipforcedfixation==1 % skip the force fixation
+                if skipforcedfixation==1 % skip the forced fixation
                     counterannulus=(AnnulusTime/ifi)+1;
                     skipcounterannulus=1000;
                 else %force fixation for training types 1 and 2
-                %   [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
-                    
-                  [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
-                    
-                    if trainingType~=3
-                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                    if trainingType<3
+                        [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    elseif trainingType>2
+                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                    end
+                    if trainingType~=3 % no more dots!
+               %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
                         if exist('isendo') == 0
                             isendo=0;
@@ -611,7 +615,7 @@ try
                         newtrialtime=GetSecs;
                         skipcounterannulus=1000;
                     end
-                end               
+                end
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1 && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
                 % HERE I exit the script if I press ESC
                 thekeys = find(keyCode);
@@ -624,7 +628,7 @@ try
                 % training type is 1 or 2, this is skipped
                 
                 if exist('flickerstar') == 0 % start flicker timer
-                    flicker_time_start(trial)=GetSecs; % beginning of the overall flickering period
+                    flicker_time_start(trial)=eyetime2; % beginning of the overall flickering period
                     flickerstar=1;
                     flickswitch=0;
                     flick=1;
@@ -746,9 +750,9 @@ try
             eyefixation5
             if ScotomaPresent == 1 % do we want the scotoma? (default is yes)
                 Screen('FillOval', w, scotoma_color, scotoma);
-               if trainingType>2
-                   visiblePRLring
-               end
+                if trainingType>2
+                    visiblePRLring
+                end
             else % else we get a fixation cross and no scotoma
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
@@ -812,20 +816,29 @@ try
                 resp = 1;
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 if trainingType~=3
+%                     count1 = count1 + 1; % first stage staircase counter
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=corrcounter(mixtr(trial,1),mixtr(trial,3))+1;
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                             reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
                             isreversals(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            if isreversals(mixtr(trial,1),mixtr(trial,3))==1
+                                reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                                isreversals(mixtr(trial,1),mixtr(trial,3))=0;
+                            end
+                            thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                        end
                         % if we want to prevent streaking, uncomment below
-                        %corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+%                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     end
                 end
                 if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
                     
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down % if we have enough consecutive correct responses to
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3 % if we have enough consecutive correct responses to
                         %update stimulus intensity
                         if contr<SFthreshmin && currentsf<length(sflist)
                             currentsf=min(currentsf+1,length(sflist));
@@ -837,12 +850,35 @@ try
                             thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
                             thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
                         end
+                        corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            %update stimulus intensity
+                            if contr<SFthreshmin && currentsf<length(sflist)
+                                currentsf=min(currentsf+1,length(sflist));
+                                foo=find(Contlist>=SFthreshmin);
+                                thresh(:,:)=foo(end)-SFadjust;
+                                corrcounter(:,:)=0;
+                                thestep=3;
+                            else
+                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                                thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
+                            end
+                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                        end
                     end
                 end
                 if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
                         thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
+                        corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                            thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
+                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                        end
                     end
                 end
             elseif (thekeys==escapeKey) % esc pressed
@@ -853,8 +889,14 @@ try
                 resp = 0; % if wrong response
                 PsychPortAudio('Start', pahandle2); % sound feedback
                 if trainingType~=3
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                        reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                    else
+                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                            isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                            reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                        end
                     end
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
@@ -898,7 +940,7 @@ try
             cuebeginningToResp(kk)=stim_stop-circle_start;
         end
         if trainingType > 2 % if it's a
-            training type with flicker
+            %   training type with flicker
             %   fixDuration(trial)=flicker_time_start-trial_time;
             if flickerdone>1
                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
@@ -906,40 +948,39 @@ try
                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
                 unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
             end
-        end       
+        end
         if trainingType==2
             trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
             threshperday(expDay,:)=trackthresh;
-        end        
-        if (mod(trial,150))==1
-            if trial==1
-            else
+        end
+        if (mod(trial,150))==1 && trial>1
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-            end
         end
         if (mod(trial,10))==1 && trial>1 && trainingType==3
-                     updatecounter=updatecounter+1;
-%some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-                if mean(unadjustedTimeperformance(end-9:end))>8
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                        flickerpointerPre=flickerpointerPre-1;
-                        flickerpointerPost=flickerpointerPost+1;
-                    else
-                        sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
-                elseif mean(unadjustedTimeperformance(end-9:end))<5
-                    if mod(updatecounter,2)==0
-                        %here we implement staircase on flicker time
-                        flickerpointerPre=flickerpointerPre+1;
-                        flickerpointerPost=flickerpointerPost-1;
-                    else
-                        sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-                    end
+            updatecounter=updatecounter+1;
+            %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
+            if mean(unadjustedTimeperformance(end-9:end))>8
+                if mod(updatecounter,2)==0 && flickerpointerPre ~= 0 && flickerpointerPre ~= 1
+                    %here we implement staircase on flicker time
+                    flickerpointerPre=flickerpointerPre-1;
+                    flickerpointerPost=flickerpointerPost+1;
+                else
+                    sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
                 end
-                timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
-                flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
-                coeffAdj=sizeArray(sizepointer);
+            elseif mean(unadjustedTimeperformance(end-9:end))<5
+                if mod(updatecounter,2)==0 && flickerpointerPost ~= 0 && flickerpointerPost ~= 1 
+                    %here we implement staircase on flicker time
+                    flickerpointerPre=flickerpointerPre+1;
+                    flickerpointerPost=flickerpointerPost-1;
+                else
+                    if sizepointer~=length(sizeArray)
+                    sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+                    end
+                    end
+            end
+            timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
+            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
+            coeffAdj=sizeArray(sizepointer);
         end
         
         TRLsize(trial)=coeffAdj;
@@ -958,7 +999,7 @@ try
         rectimage{kk}=imageRect_offs;
         if exist('endExp')
             totalduration=(endExp-startExp)/60;
-        end       
+        end
         %% record eyelink-related variables
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -999,20 +1040,18 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11
-        if sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
-            DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
-            Screen('Flip', w);
-            KbQueueWait;
-        end
+        if trial>11 && trainingType~=3
+            if mod(checkcounter,10) == 0 && sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
+                DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
+                Screen('Flip', w);
+                KbQueueWait;
+            end
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     
     ListenChar(0);
     Screen('Flip', w);
-    KbQueueWait;
     
     %% shut down EyeTracker and screen functions
     if EyetrackerType==1
@@ -1026,10 +1065,12 @@ try
     
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+        save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    KbQueueWait;
+
     ShowCursor;
     Screen('CloseAll');
-    PsychPortAudio('Close', pahandle);
+    PsychPortAudio('Close', pahandle1);
     
 catch ME
     psychlasterror()

@@ -19,7 +19,8 @@ countblank=[];
 blankcounter2=0;
 counterflicker2=0;
 turnFlickerOn=0;
-TrialNum = strcat('Trial',num2str(trial));Priority(0);
+TrialNum = strcat('Trial',num2str(trial));
+Priority(0);
 eyechecked=0; % while 0, trial loop is active
 KbQueueFlush(); % flushes all the keyboard responses (resets)
 stopchecking=-100;
