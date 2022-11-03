@@ -20,15 +20,33 @@ thresho=permute(Threshlist,[3 1 2]);
 shapes_type={ '9 vs 6','2 vs 5', 'q vs p', 'b vs d', 'eggs', 'diagonal line', 'horizontal vs vertical line'};
 shapesoftheDay
 sz=size(thresho);
+corr_mat = reshape(rispo,[166,3]);
+% for ui=1:sz(2)
+% % subplot(1,3,ui)
+% figure(ui)
+% scatter(1:sz(1),thresho(:,ui), 'filled')
+%  xlabel('n trials', 'fontsize', 10);
+% 
+%  ylabel('jitter', 'fontsize', 10);
+%  title(shapes_type{shapesoftheDay(ui)})
+% 
+% end
 
 for ui=1:sz(2)
-subplot(2,3,ui)
-scatter(1:sz(1),thresho(:,ui), 'filled')
- xlabel('n trials', 'fontsize', 10);
-
- ylabel('jitter', 'fontsize', 10);
- title(shapes_type{shapesoftheDay(ui)})
-
+    figure(ui)
+    for i = 1:sz(1)
+        if corr_mat(i,ui) == 1
+            plot(i,thresho(i,ui),'.b','MarkerSize', 10)
+            hold on;
+        else
+            plot(i,thresho(i,ui),'*r','MarkerSize', 5)
+            hold on;
+        end
+        xlabel('n trials', 'fontsize', 10);
+        
+        ylabel('jitter', 'fontsize', 10);
+        title(shapes_type{shapesoftheDay(ui)})
+    end
 end
 
       print([name session 'training2' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI

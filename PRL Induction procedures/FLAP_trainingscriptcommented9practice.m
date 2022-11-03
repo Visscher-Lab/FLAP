@@ -277,7 +277,7 @@ try
                 Contlist2=load(['./data/' newest],'Contlist');
                 Contlist = Contlist2.Contlist;
                 lasttracksf=load(['./data/' newest],'currentsf');
-                currentsf=lasttracksf;
+                currentsf=lasttracksf.currentsf;
             end
         end
         if trainingType==2
@@ -406,10 +406,18 @@ try
     end
     
    checkcounter = 0;
-   currentsf = currentsf.currentsf;
+   shapecounter = 0;
+  % currentsf = currentsf.currentsf;
     %% HERE starts trial loop
     for trial=1:length(mixtr)
         checkcounter = checkcounter + 1;
+        if trial>1 && mixtr(trial,1) == mixtr(trial-1,1)
+            shapecounter = shapecounter+1;
+        else 
+            if trial>1 && mixtr(trial,1)~= mixtr(trial-1,1)
+                shapecounter = 0;
+            end
+        end
         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
             practicePassed=0;
@@ -584,6 +592,9 @@ try
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
+                if trainingType~=3 % no more dots!
+                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                end
                 if skipforcedfixation==1 % skip the forced fixation
                     counterannulus=(AnnulusTime/ifi)+1;
                     skipcounterannulus=1000;
@@ -594,7 +605,7 @@ try
                         [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     end
                     if trainingType~=3 % no more dots!
-               %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+%                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif trainingType==3 %force fixation for training types 3
                         if exist('isendo') == 0
                             isendo=0;
@@ -922,10 +933,48 @@ try
             else
                 PsychPortAudio('Start', pahandle1);
             end
-        else
+        else % if trial has timed out, 
+            % staircase update
+            if trainingType~=3
+                staircounter(mixtr(trial,1),mixtr(trial,3))=staircounter(mixtr(trial,1),mixtr(trial,3))+1;
+            end
+            if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
+                Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=contr;
+            end
+            if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
+                Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=Orijit;
+            end
             resp = 0;
             respTime=0;
             PsychPortAudio('Start', pahandle2);
+            if trainingType~=3
+                if  corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
+                    isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                    reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                else
+                    if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+                        isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                        reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+                    end
+                end
+                corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+            end
+            if trainingType==1 || trainingType == 4 && mixtr(trial,3)==1
+                if contr>SFthreshmax && currentsf>1
+                    currentsf=max(currentsf-1,1);
+                    thresh(:,:)=StartCont+SFadjust;
+                    corrcounter(:,:)=0;
+                    thestep=3;
+                else
+                    thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) -stepsizes(thestep);
+                    thresh(mixtr(trial,1),mixtr(trial,3))=max(thresh(mixtr(trial,1),mixtr(trial,3)),1);
+                end
+            end
+            if trainingType==2 || trainingType == 4 && mixtr(trial,3)==2
+                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) -stepsizes(thestep);
+                thresh(mixtr(trial,1),mixtr(trial,3))=max(thresh(mixtr(trial,1),mixtr(trial,3)),1);
+            end
         end
         if trainingType~=3 % if the trial didn't time out, save some variables
             if trialTimedout(trial)==0
@@ -1039,7 +1088,7 @@ try
             break;
         end
         kk=kk+1;
-        if trial>11 && trainingType~=3
+        if shapecounter>11 && trainingType~=3 
             if mod(checkcounter,10) == 0 && sum(Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3))-10:staircounter(mixtr(trial,1),mixtr(trial,3))))==0
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);

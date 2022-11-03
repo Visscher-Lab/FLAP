@@ -37,7 +37,7 @@ ppd = round(pi * rect(3) / atan(mon_width/v_dist/2) / 360);
 fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 
 %if mouse calibration is needed
-MouseCalib=1;
+MouseCalib=0;
 % oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
 % Mscreen=SetResolution(screenNumber, oldResolution);
 Mscreen=[1920 1080];
