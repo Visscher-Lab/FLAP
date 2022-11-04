@@ -150,7 +150,7 @@ try
 
                 fixationscriptW;
             else %numbers
-CIstimuliMod_ScannerIns
+                CIstimuliMod_ScannerIns
                 imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                     imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                 imageRect_offsCIleft2=imageRect_offsCIleft;
@@ -189,7 +189,7 @@ CIstimuliMod_ScannerIns
             end
 
             StimulusOnsetTime=Screen('Flip',w); %show stimulus
-            WaitSecs(10); %0.200
+            WaitSecs(0.2); %0.200
             fixationscriptW; %fixation aids
             ResponseFixationOnsetTime=Screen('Flip',w); %start of response time
             MaximumResponseTime=totaltrialtime-(ResponseFixationOnsetTime-trialstarttime); % maximum time to response
