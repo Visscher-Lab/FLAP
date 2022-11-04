@@ -9,6 +9,8 @@ newTargy=Targy+jitteryci;
 newTargx=Targx+jitterxci;
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
+xJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
+yJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
 
 if stimulusdirection_rightstim==1 % nine is shown in right side
     targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
