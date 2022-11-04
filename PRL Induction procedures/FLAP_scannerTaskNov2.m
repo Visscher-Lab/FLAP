@@ -8,7 +8,7 @@ commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
 %% take information from the user
 try
-    prompt={'Subject Name', 'Pre or Post Scan','Run Number','site Mac Laptop(2)','demo (0) or session (1)', 'left (1) or right (2) TRL?'};
+    prompt={'Subject Name', 'Pre or Post Scan','Run Number','site: Bits++(1), Mac Laptop(2)','demo (0) or session (1)', 'left (1) or right (2) TRL?'};
 
     name= 'Subject Name';
     numlines=1;
@@ -88,10 +88,16 @@ try
     soundsc(sin(1:.5:1000)); % play 'ready' tone
     disp('Ready, waiting for trigger...');
     commandwindow;
+    if site==1
+        tChar=KbName('t');
+        KbWait;
+        startTime=GetSecs;
+    else
     startTime = wait4T(tChar);  %wait for 't' from scanner.
+    end
     disp(['Trigger received - ' startdatetime]);
 
-    fixationlength=10;
+    %fixationlength=10;
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials

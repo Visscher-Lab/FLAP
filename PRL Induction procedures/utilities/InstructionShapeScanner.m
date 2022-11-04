@@ -37,6 +37,6 @@ imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetco
 
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2; yJitLoc; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.88);
 FirstInstructionOnsetTime=Screen('Flip', w);
-WaitSecs(0.5);
+%WaitSecs(0.5);
     
     %%

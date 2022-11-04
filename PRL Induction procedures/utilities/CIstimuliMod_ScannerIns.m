@@ -1,8 +1,9 @@
+Orijit=0;
 %jittering location of the target within the patch of distractors
 
-jitterxci=possibleoffset(randi(length(possibleoffset)));
-jitteryci=possibleoffset(randi(length(possibleoffset)));
-
+%jitterxci=possibleoffset(randi(length(possibleoffset)));
+%jitteryci=possibleoffset(randi(length(possibleoffset)));
+jitterxci=0;jitteryci=0;
 % here I define the shapes
 newTargy=Targy+jitteryci;
 newTargx=Targx+jitterxci;
@@ -21,7 +22,6 @@ else %six is shown in the left side
 end
 xModLoc=zeros(1,length(eccentricity_XCI));
 yModLoc=zeros(1,length(eccentricity_XCI));
-
 
 % here I adjust the offset of distractors to avoid cluttering the CI shape
 
@@ -154,20 +154,20 @@ yJitLoc2(yJitLoc2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 theori=180*rand(1,length(eccentricity_XCI));
 theori2=theori;
 if stimulusdirection_rightstim==1 % nine is shown in right side
-    theori(targetcord)=Targori(1,:)+Orijit;;
+    theori(targetcord)=Targori(1,:)+Orijit;
     xJitLoc(targetcord)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
 else %six is shown in the right side
-    theori(targetcord)=Targori(2,:)+Orijit;;
+    theori(targetcord)=Targori(2,:)+Orijit;
     xJitLoc(targetcord)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
 end
 if stimulusdirection_leftstim==1 % nine is shown in left side
-    theori2(targetcord2)=Targori(1,:)+Orijit;;
+    theori2(targetcord2)=Targori(1,:)+Orijit;
     xJitLoc2(targetcord2)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc2(targetcord2)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
 else %six is shown in the left side
-    theori2(targetcord2)=Targori(2,:)+Orijit;;
+    theori2(targetcord2)=Targori(2,:)+Orijit;
     xJitLoc2(targetcord2)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc2(targetcord2)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
 end
