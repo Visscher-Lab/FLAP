@@ -191,7 +191,8 @@ try
                     if CharAvail
                         [ch, keyTime] = GetChar;
                         responsekey=KbName(ch);
-                        RT(totalblock,trial)=keyTime.secs-ResponseFixationOnsetTime; %reaction time
+                        RTraw(totalblock,trial)=keyTime.secs;
+                        RT(totalblock,trial)=abs(keyTime.secs-ResponseFixationOnsetTime); %reaction time
                         conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
                         if any(conditions)==1
                             PsychPortAudio('Start', pahandle1); % feedback for true response
@@ -209,11 +210,12 @@ try
                     end
 
                 end
-            elseif site==0
+            elseif site==1
                 while ~timedout
                     [ keyIsDown, keyTime, keyCode ] = KbCheck;
                     responsekey = find(keyCode, 1);
                     if keyIsDown
+                        RTraw(totalblock,trial)=keyTime;
                         RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
                         conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
                         if any(conditions)==1
@@ -247,7 +249,7 @@ try
         fixationscriptW;
         DrawFormattedText(w, 'x', 'center', 550, white);%558
         RestTime=Screen('Flip',w);
-        save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
+        save(baseName,'RT','RTraw','ResponseType','trialstarttime','-append') %save our variables
 
         while GetSecs < RestTime + 15; %  rest for 15 sec
 
