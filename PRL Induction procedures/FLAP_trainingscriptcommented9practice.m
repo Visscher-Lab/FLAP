@@ -236,7 +236,7 @@ try
                 shapeMat(:,1)= [5 4 7];
             end
             
-            shapeMat(:,1)= [5 6 4];
+            shapeMat(:,1)= [4 6 4]; %[5 6 4]
             
             shapesoftheDay=shapeMat(:,expDay);
         end
