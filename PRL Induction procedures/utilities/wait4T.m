@@ -12,6 +12,7 @@ function startTime = wait4T(tChar)
 
 %% set defaults
 if ~exist('tChar','var')
+    
     tChar = {'t'};
 end
 ch = '';

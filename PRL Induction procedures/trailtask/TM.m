@@ -38,9 +38,7 @@ fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 
 %if mouse calibration is needed
 MouseCalib=0;
-% oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-% Mscreen=SetResolution(screenNumber, oldResolution);
-Mscreen=[1920 1080];
+Mscreen=[3840 1080];
 
 %sets and saves the random seed
 randseedvar=100*clock;

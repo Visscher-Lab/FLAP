@@ -33,7 +33,7 @@ ys=7;
 
 [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
 
-JitRat=4; % amount of jit ratio (the larger the value the less jitter)
+JitRat=1; % amount of jit ratio (the larger the value the less jitter)
 Oscat= 0.5;
 
 xlocsCI=x1(:)';
