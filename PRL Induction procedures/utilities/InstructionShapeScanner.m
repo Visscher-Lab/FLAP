@@ -5,15 +5,6 @@ Screen('FillRect', w, gray);
 
 
 
-%                 CIexample1=Targori{shapesoftheDay(mixtr(trial,1))}(1,:);
-%                CIexample2=Targori{shapesoftheDay(mixtr(trial,1))}(2,:);
-%
-%
-% tp=Targy{shapesoftheDay(mixtr(trial,1))};
-% tp2=Targx{shapesoftheDay(mixtr(trial,1))};
-%             exampletargetcord =tp(1,:)+yTrans  + (tp2(1,:)+xTrans - 1)*ymax;
-%             exampletargetcord2 =tp(2,:)+yTrans  + (tp2(2,:)+xTrans - 1)*ymax;
-
 imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
     imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
 imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
