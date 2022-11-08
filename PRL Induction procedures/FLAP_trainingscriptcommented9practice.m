@@ -154,7 +154,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials= 3%166;  %total number of trials per staircase (per shape)
+            trials= 166;  %total number of trials per staircase (per shape)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
