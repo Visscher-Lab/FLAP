@@ -233,10 +233,10 @@ try
             load NewShapeMat.mat;         % shape parameters for each session of training
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
-                shapeMat(:,1)= [1 2 3];
+                shapeMat(:,1)= [2 4 6];
             end
             
-            shapeMat(:,1)= [1 2 3]; %[5 6 4]
+            shapeMat(:,1)= [2 7 2]; %[5 6 4]
             
             shapesoftheDay=shapeMat(:,expDay);
         end
