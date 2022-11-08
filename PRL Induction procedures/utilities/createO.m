@@ -11,7 +11,7 @@
         theLetter = double(circle) .* double(theLetter)+gray * ~double(circle);
         theLetter=Screen('MakeTexture', w, theLetter);
         
-        theArrow=imread('Arrow.png');
+        theArrow=imread('Arrowv3.PNG');
         theArrow=theArrow(:,:,1);
         theArrow=imresize(theArrow,[nrw nrw],'bicubic');
         

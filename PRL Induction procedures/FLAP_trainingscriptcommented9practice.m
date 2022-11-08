@@ -154,7 +154,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=166;  %total number of trials per staircase (per shape)
+            trials= 3%166;  %total number of trials per staircase (per shape)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -236,7 +236,7 @@ try
                 shapeMat(:,1)= [1 2 3];
             end
             
-            %shapeMat(:,1)= [4 6 4]; %[5 6 4]
+            shapeMat(:,1)= [6 7 1]; %[5 6 4]
             
             shapesoftheDay=shapeMat(:,expDay);
         end
