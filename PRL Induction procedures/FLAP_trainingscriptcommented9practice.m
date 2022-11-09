@@ -424,7 +424,7 @@ try
             practicePassed=0;
         end
         
-        if trainingType==2
+        if trainingType<3
             while practicePassed==0
                 FLAPpractice
             end
