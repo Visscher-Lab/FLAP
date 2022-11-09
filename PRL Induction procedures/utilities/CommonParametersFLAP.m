@@ -28,6 +28,7 @@ preCueISI=0.75; % time between beginning of trial and first event in the trial (
 ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
 postCueISI=0.1; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
+AnnulusTime = 0.65; %how long do they need to keep fixation near the pre-target element
 if exist('test', 'var')
     if test==1
         stimulusduration=2.133; % stimulus duration during debugging
@@ -57,7 +58,6 @@ holdtrial = 1; %for training type 3 and 4: we force a series of consecutive tria
 annulusOrPRL = 2; % in training types in which we force fixation before target appearance, do we want fixation within an annulus (1) or within the assigned PRL (2)? default is PRL
 timeflickerallowed=0.2; % time before flicker starts
 flickerpersistallowed=0.2; % time away from flicker in which flicker persists
-AnnulusTime = 2/3; %how long do they need to keep fixation near the pre-target element
 Jitter = [3:0.05:7]/3; %flickering duration for task type 3 and 4
 flickeringrate = 0.25; %rate of flickering (in seconds) for task type 3 and 4
 coeffAdj=1; % size of the fixation window for training task 3 and 4 (100% of the TRL size, it is adaptive in training type 3) NOT FULLY IMPLEMENTED YET, DETAILS STILL TO BE DECIDED
