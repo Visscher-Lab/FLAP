@@ -157,21 +157,21 @@ theori=180*rand(1,length(eccentricity_XCI));
 theori2=theori;
 if stimulusdirection_rightstim==1 % nine is shown in right side
     theori(targetcord)=Targori(1,:)+Orijit;
-    xJitLoc(targetcord)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
-    yJitLoc(targetcord)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
+    xJitLoc(targetcord)=pix_deg*(offsetx(1,:))/coeffCI;%+xJitLoc(targetcord);
+    yJitLoc(targetcord)=pix_deg*(offsety(1,:))/coeffCI;%+xJitLoc(targetcord);
 else %six is shown in the right side
     theori(targetcord)=Targori(2,:)+Orijit;
-    xJitLoc(targetcord)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
-    yJitLoc(targetcord)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
+    xJitLoc(targetcord)=pix_deg*(offsetx(2,:))/coeffCI;%+xJitLoc(targetcord);
+    yJitLoc(targetcord)=pix_deg*(offsety(2,:))/coeffCI;%+xJitLoc(targetcord);
 end
 if stimulusdirection_leftstim==1 % nine is shown in left side
     theori2(targetcord2)=Targori(1,:)+Orijit;
-    xJitLoc2(targetcord2)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
-    yJitLoc2(targetcord2)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
+    xJitLoc2(targetcord2)=pix_deg*(offsetx(1,:))/coeffCI;%+xJitLoc(targetcord);
+    yJitLoc2(targetcord2)=pix_deg*(offsety(1,:))/coeffCI;%+xJitLoc(targetcord);
 else %six is shown in the left side
     theori2(targetcord2)=Targori(2,:)+Orijit;
-    xJitLoc2(targetcord2)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
-    yJitLoc2(targetcord2)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
+    xJitLoc2(targetcord2)=pix_deg*(offsetx(2,:))/coeffCI;%+xJitLoc(targetcord);
+    yJitLoc2(targetcord2)=pix_deg*(offsety(2,:))/coeffCI;%+xJitLoc(targetcord);
 end
 
 

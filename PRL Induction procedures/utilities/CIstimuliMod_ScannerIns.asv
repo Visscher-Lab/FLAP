@@ -9,15 +9,17 @@ newTargy=Targy+jitteryci;
 newTargx=Targx+jitterxci;
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
+xJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
+yJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
 
-if stimulusdirection_rightstim==1 % nine is shown in right side
+if stimulusdirection_rightstim==1 % pointing left
     targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
-else %six is shown in the right side
+else %pointing right
     targetcord =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
 end
-if stimulusdirection_leftstim==1 % nine is shown in left side
+if stimulusdirection_leftstim==1 % pointing left
     targetcord2 =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
-else %six is shown in the left side
+else %pointing right
     targetcord2 =newTargy(2,:)+yTrans  + (newTargx(2,:)+xTrans - 1)*ymax;
 end
 xModLoc=zeros(1,length(eccentricity_XCI));
@@ -153,20 +155,20 @@ yJitLoc2(yJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 yJitLoc2(yJitLoc2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 theori=180*rand(1,length(eccentricity_XCI));
 theori2=theori;
-if stimulusdirection_rightstim==1 % nine is shown in right side
+if stimulusdirection_rightstim==1 % pointing left
     theori(targetcord)=Targori(1,:)+Orijit;
     xJitLoc(targetcord)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
-else %six is shown in the right side
+else %pointing right
     theori(targetcord)=Targori(2,:)+Orijit;
     xJitLoc(targetcord)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
 end
-if stimulusdirection_leftstim==1 % nine is shown in left side
+if stimulusdirection_leftstim==1 % pointing left
     theori2(targetcord2)=Targori(1,:)+Orijit;
     xJitLoc2(targetcord2)=pix_deg*(offsetx(1))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc2(targetcord2)=pix_deg*(offsety(1))/coeffCI;%+xJitLoc(targetcord);
-else %six is shown in the left side
+else %pointing right
     theori2(targetcord2)=Targori(2,:)+Orijit;
     xJitLoc2(targetcord2)=pix_deg*(offsetx(2))/coeffCI;%+xJitLoc(targetcord);
     yJitLoc2(targetcord2)=pix_deg*(offsety(2))/coeffCI;%+xJitLoc(targetcord);
