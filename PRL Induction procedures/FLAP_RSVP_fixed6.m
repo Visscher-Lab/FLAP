@@ -30,7 +30,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test', '1', '1','0', '2', '1', '3' };
+    defaultanswer={'test', '1', '3','0', '2', '1', '3' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;

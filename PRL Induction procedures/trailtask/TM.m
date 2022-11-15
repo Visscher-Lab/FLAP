@@ -37,8 +37,9 @@ ppd = round(pi * rect(3) / atan(mon_width/v_dist/2) / 360);
 fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 
 %if mouse calibration is needed
-MouseCalib=0;
-Mscreen=[3840 1080];
+MouseCalib=1;
+xoff=1920;
+Mscreen=[1920 1080];
 
 %sets and saves the random seed
 randseedvar=100*clock;
@@ -112,10 +113,12 @@ for block=1:4  %loo through the 4 phases
             [x,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
             
             if MouseCalib
-                x=round(x*rect(3)/Mscreen(1));
+                x=round(x*rect(3)/Mscreen(1))-xoff;
                 y=round(y*rect(4)/Mscreen(2));
             end
             if any(buttons)
+                x
+                y
                 if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
                     RespTime(numresp,block)=GetSecs-StartTime(numresp,block);
                     CircFill(:,1:numresp)=CircleColorFillResp; %changes circle fill to show response

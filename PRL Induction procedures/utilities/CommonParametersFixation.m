@@ -12,19 +12,20 @@ practicetrials=5; % if we run in demo mode, how many trials do I want?
 
 %% general temporal parameters (trial events)
 
-prefixationsquare=0.5; % time interval between trial start and forced fixation period
+%prefixationsquare=0.5; % time interval between trial start and forced fixation period
 pretargettime=0.55; % time interval between end of forced fixation at the beginning of the trial and appearance of the target
-JitterFlicker=[0.5:0.5:2]; %jitter array for flicker duration
-initialfixationduration=0.5/3; % duration of the frame within which to keep the scotoma at the beginning of the trial
-trialTimeout = 8; % how long (seconds) should a trial last without a response
-realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
-AnnulusDuration=2;
-AnnulusTime=AnnulusDuration/3;
+JitterFlicker=[2:0.5:5]; %jitter array for flicker duration
+initialfixationduration=0.5; % duration of the frame within which to keep the scotoma at the beginning of the trial
+trialTimeout = 15; % how long (seconds) should a trial last without a response
+%realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
+%AnnulusDuration=2;
+%AnnulusTime=AnnulusDuration/3;
+AnnulusTime=0.65;
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
 kk=1; % trial counter
-timeflickerallowed=0.2; % time before flicker starts
-flickerpersistallowed=0.2; % time away from flicker in which flicker persists
+timeflickerallowed=0.052; % time before flicker starts
+flickerpersistallowed=0.052; % time away from flicker in which flicker persists
 framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts
 blankframeallowed=flickerpersistallowed/ifi; % frames away from flicker in which flicker persists
 

@@ -277,6 +277,7 @@ try
     % general instruction TO BE REWRITTEN
    if AssessmentType == 1 || AssessmentType == 2
        InstructionFLAPAssessment(w,AssessmentType,gray,white)
+                   theoris =[-45 45];
    end
     
     % check EyeTracker status, if Eyelink
@@ -333,7 +334,6 @@ try
         %% generate answer for this trial (training type 3 has no button response)
         
         if AssessmentType==1 
-            theoris =[-45 45];
             theans(trial)=randi(2);
             ori=theoris(theans(trial));
         elseif AssessmentType==2 

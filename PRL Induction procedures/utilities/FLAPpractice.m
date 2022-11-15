@@ -3,19 +3,20 @@ if trainingType==1
     ssf=sflist(currentsf);
     fase=randi(4);
     texture(trial)=TheGabors(currentsf, fase);
-    practicecontrastarray=[0.4 0.4 0.4 0.3 0.3 0.3 0.25 0.25 0.25]; %predefined contrast values for practice trials
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
+    practicecontrastarray=[0.6 0.6 0.6 0.4 0.4 0.4  0.2 0.2 0.2]; %predefined contrast values for practice trials
+    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
-    Jitpracticearray=[0 0  15 0 0  15 0 0  15]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.25 0.25 0.25]; % stimulus duration practice
-    targethighercontrast=[1 1 0 1 0 0 1 0 0]; % target contrast
-    FlickerTime=0;
+    Jitpracticearray=[0 0 0 10 10 10 15 15  15]; %  stimulus ori practice
+    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
+    targethighercontrast=[1 1 1 1 1 1 0 0 0]; % target contrast
     Tscat=0;
-    performanceThresh=0.75;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
-trialTimeout=20;
+FlickerTime=0;
+trialTimeout=10;
+performanceThresh=0.75;
+
 for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
     theans(practicetrial)=randi(2);
@@ -24,9 +25,10 @@ for practicetrial=1:practicetrialnum
         ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2
         Orijit=Jitpracticearray(practicetrial);
-        stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
         CIstimuliModPractice % add the offset/polarity repulsion
     end
+            stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
+
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg; % if training type 1 or 2, stimulus always presented in the center
     eccentricity_X(practicetrial)= theeccentricity_X;
@@ -34,6 +36,8 @@ for practicetrial=1:practicetrialnum
     
     if practicetrial==1 &&  trainingType ==2
         InstructionShape
+    elseif practicetrial==1 &&  trainingType ==1
+               InstructionFLAP(w,trainingType,gray,white)
     end
     
     %  destination rectangle for the target stimulus
