@@ -12,7 +12,7 @@ try
 
     name= 'test';
     numlines=1;
-    defaultanswer={'test','1', '1', '2','1','1'};
+    defaultanswer={'test','1', '1', '3','1','1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -96,12 +96,16 @@ try
         startTime = wait4T(tChar);  %wait for 't' from scanner.
     elseif site==3
         tChar=KbName('t');
-        KbWait;
-        startTime=GetSecs;
+        [TTLtime, keyCode]=KbWait;
+        startTime=TTLtime;
     end
     disp(['Trigger received - ' startdatetime]);
 
-    %fixationlength=10;
+%     n=1; %we need to collect ttl pulses from the scanner
+%     TTLpulse = find(keyCode, 1);
+%     TTL{n,1}=KbName(TTLpulse);TTL{n,2}=TTLtime;
+%     ttlpulses=false;
+
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials
@@ -109,47 +113,61 @@ try
         totalactiveblock=2;
     end
     for totalblock=1:totalactiveblock
-        if Isdemo==1
-            runnumber=1;
-        end
-        active=num2str(totalblock);
-        activeblock=activeblockcue(totalblock,:);
-        activeblockstim=eval(['activeblockstimulus' active]);% direction of gabors or being 6 or9 in both location
-        runnum=num2str(runnumber);
-        blocktype=activeblocktype(runnumber,totalblock);
+%         while ~ttlpulses
+%              [keyisdown,keytime,keycode]=KbCheck; %collect possible pulses from the scanner
+
+            if Isdemo==1
+                runnumber=1;
+            end
+            active=num2str(totalblock);
+            activeblock=activeblockcue(totalblock,:);
+            activeblockstim=eval(['activeblockstimulus' active]);% direction of gabors or being 6 or9 in both location
+            runnum=num2str(runnumber);
+            blocktype=activeblocktype(runnumber,totalblock);
+%             if keyisdown
+%                 possibleTTLpulse=find(keycode, 1);
+%                 TTL{n+1,1}=KbName(possibleTTLpulse);TTL{n+1,2}=keytime;
+%                 ttlpulses=true;
+%             end
+%             FlushEvents;
+%             break;
+%         end
         for trial=1:10
             trialstarttime(totalblock,trial)=GetSecs;
             Screen('TextFont',w, 'Arial');
-            Screen('TextSize',w, 42);
+            Screen('TextSize',w, 60);
             fixationscriptW;
             cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
+
             if cue==1
-                DrawFormattedText(w, '<', 'center',540, white);
+                DrawFormattedText(w, '<', 'center',cueloc, white);%688
             else
-                DrawFormattedText(w, '>', 'center',540, white);
+                DrawFormattedText(w, '>', 'center',cueloc, white);
             end
             CueOnsetTime=Screen('Flip',w);
-            WaitSecs(0.250);
+            while GetSecs<CueOnsetTime+0.250
+            end
             stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
             if blocktype==1 %gabors
                 gaborcontrast=0.35;
-                theoris =[-45 45];
+                theoris =[-45 45]; % whether right or left oriented gabor
+                %trl locations
                 imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                     imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
                 imageRect_offsright =[imageRect(1)-theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                     imageRect(3)-theeccentricity_X, imageRect(4)+theeccentricity_Y];
 
-                if stimulusdirection_leftstim==1 %1 means right
-                    Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(2),[], gaborcontrast);
-
-                else
+                if stimulusdirection_leftstim==1
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
-                end
-                if stimulusdirection_rightstim==1 %1 means right
-                    Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
 
                 else
+                    Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(2),[], gaborcontrast);
+                end
+                if stimulusdirection_rightstim==1
                     Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(1),[], gaborcontrast);
+
+                else
+                    Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
                 end
 
                 fixationscriptW;
@@ -185,21 +203,22 @@ try
                 Screen('FrameOval', w,gray, imageRect_offsCImaskright, 22, 22);
                 fixationscriptW; %fixation aids
                 if cue==1 % we are showing cue during the stimulus presentation
-                    DrawFormattedText(w, '<', 'center',540, white);%560
+                    DrawFormattedText(w, '<', 'center',cueloc, white);%688
                 else
-                    DrawFormattedText(w, '>', 'center',540, white);
+                    DrawFormattedText(w, '>', 'center',cueloc, white);
                 end
 
             end
 
             StimulusOnsetTime=Screen('Flip',w); %show stimulus
-            WaitSecs(0.200); %0.200
+            while GetSecs<StimulusOnsetTime+0.200 %stimulus presentation time is 200 ms
+            end
             fixationscriptW; %fixation aids
             ResponseFixationOnsetTime=Screen('Flip',w); %start of response time
             MaximumResponseTime=totaltrialtime-(ResponseFixationOnsetTime-trialstarttime(totalblock,trial)); % maximum time to response
             ListenChar(2);
             timedout=false;
-            RT(totalblock,trial)=0;ResponseType{totalblock,trial}='miss';
+            RT(totalblock,trial)=0;ResponseType{totalblock,trial}='miss';RTraw=0;%Resp_TTL{totalblock,trial}='no'
             if site==1
                 while ~timedout
                     [ keyIsDown, keyTime, keyCode ] = KbCheck;
@@ -254,6 +273,7 @@ try
                     if keyIsDown
                         RTraw(totalblock,trial)=keyTime;
                         RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
+                        TTL{totalblock,trial}=KbName(responsekey);
                         conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
                         if any(conditions)==1
                             PsychPortAudio('Start', pahandle1); % feedback for true response
@@ -281,10 +301,10 @@ try
         end
         clear responsekey;
         Screen('TextFont',w, 'Arial');
-        Screen('TextSize',w, 42);
+        Screen('TextSize',w, 60);
         Screen('FillRect', w, gray);
         fixationscriptW;
-        DrawFormattedText(w, 'x', 'center', 550, white);%558
+        DrawFormattedText(w, 'x', 'center', xloc, white);%685
         RestTime=Screen('Flip',w);
         save(baseName,'RT','RTraw','ResponseType','trialstarttime','-append') %save our variables
 

@@ -10,7 +10,7 @@ addpath([cd '/utilities']); %add folder with utilities files
 try
     prompt={'Subject Name', 'Pre or Post Scan','Run Number','site: Bits++(1), Mac Laptop(2), Windows Laptop(3)','demo (0) or session (1)', 'left (1) or right (2) TRL?'};
 
-    name= 'test';
+    name= 'Subject Name';
     numlines=1;
     defaultanswer={'test','1', '1', '2','1','1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
@@ -200,7 +200,7 @@ try
             ListenChar(2);
             timedout=false;
             RT(totalblock,trial)=0;ResponseType{totalblock,trial}='miss';
-            if site==1
+            if        site==1
                 while ~timedout
                     [ keyIsDown, keyTime, keyCode ] = KbCheck;
                     responsekey = find(keyCode, 1);
@@ -221,8 +221,7 @@ try
                     end;
                     if((keyTime-ResponseFixationOnsetTime)>MaximumResponseTime),timedout=true;
                     end
-                end
-            elseif   site==2
+                elseif site==2
                 while ~timedout
                     keyTime=GetSecs;
                     if CharAvail
@@ -247,27 +246,7 @@ try
                     end
 
                 end
-            elseif site==3
-                while ~timedout
-                    [ keyIsDown, keyTime, keyCode ] = KbCheck;
-                    responsekey = find(keyCode, 1);
-                    if keyIsDown
-                        RTraw(totalblock,trial)=keyTime;
-                        RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
-                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
-                        if any(conditions)==1
-                            PsychPortAudio('Start', pahandle1); % feedback for true response
-                            ResponseType{totalblock,trial}='correct';
-                        else
-                            PsychPortAudio('Start', pahandle2); %feedback for false response
-                            ResponseType{totalblock,trial}='false';
-                        end
-                        clear conditions;
-                        FlushEvents;
-                        break;
-                    end;
-                    if((keyTime-ResponseFixationOnsetTime)>MaximumResponseTime),timedout=true;
-                    end
+
                 end
             end
             % Begin the rest block jittered times between trials

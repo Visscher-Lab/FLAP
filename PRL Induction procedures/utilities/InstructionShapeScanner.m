@@ -26,7 +26,7 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [example
 %egg, 5...)
 imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord2),:)=0;
 
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2; yJitLoc; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.88);
+Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2; exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.88);
 FirstInstructionOnsetTime=Screen('Flip', w);
 %WaitSecs(0.5);
     
