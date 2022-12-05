@@ -12,11 +12,11 @@
         inputImage=imread([StimuliFolder thesentences(fg).name]);
         inputImage=inputImage(:,:,1);
         inputImage=inputImage(300:1050, 300:2200);
-        round([sizes(fg)*pix_deg (sizes(fg)/conversionfactor)*pix_deg])
+        round([sizes(fg)*pix_deg (sizes(fg)/conversionfactor)*pix_deg]);
         nrr=round(sizes(fg)*pix_deg);
         nrc=round((sizes(fg)/conversionfactor)*pix_deg);
         inputImage=imresize(inputImage,[nrc nrr],'bicubic');
         TheSentence(fg)=Screen('MakeTexture', w, inputImage);
-    end;
+    end
     
     

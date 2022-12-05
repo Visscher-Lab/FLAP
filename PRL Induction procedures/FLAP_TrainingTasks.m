@@ -154,7 +154,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials= 166;  %total number of trials per staircase (per shape)
+            trials= 166;  %total number of trials per staircase (per shape, we have 3 per day)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -236,7 +236,7 @@ try
                 shapeMat(:,1)= [2 4 6];
             end
             
-            shapeMat(:,1)= [2 7 2]; %[5 6 4]
+        %    shapeMat(:,1)= [5 2 7]; %[5 6 4]
             
             shapesoftheDay=shapeMat(:,expDay);
         end
@@ -246,8 +246,10 @@ try
                 if expDay==1
                     StartCont=15;  %starting value for Gabor contrast
                     currentsf=4;
+                    logUnitStep=0.05;
                 end
-                Contlist = log_unit_down(max_contrast+.122, 0.05, nsteps); % contrast list for trainig type 1 and 4
+                            theoris =[-45 45]; % possible orientation of the Gabor
+                Contlist = log_unit_down(max_contrast+.122, logUnitStep, nsteps); % contrast list for trainig type 1 and 4
                 Contlist(1)=1;
                 
                 if trainingType==1
@@ -320,8 +322,8 @@ try
             
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
-            sizeArray=log_unit_down(1.99, 0.008, nsteps)
-            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps)
+            sizeArray=log_unit_down(1.99, 0.008, nsteps);
+            persistentflickerArray=log_unit_up(0.08, 0.026, nsteps);
             
             d = dir(['./data/' 'AR' '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
             
@@ -391,11 +393,7 @@ try
     end
     ListenChar(0);
     
-    % general instruction TO BE REWRITTEN
-   if trainingType~=2
-       InstructionFLAP(w,trainingType,gray,white)
-   end
-    
+
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -424,7 +422,7 @@ try
             practicePassed=0;
         end
         
-        if trainingType==2
+        if trainingType<3
             while practicePassed==0
                 FLAPpractice
             end
@@ -433,6 +431,13 @@ try
            closescript=1;
            break
         end
+        
+        
+            % general instruction TO BE REWRITTEN
+   if trainingType~=2 && trial==1
+       InstructionFLAP(w,trainingType,gray,white)
+   end
+    
         %% training type-specific staircases
         
         if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
@@ -452,14 +457,15 @@ try
         if trainingType==3 || trainingType==4 %if it's a training type 3 or 4 trial, how long is the flickering?
             FlickerTime=Jitter(randi(length(Jitter)));
             actualtrialtimeout=realtrialTimeout;
-            trialTimeout=400000;
+         %   trialTimeout=400000;
+                        trialTimeout=realtrialTimeout+5;
+
         elseif trainingType==1 || trainingType==2 || demo==1 %if it's a training type 1 or 2 trial, no flicker
             FlickerTime=0;
         end
         %% generate answer for this trial (training type 3 has no button response)
         
         if trainingType==1 ||  (trainingType==4 && mixtr(trial,3)==1)
-            theoris =[-45 45];
             theans(trial)=randi(2);
             ori=theoris(theans(trial));
         elseif trainingType==2 || (trainingType==4 && mixtr(trial,3)==2)
@@ -603,7 +609,7 @@ try
                     if trainingType<3
                         [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
                     elseif trainingType>2
-                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus);
                     end
                     if trainingType~=3 % no more dots!
 %                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
@@ -829,6 +835,8 @@ try
                 if trainingType~=3
 %                     count1 = count1 + 1; % first stage staircase counter
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=corrcounter(mixtr(trial,1),mixtr(trial,3))+1;
+              % if more than 3 reversals have passed, we switch to a 3:1
+              % staircase
                     if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                             reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
@@ -836,6 +844,8 @@ try
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
                     else
+               % the staircase begins as a 1 up 1 down ujntil 3 reversals
+               % have passed
                         if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
                             if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                                 reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
@@ -915,7 +925,7 @@ try
                 if trainingType==1 || trainingType == 4 && mixtr(trial,3)==1
                     if contr>SFthreshmax && currentsf>1
                         currentsf=max(currentsf-1,1);
-                        thresh(:,:)=StartCont+SFadjust;
+                        thresh(:,:)=StartCont;
                         corrcounter(:,:)=0;
                         thestep=3;
                     else
@@ -930,7 +940,9 @@ try
             end
         elseif trainingType==3 % no response to be recorded here
             if closescript==1
-                PsychPortAudio('Start', pahandle2);
+       %         PsychPortAudio('Start', pahandle2);
+            elseif trialTimedout(trial)==1
+                                PsychPortAudio('Start', pahandle2);
             else
                 PsychPortAudio('Start', pahandle1);
             end

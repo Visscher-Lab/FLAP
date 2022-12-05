@@ -50,4 +50,4 @@ ca=1;
 
 condlist=fullfact([cndt ca]);
 
-mixtr=(1:trials)'
+mixtr=(1:trials)';

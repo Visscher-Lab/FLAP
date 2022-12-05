@@ -50,7 +50,7 @@ coeffCI=ecccoeffCI/2;
 
 
 Tcontr=0.938;         %target contrast
-Dcontr=0.38;        %distractor contrast
+Dcontr=0.58;        %distractor contrast
 
 
         ssf=1;

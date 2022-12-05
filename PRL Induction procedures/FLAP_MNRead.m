@@ -10,7 +10,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '1','0', '0','2','0' };
+    defaultanswer={'test','1', '3', '1','0', '0','2','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -243,11 +243,13 @@ try
         Screen('Flip',w);
         WaitSecs(0.5)
         
-        if thekeys~=wrongkey & thekeys~=escapeKey
+        if thekeys~=wrongkey && thekeys~=escapeKey
             clear thekeys
             KbQueueFlush()
             [keyIsDown, keyCode] = KbQueueCheck;
-            DrawFormattedText(w, '++++++++++++++++', 'center', 'center', white);
+%            DrawFormattedText(w, '++++++++++++++++', 'center', 'center', white);
+                        DrawFormattedText(w, '++++++++++++++++', 'center', 'center', [0 0 0]);
+
             Screen('Flip',w);
             while sum(keyCode)==0
                 [keyIsDown, keyCode] = KbQueueCheck;
@@ -260,12 +262,14 @@ try
                 closescript = 1;
                 %     return;
             elseif thekeys==wrongkey
-                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+%                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+                                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', [0 0 0]);
+
                 Screen('Flip',w);
                 save(baseName)
                 closescript = 1;
                 %    return
-            else thekeys~=wrongkey & thekeys~=escapeKey
+            else thekeys~=wrongkey && thekeys~=escapeKey
                 err=KbName(thekeys);
             end
             
@@ -373,7 +377,7 @@ try
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
         Screen('Flip', w);
         Screen('CloseAll');
-        PsychPortAudio('Close', pahandle);
+   %     PsychPortAudio('Close', pahandle);
     end
     
     
