@@ -49,8 +49,8 @@ try
 
     KbName('UnifyKeyNames');
 
-    indexfingerresp = KbName('b');% left oriented gabor or six
-    middlefingerresp = KbName('r');% right oriented gabor or nine
+    leftfingerresp = KbName('b');% left oriented gabor or six
+    rightfingerresp = KbName('r');% right oriented gabor or nine
     escapeKey = KbName('ESCAPE');	% quit key
 
     % get keyboard for the key recording
@@ -82,9 +82,10 @@ try
     eccentricity_X(1)= theeccentricity_X;
     eccentricity_Y(1) =theeccentricity_Y ;
     InstructionShapeScanner
-
     %% get trigger t
     ListenChar(2);
+    %KbQueueCreate(deviceIndex);
+    %KbQueueStart(deviceIndex);
     soundsc(sin(1:.5:1000)); % play 'ready' tone
     disp('Ready, waiting for trigger...');
     commandwindow;
@@ -226,7 +227,7 @@ try
                     if keyIsDown
                         RTraw(totalblock,trial)=keyTime;
                         RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
-                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
+                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
                         if any(conditions)==1
                             PsychPortAudio('Start', pahandle1); % feedback for true response
                             ResponseType{totalblock,trial}='correct';
@@ -249,7 +250,7 @@ try
                         responsekey=KbName(ch);
                         RTraw(totalblock,trial)=keyTime.secs;
                         RT(totalblock,trial)=abs(keyTime.secs-ResponseFixationOnsetTime); %reaction time
-                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
+                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
                         if any(conditions)==1
                             PsychPortAudio('Start', pahandle1); % feedback for true response
                             ResponseType{totalblock,trial}='correct';
@@ -274,7 +275,7 @@ try
                         RTraw(totalblock,trial)=keyTime;
                         RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
                         TTL{totalblock,trial}=KbName(responsekey);
-                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
+                        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
                         if any(conditions)==1
                             PsychPortAudio('Start', pahandle1); % feedback for true response
                             ResponseType{totalblock,trial}='correct';
@@ -317,6 +318,9 @@ try
     %% Clean up
     DrawFormattedText(w, 'Task completed', 'center', 'center', white);
     ListenChar(0);
+    %KbQueueStop;
+    %[pressed, keypress]=KbQueueCheck(deviceIndex);
+    %TTLpulses
     Screen('Flip', w);
 
     c=clock;

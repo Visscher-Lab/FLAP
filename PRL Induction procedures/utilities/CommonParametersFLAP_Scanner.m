@@ -61,9 +61,17 @@ Screen('TextSize',w, 42);
     interTrialIntervals3=[1 4 1 2 7 2 2 8 2 1; 3 7 1 1 3 4 1 4 5 1; 1 5 3 1 7 1 3 1 6 2; 2 5 1 2 1 8 3 4 1 3];
     interTrialIntervals4=[6 8 1 2 1 2 3 1 4 2; 1 7 1 5 2 2 3 2 6 1; 2 1 5 2 8 1 3 4 2 2; 3 1 7 2 6 2 1 4 2 2];
     interTrialIntervals5=[3 7 1 1 3 4 1 4 5 1; 5 6 2 1 2 1 3 2 7 1; 1 4 1 2 7 2 2 8 2 1; 2 5 1 2 1 8 3 4 1 3];
-    activeblockcue=[2 2 1 2 1 1 2 2 2 1; 1 1 2 1 2 2 1 2 2 1; 1 1 2 2 2 1 2 1 1 1; 1 2 2 1 1 2 1 2 1 2]; %attention location (cue direction) 1:left, 2:right
-    activeblockstimulus1=[2 1;1 1;2 2;2 2;1 2;2 1;1 2;2 2;1 2;2 2];activeblockstimulus2=[2 1;1 2;2 1;2 1;1 1;1 2;1 1;1 1;1 1;2 1];activeblockstimulus3=[1 2;1 1;2 2;2 1;2 2;2 2;1 2;2 1;2 2;1 2];activeblockstimulus4=[1 1;1 2;1 2;2 1;1 2;2 1;1 2;2 2;1 1;2 1];%orientation of gabors/6 or 9 for left and right stimuli
-    activeblocktype=[2 1 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for CI stimulus
-    totalactiveblock=4;
+    activeblockcue1=[2 1 2 1 1 2 1 1 2 2 2 1;2 1 1 1 2 1 2 2 1 2 2 1;1 2 1 1 2 2 2 1 2 1 1 2]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue2=[1 2 1 2 2 1 2 2 1 2 1 1;2 1 2 2 1 2 1 1 2 1 2 1;1 2 2 1 2 2 1 2 1 1 2 1]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue3=[1 2 2 2 1 2 1 1 2 1 2 1;1 2 1 2 2 1 2 1 1 2 2 1;1 2 2 1 2 1 2 1 2 1 2 1]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue4=[2 1 1 2 2 1 2 1 1 2 1 2;1 2 2 1 1 2 1 2 2 1 2 1;1 2 1 1 2 2 1 2 1 2 2 1]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue5=[1 2 2 1 1 2 1 2 2 1 2 1;1 2 1 1 2 1 2 2 1 2 2 1;1 2 2 1 1 1 2 1 2 1 2 2]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue6=[2 1 2 2 1 1 2 1 1 2 2 1;1 2 2 1 2 2 1 1 2 1 2 1;2 1 2 1 2 2 1 2 1 2 1 1]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue7=[1 2 1 1 2 2 1 2 2 1 2 1;1 2 1 1 2 1 2 2 1 2 2 1;2 1 2 1 1 1 2 1 2 1 2 2]; %attention location (cue direction) 1:left, 2:right
+    activeblockcue8=[2 1 1 2 1 1 2 1 1 2 2 2;2 1 2 1 2 2 1 1 2 1 2 1;2 1 2 1 2 2 1 2 1 2 1 1];
+    activeblockstimulus1=[2 1;1 1;2 2;2 2;1 2;1 2;2 1;1 1;2 2;2 1;1 2;1 1;1 2;2 2 ;1 1;2 2;1 2;1 1;2 1;1 1;2 2;2 1;1 2;1 1;2 2;1 2;1 1;2 1;1 2;1 1;2 1;2 2;2 1;1 1;1 2;2 2];activeblockstimulus2=[1 2;1 1;2 2;1 2;1 1;2 1;2 2;2 1;2 1;2 2;1 1;1 2;1 1;1 2;2 2;2 1;1 1;1 2;2 1;2 2;1 2;1 1;2 1;2 2;1 2;1 1;2 1;2 2;1 1;1 2;2 1;2 1;2 2;1 2;2 2;1 1];activeblockstimulus3=[2 2;2 1;1 2;2 2;2 1;1 1;1 2;1 1;1 2;2 2;1 1;1 2;2 1;1 1;1 2;1 2;2 1;1 2;1 1;2 2;2 1;1 1;2 2;2 2;2 1;2 2;1 1;1 2;2 1;2 2;1 1;2 1;2 2;1 1;1 2;1 2];activeblockstimulus4=[1 1;1 2;1 2;2 1;1 2;2 1;1 2;2 2;1 1;2 1];%orientation of gabors/6 or 9 for left and right stimuli
+    %activeblocktype=[2 1 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for CI stimulus
+    activeblocktype=[1 2 4 3 4;1 4 2 4 3;2 4 1 4 3;2 4 3 1 4;3 4 2 1 4;3 4 2 4 1;4 3 4 1 2;4 1 3 4 2];%1 for gabors, 2 for Egg-CI stimulus, 3 for 6/9-CI stimulus, 4 for rest
+    totalactiveblock=3;totaltrial=12;
     TR=1.5;
     totaltrialtime=TR*2;
