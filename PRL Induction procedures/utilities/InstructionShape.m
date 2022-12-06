@@ -33,7 +33,6 @@ imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X, i
 imageRect_offsCI2instr=imageRect_offsCIinstr;
 imageRect_offsCI2instr2=imageRect_offsCIinstr2;
 
-
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
 %here I draw the target contour (9) and other sub types (left egg, left
 %diag, 2)
@@ -48,6 +47,9 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [example
 imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord2),:)=0;
 
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2; yJitLoc; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.88);
+
+
+
 Screen('Flip', w);
 KbQueueWait;
 WaitSecs(0.5);

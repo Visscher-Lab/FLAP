@@ -16,7 +16,7 @@ if site==1  % Windows @UAB Lab
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);
     baseName=['.\data\' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
-elseif site==2
+elseif site==2 %Pinar's Mac
     screencm=[70.8, 39.8];
     v_d=123;
     AssertOpenGL;
