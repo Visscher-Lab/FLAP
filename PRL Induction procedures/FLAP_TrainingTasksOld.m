@@ -419,7 +419,9 @@ try
         end
         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
-            practicePassed=0;
+   %         practicePassed=0;
+               practicePassed=1;
+
         end
         
         if trainingType<3
@@ -835,12 +837,9 @@ try
                 if trainingType~=3
 %                     count1 = count1 + 1; % first stage staircase counter
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=corrcounter(mixtr(trial,1),mixtr(trial,3))+1;
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down
-                        isreversals(mixtr(trial,1),mixtr(trial,3))=1;
-                    end
               % if more than 3 reversals have passed, we switch to a 3:1
               % staircase
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3                       
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                             reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
                             isreversals(mixtr(trial,1),mixtr(trial,3))=0;
