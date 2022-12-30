@@ -24,7 +24,8 @@ elseif site==2 %Pinar's Mac
     screenNumber=max(Screen('Screens'));
     rand('twister', sum(100*clock));
     PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    %[w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     baseName=['./data/' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
 elseif site==3 %Dell laptop- UAB
     screencm=[70.8, 39.8];
