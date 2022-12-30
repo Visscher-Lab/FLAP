@@ -137,16 +137,16 @@ if site<3
     pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
     pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
 elseif site==3 % Windows
-    pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+    pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+%    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 end
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
     [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
 end
 
-
-pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+% 
+% pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+% PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer

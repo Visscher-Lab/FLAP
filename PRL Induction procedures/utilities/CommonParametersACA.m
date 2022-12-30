@@ -10,9 +10,10 @@ if PRLlocations==4
     xlocs=[0 PRLecc 0 -PRLecc];
     ylocs=[-PRLecc 0 PRLecc 0 ];
 elseif PRLlocations==2
-    xlocs=[PRLecc  -PRLecc];
+    xlocs=[-PRLecc  PRLecc];
     ylocs=[0  0];
 end
+fixdotcolor=[177 177 177]; % color of the fixation dot before target appearance
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 oval_thick=6; %thickness of the cue's oval during the Attention task
@@ -23,18 +24,21 @@ if oneOrfourCues==4 % for attention part, do we want 4 dots to briefly signal th
     cue_spatial_offset=2;
 end
 circleSize=2.5; % cue size
+dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
+imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
+
 %% general temporal parameters (trial events)
 
 
 practicetrials=5; % if we run in demo mode, how many trials do I want?
-prefixationsquare=0.5; % time interval between trial start and forced fixation period
-cueonset=0.2; % time between end of the forced fixation period and the cue (value works for Acuity and
+ITI=0.75; % time interval between trial start and forced fixation period
+fixationduration=0.5; %duration of forced fixation period
+postfixationblank=[0.2 0.1]; % time between end of the forced fixation period and the cue (value works for Acuity and
 %crowding, for attention the value is jittered to increase time uncertainty
 Jitter=[0.5:0.5:2]; %jitter array for cue onset during Attention part
-cueduration=[0.05 0.05 0.133 0.133]; % cue duration
-cueISI=[ 0.05 0.05 0.133 0.133]; % cue to target ISI
-stimulusduration=0.133; % duration of the C
-fixTime=0.5/3;
+cueduration=0.05; % cue duration
+cueISI=0.05; % cue to target ISI
+stimulusduration=0.2; % duration of the C
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
 
