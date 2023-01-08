@@ -29,7 +29,8 @@ testmatCW=[mixtrCW rispo(length(mixtrVA)+1:(length(mixtrVA)+length(mixtrCW)))' t
 % time_stim seems to be a reaction time measurement in s
 
 
-testmatAtt= [mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
+%testmatAtt= [mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
+testmatAtt= [mixtrAtt(1:151,:) rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+(length(mixtrAtt))-89))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+(length(mixtrAtt))-89))'];
 
 
 
@@ -82,7 +83,7 @@ scatter(1:length(ThreshlistVA), ThreshlistVA,50, 'filled')
 title([  subj ' acuity'])
 xlabel('trials')
 ylabel('dva')
-%ylim([0 2])
+ylim([0 1.4])
 set(gca,'FontSize',17)
 
 print([newdir subj 'ACAacuity'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -101,7 +102,7 @@ legend ('radial', 'tangential')
 title([  subj ' crowding'])
 xlabel('trials')
 ylabel('dva')
-%ylim([0 2])
+ylim([0 8])
 set(gca,'FontSize',17)
 
 print([newdir subj 'ACAcrowding'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -137,7 +138,7 @@ text(1,limits2/2, ['p = ' num2str(p3)]);
 if limithigh>100
     limithigh=100;
 end
-%ylim([limits2*0.8 limithigh])
+
 
 %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -157,6 +158,7 @@ ylabel('Reaction time (s)')
 title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 text(1,limits/2, ['p = ' num2str(p)]);
+ylim([0 0.8]);
 %ylim([limits*0.8 limits*1.2])
 print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([subj 'crowdingTask'],'-dpng')
@@ -184,7 +186,7 @@ limithigh=limits2*1.2;
 if limithigh>100
     limithigh=100;
 end
-%ylim([limits2*0.8 limithigh])
+ylim([0 100])
 
 %print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %            print([dir subj 'att_new_corr'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -205,6 +207,7 @@ limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
 text(1,limits/2, ['p = ' num2str(p2)]);
 
 %ylim([limits*0.8 limits*1.2])
+ylim([0 0.8]);
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -326,7 +329,7 @@ listOfThreshVA=[mixtrVA nan(length(mixtrVA),1) time_stim(1:length(mixtrVA))' ris
 
 
 testmatAtt= [mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
-
+%testmatAtt= [mixtrAtt(1:151,:) rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+(length(mixtrAtt))-89))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+(length(mixtrAtt))-89))'];
 
 
 
@@ -386,7 +389,10 @@ end
 
 
 
-listOfThreshAtt=[mixtrAtt time_stim(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW))+length(mixtrAtt))' rispo(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW))+length(mixtrAtt))'];
+listOfThreshAtt=[mixtrAtt time_stim(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' rispo(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
+%listOfThreshAtt=[mixtrAtt time_stim(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' rispo(length(mixtrVA)+1+length(mixtrCW):(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
+
+%[mixtrAtt rispo(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))' time_stim(length(mixtrVA)+length(mixtrCW)+1:(length(mixtrVA)+length(mixtrCW)+length(mixtrAtt)))'];
 
 
 listOfThreshAttshortcued=listOfThreshAtt(listOfThreshAtt(:,2)==1,:);

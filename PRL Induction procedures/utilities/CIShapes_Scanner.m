@@ -38,8 +38,8 @@ Oscat= 0.5;
 
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
-ecccoeffCI=3; %original
-%ecccoeffCI=1.8; %marcello changed it
+%ecccoeffCI=3; %original
+ecccoeffCI=1.8; %marcello changed it
 %generate visual cue
 
 eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;

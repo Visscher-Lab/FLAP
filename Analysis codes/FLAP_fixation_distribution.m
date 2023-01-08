@@ -19,7 +19,7 @@ addpath([cd '/Functions']);
 addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/Analysis codes/Oculomotor Analysis/Functions');
 
 addpath('/Users/marcellomaniglia/Documents/GitHub/FLAP/Analysis codes/Oculomotor Analysis/Functions/fixationpilotdata');
-subNum=baseName(8:17);
+subNum=baseName(70:71);
 % if mod(iui,2)>0
 % name=['Crossland distribution FLAP' subNum 'pre test'];
 % elseif mod(iui,2)==0
@@ -28,7 +28,7 @@ subNum=baseName(8:17);
 %subNum=['Sub 1' ];
 
 
-name=['Crossland distribution FLAP' subNum 'fixation task'];
+name=['Crossland distribution FLAP ' subNum ' fixation task'];
 firsttrial=1;
 totaltrial=str2num(TrialNum(6:end))-1;
 
