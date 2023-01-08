@@ -184,7 +184,8 @@ try
                     imageRect_offsCIright =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIright2=imageRect_offsCIright;
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+%                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
@@ -197,8 +198,8 @@ try
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
                     imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
                     
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 60, 60);
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 60, 60);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
                     responseScanner2;
                     % Begin the rest block jittered times between trials
 
@@ -214,7 +215,8 @@ try
                     imageRect_offsCIrightnum =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIrightnum2=imageRect_offsCIrightnum;
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    %imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
@@ -227,8 +229,8 @@ try
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
                     imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
                     
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 60, 60);
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 60, 60);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
 
                     responseScanner2;
                     % Begin the rest block jittered times between trials
@@ -238,7 +240,7 @@ try
                     WaitSecs(iti);
                 end
             end
-            save(baseName,'RT','RTraw','ResponseType','trialstarttime','-append') %save our variables
+            save(baseName,'RT','RTraw','ResponseType','ResponseKey','trialstarttime','-append') %save our variables
         end
     end
 
