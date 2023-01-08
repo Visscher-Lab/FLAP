@@ -38,7 +38,8 @@ Oscat= 0.5;
 
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
-ecccoeffCI=3;
+ecccoeffCI=3; %original
+%ecccoeffCI=1.8; %marcello changed it
 %generate visual cue
 
 eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
@@ -48,8 +49,8 @@ coeffCI=ecccoeffCI/2;
 
 
 Tcontr=0.938;         %target contrast
-Dcontr=0.38;        %distractor contrast
-
+%Dcontr=0.38;        %distractor contrast
+Dcontr=0.938;
 
 ssf=1;
 % texture(trial)=TheGabors(sf);
@@ -99,30 +100,19 @@ Targorinum=[orifoonum; orifoonum];
 offsetxnum= [Xoffnum; -Xoffnum];
 offsetynum=[Yoffnum; -Yoffnum];
 
-%     xs=7;
-%     ys=7;
-%     %density 1 deg
-%     [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
-%     %[x1,y1]=meshgrid(-8:8,-6:6); %contour integration related
-%     xlocsCI=x1(:)';
-%     ylocsCI=y1(:)';
-%     ecccoeffCI=3;
-%     %generate visual cue
-%     eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;
-%     eccentricity_YCI=ylocsCI*pix_deg/ecccoeffCI;
-% coeffCI=ecccoeffCI/2;
+
 %     yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
 %     xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
 %     orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
-%
-%
+% 
+% 
 %     Xoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
 %     Yoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
-%
+% 
 %     Targx= [xfoo; -xfoo];
 %     Targy= [yfoo; -yfoo];
-%
+% 
 %     Targori=[orifoo; orifoo];
-%
+% 
 %     offsetx= [Xoff; -Xoff];
 %     offsety=[Yoff; -Yoff];

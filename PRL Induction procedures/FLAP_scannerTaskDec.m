@@ -81,7 +81,7 @@ try
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg;
     eccentricity_X(1)= theeccentricity_X;
-    eccentriscacity_Y(1) =theeccentricity_Y ;
+    eccentricity_Y(1) =theeccentricity_Y ;
     InstructionShapeScanner
     %% get trigger t
     ListenChar(2);
@@ -102,12 +102,6 @@ try
         startTime=TTLtime;
     end
     disp(['Trigger received - ' startdatetime]);
-
-    %     n=1; %we need to collect ttl pulses from the scanner
-    %     TTLpulse = find(keyCode, 1);
-    %     TTL{n,1}=KbName(TTLpulse);TTL{n,2}=TTLtime;
-    %     ttlpulses=false;
-
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials
@@ -115,26 +109,16 @@ try
         totalactiveblock=2;
     end
     for totalblock=1:totalactiveblock
-        %         while ~ttlpulses
-        %              [keyisdown,keytime,keycode]=KbCheck; %collect possible pulses from the scanner
-
         if Isdemo==1
             runnumber=1;
         end
         active=num2str(totalblock);
-        activeblockcue=eval(['activeblockcue' runnumber]);
-        activeblock=activeblockcue(totalblock,:);
-        activeblockstim=eval(['activeblockstimulus' runnumber]);% direction of gabors or being 6 or9 in both location
         runnum=num2str(runnumber);
+        activeblockcue=eval(['activeblockcue' runnum]);
+        activeblock=activeblockcue(totalblock,:);
+        activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
         blocktype=activeblocktype(runnumber,totalblock);
-        %             if keyisdown
-        %                 possibleTTLpulse=find(keycode, 1);
-        %                 TTL{n+1,1}=KbName(possibleTTLpulse);TTL{n+1,2}=keytime;
-        %                 ttlpulses=true;
-        %             end
-        %             FlushEvents;
-        %             break;
-        %         end
+
         for trial=1:totaltrial
             trialstarttime(totalblock,trial)=GetSecs;
             Screen('TextFont',w, 'Arial');
@@ -150,7 +134,7 @@ try
             CueOnsetTime=Screen('Flip',w);
             while GetSecs<CueOnsetTime+0.250
             end
-            if totalblock==1 && trial==1
+            if totalblock==1
                 stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
                 stimulusdirection_leftstim_num=activeblockstim(trial,1);stimulusdirection_rightstim_num=activeblockstim(trial,2); %what are shown in left and right is set
             elseif totalblock>1
@@ -158,8 +142,7 @@ try
                 stimulusdirection_leftstim_num=activeblockstim((totalblock*totaltrial)+trial,1);stimulusdirection_rightstim_num=activeblockstim((totalblock*totaltrial)+trial,2); %what are shown in left and right is set
             end
             if blocktype==1 %gabors
-                gaborcontrast=0.35;
-                theoris =[-45 45]; % whether right or left oriented gabor
+
                 %trl locations
                 imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                     imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
@@ -181,7 +164,7 @@ try
 
                 fixationscriptW;
             elseif blocktype==2 %egg-CI
-                CIstimuliMod_ScannerIns
+                %CIstimuliMod_ScannerIns
                 imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                     imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                 imageRect_offsCIleft2=imageRect_offsCIleft;

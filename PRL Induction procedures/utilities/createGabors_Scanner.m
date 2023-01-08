@@ -19,15 +19,5 @@ m=m+midgray;
 m = double(circle) .* double(m)+midgray * ~double(circle);
 TheGabors=Screen('MakeTexture', w, m,[],[],2);
 
-
-
-%     imsizeBig=sigma_pixBig*2.5;
-%     [x0Big,y0Big]=meshgrid(-imsizeBig:imsizeBig,-imsizeBig:imsizeBig);
-%     G = exp(-((x0Big/sigma_pixBig).^2)-((y0Big/sigma_pixBig).^2));
-%     for i=1:(length(sfs))  %bpk: note that sfs has only one element
-%         f_gabor=(sfs(i)/pix_deg)*2*pi;
-%         a=cos(rot)*f_gabor;
-%         b=sin(rot)*f_gabor;
-%         m=maxcontrast*sin(a*x0Big+b*y0Big+pi).*G;
-%         TheGaborsBig(i)=Screen('MakeTexture', w, midgray+inc*m,[],[],2);
-%     end
+gaborcontrast=0.35;
+theoris =[-45 45]; % whether right or left oriented gabor

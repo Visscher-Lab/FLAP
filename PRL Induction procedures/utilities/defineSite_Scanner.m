@@ -15,7 +15,10 @@ if site==1  % Windows @UAB Lab
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);
-    baseName=['.\data\' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
+    baseName=['.\data\' SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
+    resolution=Screen('Resolution',screenNumber);
+    cueloc=(resolution.height/2)+14;
+    xloc=(resolution.height/2)+10;
 elseif site==2 %Pinar's Mac
     screencm=[70.8, 39.8];
     v_d=123;
@@ -24,9 +27,12 @@ elseif site==2 %Pinar's Mac
     screenNumber=max(Screen('Screens'));
     rand('twister', sum(100*clock));
     PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-    %[w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    baseName=['./data/' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
+    %[w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    baseName=['./data/' SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
+    resolution=Screen('Resolution',screenNumber);
+    cueloc=(resolution.height/2)+14;
+    xloc=(resolution.height/2)+10;
 elseif site==3 %Dell laptop- UAB
     screencm=[70.8, 39.8];
     v_d=123;
@@ -39,7 +45,7 @@ elseif site==3 %Dell laptop- UAB
     rand('twister', sum(100*clock));
     PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    baseName=['.\data\' SUBJECT '_FLAP_ScannerVPixx_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
+    baseName=['.\data\' SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart '.mat'];
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];

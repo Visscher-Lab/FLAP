@@ -5,7 +5,7 @@ close all;
 clear;
 clc;
 commandwindow
-addpath([cd '/utilities']); %add folder with utilities files
+%addpath([cd '/utilities']); %add folder with utilities files
 %% take information from the user
 try
     prompt={'Subject Name', 'Pre or Post Scan','Run Number','site: Bits++(1), Mac Laptop(2), Windows Laptop(3)','demo (0) or session (1)', 'left (1) or right (2) TRL?'};
