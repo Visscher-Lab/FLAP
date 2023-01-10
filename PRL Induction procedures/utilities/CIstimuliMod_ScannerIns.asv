@@ -331,7 +331,8 @@ else %6 is shown on the left side
     xJitLocnum2(targetcordnum2)=pix_deg*(offsetxnum(2,:))/coeffCI;%+xJitLoc(targetcord);
     yJitLocnum2(targetcordnum2)=pix_deg*(offsetynum(2,:))/coeffCI;%+xJitLoc(targetcord);
 end
-
+% theorinum(targetcordnum)=Targorinum(1,:);
+% theorinum2(targetcordnum2)=Targorinum(2,:);
 %this is for the instructions
 % here I adjust the offset of distractors to avoid
 % cluttering the CI shape (left stimulus example)

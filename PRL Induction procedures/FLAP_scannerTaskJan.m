@@ -1,7 +1,7 @@
 
 % Orientation Discrimination and Contour Integration task for scanner
 % written by Pinar Demirayak April 2022
-tic;
+
 close all;
 clear;
 clc;
@@ -101,6 +101,7 @@ try
         startTime=TTLtime;
     end
     disp(['Trigger received - ' startdatetime]);
+    tic;
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials
@@ -184,20 +185,20 @@ try
                     imageRect_offsCIright =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIright2=imageRect_offsCIright;
-%                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
+                    %                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
 
-                   %stimulus that is shown on the right side
+                    %stimulus that is shown on the right side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc; yJitLoc; xJitLoc; yJitLoc], theori,[], Dcontr);
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
-                   %stimulus that is shown on the left side
+                    %stimulus that is shown on the left side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
                     imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
-                    
+
                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
                     responseScanner2;
@@ -216,7 +217,7 @@ imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIrightnum2=imageRect_offsCIrightnum;
                     %imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
@@ -224,11 +225,11 @@ imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg
                     %stimulus that is shown on the right side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
                     imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
-                    
+
                     %stimulus that is shown on the left side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
                     imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
-                    
+
                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
 
@@ -262,4 +263,4 @@ catch ME
     psychlasterror()
 end
 toc;
-time=toc-tic
+time = toc(tic)
