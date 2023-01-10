@@ -91,20 +91,25 @@ try
     commandwindow;
     trigger=false;
     triggercode=23;
-    if site==2
+    if site==1
+        tChar=KbName('t');
+        KbWait;
+        startTime=GetSecs;
+    elseif site==2
         startTime = wait4T(tChar);  %wait for 't' from scanner.
-    elseif site==1 || site==3
+    elseif site==3
         while ~trigger
-            [ keyIsDown, keyTime, keyCode ] = KbCheck;
-            if keyIsDown
-                TTL = find(keyCode, 1);
-                if TTL==triggercode
-                    startTime=keyTime;
-                    clear keyIsDown keyTime keyCode
-                    trigger=true;
-                end
-            end
+[ keyIsDown, keyTime, keyCode ] = KbCheck;
+%TTL = find(keyCode, 1);
+if keyIsDown
+    TTL = find(keyCode, 1);
+    if TTL==triggercode
+    break
+end
         end
+        %tChar=KbName('t');
+        %[TTLtime, keyCode]=KbWait;
+        %startTime=TTLtime;
     end
     disp(['Trigger received - ' startdatetime]);
     fixationscriptW;

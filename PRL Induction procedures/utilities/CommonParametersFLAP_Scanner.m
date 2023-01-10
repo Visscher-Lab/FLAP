@@ -38,13 +38,17 @@ Screen('TextSize',w, 42);
 %% scanner task related variables
 startdatetime = datestr(now); %Current date and time as date vector. [year month day hour minute seconds]
 interTrialIntervals1=[5 1 3 2 1 4 7 4 1 3 2 1; 1 5 3 7 2 1 2 6 1 3 2 1;0 0 0 0 0 0 0 0 0 0 0 0;1 3 6 1 8 1 3 2 1 2 4 2;0 0 0 0 0 0 0 0 0 0 0 0];
-interTrialIntervals2=[3 1 3 1 5 2 1 4 1 7 1 4;0 0 0 0 0 0 0 0 0 0 0 0;2 6 1 3 2 1 7 1 5 1 2 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 4 2 5 6 1 8 3 2 1 2 1];
+interTrialIntervals2=[3 1 3 1 5 2 1 4 1 7 2 4;0 0 0 0 0 0 0 0 0 0 0 0;2 6 1 3 2 1 7 1 5 1 2 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 4 2 1 6 1 8 3 2 1 2 1];
 interTrialIntervals3=[1 1 7 2 5 1 4 1 3 2 4 3;0 0 0 0 0 0 0 0 0 0 0 0;3 1 7 1 2 3 6 1 2 1 2 5;0 0 0 0 0 0 0 0 0 0 0 0; 6 1 2 3 1 2 3 2 1 8 1 4];
 interTrialIntervals4=[3 2 2 7 1 4 1 3 1 5 1 4;0 0 0 0 0 0 0 0 0 0 0 0;3 2 5 1 1 3 6 1 2 7 1 2; 2 4 3 1 8 2 1 3 6 1 2 1;0 0 0 0 0 0 0 0 0 0 0 0];
 interTrialIntervals5=[2 3 1 7 1 2 4 1 3 4 1 5;0 0 0 0 0 0 0 0 0 0 0 0;5 1 3 2 1 6 1 2 3 2 7 1; 4 2 6 1 2 3 1 2 8 1 3 1;0 0 0 0 0 0 0 0 0 0 0 0];
-interTrialIntervals6=[1 4 3 1 5 2 1 4 1 7 1 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 1 7 1 2 3 6 1 5 1 2 2;0 0 0 0 0 0 0 0 0 0 0 0; 2 8 3 1 4 2 1 3 6 1 2 1];
+interTrialIntervals6=[1 4 3 1 5 2 1 4 2 7 1 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 1 7 1 2 3 6 1 5 1 2 2;0 0 0 0 0 0 0 0 0 0 0 0; 2 8 3 1 4 2 1 3 6 1 2 1];
 intreTrialInterval7=[0 0 0 0 0 0 0 0 0 0 0 0; 1 5 3 1 4 2 1 3 7 1 2 4;0 0 0 0 0 0 0 0 0 0 0 0; 2 1 3 6 1 8 3 2 1 4 1 2;2 6 2 3 1 1 7 1 5 1 2 3];
-intreTrialInterval8=[0 0 0 0 0 0 0 0 0 0 0 0; 5 1 3 1 4 3 1 2 7 1 2 4; 2 1 6 3 1 8 3 2 1 4 2 1;0 0 0 0 0 0 0 0 0 0 0 0;3 4 2 5 6 1 8 3 2 1 2 1];
+intreTrialInterval8=[0 0 0 0 0 0 0 0 0 0 0 0; 5 1 3 1 4 3 1 2 7 1 2 4; 2 1 6 3 1 8 3 2 1 4 2 1;0 0 0 0 0 0 0 0 0 0 0 0;3 4 2 1 6 1 8 3 2 1 2 1];
+%interTrialIntervals2=[3 1 3 1 5 2 1 4 1 7 1 4;0 0 0 0 0 0 0 0 0 0 0 0;2 6 1 3 2 1 7 1 5 1 %1% 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 4 2 %5% 6 1 8 3 2 1 2 1];
+%interTrialIntervals6=[1 4 3 1 5 2 1 4 %1% 7 1 3;0 0 0 0 0 0 0 0 0 0 0 0; 3 1 7 1 2 3 6 1 5 1 2 2;0 0 0 0 0 0 0 0 0 0 0 0; 2 8 3 1 4 2 1 3 6 1 2 1];
+%intreTrialInterval8=[0 0 0 0 0 0 0 0 0 0 0 0; 5 1 3 1 4 3 1 2 7 1 2 4; 2 1 6 3 1 8 3 2 1 4 2 1;0 0 0 0 0 0 0 0 0 0 0 0;3 4 2 %5% 6 1 8 3 2 1 2 1];
+
 activeblockcue1=[2 1 2 1 1 2 1 1 2 2 2 1;2 1 1 1 2 1 2 2 1 2 2 1;0 0 0 0 0 0 0 0 0 0 0 0;1 2 1 1 2 2 2 1 2 1 1 2;0 0 0 0 0 0 0 0 0 0 0 0]; %attention location (cue direction) 1:left, 2:right
 activeblockcue2=[1 2 1 2 2 1 2 2 1 2 1 1;0 0 0 0 0 0 0 0 0 0 0 0;2 1 2 2 1 2 1 1 2 1 2 1;0 0 0 0 0 0 0 0 0 0 0 0;1 2 2 1 2 2 1 2 1 1 2 1]; %attention location (cue direction) 1:left, 2:right
 activeblockcue3=[1 2 2 2 1 2 1 1 2 1 2 1;0 0 0 0 0 0 0 0 0 0 0 0;1 2 1 2 2 1 2 1 1 2 2 1;0 0 0 0 0 0 0 0 0 0 0 0;1 2 2 1 2 1 2 1 2 1 2 1]; %attention location (cue direction) 1:left, 2:right
