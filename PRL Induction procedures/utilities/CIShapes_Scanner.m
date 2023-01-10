@@ -33,13 +33,13 @@ ys=7;
 
 [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
 
-JitRat=1; % amount of jit ratio (the larger the value the less jitter)
+JitRat=2; % amount of jit ratio (the larger the value the less jitter)
 Oscat= 0.5;
 
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
 %ecccoeffCI=3; %original
-ecccoeffCI=1.8; %marcello changed it
+ecccoeffCI=1.8; %marcello changed it to 1.8
 %generate visual cue
 
 eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI;

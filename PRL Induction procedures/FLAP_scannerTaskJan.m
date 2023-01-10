@@ -1,7 +1,7 @@
 
 % Orientation Discrimination and Contour Integration task for scanner
 % written by Pinar Demirayak April 2022
-tic;
+
 close all;
 clear;
 clc;
@@ -107,6 +107,7 @@ try
         end
     end
     disp(['Trigger received - ' startdatetime]);
+    tic;
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials
@@ -191,7 +192,8 @@ try
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIright2=imageRect_offsCIright;
                     %                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
+
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
@@ -222,7 +224,7 @@ try
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
                     imageRect_offsCIrightnum2=imageRect_offsCIrightnum;
                     %imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.2 (xs/coeffCI*pix_deg)*1.2]], wRect);
+                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
                     imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
@@ -268,4 +270,4 @@ catch ME
     psychlasterror()
 end
 toc;
-time=toc-tic
+time = toc(tic)
