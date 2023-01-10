@@ -88,8 +88,8 @@ if RTraw==0
     elseif site==3
         while ~timedout
             [ keyIsDown, keyTime, keyCode ] = KbCheck;
-            responsekey = find(keyCode, 1);
-            if keyIsDown
+            if keyIsDown && responsekey==leftfingerresp ||responsekey==rightfingerresp
+                responsekey = find(keyCode, 1);
                 RTraw(totalblock,trial)=keyTime;
                 %RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
                 RT(totalblock,trial)=keyTime-StimulusOnsetTime;

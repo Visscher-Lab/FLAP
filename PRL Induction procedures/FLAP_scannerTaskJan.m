@@ -270,4 +270,3 @@ catch ME
     psychlasterror()
 end
 toc;
-time = toc(tic)
