@@ -11,7 +11,7 @@ thresho=permute(Threshlist,[3 1 2]);
 
  name = baseName(8:10);
   theadd= baseName(37:end);
- session = baseName(34:38);
+ session = baseName(33:38);
 %feat=ones(1,length(totale_trials))*4;
 %% graph stats
 lowt=thresho(:,:,1);

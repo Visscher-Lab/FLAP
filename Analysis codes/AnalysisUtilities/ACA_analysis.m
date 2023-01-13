@@ -114,6 +114,7 @@ bar(2, AttCorrshortUncuedPerc, 'r')
 hold on
 legend ('cued', 'uncued')
 ylabel('Percentage correct')
+ylim([0 100])
 title([  subj ' short ISI Attention %'])
 limits2=max([AttCorrshortCuedPerc AttCorrshortUncuedPerc]);
 limithigh=limits2*1.2;
@@ -144,7 +145,7 @@ ylabel('Reaction time (s)')
 title([  subj ' short ISI Attention RT'])
 limits=max([AttCorrshortCuedRT AttCorrshortUncuedRT]);
 text(1,0.5, ['p = ' num2str(p)]);
-%ylim([limits*0.8 limits*1.2])
+ylim([limits*0.8 limits*1.2])
 print([newdir subj 'ACAattentionshort'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 %print([subj 'crowdingTask'],'-dpng')
 %print([dir subj 'short_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
@@ -162,6 +163,7 @@ hold on
 legend ('cued', 'uncued')
 ylabel('Percentage correct')
 title([  subj ' long ISI Attention %'])
+ylim([0 100])
 limits2=max([AttCorrlongCuedPerc AttCorrlongUncuedPerc]);
 limithigh=limits2*1.2;
 
@@ -188,7 +190,7 @@ title([  subj ' long ISI Attention RT'])
 limits=max([AttCorrlongCuedRT AttCorrlongUncuedRT]);
 text(1,0.5, ['p = ' num2str(p2)]);
 
-%ylim([limits*0.8 limits*1.2])
+ylim([limits*0.8 limits*1.2])
 %print([dir subj 'long_att_new_Results'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 print([newdir subj 'ACAattentionlong'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -500,7 +502,7 @@ for ui=1:length(xlocs)
 end
 xlim([-20 20])
 ylim([-15 15])
-title('VA corr')
+title([subj 'VA corr'])
 set (gca,'YDir','reverse');
 
 subplot(2,1,2)

@@ -76,11 +76,12 @@ try
     %% draw everything on the instruction page
 
     stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
+    stimulusdirection_leftstim_num=1;stimulusdirection_rightstim_num=2;
     CIstimuliMod_ScannerIns;
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg;
     eccentricity_X(1)= theeccentricity_X;
-    eccentricity_Y(1) =theeccentricity_Y ;
+    eccentriscacity_Y(1) =theeccentricity_Y ;
     InstructionShapeScanner
     %% get trigger t
     ListenChar(2);
@@ -121,6 +122,7 @@ try
             runnumber=1;
         end
         active=num2str(totalblock);
+        activeblockcue=eval(['activeblockcue' runnumber]);
         activeblock=activeblockcue(totalblock,:);
         activeblockstim=eval(['activeblockstimulus' runnumber]);% direction of gabors or being 6 or9 in both location
         runnum=num2str(runnumber);
