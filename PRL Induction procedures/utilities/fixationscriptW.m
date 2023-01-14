@@ -13,6 +13,10 @@ distWag=0;
 imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 
+
+imageRectWW(4) = imageRectWW(4) + startingfixationpoint(mixtr(trial,1)) * pix_deg;
+    imageRectWW(2) = imageRectWW(2) + startingfixationpoint(mixtr(trial,1)) * pix_deg;
+
 cornerDist=scotomadeg/2*1; % to make the fixation brackets smaller or larger. >1 - larger, <1 - smaller
 p1x=-cornerDist;
 p1y=-cornerDist;
@@ -46,9 +50,10 @@ end
 
 
 imageRectLeft=[imageRectWW(1)-(round(distWag*pix_deg)) imageRectWW(2) imageRectWW(3)-(round(distWag*pix_deg)) imageRectWW(4) ];
+imageRectRight=[imageRectWW(1)+(round(distWag*pix_deg)) imageRectWW(2) imageRectWW(3)+(round(distWag*pix_deg)) imageRectWW(4) ];
 imageRectDown=[imageRectWW(1) imageRectWW(2)+(round(distWag*pix_deg)) imageRectWW(3) imageRectWW(4)+(round(distWag*pix_deg)) ];
 imageRectUp=[imageRectWW(1) imageRectWW(2)-(round(distWag*pix_deg)) imageRectWW(3) imageRectWW(4)-(round(distWag*pix_deg)) ];
-imageRectRight=[imageRectWW(1)+(round(distWag*pix_deg)) imageRectWW(2) imageRectWW(3)+(round(distWag*pix_deg)) imageRectWW(4) ];
+
 
 
 if inward==1

@@ -94,7 +94,6 @@ try
     
     ecc_r=PRLecc*pix_deg; % radius of possible target locations
     
-    angl= [90 45 0 315 270 225 180 135]; % angles of possible target locations
     
     for ui=1:length(angl)
         ecc_t=deg2rad(angl(ui));
@@ -105,9 +104,10 @@ try
         eccentricity_X(ui)=ecc_x;
         eccentricity_Y(ui)=ecc_y;
     end
-    tr=10; % trials per target location
+    tr=5; % trials per target location
+    loc = [1;2]; % number of fixation locations
     
-    mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
+    mixtr=[repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
     mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
     
     if Isdemo==0
@@ -151,7 +151,7 @@ try
         trialTimedout(trial)=0;
         
         flickk=0;
-        if mod(trial,20)==0
+        if mod(trial,10)==0
             interblock_instruction
         end
         
@@ -159,8 +159,8 @@ try
         FlickerTime=JitterFlicker(randi(length(JitterFlicker))); % define the flicker time duration (movie duration) for this trial
         actualtrialtimeout=400000;
         
-        theeccentricity_X=eccentricity_X(mixtr(trial,1)); % target location x
-        theeccentricity_Y=eccentricity_Y(mixtr(trial,1)); % target location y
+        theeccentricity_X=eccentricity_X(mixtr(trial,2)); % target location x
+        theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg + eccentricity_Y(mixtr(trial,2)); % target location y
         
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
