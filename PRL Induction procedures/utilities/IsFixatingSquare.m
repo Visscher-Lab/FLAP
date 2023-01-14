@@ -10,8 +10,8 @@ if EyetrackerType == 1
     end
 end
 framecounter=framecounter+1;
-if   framecounter>1 & round(wRect(4)/2+(newsampley-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
-        && round(wRect(4)/2+(newsampley-(wRect(4)/2)))<(wRect(4)/2+fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2)))<= (wRect(3)/2+fixwindowPix)
+if   framecounter>1 & round(newRect(4)/2+(newsampley-(newRect(4)/2)))>(newRect(4)/2-fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
+        && round(newRect(4)/2+(newsampley-(newRect(4)/2)))<(newRect(4)/2+fixwindowPix) && round(wRect(3)/2+(newsamplex-(wRect(3)/2)))<= (wRect(3)/2+fixwindowPix)
     
     % if eyes are within fixation window; we count the frame
     fixating=fixating+1;
