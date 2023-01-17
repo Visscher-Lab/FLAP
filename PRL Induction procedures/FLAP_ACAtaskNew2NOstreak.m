@@ -6,7 +6,7 @@ clc;
 commandwindow
 %addpath('/Users/sll/Desktop/Flap/Flap_scripts/utilities')
 
-
+Screen('Preference', 'SkipSyncTests', 1);
 addpath([cd '/utilities']);
 try
     prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)'};
