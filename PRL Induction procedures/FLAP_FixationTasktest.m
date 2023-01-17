@@ -110,15 +110,15 @@ try
     mixtr=[repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
     mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
     
-    if Isdemo==0
-        tr=2;
-        mixtr=[repmat(1:length(angl),1,tr)'];
-        mixtr =mixtr(randperm(length(mixtr)),:);
-    elseif Isdemo==1
-        tr=10; % trials per target location
-        mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
-        mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
-    end
+%     if Isdemo==0
+%         tr=2;
+%         mixtr=[repmat(1:length(angl),1,tr)'];
+%         mixtr =mixtr(randperm(length(mixtr)),:);
+%     elseif Isdemo==1
+%         tr=10; % trials per target location
+%         mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
+%         mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+%     end
     
     
     %% main loop
@@ -159,13 +159,16 @@ try
         FlickerTime=JitterFlicker(randi(length(JitterFlicker))); % define the flicker time duration (movie duration) for this trial
         actualtrialtimeout=400000;
         
-        theeccentricity_X=eccentricity_X(mixtr(trial,2)); % target location x
+        theeccentricity_X=eccentricity_X(mixtr(trial,1)); % target location x
         theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg + eccentricity_Y(mixtr(trial,2)); % target location y
         
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
         
         FLAPVariablesReset
+        newRect = wRect;
+        newRect(4) = newRect(4) + startingfixationpoint(mixtr(trial,1)) * pix_deg;
+        
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');

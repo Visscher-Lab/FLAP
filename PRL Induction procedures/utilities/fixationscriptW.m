@@ -19,13 +19,13 @@ imageRectWW(4) = imageRectWW(4) + startingfixationpoint(mixtr(trial,1)) * pix_de
 
 cornerDist=scotomadeg/2*1; % to make the fixation brackets smaller or larger. >1 - larger, <1 - smaller
 p1x=-cornerDist;
-p1y=-cornerDist;
+p1y=  - cornerDist + startingfixationpoint(mixtr(trial,1));
 p2x=cornerDist;
-p2y=-cornerDist;
+p2y=-cornerDist + startingfixationpoint(mixtr(trial,1));
 p3x=cornerDist;
-p3y=cornerDist;
+p3y=cornerDist + startingfixationpoint(mixtr(trial,1));
 p4x=-cornerDist;
-p4y=cornerDist;
+p4y=cornerDist + startingfixationpoint(mixtr(trial,1));
 
 punto1x=p1x*pix_deg;
 punto1y=p1y*pix_deg;
