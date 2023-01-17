@@ -146,7 +146,7 @@ try
 end
 
 % 
-% pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-% pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-% PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-% PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer

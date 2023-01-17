@@ -5,8 +5,10 @@ PRLsize =10; % diameter PRL in deg
 scotoma_color=[200 200 200];
 red=[255 0 0];
 fixwindow=3;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
-PRLecc=10;  %eccentricity of target locations in deg
-stimulusSize=1.5;
+startingfixationpoint= [-6 6]; % locatoin of fixation box at the beginning of the trial
+PRLecc=15;  %eccentricity of target locations in deg
+    angl= [0 45 90 135 180]; % angles of possible target locations
+stimulusSize=2;
 flickeringrate=0.25;
 practicetrials=5; % if we run in demo mode, how many trials do I want?
 
@@ -14,7 +16,7 @@ practicetrials=5; % if we run in demo mode, how many trials do I want?
 
 %prefixationsquare=0.5; % time interval between trial start and forced fixation period
 pretargettime=0.55; % time interval between end of forced fixation at the beginning of the trial and appearance of the target
-JitterFlicker=[2:0.5:5]; %jitter array for flicker duration
+JitterFlicker=[3:0.5:5]; %jitter array for flicker duration
 initialfixationduration=0.5; % duration of the frame within which to keep the scotoma at the beginning of the trial
 trialTimeout = 15; % how long (seconds) should a trial last without a response
 %realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
@@ -63,3 +65,4 @@ newfig(d==1)=0;
 circlePixels=newfig;
 
 imageRectcue = CenterRect([0, 0, [smallradius*2 ((smallradius/pix_deg)*pix_deg_vert)*2]], wRect);
+
