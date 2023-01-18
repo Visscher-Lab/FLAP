@@ -82,10 +82,10 @@ try
     staircounterVA(1:PRLlocations)=0;
     corrcounterVA(1:PRLlocations)=0;
     
-        % Threshold -> 79%
+    % Threshold -> 79%
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.steps= [2 3];                    % # of correct answers to go one step down
-     
+    
     Sizelist=log_unit_down(StartSize, 0.03, 90);
     
     % stepsizesVA=[4 4 3 3 2 2 1];
@@ -139,7 +139,7 @@ try
         eyelinkCalib
     end
     %% Trial structure
-   if PRLlocations==2
+    if PRLlocations==2
         % acuity
         coin=randi(2);
         if coin==1
@@ -189,8 +189,8 @@ try
         end
     end
     totalmixtr=length(mixtrVA)+length(mixtrCW)+length(mixtrAtt);
-            totalmixtr=length(mixtrVA)+length(mixtrCW);
-
+    totalmixtr=length(mixtrVA)+length(mixtrCW);
+    
     %% main loop
     HideCursor;
     ListenChar(2);
@@ -230,8 +230,8 @@ try
     
     resetcounterVA(1:PRLlocations)=1;
     resetcounterCW(1:PRLlocations, 1:ca)=1; %25;
-        ThreshlistVA(1:PRLlocations)=0;
-ThreshlistCW(1:PRLlocations, 1:ca)=0;
+    ThreshlistVA(1:PRLlocations)=0;
+    ThreshlistCW(1:PRLlocations, 1:ca)=0;
     for totaltrial=1:totalmixtr
         trialTimedout(totaltrial)=0;
         TrialNum = strcat('Trial',num2str(totaltrial));
@@ -360,7 +360,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
         
         
         FLAPVariablesReset
-                if EyetrackerType ==2
+        if EyetrackerType ==2
             %start logging eye data
             Datapixx('RegWrRd');
             Pixxstruct(trial).TrialStart = Datapixx('GetTime');
@@ -391,12 +391,12 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 trial_time = GetSecs;
-                                if EyetrackerType ==2
+                if EyetrackerType ==2
                     Datapixx('SetMarker');
-                        Datapixx('RegWrVideoSync');
-                        %collect marker data
-                        Datapixx('RegWrRd');
-                        Pixxstruct(trial).TrialOnset = Datapixx('GetMarker'); 
+                    Datapixx('RegWrVideoSync');
+                    %collect marker data
+                    Datapixx('RegWrRd');
+                    Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
                 end
                 %      clear imageRect_offsCirc
                 clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
@@ -447,16 +447,16 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
                     stimstar=1;
                 end
                 
-                                    if EyetrackerType ==2
-                        %set a marker to get the exact time the screen flips
-                        Datapixx('SetMarker');
-                        Datapixx('RegWrVideoSync');
-                        %collect marker data
-                        Datapixx('RegWrRd');
-                        Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
-                        Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
-                                    end
-                    
+                if EyetrackerType ==2
+                    %set a marker to get the exact time the screen flips
+                    Datapixx('SetMarker');
+                    Datapixx('RegWrVideoSync');
+                    %collect marker data
+                    Datapixx('RegWrRd');
+                    Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
+                    Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                end
+                
                 if whichTask == 2 % show flankers for crowding
                     if exist('imageRect_offs_flank1')==0
                         
@@ -625,7 +625,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     resetcounterVA(mixtrVA(trial))=0;
-                                        if reversalsVA(mixtrVA(trial))<2
+                    if reversalsVA(mixtrVA(trial))<2
                         sc.down=sc.steps(1);
                     elseif reversalsVA(mixtrVA(trial))>= 2
                         sc.down=sc.steps(2);
@@ -637,7 +637,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
                     
                     corrcounterVA(mixtrVA(trial))=0;
                     % we don't want the step size to change on a wrong response
-
+                    
                     thestep=min(reversalsVA(mixtrVA(trial))+1,length(stepsizesVA));
                     threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) -stepsizesVA(thestep);
                     threshVA(mixtrVA(trial))=max(threshVA(mixtrVA(trial)));
@@ -648,8 +648,8 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
             elseif whichTask == 2
                 
                 staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))+1;
-                                ThreshlistCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=sep;
-
+                ThreshlistCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=sep;
+                
                 if foo(theans(trial))
                     resp = 1;
                     nswrCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=1;
@@ -693,7 +693,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
                 else % wrong response
                     resp = 0;
                     nswrCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=0;
-
+                    
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     resetcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
@@ -702,13 +702,13 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
                     if  corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))>=sc.down
                         isreversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
                     end
-
+                    
                     
                     corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=0;
                     thestep=min(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizesCW));
                     
                     % we don't want the step size to change on a wrong response
-
+                    
                     threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) -stepsizesCW(thestep);
                     threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,1),mixtrCW(trial,2)),1);
                 end
@@ -730,61 +730,61 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
             end
             %   stim_stop=secs;
         else
-
+            
             resp = 0;
             respTime(trial)=0;
-                        PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+            PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
             PsychPortAudio('Start', pahandle);
             if whichTask==1
-                                    if reversalsVA(mixtrVA(trial))<2
-                        sc.down=sc.steps(1);
-                    elseif reversalsVA(mixtrVA(trial))>= 2
-                        sc.down=sc.steps(2);
-                    end
+                if reversalsVA(mixtrVA(trial))<2
+                    sc.down=sc.steps(1);
+                elseif reversalsVA(mixtrVA(trial))>= 2
+                    sc.down=sc.steps(2);
+                end
                 staircounterVA(mixtrVA(trial))=staircounterVA(mixtrVA(trial))+1;
                 ThreshlistVA(staircounterVA(mixtrVA(trial)))=VAsize;
-                    nswr(trial)=0;
-                    resetcounterVA(mixtrVA(trial))=0;
-                                        if reversalsVA(mixtrVA(trial))<2
-                        sc.down=sc.steps(1);
-                    elseif reversalsVA(mixtrVA(trial))>= 2
-                        sc.down=sc.steps(2);
-                    end
-                    %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
-                    if  corrcounterVA(mixtrVA(trial))>=sc.down
-                        isreversalsVA(mixtrVA(trial))=1;
-                    end
-
-                    corrcounterVA(mixtrVA(trial))=0;
-                    % we don't want the step size to change on a wrong response
-                    thestep=min(reversalsVA(mixtrVA(trial))+1,length(stepsizesVA));
-                    threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) -stepsizesVA(thestep);
-                    threshVA(mixtrVA(trial))=max(threshVA(mixtrVA(trial)));
-                    if threshVA(mixtrVA(trial))<1
-                        threshVA(mixtrVA(trial))=1;
-                    end
-            end    
-            
-          if whichTask==2
-                              staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))+1;
-                ThreshlistCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=sep;
+                nswr(trial)=0;
+                resetcounterVA(mixtrVA(trial))=0;
+                if reversalsVA(mixtrVA(trial))<2
+                    sc.down=sc.steps(1);
+                elseif reversalsVA(mixtrVA(trial))>= 2
+                    sc.down=sc.steps(2);
+                end
+                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+                if  corrcounterVA(mixtrVA(trial))>=sc.down
+                    isreversalsVA(mixtrVA(trial))=1;
+                end
                 
-              nswrCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=0;
-
-            resetcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
-            
-            %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
-            if  corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))>=sc.down
-                isreversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
+                corrcounterVA(mixtrVA(trial))=0;
+                % we don't want the step size to change on a wrong response
+                thestep=min(reversalsVA(mixtrVA(trial))+1,length(stepsizesVA));
+                threshVA(mixtrVA(trial))=threshVA(mixtrVA(trial)) -stepsizesVA(thestep);
+                threshVA(mixtrVA(trial))=max(threshVA(mixtrVA(trial)));
+                if threshVA(mixtrVA(trial))<1
+                    threshVA(mixtrVA(trial))=1;
+                end
             end
             
-            corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=0;
-            thestep=min(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizesCW));
-            % we don't want the step size to change on a wrong response
-            threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) -stepsizesCW(thestep);
-            threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,1),mixtrCW(trial,2)),1);
-          end
-          
+            if whichTask==2
+                staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2))+1;
+                ThreshlistCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=sep;
+                
+                nswrCW(mixtrCW(trial,1),mixtrCW(trial,2),staircounterCW(mixtrCW(trial,1),mixtrCW(trial,2)))=0;
+                
+                resetcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
+                
+                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+                if  corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))>=sc.down
+                    isreversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))=1;
+                end
+                
+                corrcounterCW(mixtrCW(trial,1),mixtrCW(trial,2))=0;
+                thestep=min(reversalsCW(mixtrCW(trial,1),mixtrCW(trial,2))+1,length(stepsizesCW));
+                % we don't want the step size to change on a wrong response
+                threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=threshCW(mixtrCW(trial,1),mixtrCW(trial,2)) -stepsizesCW(thestep);
+                threshCW(mixtrCW(trial,1),mixtrCW(trial,2))=max(threshCW(mixtrCW(trial,1),mixtrCW(trial,2)),1);
+            end
+            
         end
         if trialTimedout(trial)==0
             stim_stop=secs;
@@ -867,7 +867,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
             clear ErrorInfo
             
         end
-                if EyetrackerType==2
+        if EyetrackerType==2
             %read in eye data
             Datapixx('RegWrRd');
             status = Datapixx('GetTPxStatus');
@@ -913,7 +913,7 @@ ThreshlistCW(1:PRLlocations, 1:ca)=0;
             %interim save
             % save(baseName, 'Pixxstruct');
             % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-                end
+        end
         
         if (mod(trial,50))==1
             if trial==1

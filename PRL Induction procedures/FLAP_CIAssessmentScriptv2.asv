@@ -870,10 +870,10 @@ try
                 corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
                 % we don't want the step size to change on a wrong response
                 thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
-                if thresh(mixtr(trial,1),mixtr(trial,2))<1
-                    thresh(mixtr(trial,1),mixtr(trial,2))=1;
+                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtrVA(trial)) -stepsizesVA(thestep);
+                thresh(mixtrVA(trial))=max(thresh(mixtrVA(trial)));
+                if thresh(mixtrVA(trial))<1
+                    thresh(mixtrVA(trial))=1;
                 end
         end
         if AssessmentType~=3 % if the trial didn't time out, save some variables
