@@ -296,7 +296,7 @@ try
     %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
     checkcounter = 0;
-    resetcounter(1:PRLlocations) = 1;
+    resetcounter(1:2) = 1;
     for trial=1:length(mixtr)
         checkcounter = checkcounter + 1;
         if trial > 1 && mixtr(trial,2) == mixtr(trial-1,2) && mixtr(trial,1) == mixtr(trial-1,1)
@@ -715,7 +715,7 @@ try
                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
                     %      threshVA(mixtrVA(trial))=min(threshVA(mixtrVA(trial)),length(Sizelist));
                 end
-                thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(Sizelist));
+                thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
                 
                 %                     if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
                 %                         isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
