@@ -153,16 +153,19 @@ FLAPVariablesReset
     ShowCursor(); %Show the cursor
     buttons=0;
     contcoord=0;
+    numrespCorr=0;%reset number of responses entered
+    resp=0; % reset every block
+
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
             if (eyetime2-trial_time)>0 && (eyetime2-trial_time)<prefixationsquare+ifi && askcalib==0
-                
+                                   
+
                 cont=0;
             elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==0 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
-                   numrespCorr=0;%reset number of responses entered
-
+numrespCorr=0;%reset number of responses entered
                  numresp=0; %reset number of responses entered
                                          resp(length(stimx)) = 0;
 
@@ -296,62 +299,60 @@ FLAPVariablesReset
              [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
              x=origx-xoff;
          end
+         
+         
+         if numrespCorr==length(stimx)
+            stim_stop=GetSecs;
+            eyechecked=10^4;
+         end
         end
-        
-        
-        
-%         if resp == 1
-%             PsychPortAudio('Start', pahandle1);
-%         end
+
         Screen('Flip',w);
         WaitSecs(0.5)
         
-        if thekeys~=wrongkey && thekeys~=escapeKey
-            clear thekeys
-            KbQueueFlush()
-            [keyIsDown, keyCode] = KbQueueCheck;
-            thekeys = find(keyCode);
-            if thekeys==escapeKey
-                Screen('Flip',w);
-                save(baseName)
-                closescript = 1;
-                %     return;
-            elseif thekeys==wrongkey
-%                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
-                                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', [0 0 0]);
-
-                Screen('Flip',w);
-                save(baseName)
-                closescript = 1;
-                %    return
-            else thekeys~=wrongkey && thekeys~=escapeKey
-                err=KbName(thekeys);
-            end
-            
-            
-        elseif thekeys==wrongkey
-            DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
-            Screen('Flip',w);
-            save(baseName)
-            closescript = 1;
-        else
-            Screen('Flip',w);
-            save(baseName)
-            closescript = 1;
-        end
-        
+%         if thekeys~=wrongkey && thekeys~=escapeKey
+%             clear thekeys
+%             KbQueueFlush()
+%             [keyIsDown, keyCode] = KbQueueCheck;
+%             thekeys = find(keyCode);
+%             if thekeys==escapeKey
+%                 Screen('Flip',w);
+%                 save(baseName)
+%                 closescript = 1;
+%                 %     return;
+%             elseif thekeys==wrongkey
+% %                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+%                                 DrawFormattedText(w, 'Press a key to exit', 'center', 'center', [0 0 0]);
+% 
+%                 Screen('Flip',w);
+%                 save(baseName)
+%                 closescript = 1;
+%                 %    return
+%             else thekeys~=wrongkey && thekeys~=escapeKey
+%                 err=KbName(thekeys);
+%             end
+%             
+%             
+%         elseif thekeys==wrongkey
+%             DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+%             Screen('Flip',w);
+%             save(baseName)
+%             closescript = 1;
+%         else
+%             Screen('Flip',w);
+%             save(baseName)
+%             closescript = 1;
+%         end
+       save(baseName)  
         time_stim(kk) = stim_stop - stim_start;
         total_trials(kk)=block;
         
-        cheiz(kk)=thekeys;
-        rispo(kk)=resp;
+%         cheiz(kk)=thekeys;
+        rispo(kk,:)=resp;
   %      xxeye(block).ics=[xeye];
  %       yyeye(block).ipsi=[yeye];
         vbltimestamp(block).ix=[VBL_Timestamp];
-        if err>1
-            err=err(1);
-        end
-        theerrors(kk)=err;
+
         
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -360,7 +361,7 @@ FLAPVariablesReset
             clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).FixationIndices = FixIndex;
             clear FixIndex
             EyeSummary.(TrialNum).TotalEvents = CheckCount;

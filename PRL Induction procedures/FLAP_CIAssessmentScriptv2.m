@@ -92,29 +92,29 @@ try
     
     %% Sound
     
-%     InitializePsychSound(1); %'optionally providing
-%     % the 'reallyneedlowlatency' flag set to one to push really hard for low
-%     % latency'.
-%     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-%     if site<3
-%         pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-%         pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-%     elseif site==3 % Windows
-%         
-%         pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-%         pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-%     end
-%     try
-%         [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-%         [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-%     end
-%     
-%     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-%     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+    %     InitializePsychSound(1); %'optionally providing
+    %     % the 'reallyneedlowlatency' flag set to one to push really hard for low
+    %     % latency'.
+    %     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    %     if site<3
+    %         pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+    %         pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+    %     elseif site==3 % Windows
+    %
+    %         pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    %         pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    %     end
+    %     try
+    %         [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
+    %         [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+    %     end
+    %
+    %     PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+    %     PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     
     %% Stimuli creation
     
-%     PreparePRLpatchCIAssessment % here I characterize PRL features
+    %     PreparePRLpatchCIAssessment % here I characterize PRL features
     
     % Gabor stimuli
     if AssessmentType==1
@@ -122,10 +122,10 @@ try
     end
     
     % CI stimuli
-    if AssessmentType==2 
+    if AssessmentType==2
         CIAssessmentShapes
     end
-
+    
     %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
@@ -183,7 +183,7 @@ try
     end
     
     %create trial matrix
-    if AssessmentType == 1 
+    if AssessmentType == 1
         mixcond{1,1}=[1 1; 1 2]; %full factorial design
         mixcond{2,1} = [1 2; 1 1];
         for cond = 1:length(mixcond)
@@ -193,8 +193,8 @@ try
             end
             mixtr{cond,1} = dummy;
         end
-%         mixtr=[mixtr ones(length(mixtr(:,1)),1)];
-    else 
+        %         mixtr=[mixtr ones(length(mixtr(:,1)),1)];
+    else
         mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
         mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
         mixcond{3,1} = [2 1; 2 2; 1 2; 1 1];
@@ -206,20 +206,20 @@ try
             end
             mixtr{cond,1} = dummy;
         end
-%         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
-%         mixtr =mixtr(randperm(length(mixtr)),:);
+        %         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
+        %         mixtr =mixtr(randperm(length(mixtr)),:);
     end
     
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     if AssessmentType==1 || AssessmentType == 2
-        stepsizes=[4 4 3 2 1]; % step sizes for staircases
+        stepsizes=[5 5 5 3 3 1]; % step sizes for staircases
         % Threshold -> 79%
-        sc.up = 1;   % # of incorrect answers to go one step up
-        sc.down = 3;  % # of correct answers to go one step down
+        sc.up = 1;                          % # of incorrect answers to go one step up
+        sc.steps= [2 3];                    % # of correct answers to go one step down
         SFthreshmin=0.01;     % contrast value below which we increase SF
         SFthreshmax=0.2; % contrast value above which we decrease SF
-        SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF       
+        SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
         if AssessmentType==1
             StartCont=15;  %starting value for Gabor contrast
             currentsf=4;
@@ -239,8 +239,8 @@ try
             shapesoftheDay=shapeMat;
             AllShapes=size((Targy));
             trackthresh=ones(AllShapes(2),conditionTwo)*StartJitter; %assign initial jitter to shapes per location
-            thresh(1,:)=trackthresh(1,:); % shape 1 location 1 (left), shape 1 location 2 (right) 
-            thresh(2,:)=trackthresh(2,:); % shape 2 location 1 (left), shape 2 location 2 (right) 
+            thresh(1,:)=trackthresh(1,:); % shape 1 location 1 (left), shape 1 location 2 (right)
+            thresh(2,:)=trackthresh(2,:); % shape 2 location 1 (left), shape 2 location 2 (right)
             % reversal and counters for each shape and each location
             % depending on mixtr
             reversals = zeros(2,2);
@@ -251,7 +251,7 @@ try
     end
     
     %% Trial structure
-
+    
     if annulusOrPRL==1 % annulus for pre-target fixation (default is NOT this)
         % here I define the annulus around the scotoma which allows for a
         % fixation to count as 'valid', i.e., the flickering is on when a
@@ -275,10 +275,10 @@ try
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-   if AssessmentType == 1 || AssessmentType == 2
-       InstructionFLAPAssessment(w,AssessmentType,gray,white)
-                   theoris =[-45 45];
-   end
+    if AssessmentType == 1 || AssessmentType == 2
+        InstructionFLAPAssessment(w,AssessmentType,gray,white)
+        theoris =[-45 45];
+    end
     
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
@@ -292,11 +292,12 @@ try
     
     
     %% HERE starts trial loop
-    mixtr = mixtr{1,1};% this is just for debugging, for the actual study, this needs to be the mod of 
-        %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
-        trialcounter = 0;
-        checkcounter = 0;
-    for trial=1:length(mixtr)  
+    mixtr = mixtr{1,1};% this is just for debugging, for the actual study, this needs to be the mod of
+    %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
+    trialcounter = 0;
+    checkcounter = 0;
+    resetcounter(1:2) = 1;
+    for trial=1:length(mixtr)
         checkcounter = checkcounter + 1;
         if trial > 1 && mixtr(trial,2) == mixtr(trial-1,2) && mixtr(trial,1) == mixtr(trial-1,1)
             trialcounter = trialcounter + 1;
@@ -316,27 +317,27 @@ try
             end
         end
         if practicePassed==2
-           closescript=1;
-           break
+            closescript=1;
+            break
         end
         %% training type-specific staircases
         
-        if AssessmentType==1   %if it's a Gabor trial 
+        if AssessmentType==1   %if it's a Gabor trial
             ssf=sflist(currentsf);
             fase=randi(4);
             texture(trial)=TheGabors(currentsf, fase);
             contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-        end        
-        if AssessmentType==2 
+        end
+        if AssessmentType==2
             Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,2)));
             Tscat=0;
         end
         %% generate answer for this trial (training type 3 has no button response)
         
-        if AssessmentType==1 
+        if AssessmentType==1
             theans(trial)=randi(2);
             ori=theoris(theans(trial));
-        elseif AssessmentType==2 
+        elseif AssessmentType==2
             theans(trial)=randi(2);
             CIstimuliMod % add the offset/polarity repulsion
         end
@@ -349,14 +350,14 @@ try
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
-% -------------------------------------------------------------------------        
+        % -------------------------------------------------------------------------
         if demo==2
             if mod(trial,40)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
             
         end
-% -------------------------------------------------------------------------
+        % -------------------------------------------------------------------------
         if AssessmentType == 1
             if trial == 1
                 Instruction_Contrast_Assessment
@@ -467,23 +468,23 @@ try
                     elseif AssessmentType>2
                         [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     end
-%                     if AssessmentType~=3 % no more dots!
-%                %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-%                     elseif AssessmentType==3 %force fixation for training types 3
-%                         if exist('isendo') == 0
-%                             isendo=0;
-%                         end
-%                         if isendo==1 % if is endo trial we slowly increase the visibility of the cue
-%                             if mod(round(eyetime2-trial_time),100)
-%                                 contrastcounter=contrastcounter+1;
-%                                 realcuecontrast=(cuecontrast*0.45)+(contrastcounter/2000);
-%                             end
-%                             Screen('FillOval', w, realcuecontrast, imageRect_offs_dot);
-%                         elseif isendo==0
-%                             realcuecontrast=cuecontrast;
-%                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], realcuecontrast);
-%                         end
-%                     end
+                    %                     if AssessmentType~=3 % no more dots!
+                    %                %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                    %                     elseif AssessmentType==3 %force fixation for training types 3
+                    %                         if exist('isendo') == 0
+                    %                             isendo=0;
+                    %                         end
+                    %                         if isendo==1 % if is endo trial we slowly increase the visibility of the cue
+                    %                             if mod(round(eyetime2-trial_time),100)
+                    %                                 contrastcounter=contrastcounter+1;
+                    %                                 realcuecontrast=(cuecontrast*0.45)+(contrastcounter/2000);
+                    %                             end
+                    %                             Screen('FillOval', w, realcuecontrast, imageRect_offs_dot);
+                    %                         elseif isendo==0
+                    %                             realcuecontrast=cuecontrast;
+                    %                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], realcuecontrast);
+                    %                         end
+                    %                     end
                     if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                         newtrialtime=GetSecs;
                         skipcounterannulus=1000;
@@ -511,26 +512,26 @@ try
                     flickswitch= flickswitch+flickeringrate;
                     flick=3-flick; % flicker/non flicker
                 end
-%                 if AssessmentType>2 && demo==2  % Force flicker here (training type 3 and 4)
-%                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
-%                 end
+                %                 if AssessmentType>2 && demo==2  % Force flicker here (training type 3 and 4)
+                %                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
+                %                 end
                 
                 % from ForcedFixationFlicker3, should I show the flicker or not?
-%                 if turnFlickerOn(end)==1 %flickering cue
-%                     if flick==2
-%                         if AssessmentType==3
-%                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-%                         elseif AssessmentType==4
-%                             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-%                         end
-%                     end
-%                 elseif turnFlickerOn(end)==0 %non-flickering cue
-%                     if AssessmentType==3
-%                         Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-%                     elseif AssessmentType==4
-%                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-%                     end
-%                 end
+                %                 if turnFlickerOn(end)==1 %flickering cue
+                %                     if flick==2
+                %                         if AssessmentType==3
+                %                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+                %                         elseif AssessmentType==4
+                %                             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                %                         end
+                %                     end
+                %                 elseif turnFlickerOn(end)==0 %non-flickering cue
+                %                     if AssessmentType==3
+                %                         Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
+                %                     elseif AssessmentType==4
+                %                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                %                     end
+                %                 end
                 if exist('circlestar')==0
                     circle_start = GetSecs;
                     circlestar=1;
@@ -552,7 +553,7 @@ try
                             assignedPRLpatch
                         end
                     end
-                elseif AssessmentType==1 
+                elseif AssessmentType==1
                     Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
                     if skipmasking==0
                         assignedPRLpatch
@@ -587,12 +588,12 @@ try
                 end
                 % start counting timeout for the non-fixed time training
                 % types 3 and 4
-%                 if AssessmentType>2
-%                     if exist('checktrialstart')==0
-%                         trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
-%                         checktrialstart=1;
-%                     end
-%                 end
+                %                 if AssessmentType>2
+                %                     if exist('checktrialstart')==0
+                %                         trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
+                %                         checktrialstart=1;
+                %                     end
+                %                 end
                 
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
                 eyechecked=10^4; % exit loop for this trial
@@ -676,80 +677,111 @@ try
             if AssessmentType~=3
                 staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
             end
-            if AssessmentType==1 
+            if AssessmentType==1
                 Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=contr;
             end
-            if AssessmentType==2 
+            if AssessmentType==2
                 Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
             end
             if foo(theans(trial)) % if correct response
                 resp = 1;
                 PsychPortAudio('Start', pahandle1); % sound feedback
-                if AssessmentType~=3
-                    corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
-                        if isreversals(mixtr(trial,1),mixtr(trial,2))==1
-                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                            isreversals(mixtr(trial,1),mixtr(trial,2))=0;
-                        end
-                        thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                    else
-                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-                            if isreversals(mixtr(trial,1),mixtr(trial,2))==1
-                                reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                                isreversals(mixtr(trial,1),mixtr(trial,2))=0;
-                            end
-                            thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                        end
-                        % if we want to prevent streaking, uncomment below
-                        %                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
-                    end
+                %                 if AssessmentType~=3
+                corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
+                if isreversals(mixtr(trial,1),mixtr(trial,2))<2
+                    sc.down=sc.steps(1);
+                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                    sc.down=sc.steps(2);
                 end
-                if AssessmentType==1 
-                    
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3 % if we have enough consecutive correct responses to
-                        %update stimulus intensity
-                        if contr<SFthreshmin && currentsf<length(sflist)
-                            currentsf=min(currentsf+1,length(sflist));
-                            foo=find(Contlist>=SFthreshmin);
-                            thresh(:,:)=foo(end)-SFadjust;
-                            corrcounter(:,:)=0;
-                            thestep=3;
-                        else
-                            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                            thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                        end
-                        corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    else
-                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-                            %update stimulus intensity
-                            if contr<SFthreshmin && currentsf<length(sflist)
-                                currentsf=min(currentsf+1,length(sflist));
-                                foo=find(Contlist>=SFthreshmin);
-                                thresh(:,:)=foo(end)-SFadjust;
-                                corrcounter(:,:)=0;
-                                thestep=3;
-                            else
-                                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                                thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                            end
-                            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                        end
-                    end
+                if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
+                    isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
                 end
-                if AssessmentType==2
-                    if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
-                        thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                        thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
-                        corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    else
-                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-                            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                            thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
-                            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                
+                if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down %&& reversalsVA(mixtrVA(trial))>= 2
+                    % non streaking after 3 reversals
+                    if isreversals(mixtr(trial,1),mixtr(trial,2))==1 %&& ThreshlistVA(staircounterVA(mixtrVA(trial-sc.down)))<ThreshlistVA(staircounterVA(mixtrVA(trial)))
+                        if resetcounter(mixtr(trial))==0
+                            isreversals(mixtr(trial,1),mixtr(trial,2))=isreversals(mixtr(trial,1),mixtr(trial,2))+1;
+                            resetcounter(mixtr(trial))=1;
+                            rever(trial)=1;
                         end
+                        isreversals(mixtr(trial,1),mixtr(trial,2))=0;
                     end
+                    thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                    if thestep>length(stepsizes)
+                        thestep=length(stepsizes);
+                    end
+                    corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                    %      threshVA(mixtrVA(trial))=min(threshVA(mixtrVA(trial)),length(Sizelist));
                 end
+                thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+                
+                %                     if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
+                %                         isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
+                %                         %reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+                %                         if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                %                             reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                %                             isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                %                         end
+                %                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                %                     else
+                %                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                %                             if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                %                                 reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                %                                 isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                %                             end
+                %                             thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                %                         end
+                %                         % if we want to prevent streaking, uncomment below
+                %                         %                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                %                     end
+                %                 end
+                %                 if AssessmentType==1
+                %
+                %                     if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3 % if we have enough consecutive correct responses to
+                %                         %update stimulus intensity
+                %                         if contr<SFthreshmin && currentsf<length(sflist)
+                %                             currentsf=min(currentsf+1,length(sflist));
+                %                             foo=find(Contlist>=SFthreshmin);
+                %                             thresh(:,:)=foo(end)-SFadjust;
+                %                             corrcounter(:,:)=0;
+                %                             thestep=3;
+                %                         else
+                %                             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                %                             thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                %                         end
+                %                         corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                %                     else
+                %                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                %                             %update stimulus intensity
+                %                             if contr<SFthreshmin && currentsf<length(sflist)
+                %                                 currentsf=min(currentsf+1,length(sflist));
+                %                                 foo=find(Contlist>=SFthreshmin);
+                %                                 thresh(:,:)=foo(end)-SFadjust;
+                %                                 corrcounter(:,:)=0;
+                %                                 thestep=3;
+                %                             else
+                %                                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                %                                 thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                %                             end
+                %                             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                %                         end
+                %                     end
+                %                 end
+%                 if AssessmentType==2
+%                     if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+%                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+%                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+%                         corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+%                     else
+%                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+%                             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+%                             thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+%                             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+%                         end
+%                     end
+%                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 ListenChar(0);
@@ -757,35 +789,56 @@ try
             else
                 resp = 0; % if wrong response
                 PsychPortAudio('Start', pahandle2); % sound feedback
-                if AssessmentType~=3
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+                resetcounter(mixtr(trial)) = 0;
+                if isreversals(mixtr(trial,1),mixtr(trial,2)) < 2
+                    sc.down = sc.steps(1);
+                elseif isreversals(mixtr(trial,1),mixtr(trial,2)) >= 2
+                    sc.down = sc.steps(2);
+                end
+                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-                        reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                    else
-                        if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-                            isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                        end
                     end
+                    
                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                end
-                if AssessmentType==1 
-                    if contr>SFthreshmax && currentsf>1
-                        currentsf=max(currentsf-1,1);
-                        thresh(:,:)=StartCont+SFadjust;
-                        corrcounter(:,:)=0;
-                        thestep=3;
-                    else
-                        thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                        thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+                    % we don't want the step size to change on a wrong response
+                    
+                    thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+                    thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
+                    if thresh(mixtr(trial,1),mixtr(trial,2))<1
+                        thresh(mixtr(trial,1),mixtr(trial,2))=1;
                     end
                 end
-                if AssessmentType==2 
-                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                    thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
-                end
-            end
+%                 if AssessmentType~=3
+%                     if  corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+%                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+%                         reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+%                     else
+%                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+%                             isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+%                             reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+%                         end
+%                     end
+%                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+%                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+%                 end
+%                 if AssessmentType==1
+%                     if contr>SFthreshmax && currentsf>1
+%                         currentsf=max(currentsf-1,1);
+%                         thresh(:,:)=StartCont+SFadjust;
+%                         corrcounter(:,:)=0;
+%                         thestep=3;
+%                     else
+%                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+%                         thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+%                     end
+%                 end
+%                 if AssessmentType==2
+%                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+%                     thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+%                 end
+%             end
         elseif AssessmentType==3 % no response to be recorded here
             if closescript==1
                 PsychPortAudio('Start', pahandle2);
@@ -796,6 +849,32 @@ try
             resp = 0;
             respTime=0;
             PsychPortAudio('Start', pahandle2);
+            if isreversals(mixtr(trial,1),mixtr(trial,2))<2
+                    sc.down=sc.steps(1);
+                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                    sc.down=sc.steps(2);
+                end
+                staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
+                Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
+                resetcounter(mixtr(trial))=0;
+                if isreversals(mixtr(trial,1),mixtr(trial,2))<2
+                    sc.down=sc.steps(1);
+                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                    sc.down=sc.steps(2);
+                end
+                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+                if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                    isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+                end
+                
+                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                % we don't want the step size to change on a wrong response
+                thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+                thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
+                if thresh(mixtr(trial,1),mixtr(trial,2))<1
+                    thresh(mixtr(trial,1),mixtr(trial,2))=1;
+                end
         end
         if AssessmentType~=3 % if the trial didn't time out, save some variables
             if trialTimedout(trial)==0
@@ -808,49 +887,49 @@ try
             cueendToResp(kk)=stim_stop-cue_last;
             cuebeginningToResp(kk)=stim_stop-circle_start;
         end
-%         if AssessmentType > 2 % if it's a
-%             %   training type with flicker
-%             %   fixDuration(trial)=flicker_time_start-trial_time;
-%             if flickerdone>1
-%                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
-%                 movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
-%                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
-%                 unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
-%             end
-%         end
-% -----------------------------------------------------------------------------------
+        %         if AssessmentType > 2 % if it's a
+        %             %   training type with flicker
+        %             %   fixDuration(trial)=flicker_time_start-trial_time;
+        %             if flickerdone>1
+        %                 flickertimetrial(trial)=FlickerTime; %  nominal duration of flicker
+        %                 movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
+        %                 Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
+        %                 unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
+        %             end
+        %         end
+        % -----------------------------------------------------------------------------------
         if AssessmentType==2
             trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
-%             threshperday(expDay,:)=trackthresh;
+            %             threshperday(expDay,:)=trackthresh;
         end
-% -----------------------------------------------------------------------------------
+        % -----------------------------------------------------------------------------------
         if (mod(trial,150))==1 && trial>1
-                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+            save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end
-%         if (mod(trial,10))==1 && trial>1 && AssessmentType==3
-%             updatecounter=updatecounter+1;
-%             %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
-%             if mean(unadjustedTimeperformance(end-9:end))>8
-%                 if mod(updatecounter,2)==0
-%                     %here we implement staircase on flicker time
-%                     flickerpointerPre=flickerpointerPre-1;
-%                     flickerpointerPost=flickerpointerPost+1;
-%                 else
-%                     sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-%                 end
-%             elseif mean(unadjustedTimeperformance(end-9:end))<5
-%                 if mod(updatecounter,2)==0
-%                     %here we implement staircase on flicker time
-%                     flickerpointerPre=flickerpointerPre+1;
-%                     flickerpointerPost=flickerpointerPost-1;
-%                 else
-%                     sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
-%                 end
-%             end
-%             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
-%             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
-%             coeffAdj=sizeArray(sizepointer);
-%         end
+        %         if (mod(trial,10))==1 && trial>1 && AssessmentType==3
+        %             updatecounter=updatecounter+1;
+        %             %some adaptive measures for the TRL size that counts as 'fixation within the TRL'
+        %             if mean(unadjustedTimeperformance(end-9:end))>8
+        %                 if mod(updatecounter,2)==0
+        %                     %here we implement staircase on flicker time
+        %                     flickerpointerPre=flickerpointerPre-1;
+        %                     flickerpointerPost=flickerpointerPost+1;
+        %                 else
+        %                     sizepointer=sizepointer-1; % increase the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+        %                 end
+        %             elseif mean(unadjustedTimeperformance(end-9:end))<5
+        %                 if mod(updatecounter,2)==0
+        %                     %here we implement staircase on flicker time
+        %                     flickerpointerPre=flickerpointerPre+1;
+        %                     flickerpointerPost=flickerpointerPost-1;
+        %                 else
+        %                     sizepointer=sizepointer+1; % decrease the size of the TRL region within which the target will be deemed as 'seen through the TRL'
+        %                 end
+        %             end
+        %             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
+        %             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persis
+        %             coeffAdj=sizeArray(sizepointer);
+        %         end
         
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;

@@ -1,12 +1,12 @@
 %FLAPpractice
-if trainingType==1
+if AssessmentType==1
     ssf=sflist(currentsf);
     fase=randi(4);
     texture(trial)=TheGabors(currentsf, fase);
     practicecontrastarray=[0.6 0.6 0.6 0.4 0.4 0.4  0.2 0.2 0.2]; %predefined contrast values for practice trials
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
-elseif trainingType==2
+elseif AssessmentType==2
     Jitpracticearray=[0 0 0 10 10 10 15 15  15]; %  stimulus ori practice
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     targethighercontrast=[1 1 1 1 1 1 0 0 0]; % target contrast
