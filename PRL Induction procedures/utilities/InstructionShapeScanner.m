@@ -56,24 +56,24 @@ Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [example
 imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord2),:)=0;
 
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2; exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.88);
-%6/9------------------------------------
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstrnum' + [examplexJitLocnum; exampleyJitLocnum; examplexJitLocnum; exampleyJitLocnum], exampletheorinum,[], Dcontr ); %Dcontr = contrast of the gabors
-%here I draw the target contour (9) and other sub types (left egg, left
-%diag, 2)
-imageRect_offsCI2instrnum(setdiff(1:length(imageRect_offsCIinstrnum),exampletargetcordnum),:)=0;
-
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instrnum' + [examplexJitLocnum; exampleyJitLocnum; examplexJitLocnum; exampleyJitLocnum], exampletheorinum,[], 0.88);
-
-
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2num' + [examplexJitLocnum2; exampleyJitLocnum2; examplexJitLocnum2; exampleyJitLocnum2], exampletheorinum2,[], Dcontr );
-%here I draw the target contour (6) and other sub types (rught diag, right
-%egg, 5...)
-imageRect_offsCI2instr2num(setdiff(1:length(imageRect_offsCIinstr2num),exampletargetcordnum2),:)=0;
-
-Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2num'+ [examplexJitLocnum2; exampleyJitLocnum2; examplexJitLocnum2; exampleyJitLocnum2], exampletheorinum2,[], 0.88);
-% gabor------------------------------------
-Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
-Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
+% %6/9------------------------------------
+% Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstrnum' + [examplexJitLocnum; exampleyJitLocnum; examplexJitLocnum; exampleyJitLocnum], exampletheorinum,[], Dcontr ); %Dcontr = contrast of the gabors
+% %here I draw the target contour (9) and other sub types (left egg, left
+% %diag, 2)
+% imageRect_offsCI2instrnum(setdiff(1:length(imageRect_offsCIinstrnum),exampletargetcordnum),:)=0;
+% 
+% Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instrnum' + [examplexJitLocnum; exampleyJitLocnum; examplexJitLocnum; exampleyJitLocnum], exampletheorinum,[], 0.88);
+% 
+% 
+% Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2num' + [examplexJitLocnum2; exampleyJitLocnum2; examplexJitLocnum2; exampleyJitLocnum2], exampletheorinum2,[], Dcontr );
+% %here I draw the target contour (6) and other sub types (rught diag, right
+% %egg, 5...)
+% imageRect_offsCI2instr2num(setdiff(1:length(imageRect_offsCIinstr2num),exampletargetcordnum2),:)=0;
+% 
+% Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2num'+ [examplexJitLocnum2; exampleyJitLocnum2; examplexJitLocnum2; exampleyJitLocnum2], exampletheorinum2,[], 0.88);
+% % gabor------------------------------------
+% Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
+% Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
 FirstInstructionOnsetTime=Screen('Flip', w);
 % %WaitSecs(0.5);
     
