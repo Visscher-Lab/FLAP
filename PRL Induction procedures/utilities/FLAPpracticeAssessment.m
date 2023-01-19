@@ -86,6 +86,7 @@ for practicetrial=1:practicetrialnum
             else %force fixation for Assessment types 1 and 2
                 if AssessmentType<3
                     [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                 elseif AssessmentType>2
                     [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
@@ -112,7 +113,8 @@ for practicetrial=1:practicetrialnum
                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
                     imageRect_offsCI2=imageRect_offsCI;
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+%                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness ], wRect);
                     imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
                         imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
                     created(practicetrial)=99;
@@ -126,6 +128,7 @@ for practicetrial=1:practicetrialnum
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
                 end
                 %                 % here I draw the circle within which I show the contour target
+                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
                 %                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
                 %                 if skipmasking==0
                 %                     assignedPRLpatch
