@@ -14,7 +14,7 @@ fixdotcolor2=[0 0 0]; % color of the fixation dot for training type 4 when dot i
 skipmasking=1; % if we want to allow masking of the target when it is not within the assigned PRL (default is no masking)
 fixationlength=10; % if we don't want the scotoma (pixel size)
 colorfixation = [200 200 200]; % if we don't want the scotoma
-
+maskthickness=pix_deg*6;
 %% general temporal parameters (trial events)
 
 preCueISI=0.75; % time between beginning of trial and first event in the trial (fixations, cues or targets)
@@ -41,7 +41,7 @@ dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 % training type 2
 jitterCI=1; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
-
+JitRat = 2;
 % training type 3/4
 updatecounter = 0; % starts the counter for the blocks in which we evaluate whether it's time to update the TRL size or the persistent flickering duration
 holdtrial = 1; %for training type 3 and 4: we force a series of consecutive trials to be in the same location

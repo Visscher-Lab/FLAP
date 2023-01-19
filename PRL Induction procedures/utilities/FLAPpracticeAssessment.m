@@ -27,7 +27,8 @@ for practicetrial=1:practicetrialnum
     else
         Orijit=Jitpracticearray(practicetrial);
         stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
-        CIstimuliModPracticeAssessment % add the offset/polarity repulsion
+%         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
+        CIstimuliModPractice
     end
     theeccentricity_Y=0;
     theeccentricity_X=LocX(mixtr(trial,2))*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
