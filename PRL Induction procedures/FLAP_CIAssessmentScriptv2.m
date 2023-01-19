@@ -123,7 +123,8 @@ try
     
     % CI stimuli
     if AssessmentType==2
-        CIAssessmentShapes
+        %         CIAssessmentShapes
+        CIShapesII
     end
     
     %% Keys definition/kb initialization
@@ -178,7 +179,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=20;  %total number of trials per staircase (per shape) % trials = 10; debugging
+            trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
         end
     end
     
@@ -233,9 +234,9 @@ try
         end
         if AssessmentType==2
             if demo==1
-                shapeMat(:,1)= [1 2];
+                shapeMat(:,1)= [1 5];
             end
-            shapeMat(:,1)= [1 2];
+            shapeMat(:,1)= [1 5];
             shapesoftheDay=shapeMat;
             AllShapes=size((Targy));
             trackthresh=ones(AllShapes(2),conditionTwo)*StartJitter; %assign initial jitter to shapes per location
@@ -352,7 +353,7 @@ try
         end
         % -------------------------------------------------------------------------
         if demo==2
-            if mod(trial,40)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            if mod(trial,trials)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
             
@@ -465,6 +466,7 @@ try
                 else %force fixation for training types 1 and 2
                     if AssessmentType<3
                         [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     elseif AssessmentType>2
                         [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
                     end
@@ -563,7 +565,8 @@ try
                         imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
                             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
                         imageRect_offsCI2=imageRect_offsCI;
-                        imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                        %                         imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                        imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness ], wRect);
                         imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
                             imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
                     end
@@ -574,7 +577,8 @@ try
                         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
                     end
                     % here I draw the circle within which I show the contour target
-                    Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+                    Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+%                     Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
                     if skipmasking==0
                         assignedPRLpatch
                     end
@@ -688,9 +692,9 @@ try
                 PsychPortAudio('Start', pahandle1); % sound feedback
                 %                 if AssessmentType~=3
                 corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                if isreversals(mixtr(trial,1),mixtr(trial,2))<2
+                if reversals(mixtr(trial,1),mixtr(trial,2))<2
                     sc.down=sc.steps(1);
-                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
                     sc.down=sc.steps(2);
                 end
                 if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
@@ -701,13 +705,13 @@ try
                     % non streaking after 3 reversals
                     if isreversals(mixtr(trial,1),mixtr(trial,2))==1 %&& ThreshlistVA(staircounterVA(mixtrVA(trial-sc.down)))<ThreshlistVA(staircounterVA(mixtrVA(trial)))
                         if resetcounter(mixtr(trial))==0
-                            isreversals(mixtr(trial,1),mixtr(trial,2))=isreversals(mixtr(trial,1),mixtr(trial,2))+1;
+                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
                             resetcounter(mixtr(trial))=1;
                             rever(trial)=1;
                         end
                         isreversals(mixtr(trial,1),mixtr(trial,2))=0;
                     end
-                    thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
                     if thestep>length(stepsizes)
                         thestep=length(stepsizes);
                     end
@@ -769,19 +773,19 @@ try
                 %                         end
                 %                     end
                 %                 end
-%                 if AssessmentType==2
-%                     if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
-%                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-%                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
-%                         corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-%                     else
-%                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-%                             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-%                             thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
-%                             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-%                         end
-%                     end
-%                 end
+                %                 if AssessmentType==2
+                %                     if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+                %                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                %                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+                %                         corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                %                     else
+                %                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+                %                             thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                %                             thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
+                %                             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                %                         end
+                %                     end
+                %                 end
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 ListenChar(0);
@@ -790,55 +794,55 @@ try
                 resp = 0; % if wrong response
                 PsychPortAudio('Start', pahandle2); % sound feedback
                 resetcounter(mixtr(trial)) = 0;
-                if isreversals(mixtr(trial,1),mixtr(trial,2)) < 2
+                if reversals(mixtr(trial,1),mixtr(trial,2)) < 2
                     sc.down = sc.steps(1);
-                elseif isreversals(mixtr(trial,1),mixtr(trial,2)) >= 2
+                elseif reversals(mixtr(trial,1),mixtr(trial,2)) >= 2
                     sc.down = sc.steps(2);
                 end
                 %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
-                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                        isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-                    end
-                    
-                    corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    % we don't want the step size to change on a wrong response
-                    
-                    thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                    thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
-                    if thresh(mixtr(trial,1),mixtr(trial,2))<1
-                        thresh(mixtr(trial,1),mixtr(trial,2))=1;
-                    end
+                if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                    isreversals(mixtr(trial,1),mixtr(trial,2))=1;
                 end
-%                 if AssessmentType~=3
-%                     if  corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
-%                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-%                         reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-%                     else
-%                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
-%                             isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-%                             reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-%                         end
-%                     end
-%                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-%                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-%                 end
-%                 if AssessmentType==1
-%                     if contr>SFthreshmax && currentsf>1
-%                         currentsf=max(currentsf-1,1);
-%                         thresh(:,:)=StartCont+SFadjust;
-%                         corrcounter(:,:)=0;
-%                         thestep=3;
-%                     else
-%                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-%                         thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
-%                     end
-%                 end
-%                 if AssessmentType==2
-%                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-%                     thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
-%                 end
-%             end
+                
+                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                % we don't want the step size to change on a wrong response
+                
+                thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+                thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
+                if thresh(mixtr(trial,1),mixtr(trial,2))<1
+                    thresh(mixtr(trial,1),mixtr(trial,2))=1;
+                end
+            end
+            %                 if AssessmentType~=3
+            %                     if  corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2)) >= 3
+            %                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            %                         reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+            %                     else
+            %                         if reversals(mixtr(trial,1),mixtr(trial,2)) < 3
+            %                             isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            %                             reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+            %                         end
+            %                     end
+            %                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+            %                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+            %                 end
+            %                 if AssessmentType==1
+            %                     if contr>SFthreshmax && currentsf>1
+            %                         currentsf=max(currentsf-1,1);
+            %                         thresh(:,:)=StartCont+SFadjust;
+            %                         corrcounter(:,:)=0;
+            %                         thestep=3;
+            %                     else
+            %                         thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+            %                         thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+            %                     end
+            %                 end
+            %                 if AssessmentType==2
+            %                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+            %                     thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
+            %                 end
+            %             end
         elseif AssessmentType==3 % no response to be recorded here
             if closescript==1
                 PsychPortAudio('Start', pahandle2);
@@ -849,32 +853,32 @@ try
             resp = 0;
             respTime=0;
             PsychPortAudio('Start', pahandle2);
-            if isreversals(mixtr(trial,1),mixtr(trial,2))<2
-                    sc.down=sc.steps(1);
-                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
-                    sc.down=sc.steps(2);
-                end
-                staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
-                Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
-                resetcounter(mixtr(trial))=0;
-                if isreversals(mixtr(trial,1),mixtr(trial,2))<2
-                    sc.down=sc.steps(1);
-                elseif isreversals(mixtr(trial,1),mixtr(trial,2))>= 2
-                    sc.down=sc.steps(2);
-                end
-                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
-                if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                    isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-                end
-                
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                % we don't want the step size to change on a wrong response
-                thestep=min(isreversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
-                if thresh(mixtr(trial,1),mixtr(trial,2))<1
-                    thresh(mixtr(trial,1),mixtr(trial,2))=1;
-                end
+            if reversals(mixtr(trial,1),mixtr(trial,2))<2
+                sc.down=sc.steps(1);
+            elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                sc.down=sc.steps(2);
+            end
+            staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
+            Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
+            resetcounter(mixtr(trial))=0;
+            if reversals(mixtr(trial,1),mixtr(trial,2))<2
+                sc.down=sc.steps(1);
+            elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                sc.down=sc.steps(2);
+            end
+            %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+            if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            end
+            
+            corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+            % we don't want the step size to change on a wrong response
+            thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+            thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+            thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
+            if thresh(mixtr(trial,1),mixtr(trial,2))<1
+                thresh(mixtr(trial,1),mixtr(trial,2))=1;
+            end
         end
         if AssessmentType~=3 % if the trial didn't time out, save some variables
             if trialTimedout(trial)==0

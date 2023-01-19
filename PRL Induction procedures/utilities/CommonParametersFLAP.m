@@ -13,6 +13,7 @@ if exist('TRLlocation', 'var')
     possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(TRLlocation) 0 ]; %eccentricity of PRL in deg
 end
+maskthickness=pix_deg*6;
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
@@ -33,7 +34,7 @@ if exist('test', 'var')
     if test==1
         stimulusduration=2.133; % stimulus duration during debugging
     else
-        stimulusduration=0.133; % stimulus duration during actual sessions
+        stimulusduration=0.2; % stimulus duration during actual sessions
     end
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
@@ -49,8 +50,10 @@ sigma_deg = stimulusSize/2.5; % sigma of the Gabor in degrees of visual angle
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 
 % training type 2
-jitterCI=1; % jitter for countour stimuli of training type 2 and 4
+jitterCI=1; % jitter for countour stimuli of training type 2 and 4 (used to be 1)
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
+possibleoffset=[0]; %location offset for countour stimuli of training type 2 and 4
+JitRat=2; % amount of jit ratio (the larger the value the less jitter)
 
 % training type 3/4
 updatecounter = 0; % starts the counter for the blocks in which we evaluate whether it's time to update the TRL size or the persistent flickering duration
