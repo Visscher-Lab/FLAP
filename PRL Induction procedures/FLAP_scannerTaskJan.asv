@@ -232,12 +232,11 @@ try
                         imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
                     %stimulus that is shown on the right side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
-                    %imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
-                   
+                    imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
+Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instrnum' + [examplexJitLocnum; exampleyJitLocnum; examplexJitLocnum; exampleyJitLocnum], exampletheorinum,[], 0.88);
                     %stimulus that is shown on the left side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
-                    %imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
-                    
+                    imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
 
                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
