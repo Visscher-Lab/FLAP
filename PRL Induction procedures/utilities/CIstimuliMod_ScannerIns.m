@@ -461,22 +461,22 @@ end
 %examplexJitLoc2=xJitLoc;
 clear newyJitLoc newxJitLoc
 
-examplexJitLoc(examplexJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-examplexJitLoc(examplexJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
-exampleyJitLoc(exampleyJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-exampleyJitLoc(exampleyJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+examplexJitLoc(examplexJitLoc>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+examplexJitLoc(examplexJitLoc< - pix_deg/ecccoeffCI_example/3)=-pix_deg/ecccoeffCI_example/3;
+exampleyJitLoc(exampleyJitLoc>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+exampleyJitLoc(exampleyJitLoc< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLoc2(examplexJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-examplexJitLoc2(examplexJitLoc2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
-exampleyJitLoc2(exampleyJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-exampleyJitLoc2(exampleyJitLoc2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+examplexJitLoc2(examplexJitLoc2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+examplexJitLoc2(examplexJitLoc2< - pix_deg/ecccoeffCI_example/3)=-pix_deg/ecccoeffCI_example/3;
+exampleyJitLoc2(exampleyJitLoc2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+exampleyJitLoc2(exampleyJitLoc2< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLoc(exampletargetcord)=pix_deg*(offsetx(1,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLoc(exampletargetcord)=pix_deg*(offsety(1,:))/coeffCI;%+xJitLoc(targetcord);
-examplexJitLoc2(exampletargetcord2)=pix_deg*(offsetx(2,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLoc2(exampletargetcord2)=pix_deg*(offsety(2,:))/coeffCI;%+xJitLoc(targetcord);
+examplexJitLoc(exampletargetcord)=pix_deg*(offsetx(1,:))/coeffCI_example;%+xJitLoc(targetcord);
+exampleyJitLoc(exampletargetcord)=pix_deg*(offsety(1,:))/coeffCI_example;%+xJitLoc(targetcord);
+examplexJitLoc2(exampletargetcord2)=pix_deg*(offsetx(2,:))/coeffCI_example;%+xJitLoc(targetcord);
+exampleyJitLoc2(exampletargetcord2)=pix_deg*(offsety(2,:))/coeffCI_example;%+xJitLoc(targetcord);
 
-exampletheori=180*rand(1,length(eccentricity_XCI));
+exampletheori=180*rand(1,length(eccentricity_XCI_example));
 exampletheori2=exampletheori;
 
 exampletheori(exampletargetcord)=Targori(1,:);
@@ -612,22 +612,22 @@ examplexJitLocnum2=newxJitLoc;
 %examplexJitLocnum2=xJitLoc;
 clear newyJitLoc newxJitLoc
 
-examplexJitLocnum(examplexJitLocnum>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-examplexJitLocnum(examplexJitLocnum< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
-exampleyJitLocnum(exampleyJitLocnum>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-exampleyJitLocnum(exampleyJitLocnum< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+examplexJitLocnum(examplexJitLocnum>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+examplexJitLocnum(examplexJitLocnum< - pix_deg/ecccoeffCI_example/3)=-pix_deg/ecccoeffCI_example/3;
+exampleyJitLocnum(exampleyJitLocnum>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+exampleyJitLocnum(exampleyJitLocnum< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLocnum2(examplexJitLocnum2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-examplexJitLocnum2(examplexJitLocnum2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
-exampleyJitLocnum2(exampleyJitLocnum2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-exampleyJitLocnum2(exampleyJitLocnum2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+examplexJitLocnum2(examplexJitLocnum2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+examplexJitLocnum2(examplexJitLocnum2< - pix_deg/ecccoeffCI_example/3)=-pix_deg/ecccoeffCI_example/3;
+exampleyJitLocnum2(exampleyJitLocnum2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
+exampleyJitLocnum2(exampleyJitLocnum2< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetxnum(1,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsetynum(1,:))/coeffCI;%+xJitLoc(targetcord);
-examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetxnum(2,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetynum(2,:))/coeffCI;%+xJitLoc(targetcord);
+examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetxnum(1,:))/coeffCI_example;%+xJitLoc(targetcord);
+exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsetynum(1,:))/coeffCI_example;%+xJitLoc(targetcord);
+examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetxnum(2,:))/coeffCI_example;%+xJitLoc(targetcord);
+exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetynum(2,:))/coeffCI_example;%+xJitLoc(targetcord);
 
-exampletheorinum=180*rand(1,length(eccentricity_XCI));
+exampletheorinum=180*rand(1,length(eccentricity_XCI_example));
 exampletheorinum2=exampletheorinum;
 
 exampletheorinum(exampletargetcordnum)=Targorinum(1,:);

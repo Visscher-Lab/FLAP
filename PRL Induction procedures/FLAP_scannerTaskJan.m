@@ -107,7 +107,7 @@ try
         end
     end
     disp(['Trigger received - ' startdatetime]);
-    tic;
+    %tic;
     fixationscriptW;
     WaitSecs(TR);
     %% Start Trials
@@ -119,7 +119,7 @@ try
             runnumber=1;
         end
         %blocktype=activeblocktype(runnumber,totalblock);
-        blocktype=3;
+        blocktype=2;
         if blocktype==4
             Screen('TextFont',w, 'Arial');
             Screen('TextSize',w, 60);
@@ -148,8 +148,8 @@ try
                 else
                     DrawFormattedText(w, '>', 'center',cueloc, white);
                 end
-                CueOnsetTime=Screen('Flip',w);
-                while GetSecs<CueOnsetTime+0.250
+                CueOnsetTime(totalblock,trial)=Screen('Flip',w);
+                while GetSecs<CueOnsetTime(totalblock,trial)+0.250
                 end
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
@@ -201,11 +201,13 @@ try
                         imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
 
                     %stimulus that is shown on the right side
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc; yJitLoc; xJitLoc; yJitLoc], theori,[], Dcontr);
+                    %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc; yJitLoc; xJitLoc; yJitLoc], theori,[], Dcontr);
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright2'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
                     %stimulus that is shown on the left side
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
+                    %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
                     imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft2'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
 
                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
@@ -231,13 +233,14 @@ try
                     imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
                         imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
                     %stimulus that is shown on the right side
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
-                    %imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
-                   
-                    %stimulus that is shown on the left side
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
-                    %imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
+                    %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
+                    imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum2'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
                     
+                    %stimulus that is shown on the left side
+                    %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
+                    imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum2'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
 
                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
@@ -271,4 +274,4 @@ catch ME
     'There was an error caught in the main program.'
     psychlasterror()
 end
-toc;
+%toc;
