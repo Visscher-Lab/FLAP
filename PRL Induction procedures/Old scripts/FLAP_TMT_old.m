@@ -5,9 +5,8 @@ commandwindow
 
 
 addpath([cd '/utilities']);
-addpath([cd '/trailtask']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
@@ -83,13 +82,13 @@ try
     KbQueueStart(deviceIndex);
     
     
-    %%
+    %% 
     %Calls the script that has the stimulus details for the trails task
-    StimDetailsTrails;
-    
-    %sets times for each phase [A_demo, A, B_demo, B]
-    Maxtimes=[2 5 2 5]*60; %specified in minutes converted to seconds
-    
+StimDetailsTrails;
+
+%sets times for each phase [A_demo, A, B_demo, B]
+Maxtimes=[2 5 2 5]*60; %specified in minutes converted to seconds
+
     %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
@@ -114,6 +113,11 @@ try
     
     %%
     
+%    DrawFormattedText(w, 'Reading test  \n \n \n \n Press any key to start', 'center', 'center', white);
+ %   Screen('Flip', w);
+ %   KbWait;
+ %   WaitSecs(1.5);
+    
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -125,44 +129,46 @@ try
         
         location =  zeros(4, 6);
     end
-        if Isdemo==0
-            FLAP_TMT_practice
-        else
-    for block=1:4
+    
+%    for trial=1:length(mixtr)
+        for block=1:4
         askcalib=0;
-        %figu res out locations
-        stimx=round(TheCoords{block}(:,1)*wRect(3));
-        stimy=round(TheCoords{block}(:,2)*wRect(4));
-        TheCircMat=[stimx-Csize,stimy-Csize, stimx+Csize,stimy+Csize]'; %this is the array for the cricles
-        for i=1:(length(stimx)-1) %this is the array for the lines
-            TheLinesMat(1,i*2-1)=stimx(i);
-            TheLinesMat(2,i*2-1)=stimy(i);
-            TheLinesMat(1,i*2)=stimx(i+1);
-            TheLinesMat(2,i*2)=stimy(i+1);
-        end
-        CircFill=ones(3,length(stimx))*CircleColorFill;
-        trial=block;
-        FLAPVariablesReset
-        HideCursor(); %hides the cursor
-        TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
-        
-        ShowCursor(); %Show the cursor
-        buttons=0;
-        contcoord=0;
-        numrespCorr=0; %mm
-        resp=0; %mm
+          %figu res out locations
+    stimx=round(TheCoords{block}(:,1)*wRect(3)); %pull out x cords
+    stimy=round(TheCoords{block}(:,2)*wRect(4)); %pull out y cords
+    TheCircMat=[stimx-Csize,stimy-Csize, stimx+Csize,stimy+Csize]'; %this is the array for the cricles
+    for i=1:(length(stimx)-1) %this is the array for the lines
+        TheLinesMat(1,i*2-1)=stimx(i);
+        TheLinesMat(2,i*2-1)=stimy(i);
+        TheLinesMat(1,i*2)=stimx(i+1);
+        TheLinesMat(2,i*2)=stimy(i+1);
+    end
+    CircFill=ones(3,length(stimx))*CircleColorFill;
+trial=block;
+FLAPVariablesReset
+           HideCursor(); %hides the cursor
+   % TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
+       TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
+
+    ShowCursor(); %Show the cursor
+    buttons=0;
+    contcoord=0;
+    numrespCorr=0;%reset number of responses entered
+    resp=0; % reset every block
+
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
             if (eyetime2-trial_time)>0 && (eyetime2-trial_time)<prefixationsquare+ifi && askcalib==0
-                
+                                   
+
                 cont=0;
             elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==0 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
-                numrespCorr=0;%reset number of responses entered
-                numresp=0;
-                resp(length(stimx)) = 0;
-                
+numrespCorr=0;%reset number of responses entered
+                 numresp=0; %reset number of responses entered
+                                         resp(length(stimx)) = 0;
+
                 if MouseCalib
                     x=round(x*wRect(3)/Mscreen(1))-xoff;
                     y=round(y*wRect(4)/Mscreen(2));
@@ -170,67 +176,63 @@ try
                 if sum(buttons)~=0
                     askcalib=1;
                 end
+             %   cont=cont+1
 
             elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==1 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
                 
                 if exist('stimstar')==0
                     stim_start=GetSecs;
                     stimstar=1;
-                    startblocktime(block)=GetSecs;
+                        startblocktime(block)=GetSecs;
                 end
                 %Draw Target
-                if ( (numrespCorr<length(stimx))&&   (startblocktime(block)  -GetSecs<Maxtimes(block) ) )  %loop through trial in each block
-                    Screen('FillRect',w,BackColor);
-                    %draw lines
-                    if numrespCorr>=2
-                        Screen('DrawLines',w,TheLinesMat(:,1:2*(numrespCorr-1)) ,2, LineColor)
-                    end
-                    %draw circles
-                    Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
-                    Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
-                    for i=1:length(stimx)  %draws text
-                        if block<=2
-                            Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                        else
-                            if mod(i,2)
-                                Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                            else
-                                Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                            end
-                        end
-                    end
-                    
-                    if  sum(buttons)~=0 && resp(numresp+1)==0;
-                        contcoord=contcoord+1;
-                        zxx(contcoord)=x;
-                        zyy(contcoord)=y;
-                        
-                        numresp=numresp+1; %increment the number of response counter
-                        StartTime(numresp,block)=GetSecs;
-                        
-                        x
-                        y
-                        if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
-                            RespTime(numresp,block)=GetSecs-StartTime(numresp,block);
-                            CircFill(:,1:numresp)=CircleColorFillResp; %changes circle fill to show response
-                            resp(numresp)=1;
-                            numrespCorr=numrespCorr+1;
-                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                            PsychPortAudio('Start', pahandle);
-                            while any(buttons)
-                                [xcoor,ycoor,buttons]=GetMouse;%wait for the button to be lifted--Pinar added
-                            end
-                        else
-                            beep; %alert poor response
-                            while any(buttons)
-                                [xcoor,ycoor,buttons]=GetMouse; %wait for the button to be lifted--Pinar added
-                            end
-                            numresp=numresp-1;
-                        end
-                        
-                        buttons=zeros(3,1)';
-                    end
+ if ( (numrespCorr<length(stimx))&&   (startblocktime(block)  -GetSecs<Maxtimes(block) ) )  %loop through trial in each block
+        Screen('FillRect',w,BackColor);
+        %draw lines
+        if numrespCorr>=2
+            Screen('DrawLines',w,TheLinesMat(:,1:2*(numrespCorr-1)) ,2, LineColor)
+        end
+        %draw circles
+        Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
+        Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+        for i=1:length(stimx)  %draws text
+            if block<=2
+                Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+            else
+                if mod(i,2)
+                    Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                else
+                    Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
                 end
+            end
+        end
+    
+        if  sum(buttons)~=0 && resp(numresp+1)==0;
+         contcoord=contcoord+1;
+         zxx(contcoord)=x;
+         zyy(contcoord)=y;
+
+            numresp=numresp+1; %increment the number of response counter       
+            StartTime(numresp,block)=GetSecs;
+            x
+            y
+            if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
+                RespTime(numresp,block)=GetSecs-StartTime(numresp,block);
+                CircFill(:,1:numresp)=CircleColorFillResp; %changes circle fill to show response
+                resp(numresp)=1;
+                numrespCorr=numrespCorr+1;
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+            else
+                beep; %alert poor response
+                %wait for the button to be lifted
+                numresp=numresp-1;
+            end
+       buttons=zeros(3,1)';
+        end
+        %now get the response
+     %   resp = 0;     
+    end
             end
             eyefixation5
             
@@ -288,40 +290,69 @@ try
                     end
                 end
             end
-            if sum(buttons)>1 && (eyetime2-StartTime(numresp,block))>2
-                [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
-                x=origx-xoff;
-            elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
-                
-            elseif sum(buttons)==0
-                [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
-                x=origx-xoff;
-            end
-            if numrespCorr==length(stimx)
-                stim_stop=GetSecs;
-                eyechecked=10^4;
-            end
+         %   [keyIsDown, keyCode] = KbQueueCheck;
+         if sum(buttons)>1 && (eyetime2-StartTime(numresp,block))>2
+                                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+             x=origx-xoff;
+         elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
+         elseif sum(buttons)==0
+             [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+             x=origx-xoff;
+         end
+         
+         
+         if numrespCorr==length(stimx)
+            stim_stop=GetSecs;
+            eyechecked=10^4;
+         end
         end
-        
+
         Screen('Flip',w);
         WaitSecs(0.5)
         
-        save(baseName)
+%         if thekeys~=wrongkey && thekeys~=escapeKey
+%             clear thekeys
+%             KbQueueFlush()
+%             [keyIsDown, keyCode] = KbQueueCheck;
+%             thekeys = find(keyCode);
+%             if thekeys==escapeKey
+%                 Screen('Flip',w);
+%                 save(baseName)
+%                 closescript = 1;
+%                 %     return;
+%             elseif thekeys==wrongkey
+% %                DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+%                                 DrawFormattedText(w, 'Press a key to exit', 'center', 'center', [0 0 0]);
+% 
+%                 Screen('Flip',w);
+%                 save(baseName)
+%                 closescript = 1;
+%                 %    return
+%             else thekeys~=wrongkey && thekeys~=escapeKey
+%                 err=KbName(thekeys);
+%             end
+%             
+%             
+%         elseif thekeys==wrongkey
+%             DrawFormattedText(w, 'Press a key to exit', 'center', 'center', white);
+%             Screen('Flip',w);
+%             save(baseName)
+%             closescript = 1;
+%         else
+%             Screen('Flip',w);
+%             save(baseName)
+%             closescript = 1;
+%         end
+       save(baseName)  
         time_stim(kk) = stim_stop - stim_start;
         total_trials(kk)=block;
-        %Since it has only ones, I dont think we need this:
-        if kk==1
-            rispo1(kk,:)=resp;
-        elseif kk==2
-            rispo2(kk,:)=resp;
-        elseif kk==3
-            rispo3(kk,:)=resp;
-        elseif kk==4
-            rispo4(kk,:)=resp;
-        end
         
+%         cheiz(kk)=thekeys;
+        rispo(kk,:)=resp;
+  %      xxeye(block).ics=[xeye];
+ %       yyeye(block).ipsi=[yeye];
         vbltimestamp(block).ix=[VBL_Timestamp];
-        
+
         
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -330,7 +361,7 @@ try
             clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).FixationIndices = FixIndex;
             clear FixIndex
             EyeSummary.(TrialNum).TotalEvents = CheckCount;
@@ -353,10 +384,11 @@ try
         clear PKnew2
         if closescript==1
             break
+            %return
         end
+        
     end
-        end
-    %thank them at the end of the experiment
+      %thank them at the end of each block
     oldTextSize=Screen('TextSize', w, 80);
     DrawFormattedText(w,'Great Job','center','center',LetterColor);
     oldTextSize=Screen('TextSize', w, oldTextSize);
@@ -396,6 +428,10 @@ try
     if site==1
         Screen('CloseAll');
         Screen('Preference', 'SkipSyncTests', 0);
+        %     s1 = serial('COM3');     % set the Bits mode back so the screen is in colour
+        %     fopen(s1);
+        %     fprintf(s1, ['$BitsPlusPlus' 13]); %one day we might use the bits# so better not to get rid of these lines
+        %     fclose(s1);
         PsychPortAudio('Close', pahandle);
         
     else
@@ -403,6 +439,7 @@ try
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
         Screen('Flip', w);
         Screen('CloseAll');
+   %     PsychPortAudio('Close', pahandle);
     end
     
     
