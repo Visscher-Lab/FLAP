@@ -29,6 +29,7 @@ flickerdone=0;
 pretrial_time=GetSecs; % trial timing
 trial_time=GetSecs;  % trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
 newtrialtime=GetSecs; % real value to be assigned later, after flicker is done
+caliblock=0;
 clear EyeData
 clear FixIndex
 clear circlestar
