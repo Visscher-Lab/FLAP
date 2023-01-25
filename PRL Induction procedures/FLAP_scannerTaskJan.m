@@ -91,7 +91,7 @@ try
     disp('Ready, waiting for trigger...');
     commandwindow;
     trigger=false;
-    triggercode=23;
+    triggercode=84;%t=23 for mac, for windows: t=84, b=66, r=82, y=89, g=71
     if site==2
         startTime = wait4T(tChar);  %wait for 't' from scanner.
     elseif site==1 || site==3
