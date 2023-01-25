@@ -1,7 +1,7 @@
-for practiceblock=1:2
+ practiceblock=1;
     askcalib=0;
-    stimx=round(TheCoords{(practiceblock*2)-1}(:,1)*wRect(3)); %pull out x cords
-    stimy=round(TheCoords{(practiceblock*2)-1}(:,2)*wRect(4)); %pull out y cords
+    stimx=round(TheCoords{practiceblock}(:,1)*wRect(3)); %pull out x cords
+    stimy=round(TheCoords{practiceblock}(:,2)*wRect(4)); %pull out y cords
     TheCircMat=[stimx-Csize,stimy-Csize, stimx+Csize,stimy+Csize]'; %this is the array for the cricles
     for i=1:(length(stimx)-1) %this is the array for the lines
         TheLinesMat(1,i*2-1)=stimx(i);
@@ -61,11 +61,11 @@ for practiceblock=1:2
                     if practiceblock==1
                         Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
                     else
-                        if mod(i,2)
-                            Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                        else
-                            Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                        end
+%                         if mod(i,2)
+%                             Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+%                         else
+%                             Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+%                         end
                     end
                 end
                 
@@ -103,25 +103,25 @@ for practiceblock=1:2
         end
         eyefixation5
         
-        if EyetrackerType==2
-            if ScotomaPresent==1
-            if scotomavpixx==1
-                Datapixx('EnableSimulatedScotoma')
-                Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
-                scotomaradiuss=round(pix_deg*6);
-                Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
-                mode=Datapixx('GetSimulatedScotomaMode');
-                status= Datapixx('IsSimulatedScotomaEnabled');
-                radius= Datapixx('GetSimulatedScotomaRadius');
-            end
-            end
-        end
+%         if EyetrackerType==2
+%             if ScotomaPresent==1
+%             if scotomavpixx==1
+%                 Datapixx('EnableSimulatedScotoma')
+%                 Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
+%                 scotomaradiuss=round(pix_deg*6);
+%                 Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
+%                 mode=Datapixx('GetSimulatedScotomaMode');
+%                 status= Datapixx('IsSimulatedScotomaEnabled');
+%                 radius= Datapixx('GetSimulatedScotomaRadius');
+%             end
+%             end
+%         end
         if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
             Screen('FillRect', w, white);
-        else
-             if ScotomaPresent==1
-            Screen('FillOval', w, scotoma_color, scotoma);
-             end
+%         else
+%              if ScotomaPresent==1
+%             Screen('FillOval', w, scotoma_color, scotoma);
+%              end
         end
         
         [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
@@ -222,7 +222,6 @@ for practiceblock=1:2
     end
     kk=kk+1;
     clear PKnew2
-    if closescript==1
-        break
-    end
-end
+%     if closescript==1
+%         break
+%     end
