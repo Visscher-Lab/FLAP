@@ -41,6 +41,8 @@ ylocsCI=y1(:)';
 %ecccoeffCI=3; %original
 ecccoeffCI=1.8; %marcello changed it to 1.8
 ecccoeffCI_example=3;
+
+CIstimulussize=stimulusSize*2.6*pix_deg;
 %generate visual cue
 
 eccentricity_XCI=xlocsCI*pix_deg/ecccoeffCI; % for the actual experiment
@@ -52,7 +54,7 @@ eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
 coeffCI=ecccoeffCI/2;%for the actual experiment
 coeffCI_example=ecccoeffCI_example/2;%for the actual experiment
 
-Tcontr=0.938;         %target contrast
+Tcontr=0.1938;         %target contrast
 %Dcontr=0.38;        %distractor contrast
 Dcontr=0.938;
 
@@ -104,51 +106,6 @@ Targorinum=[orifoonum; orifoonum];
 offsetxnum= [Xoffnum; -Xoffnum];
 offsetynum=[Yoffnum; -Yoffnum];
 
-
-%     yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
-%     xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
-%     orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
-%
-%
-%     Xoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
-%     Yoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
-%     Targx= [xfoo; -xfoo];
-%     Targy= [yfoo; -yfoo];
-%
-%     Targori=[orifoo; orifoo];
-%
-%     offsetx= [Xoff; -Xoff];
-%     offsety=[Yoff; -Yoff];
-% %d/b
-% Targx= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1
-%     2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
-% Targy=[-1      0       1       -2      2       -2      2       -2      -1      0       1       2       -3       -4       -5
-%     -1      0       1       -2      2       -2      2       -2       2      -1       1       0       -3       -4       -5];
-% 
-% Targori =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0
-%     150     0       30     120      60     90      90      0       0       0       0       0       0       0       0];
-% 
-% Xoff=[0     0.2193      0       0       0       0       0       0       0       0       0       0       0       0       0];
-% Yoff=[0     0           0       0       0       0.1096  -0.1827 0       0       0       0       0       0       0       0];
-% 
-% offsetx= [Xoff; -Xoff];
-% offsety=[Yoff; -Yoff];
-% %q and p
-% Targx= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1
-%     2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
-% Targy=[-1      0       1       -2      2       -2      2       -2      -1      0       1       2       3       4       5
-%     -1      0       1       -2      2       -2      2       -2       2      -1       1       0       3       4       5];
-% 
-% Targori =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0
-%     150     0       30     120      60     90      90      0       0       0       0       0       0       0       0];
-% 
-% Xoff=[0     0.2193      0       0       0       0       0       0       0       0       0       0       0       0       0];
-% Yoff=[0     0           0       0       0       0.1096  -0.1827 0       0       0       0       0       0       0       0];
-% 
-% offsetx= [-Xoff; Xoff];
-% offsety=[-Yoff; -Yoff];
-
-
 %d/p
 Targx= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1
     2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
@@ -161,5 +118,5 @@ Targori =[30     0       150     60      120     90      90      0       0      
 Xoff=[0     0.2193      0       0       0       0       0       0       0       0       0       0       0       0       0];
 Yoff=[0     0           0       0       0       0.1096  -0.1827 0       0       0       0       0       0       0       0];
 
-offsetx= [Xoff; -Xoff];
-offsety=[Yoff; -Yoff];
+offsetx= [-Xoff; Xoff];
+offsety=[-Yoff; -Yoff];

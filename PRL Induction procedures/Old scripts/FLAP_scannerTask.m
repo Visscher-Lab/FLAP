@@ -57,7 +57,7 @@ try
     jitterCI=1;
     possibleoffset=[-2:2];
     %ExerTime=0 ; % If this is a 1 then break time will be ignored.
-    JitRat=8; % amount of jit ration the larger the value the less jitter
+    JitRat=4; % amount of jit ration the larger the value the less jitter
 
     gaborcontrast=0.35;
     circularMasking=1; % if we want a circular masking around the contour
@@ -73,10 +73,10 @@ try
     %closescript=0;
     interTrialIntervals1=[1 4 1 2 7 2 2 8 2 1; 3 7 1 1 3 4 1 4 5 1; 1 5 3 1 7 1 3 1 6 2; 2 5 1 2 1 8 3 4 1 3];
     interTrialIntervals2=[4 1 1 2 8 2 3 1 6 2; 1 7 1 5 2 2 3 2 6 1; 2 1 5 2 8 1 3 4 2 2; 3 1 7 2 6 2 1 4 2 2];
-    %activeblockcue1=[2 2 1 2 1 1 2 2 2 1]; activeblockcue2=[1 1 2 1 2 2 1 2 2 1]; activeblockcue3=[1 1 2 2 2 1 2 1 1 1]; activeblockcue4=[1 2 2 1 1 2 1 2 1 2]; activeblockcue5=[1 2 1 2 1 2 1 2 1 1];
     activeblockcue=[2 2 1 2 1 1 2 2 2 1; 1 1 2 1 2 2 1 2 2 1; 1 1 2 2 2 1 2 1 1 1; 1 2 2 1 1 2 1 2 1 2]; %attention location (cue direction) 1:left, 2:right
     activeblockstimulus1=[2 1;1 1;2 2;2 2;1 2;2 1;1 2;2 2;1 2;2 2];activeblockstimulus2=[2 1;1 2;2 1;2 1;1 1;1 2;1 1;1 1;1 1;2 1];activeblockstimulus3=[1 2;1 1;2 2;2 1;2 2;2 2;1 2;2 1;2 2;1 2];activeblockstimulus4=[1 1;1 2;1 2;2 1;1 2;2 1;1 2;2 2;1 1;2 1];%orientation of gabors/6 or 9 for left and right stimuli
-    activeblocktype=[1 2 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for numbers
+    %activeblocktype=[1 2 2 1;2 2 1 1;2 1 2 1;2 1 1 2;1 1 2 2]; %1 for gabors 2 for numbers
+    activeblocktype=[2 2 1 2;2 2 2 1;2 1 2 2;1 2 2 2;2 1 2 2;2 2 1 2]; %1 for gabors 2 for numbers
     totalactiveblock=4;
     TR=1.5;
     totaltrialtime=TR*2;
@@ -322,6 +322,8 @@ try
     eccentricity_Ydeg=[PRL1y PRL2y];
 
     %% settings for individual small gabors for contour integration stimulus
+   %stimulusSize = 2.5;
+    %sigma_deg = stimulusSize/2.5;
     sigma_pixSmall = sigma_degSmall*pix_deg;
     imsizeSmall=sigma_pixSmall*2.5;
     [x0Small,y0Small]=meshgrid(-imsizeSmall:imsizeSmall,-imsizeSmall:imsizeSmall); % contour integration task related
@@ -481,8 +483,8 @@ coeffCI=ecccoeffCI/2;
     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori,[], Dcontr );% background of stimulus 6 for the instruction slideon the left side
     imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' +[xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Tcontr );% stimulus 6 for theinstruction slide on the left side
-    Screen('FrameOval', w,gray, imageRect_offsCImask2, 60, 60); %mask
-    Screen('FrameOval', w,gray, imageRect_offsCImask1, 60, 60); %mask
+    Screen('FrameOval', w,gray, imageRect_offsCImask2, 22, 22); %mask
+    Screen('FrameOval', w,gray, imageRect_offsCImask1, 22, 22); %mask
     Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs_Big, theoris(2),[], gaborcontrast);%orientation disc.task stimulus for the instruction slide on the right side
     Screen('DrawTexture', w, TheGaborsBig, [], imageRect_offs2_Big, theoris(1),[], gaborcontrast); %orientation disc. task stimulus for the instruction slide on the left side
     colorfixation = white;
@@ -563,9 +565,10 @@ coeffCI=ecccoeffCI/2;
                     imageRect_Small(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI, imageRect_Small(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
                 imageRect_offsCII =[imageRect_Small(1)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect_Small(2)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI,...
                     imageRect_Small(3)+(newsamplex-wRect(3)/2)+eccentricity_XCI'+theeccentricity_XCI2, imageRect_Small(4)+(newsampley-wRect(4)/2)+eccentricity_YCI'+theeccentricity_YCI];
-                imageRect_offsCI2=imageRect_offsCI;
-                imageRect_offsCII2=imageRect_offsCII;
-                imageRectMask = CenterRect([0, 0, [ xs*1.75*pix_deg xs*1.75*pix_deg]], wRect);
+                %imageRect_offsCI2=imageRect_offsCI;
+                %imageRect_offsCII2=imageRect_offsCII;
+                %imageRectMask = CenterRect([0, 0, [ xs*1.75*pix_deg xs*1.75*pix_deg]], wRect);
+                 imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.5651 (xs/coeffCI*pix_deg)*1.5651]], wRect);
                 imageRect_offsCImask1=[imageRectMask(1)+theeccentricity_XCI, imageRectMask(2)+theeccentricity_YCI,...
                     imageRectMask(3)+theeccentricity_XCI, imageRectMask(4)+theeccentricity_YCI];
                 imageRect_offsCImask2=[imageRectMask(1)+theeccentricity_XCI2, imageRectMask(2)+theeccentricity_YCI2,...
@@ -622,13 +625,13 @@ coeffCI=ecccoeffCI/2;
                     yJitLoc2(targetcord2)=(pix_deg*offsety(2,:))+yJitLoc2(targetcord2);
                 end
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr ); % background of left stimulus
-                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Tcontr );% stimulus right
+                %imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Tcontr );% stimulus right
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Dcontr );% background of right stimulus
-                imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Tcontr );% stimulus left
-                Screen('FrameOval', w,gray, imageRect_offsCImask2, 60, 60);
-                Screen('FrameOval', w,gray, imageRect_offsCImask1, 60, 60);
+                %imageRect_offsCII2(setdiff(1:length(imageRect_offsCI),targetcord2),:)=0;
+                %Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCII2' + [xJitLoc2+xModLoc; yJitLoc2+yModLoc; xJitLoc2+xModLoc; yJitLoc2+yModLoc], theori2,[], Tcontr );% stimulus left
+                Screen('FrameOval', w,gray, imageRect_offsCImask2, 22, 22);
+                Screen('FrameOval', w,gray, imageRect_offsCImask1, 22, 22);
                 fixationscriptW; %fixation aids
                 if cue==1 % we are showing cue during the stimulus presentation
                     DrawFormattedText(w, '<', 'center', 560', white);
@@ -646,6 +649,7 @@ coeffCI=ecccoeffCI/2;
             ListenChar(2);
             timedout=false;
             RT(totalblock,trial)=0;ResponseType{totalblock,trial}='miss';
+            if site==2
             while ~timedout
                 keyTime=GetSecs;
                 if CharAvail
@@ -669,7 +673,28 @@ coeffCI=ecccoeffCI/2;
                 end
 
             end
-
+            elseif site==0
+                while ~timedout
+                [ keyIsDown, keyTime, keyCode ] = KbCheck;
+                responsekey = find(keyCode, 1);
+                if keyIsDown
+                    RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
+                    conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==middlefingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==indexfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==middlefingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==indexfingerresp); %conditions that are true
+                                    if any(conditions)==1
+                    PsychPortAudio('Start', pahandle1); % feedback for true response
+                    ResponseType{totalblock,trial}='correct';
+                else
+                    PsychPortAudio('Start', pahandle2); %feedback for false response
+                    ResponseType{totalblock,trial}='false';
+                end
+                clear conditions;
+                FlushEvents;
+                    break; 
+                end;
+                if((keyTime-ResponseFixationOnsetTime)>MaximumResponseTime),timedout=true;
+                end
+                end
+            end
             % Begin the rest block jittered times between trials
 
             itiforrun=eval(['interTrialIntervals' runnum]);
@@ -680,17 +705,17 @@ coeffCI=ecccoeffCI/2;
             break;
         end
         clear responsekey;
-        Screen('TextFont',w, 'Arial');
-        Screen('TextSize',w, 42);
-        Screen('FillRect', w, gray);
-        fixationscriptW;
-        DrawFormattedText(w, 'x', 'center', 558, white);
-        RestTime=Screen('Flip',w);
-        save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
-
-        while GetSecs < RestTime + 15; %  rest for 15 sec
-
-        end
+%         Screen('TextFont',w, 'Arial');
+%         Screen('TextSize',w, 42);
+%         Screen('FillRect', w, gray);
+%         fixationscriptW;
+%         DrawFormattedText(w, 'x', 'center', 558, white);
+%         RestTime=Screen('Flip',w);
+%         save(baseName,'RT','ResponseType','trialstarttime','-append') %save our variables
+% 
+%         while GetSecs < RestTime + 15; %  rest for 15 sec
+% 
+%         end
     end
 
 

@@ -73,8 +73,7 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
     %
     %         end
     %     elseif site==1 || site==3
-%     while ~timedout
-while GetSecs<(ResponseFixationOnsetTime+MaximumResponseTime2)
+    while ~timedout
         [ keyIsDown, keyTime, keyCode ] = KbCheck;
         responsekey = find(keyCode, 1);
         if keyIsDown && responsekey==leftfingerresp ||keyIsDown && responsekey==rightfingerresp
@@ -103,10 +102,9 @@ while GetSecs<(ResponseFixationOnsetTime+MaximumResponseTime2)
         end
         %         if((keyTime-ResponseFixationOnsetTime(totalblock,trial))>MaximumResponseTime2(totalblock,trial)),timedout=true;
         %         end
-%         if GetSecs>(ResponseFixationOnsetTime+MaximumResponseTime2)
-%            % timedout=true;
-%             break;
-%         end
+        if GetSecs>(ResponseFixationOnsetTime+MaximumResponseTime2)
+            timedout=true;
+        end
     end
     %end
 else % key was pressed during stimulus presentation
