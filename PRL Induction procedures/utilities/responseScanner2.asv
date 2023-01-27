@@ -10,6 +10,8 @@ if cue==1 % we are showing cue during the stimulus presentation
 else
     DrawFormattedText(w, '>', 'center',cueloc, white);
 end
+                    while GetSecs<trialstarttime(totalblock,trial)+0.250
+                    end
 StimulusOnsetTime(totalblock,trial)=Screen('Flip',w); %show stimulus
 ListenChar(2);
 %while GetSecs<StimulusOnsetTime(totalblock,trial)+0.200 %stimulus presentation time is 200 ms
@@ -31,11 +33,13 @@ while GetSecs<trialstarttime(totalblock,trial)+0.450 %stimulus presentation time
         clear conditions;
         FlushEvents;
         %while GetSecs<200-(keyTime-StimulusOnsetTime(totalblock,trial))
-        while GetSecs<450-(keyTime-trialstarttime(totalblock,trial))
+        while GetSecs<450-(RTraw(totalblock,trial)-trialstarttime(totalblock,trial))
         end
         %         if exist ('responsekey','var')
         %             clear responsekey keyIsDown keyTime keyCode;
         %         end
+        afterresponseduringpresentation(totalblock,trial)=GetSecs;
+        break;
     end
 end
 fixationscriptW; %fixation aids
@@ -73,7 +77,8 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
     %
     %         end
     %     elseif site==1 || site==3
-    while ~timedout
+    %     while ~timedout
+    while GetSecs<(ResponseFixationOnsetTime(totalblock,trial)+MaximumResponseTime2(totalblock,trial))
         [ keyIsDown, keyTime, keyCode ] = KbCheck;
         responsekey = find(keyCode, 1);
         if keyIsDown && responsekey==leftfingerresp ||keyIsDown && responsekey==rightfingerresp
@@ -93,24 +98,27 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
             FlushEvents;
 
             %break;
-            while GetSecs<(MaximumResponseTime2(totalblock,trial)-(keyTime-ResponseFixationOnsetTime(totalblock,trial)))
+            while GetSecs<RTraw(totalblock,trial)+(MaximumResponseTime2(totalblock,trial)-(RTraw(totalblock,trial)-ResponseFixationOnsetTime(totalblock,trial)))
             end
             %             if exist ('responsekey','var')
             %                 clear responsekey keyIsDown keyTime keyCode;
             %             end
+            afterresponse(totalblock,trial)=GetSecs;
             break;
         end
         %         if((keyTime-ResponseFixationOnsetTime(totalblock,trial))>MaximumResponseTime2(totalblock,trial)),timedout=true;
         %         end
-        if GetSecs>(ResponseFixationOnsetTime+MaximumResponseTime2)
-            timedout=true;
-        end
+        %         if GetSecs>(ResponseFixationOnsetTime+MaximumResponseTime2)
+        %            % timedout=true;
+        %             break;
+        %         end
     end
     %end
 else % key was pressed during stimulus presentation
     %while (keyTime-StimulusOnsetTime(totalblock,trial))>MaximumResponseTime(totalblock,trial)
-    while GetSecs<(ResponseFixationOnsetTime+MaximumResponseTime2)
+    while GetSecs<(ResponseFixationOnsetTime(totalblock,trial)+MaximumResponseTime2(totalblock,trial))
     end
+    afterafterresponseduringpresentation(totalblock,trial)=GetSecs;
 end
 %%% end
 if exist ('responsekey','var')

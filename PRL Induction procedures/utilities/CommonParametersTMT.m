@@ -15,8 +15,9 @@ fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 
 %if mouse calibration is needed
 MouseCalib=1;
-xoff=1920; %ucr uses 1920, uab uses 0
-Mscreen=[1920 1080];
+xoff=-1920; %ucr uses 1920, uab uses 0
+%xoff=0; %ucr uses 1920, uab uses 0
+%Mscreen=[1920 1080];
 
 %sets and saves the random seed
 randseedvar=100*clock;

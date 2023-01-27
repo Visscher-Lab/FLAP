@@ -70,9 +70,6 @@ try
     eccentricity_X=[PRLx -PRLx]*pix_deg;
     eccentricity_Y=[PRLy PRLy]*pix_deg;
 
-    %% settings for individual small gabors for contour integration stimulus
-
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
 
     %% draw everything on the instruction page
 
@@ -85,13 +82,50 @@ try
     eccentricity_X(1)= theeccentricity_X;
     eccentricity_Y(1) =theeccentricity_Y ;
     InstructionShapeScanner
+    Screen('TextFont',w, 'Arial');
+    Screen('TextSize',w, 60);
+    %% settings for individual small gabors for contour integration stimulus
+
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+    %locations of the stimulus on the screen
+    % gabors
+    imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
+    imageRect_offsright =[imageRect(1)-theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+        imageRect(3)-theeccentricity_X, imageRect(4)+theeccentricity_Y];
+    %egg or d/p stimulus
+    imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
+        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
+    imageRect_offsCIleft2=imageRect_offsCIleft;
+    imageRect_offsCIright =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
+        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
+    imageRect_offsCIright2=imageRect_offsCIright;
+    %imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
+    imageRectMask = CenterRect([0, 0, [CIstimulussize+maskthickness CIstimulussize+maskthickness]], wRect);
+    imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
+        imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
+    imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
+        imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
+    %6/9 stimulus
+    imageRect_offsCIleftnum =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
+        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
+    imageRect_offsCIleftnum2=imageRect_offsCIleftnum;
+    imageRect_offsCIrightnum =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
+        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
+    imageRect_offsCIrightnum2=imageRect_offsCIrightnum;
+    %%imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56(xs/coeffCI*pix_deg)*1.56]], wRect); %1.49
+    imageRectMask = CenterRect([0, 0, [CIstimulussize+maskthickness CIstimulussize+maskthickness]], wRect);
+    imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
+        imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
+    imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
+        imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
     %% get trigger t
     ListenChar(2);
     soundsc(sin(1:.5:1000)); % play 'ready' tone
     disp('Ready, waiting for trigger...');
     commandwindow;
     trigger=false;
-    triggercode=23;
+    triggercode=84;%t=23 for mac, for windows: t=84, b=66, r=82, y=89, g=71
     if site==2
         startTime = wait4T(tChar);  %wait for 't' from scanner.
     elseif site==1 || site==3
@@ -110,7 +144,8 @@ try
     disp(['Trigger received - ' startdatetime]);
     %tic;
     fixationscriptW;
-    WaitSecs(TR);
+    while GetSecs < startTime + TR; %  rest for 1.5 sec
+    end
     %% Start Trials
     if Isdemo==1
         totalblockfinal=2;
@@ -119,12 +154,9 @@ try
         if Isdemo==1
             runnumber=1;
         end
-        %blocktype=activeblocktype(runnumber,totalblock);
-        blocktype=2;
+        blocktype=activeblocktype(runnumber,totalblock);
+        %blocktype=2;
         if blocktype==4
-            Screen('TextFont',w, 'Arial');
-            Screen('TextSize',w, 60);
-            Screen('FillRect', w, gray);
             fixationscriptW;
             DrawFormattedText(w, 'x', 'center', xloc, white);%685
             RestTime=Screen('Flip',w);
@@ -139,9 +171,6 @@ try
             activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
 
             for trial=1:totaltrial
-                trialstarttime(totalblock,trial)=GetSecs;
-                Screen('TextFont',w, 'Arial');
-                Screen('TextSize',w, 60);
                 fixationscriptW;
                 cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
                 if cue==1
@@ -149,9 +178,16 @@ try
                 else
                     DrawFormattedText(w, '>', 'center',cueloc, white);
                 end
+
+                % wait for the ITI appropriate
+                % record the time of the TTL pulse
+                trialstarttime(totalblock,trial)=GetSecs; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frames
+
+                % show the cue
                 CueOnsetTime(totalblock,trial)=Screen('Flip',w);
-                while GetSecs<CueOnsetTime(totalblock,trial)+0.250
-                end
+
+                %while GetSecs<CueOnsetTime(totalblock,trial)+0.250
+                % while showing the cue, prepare the stimulus
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
                     stimulusdirection_leftstim_num=activeblockstim(trial,1);stimulusdirection_rightstim_num=activeblockstim(trial,2); %what are shown in left and right is set
@@ -160,11 +196,7 @@ try
                     stimulusdirection_leftstim_num=activeblockstim(((totalblock-1)*totaltrial)+trial,1);stimulusdirection_rightstim_num=activeblockstim(((totalblock-1)*totaltrial)+trial,2); %what are shown in left and right is set
                 end
                 if blocktype==1 %gabors
-                    %trl locations
-                    imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-                    imageRect_offsright =[imageRect(1)-theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                        imageRect(3)-theeccentricity_X, imageRect(4)+theeccentricity_Y];
+                    createGabors_Scanner
 
                     if stimulusdirection_leftstim==1 %right oriented
                         Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
@@ -178,34 +210,22 @@ try
                     else %left oriented
                         Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
                     end
+
+                    % wait with the cue on screen till ready to show the
+                    % stimulus
+                    while GetSecs<trialstarttime(totalblock,trial)+0.250
+                    end
+
                     responseScanner2;
                     % Begin the rest block jittered times between trials
 
                     itiforrun=eval(['interTrialIntervals' runnum]);
                     iti=itiforrun(totalblock,trial)*TR;
-                    %WaitSecs(iti);
                     ititime(totalblock,trial)=GetSecs;
-            while GetSecs < ititime + 15; %  rest for 15 sec
-
-            end
+                    while GetSecs < ititime(totalblock,trial) + iti; %  rest for each iti
+                    end
                 elseif blocktype==2 %egg-CI
-                    %CIstimuliMod_ScannerIns
                     CIstimuliMod_Scanner
-                    imageRect_offsCIleft =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
-                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
-                    imageRect_offsCIleft2=imageRect_offsCIleft;
-                    imageRect_offsCIright =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
-                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
-                    imageRect_offsCIright2=imageRect_offsCIright;
-
-                    %                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
-                    imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
-                        imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
-                    imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
-                        imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
-
                     %stimulus that is shown on the right side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright'+ [xJitLoc; yJitLoc; xJitLoc; yJitLoc], theori,[], Dcontr);
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
@@ -215,51 +235,49 @@ try
                     imageRect_offsCIleft2(setdiff(1:length(imageRect_offsCIleft),targetcord2),:)=0;
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft2'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
 
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
+                    %                     Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
+                    %                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, maskthickness/2, maskthickness/2);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, maskthickness/2, maskthickness/2);
+
                     responseScanner2;
                     % Begin the rest block jittered times between trials
 
                     itiforrun=eval(['interTrialIntervals' runnum]);
                     iti=itiforrun(totalblock,trial)*TR;
-                    WaitSecs(iti);
+                    %WaitSecs(iti);
+                    ititime(totalblock,trial)=GetSecs;
+                    while GetSecs < ititime(totalblock,trial) + iti; %  rest for 15 sec
+                    end
 
                 elseif blocktype==3 %6 or 9
-                    CIstimuliMod_ScannerIns
-                    imageRect_offsCIleftnum =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
-                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(1), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
-                    imageRect_offsCIleftnum2=imageRect_offsCIleftnum;
-                    imageRect_offsCIrightnum =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(1),...
-                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(2), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(1)];
-                    imageRect_offsCIrightnum2=imageRect_offsCIrightnum;
-                    %imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                    imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.49 (xs/coeffCI*pix_deg)*1.49]], wRect);
-                    imageRect_offsCImaskleft=[imageRectMask(1)+eccentricity_X(1), imageRectMask(2)+eccentricity_Y(1),...
-                        imageRectMask(3)+eccentricity_X(1), imageRectMask(4)+eccentricity_Y(1)];
-                    imageRect_offsCImaskright=[imageRectMask(1)+eccentricity_X(2), imageRectMask(2)+eccentricity_Y(1),...
-                        imageRectMask(3)+eccentricity_X(2), imageRectMask(4)+eccentricity_Y(1)];
+                    CIstimuliMod_Scanner
                     %stimulus that is shown on the right side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
                     imageRect_offsCIrightnum2(setdiff(1:length(imageRect_offsCIrightnum),targetcordnum),:)=0;
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIrightnum2'+ [xJitLocnum; yJitLocnum; xJitLocnum; yJitLocnum], theorinum,[], Dcontr);
-                    
+
                     %stimulus that is shown on the left side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
                     imageRect_offsCIleftnum2(setdiff(1:length(imageRect_offsCIleftnum),targetcordnum2),:)=0;
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleftnum2'+ [xJitLocnum2; yJitLocnum2; xJitLocnum2; yJitLocnum2], theorinum2,[], Dcontr);
 
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
-                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
+                    %Screen('FrameOval', w,gray, imageRect_offsCImaskleft, 80, 80);
+                    %Screen('FrameOval', w,gray, imageRect_offsCImaskright, 80, 80);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskleft, maskthickness/2, maskthickness/2);
+                    Screen('FrameOval', w,gray, imageRect_offsCImaskright, maskthickness/2, maskthickness/2);
 
                     responseScanner2;
                     % Begin the rest block jittered times between trials
 
                     itiforrun=eval(['interTrialIntervals' runnum]);
                     iti=itiforrun(totalblock,trial)*TR;
-                    WaitSecs(iti);
+                    ititime(totalblock,trial)=GetSecs;
+                    while GetSecs < ititime(totalblock,trial) + iti; %
+                    end
                 end
             end
-            save(baseName,'RT','RTraw','ResponseType','ResponseKey','trialstarttime','-append') %save our variables
+            save(baseName,'RTraw','ResponseType','ResponseKey','trialstarttime','-append') %save our variables
         end
     end
 
@@ -280,4 +298,3 @@ catch ME
     'There was an error caught in the main program.'
     psychlasterror()
 end
-%toc;
