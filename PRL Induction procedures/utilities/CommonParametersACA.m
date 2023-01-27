@@ -3,9 +3,12 @@ scotomadeg=6; % scotoma size in deg
 scotoma_color=[200 200 200];
 red=[255 0 0];
 attContr= 0.35; % contrast of the target
-StartSize=2; %starting size for VA
+StartSize=1; %starting size for VA
+StartCont=1.122; %starting value for contrast
+StimSize=1; %stimulus size for non-acuity tasks
 fixwindow=3;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 PRLecc=7.5;         %%eccentricity of PRLs
+        max_separation=8; %max deg for crowding
 if PRLlocations==4
     xlocs=[0 PRLecc 0 -PRLecc];
     ylocs=[-PRLecc 0 PRLecc 0 ];
@@ -45,11 +48,12 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
 kk=1; % trial counter
-
+    exocuearray=[1, 5];
+calibrationtolerance=2;
 %% visual stimuli common parameters
 bg_index =round(gray*255); %background color
-imsize=StartSize*pix_deg; %stimulus size
-
+imsize=StartSize*pix_deg; %starting size for acuity
+stimulussize=StimSize*pix_deg; %stimulus size for nono-acuity tasks
 scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 fixwindowPix=fixwindow*pix_deg; % fixation window

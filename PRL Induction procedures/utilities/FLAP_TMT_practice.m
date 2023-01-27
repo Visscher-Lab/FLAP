@@ -33,8 +33,8 @@
             resp(length(stimx)) = 0;
             
             if MouseCalib
-                x=round(x*wRect(3)/Mscreen(1))-xoff;
-                y=round(y*wRect(4)/Mscreen(2));
+                x=round(x*wRect(3)/wRect(3))-xoff;
+                y=round(y*wRect(4)/wRect(4));
             end
             if sum(buttons)~=0
                 askcalib=1;
