@@ -90,7 +90,7 @@ end
 
 PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-%% Trigger Setup
+%% Trigger Setup for Mac
 if site==2
     a                               = cd;
     if a(1)=='/' % mac or linux

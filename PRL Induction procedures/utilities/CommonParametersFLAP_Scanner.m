@@ -2,10 +2,12 @@
 
 stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
+oval_thick=3;
 possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(TRLlocation) 0 ]; %eccentricity of PRL in deg
 
 %% general temporal parameters (trial events)
+maskthickness=pix_deg*6;
 scotomadeg=10; % size of the scotoma in degrees of visual angle
 closescript=0; % to allow ESC use
 kk=1; % trial counter
@@ -13,19 +15,19 @@ kk=1; % trial counter
 
 % training type 1
 sigma_deg = stimulusSize/2.5; % sigma of the Gabor in degrees of visual angle
-dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
+%dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 
 % training type 2
 jitterCI=0; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
-
+possibleoffset=[0];
 
 %% visual stimuli common parameters
 imsize=(stimulusSize*pix_deg)/2; %Gabor mask (effective stimulus size)
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
 %scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
-imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
+%imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
 [xc, yc] = RectCenter(wRect);
 %r_lim=((radius*pix_deg)-(imsize))/pix_deg; % visual space limits within which random locations are chosen
 %fixwindowPix=fixwindow*pix_deg;
