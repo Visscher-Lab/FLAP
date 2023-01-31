@@ -177,7 +177,7 @@ try
         if whichTask==3
             %attention
             mixtrtemp=repmat(fullfact([2 2]),tr_per_condition,1);
-            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
+            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);whichTask==3
         end
     end
     if Isdemo==0
