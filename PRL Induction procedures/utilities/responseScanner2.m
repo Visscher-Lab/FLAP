@@ -10,12 +10,12 @@ if cue==1 % we are showing cue during the stimulus presentation
 else
     DrawFormattedText(w, '>', 'center',cueloc, white);
 end
-                    while GetSecs<trialstarttime(totalblock,trial)+0.250
-                    end
+while GetSecs<trialstarttime(totalblock,trial)+cue_duration%cue presentation time is 250 ms
+end
 StimulusOnsetTime(totalblock,trial)=Screen('Flip',w); %show stimulus
 ListenChar(2);
 %while GetSecs<StimulusOnsetTime(totalblock,trial)+0.200 %stimulus presentation time is 200 ms
-while GetSecs<trialstarttime(totalblock,trial)+0.450 %stimulus presentation time is 200 ms
+while GetSecs<trialstarttime(totalblock,trial)+(stim_duration+cue_duration) %stimulus presentation time is 200 ms
     [ keyIsDown, keyTime, keyCode ] = KbCheck;
     responsekey = find(keyCode, 1);
     if keyIsDown && responsekey==leftfingerresp ||keyIsDown && responsekey==rightfingerresp %if participant gives a response during presentation time
@@ -33,7 +33,7 @@ while GetSecs<trialstarttime(totalblock,trial)+0.450 %stimulus presentation time
         clear conditions;
         FlushEvents;
         %while GetSecs<200-(keyTime-StimulusOnsetTime(totalblock,trial))
-        while GetSecs<450-(RTraw(totalblock,trial)-trialstarttime(totalblock,trial))
+        while GetSecs<(stim_duration+cue_duration)-(RTraw(totalblock,trial)-trialstarttime(totalblock,trial))
         end
         break;
     end

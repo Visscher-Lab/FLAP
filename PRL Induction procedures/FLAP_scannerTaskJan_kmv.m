@@ -35,7 +35,7 @@ try
     defineSite_Scanner %Screen parameters
     trainingType=0;
     CommonParametersFLAP_Scanner % define common parameters
-    [ifi nrValidSamples stddev] = Screen('GetFlipInterval',w); % inter-flip interval in ms
+    [ifi nrValidSamples stddev] = screen('GetFlipInterval',w); % inter-flip interval in ms
 
     %% Stimuli creation
     coeffAdj=1;
@@ -47,12 +47,9 @@ try
     % CI stimuli
     CIShapes_Scanner
     % define stimulus durations
-    cue_duration  = round(.250/ifi) * ifi; % cue duration in units of inter-frame intervals
-    stim_duration = round(.200/ifi) * ifi; % stimulus duration in units of inter-frame intervals
-    rest_duration = round(15/ifi)*ifi;
-
-    eccentricity_X=[PRLx -PRLx]*pix_deg;
-    eccentricity_Y=[PRLy PRLy]*pix_deg;
+    cue_duration  = round(.250/ifi) * ifi; % durations must be in units of inter-frame intervals
+    stim_duration = round(.200/ifi) * ifi;
+    
     %% response
 
     KbName('UnifyKeyNames');
@@ -71,11 +68,15 @@ try
             deviceIndex =  k_id(i);
         end
     end
-    %     KbQueueCreate(deviceIndex); %checks for keyboard inputs
-    %     KbQueueStart(deviceIndex);
+
+    %% main loop
+    HideCursor;
+    eccentricity_X=[PRLx -PRLx]*pix_deg;
+    eccentricity_Y=[PRLy PRLy]*pix_deg;
+
 
     %% draw everything on the instruction page
-    HideCursor;
+
     stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
     stimulusdirection_leftstim_num=1;stimulusdirection_rightstim_num=2;
     CIstimuliMod_Scanner;
@@ -127,28 +128,26 @@ try
     disp('Ready, waiting for trigger...');
     commandwindow;
     trigger=false;
-    %triggercode=84;%t=23 for mac, for windows: t=84, b=66, r=82, y=89, g=71
+    triggercode=84;%t=23 for mac, for windows: t=84, b=66, r=82, y=89, g=71
     if site==2
         startTime = wait4T(tChar);  %wait for 't' from scanner.
     elseif site==1 || site==3
         while ~trigger
-            [ keyIsDown, keyTime, keyCode ] = KbCheck; %check this later
-            TTL = find(keyCode, 1);
-            if keyIsDown==1 && TTL==KbName('t')
-                startTime=keyTime;
-                clear keyIsDown keyTime keyCode
-                trigger=true;
+            [ keyIsDown, keyTime, keyCode ] = KbCheck;
+            if keyIsDown
+                TTL = find(keyCode, 1);
+                if TTL==triggercode
+                    startTime=keyTime;
+                    clear keyIsDown keyTime keyCode
+                    trigger=true;
+                end
             end
-            %end
         end
     end
     disp(['Trigger received - ' startdatetime]);
     %tic;
     fixationscriptW;
-    %     while GetSecs < startTime + TR; %  rest for 1.5 sec
-    %     end
-
-    k=1;
+ 
     %% Start Trials
     if Isdemo==1
         totalblockfinal=2;
@@ -163,7 +162,7 @@ try
             fixationscriptW;
             DrawFormattedText(w, 'x', 'center', xloc, white);%685
             RestTime=Screen('Flip',w);
-            while GetSecs < RestTime + rest_duration; %  rest for 15 sec
+            while GetSecs < RestTime + 15; %  rest for 15 sec
 
             end
         else
@@ -172,84 +171,46 @@ try
             activeblockcue=eval(['activeblockcue' runnum]);
             activeblock=activeblockcue(totalblock,:);
             activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
-            itiforrun=eval(['interTrialIntervals' runnum]);
-            itiforrun=[2 2 2 2 2 2 1 1 1 1 1 1];
+            
             % LOOP FOR TRIALS %%%%%%%%
             for trial=1:totaltrial
-                if trial==1 && totalblock==1 % it's the first trial of the first block
-                    itiprevious = 1;
-                    TimeToStartListening(totalblock,trial)=startTime;
-                    TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
-                    trialstarttime(totalblock,trial)=startTime+TR;
-                elseif trial==1 && totalblock>1 %&& itiforrun(totalblock,trial-1)>1% it's the first trial of the following blocks and iti is greater than 1TR
-                    %iti=itiforrun(totalblock,trial); % inter-trial-interval changes in each trial
-                    %activeblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)~=4);
-                    %restblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)==4);
-                    TimeToStartListening(totalblock,trial)=GetSecs;
-                    TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial);
-                    %TimeToStartListening(totalblock,trial)=startTime;
-                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+TR+(activeblocksuntilnow*58*TR)+(restblocksuntilnow*rest_duration);
-                    trialstarttime(totalblock,trial)=TimeToStopListening(totalblock,trial);
-                    %                 elseif trial==1 && totalblock>1 && itiforrun(totalblock,trial-1)==1%if it's the first trial of the following blocks and iti is greater than 1TR
-                    %                     iti=1;
-                    %                     activeblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)~=4);
-                    %                     restblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)==4);
-                    %                     TimeToStartListening(totalblock,trial)=startTime;
-                    %                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+TR+(activeblocksuntilnow*58*TR)+(restblocksuntilnow*rest_duration);
-                    %                     trialstarttime(totalblock,trial)=TimeToStopListening(totalblock,trial);
-                elseif trial>1 && itiforrun(totalblock,trial-1)>1 %if it's not the first trial of the block and previous iti is greater than 1TR
-                    %iti=itiforrun(totalblock,trial); % inter-trial-interval changes in each trial
-                    itiprevious=itiforrun(totalblock,trial-1);
-                    %TimeToStartListening(totalblock,trial)=trialstarttime(totalblock,trial-1);
-                    TimeToStartListening(totalblock,trial)=GetSecs;
-                    TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
-                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+(2*TR)+itiprevious+((iti-0.5)*TR);
-                elseif trial>1 && itiforrun(totalblock,trial-1)==1 %if it's not the first trial of the block and iti equals 1TR
-                    %iti=itiforrun(totalblock,trial);
-                    itiprevious=itiforrun(totalblock,trial-1);
-                    TimeToStartListening(totalblock,trial)=GetSecs;
-                    TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
-                    %TimeToStartListening(totalblock,trial)=trialstarttime(totalblock,trial-1);
-                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((iti-0.5)*TR)+(2*TR);
-                    trialstarttime(totalblock,trial)=trialstarttime(totalblock,trial-1)+((2+itiprevious)*TR);%there is no time to collect ttl pulses
+                % wait the intertrial interval
+                itiforrun=eval(['interTrialIntervals' runnum]);
+                if trial ==1
+                    iti = TR;
+                else
+                    iti=itiforrun(totalblock,trial-1)*TR + 2*TR; % the length of the trial is 2 TRs
+                    % itiforrun indicates the time AFTER a given trial
+                    % until the next trial
                 end
-
+                %ititime(totalblock,trial)=GetSecs;
+                
+                %prepare the cue
                 fixationscriptW;
-                %KbEventsFlush;
-                while GetSecs < TimeToStartListening(totalblock,trial)+(TimeToStopListening(totalblock,trial)-TimeToStartListening(totalblock,trial))%TimeToStopListening(totalblock,trial)%% CueOnsetTime(totalblock,trial-1)+iti %resting for iti
-                    [keyIsDown, keyTime, keyCode] = KbCheck;
-                    if  keyIsDown
-                        key(1,k) = find(keyCode, 1);
-                        keypresstime(1,k)=keyTime;
-                        if key==KbName('t');
-                            if k==1
-                                TTL_time(1,k)=keyTime;
-                                k=k+1;
-                            elseif keypresstime(1,k)-keypresstime(1,k-1)>=1.5
-                                TTL_time(1,k)=keyTime;
-                                k=k+1;
-                            end
-                        end
-                    end
-                end
-                if exist('TTL_time')
-                    clear keyIsDown keyTime keyCode keypresstime key
-                end
-                if trial>1 && itiprevious>1 && trial<totaltrial
-                    trialstarttime(totalblock,trial)=TTL_time(1,k-1)+TR; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frames
-                    %clear TTL_time
-                end
                 cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
                 if cue==1
                     DrawFormattedText(w, '<', 'center',cueloc, white);%688
                 else
                     DrawFormattedText(w, '>', 'center',cueloc, white);
                 end
-                if trial==1 && totalblock>1 %we don't have iti for the first trial of the following task blocks
-                else
-                    while GetSecs < TimeToStopListening(totalblock,trial)+(TR/2) %leftover iti wait
-                    end
+                
+                % define a time, t_listen 1.5 TRs before the expected TTL pulse that
+                % will start the next trial.
+
+                % listen for the TTL pulses until t_listen  and record their times.
+                % 
+                % listen for the next TTL pulse and start the timer.
+                % next cue starts 1 TR after that pulse.
+
+
+
+                % wait for the ITI appropriate
+                while GetSecs < trialstarttime(totalblock,trial) + iti; %
                 end
+
+                % record the time of the TTL pulse
+                trialstarttime(totalblock,trial)=GetSecs; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frames
+                
                 % show the cue
                 CueOnsetTime(totalblock,trial)=Screen('Flip',w);
 
@@ -257,13 +218,13 @@ try
                 % while showing the cue, prepare the stimulus
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
-                    stimulusdirection_leftstim_num=stimulusdirection_leftstim;stimulusdirection_rightstim_num=stimulusdirection_rightstim; %what are shown in left and right is set
+                    stimulusdirection_leftstim_num=activeblockstim(trial,1);stimulusdirection_rightstim_num=activeblockstim(trial,2); %what are shown in left and right is set
                 elseif totalblock>1
                     stimulusdirection_leftstim=activeblockstim(((totalblock-1)*totaltrial)+trial,1);stimulusdirection_rightstim=activeblockstim(((totalblock-1)*totaltrial)+trial,2); %what are shown in left and right is set
-                    stimulusdirection_leftstim_num=stimulusdirection_leftstim;stimulusdirection_rightstim_num=stimulusdirection_rightstim; %what are shown in left and right is set
+                    stimulusdirection_leftstim_num=activeblockstim(((totalblock-1)*totaltrial)+trial,1);stimulusdirection_rightstim_num=activeblockstim(((totalblock-1)*totaltrial)+trial,2); %what are shown in left and right is set
                 end
                 if blocktype==1 %gabors
-                    %createGabors_Scanner
+                    createGabors_Scanner
 
                     if stimulusdirection_leftstim==1 %right oriented
                         Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
@@ -278,14 +239,13 @@ try
                         Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
                     end
 
-                    responseScanner2;
-                    % Begin the rest block jittered times between trials
+                    % wait with the cue on screen till ready to show the
+                    % stimulus
+                    while GetSecs<trialstarttime(totalblock,trial)+0.250
+                    end
 
-                    %                     itiforrun=eval(['interTrialIntervals' runnum]);
-                    %                     iti=itiforrun(totalblock,trial)*TR;
-                    %                     ititime(totalblock,trial)=GetSecs;
-                    %                     while GetSecs < ititime(totalblock,trial) + iti; %  rest for each iti
-                    %                     end
+                    responseScanner2;
+                
                 elseif blocktype==2 %egg-CI
                     CIstimuliMod_Scanner
                     %stimulus that is shown on the right side
@@ -303,7 +263,7 @@ try
                     Screen('FrameOval', w,gray, imageRect_offsCImaskright, maskthickness/2, maskthickness/2);
 
                     responseScanner2;
-                    % Begin the rest block jittered times between trials
+             
 
                 elseif blocktype==3 %6 or 9
                     CIstimuliMod_Scanner
@@ -326,9 +286,6 @@ try
                     % Begin the rest block jittered times between trials
 
                 end
-            end
-            iti=itiforrun(totalblock,trial);
-            while GetSecs < trialstarttime(totalblock,trial)+(iti*TR)+(2*TR)%TimeToStopListening(totalblock,trial)%% CueOnsetTime(totalblock,trial-1)+iti %resting for iti
             end
             save(baseName,'RTraw','ResponseType','ResponseKey','trialstarttime','-append') %save our variables
         end
