@@ -1,5 +1,6 @@
-% Visual Acuity/Crowding/cued-uncued attention task
-% written by Marcello A. Maniglia july 2021 %2017/2021
+% FLAP Attention task via RSVP streams on 4 peripheral locations
+% Marcello Maniglia 1/25/2023
+
 close all;
 clear;
 clc;
@@ -35,7 +36,6 @@ try
         mkdir('data')
     end
     
-
     
     if Isdemo==0
         filename=' RSVP_practice';
@@ -57,8 +57,9 @@ try
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
-    CommonParametersACA % load parameters for time and space
+    CommonParametersRSVP % load parameters for time and space
     
+    load RSVPmx.mat
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
@@ -73,8 +74,20 @@ try
     %% creating stimuli
     createO
     
+    whichLetter={theDot theCircles theLetter theArrow};
+    
+    whichLetter(2)=theCircles;
+    whichLetter(3)=theLetter;
+    whichLetter(4)=theArrow;
+    
+    %1= C stays on screen until response
+    %2= foil
+    %3= target
+    %4=cue
+    %5= blank
+    
     %% STAIRCASES:
-%mixtr to be created
+    %mixtr to be created
     %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
@@ -85,6 +98,7 @@ try
     RespType(4) = KbName('DownArrow');
     RespType(5) = KbName('c'); % continue with study
     RespType(6) = KbName('m'); %recalibrate
+    RespType(7) = KbName('w'); %foil 'wrong' response
     escapeKey = KbName('ESCAPE');	% quit key
     
     % get keyboard for the key recording
@@ -106,10 +120,11 @@ try
         eyelinkCalib
     end
     %% Trial structure
-
+    
     if Isdemo==0
         mixtr=mixtr(1:practicetrials,:);
     end
+    
     
     %% main loop
     HideCursor;
@@ -144,24 +159,10 @@ try
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
-    presentcue=0;
-  
-    
-    %sequences of events for each trial (single trial events)
- array_of_events=[ 1 2 2 3 2 2 3 3 2 3 3 4];
- 
- time_of_events=[1000000 0.2 0.5 0.3]; 
- %events type
- %1= C stays on screen until response
- %2= foil
- %3= target
- %4=cue
- %5= blank
- 
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
-
+        
         
         if mod(trial,tr_per_condition+1)==0 && trial~= length(mixtr)
             interblock_instruction
@@ -169,27 +170,24 @@ try
         
         theeccentricity_X=eccentricity_X(mixtr(trial,1));
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
-        %  destination rectangle for the fixation dot
-        imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
-            imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
         
-            trialTimeout=realtrialTimeout;
-
-
-            imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
-
-
-
-            currentpostfixationblank=postfixationblank(1);
-            currentcueISI=0;
-            currentcueduration=0;
-        trialTimeout=realtrialTimeout+currentpostfixationblank;
+        trialTimeout=realtrialTimeout;
+       
+        array_of_events=trialArray{trial};
+        number_of_events=0;
+        clear time_of_this_event
+        
+        % TRL locations
+        imageRect_circleoffs1=[imageRectcircles(1)+eccentricity_X(1), imageRectcircles(2)+eccentricity_Y(1),...
+            imageRectcircles(3)+eccentricity_X(1), imageRectcircles(4)+eccentricity_Y(1)];
+        imageRect_circleoffs2=[imageRectcircles(1)+eccentricity_X(2), imageRectcircles(2)+eccentricity_Y(2),...
+            imageRectcircles(3)+eccentricity_X(2), imageRectcircles(4)+eccentricity_Y(2)];
+        imageRect_circleoffs3=[imageRectcircles(1)+eccentricity_X(3), imageRectcircles(2)+eccentricity_Y(3),...
+            imageRectcircles(3)+eccentricity_X(3), imageRectcircles(4)+eccentricity_Y(3)];
         
         % compute response for trial
         theoris =[-180 0 -90 90];
-        theans(trial)=randi(4);
-        ori=theoris(theans(trial));
+
         
         FLAPVariablesReset
         if EyetrackerType ==2
@@ -198,26 +196,28 @@ try
             Pixxstruct(trial).TrialStart = Datapixx('GetTime');
             Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
         end
+        
+        respcounter=0;
         while number_of_events<length(array_of_events(mixtr(trial,1)))
-            
+            if number_of_events==0
+                number_of_events=1;
+            end
+            time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
+                     
             if ScotomaPresent == 1
                 fixationscriptW
-
             end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-            
-            % constrained fixation loop
+            %%         % constrained fixation loop at the beginning of the trial
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                presentcue=0;
                 %   IsFixatingSquare
                 [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
                 if exist('starfix')==0
                     startfix(trial)=eyetime2;
                     starfix=98;
                 end
-                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 trial_time = GetSecs;
@@ -228,29 +228,55 @@ try
                     Datapixx('RegWrRd');
                     Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
                 end
-                %      clear imageRect_offsCirc
-                clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
-                clear stimstar subimageRect_offs_cue
+                clear imageRect_offs stimstar
                 fixating=1500;
-            end
-            
-            % beginning of the trial after fixation criteria satisfied in
-            % previous loop
-            if (eyetime2-trial_time)>=currentpostfixationblank && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-
-            elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                % show target
-                if exist('imageRect_offs')==0
-                    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+            end           
+            %%      % beginning of the trial after fixation criteria satisfied in
+            time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
+            % this looks into the timing of events array, looks at the array
+            % of events and the counter of number of events
+            cumulativeclock=sum(time_of_this_event);
+            %           if  resetflag==1
+            %              trial_time=GetSecs-eyetime2;
+            %               resetflag=0;
+            %           end
+            eyetime2=GetSecs-trial_time;
+            mao=[mao eyetime2];
+            %if eyetime2>=time_of_this_event(number_of_events) && eyetime2<=time_of_this_event(number_of_events)
+            if     (eyetime2-trial_time)<=time_of_this_event(number_of_events) && stopchecking>1 && fixating>1000
+                
+                stimtype=array_of_events(number_of_events);
+                tloc=mixtr(trial,1);
+                
+                if stimtype==4 %cue
+                     
+                    if mixtr(trial,1) ==1 && mixtr(trial,2)==2
+                   ori= 90;
+                    elseif mixtr(trial,1) ==1 && mixtr(trial,2)==3
+                    ori= 135;
+                    elseif mixtr(trial,1) ==2 && mixtr(trial,2)==1
+                    ori= -90;
+                    elseif mixtr(trial,1) ==2 && mixtr(trial,2)==3
+                    ori= -135;
+                    elseif mixtr(trial,1) ==3 && mixtr(trial,2)==1
+                    ori= -45;
+                    elseif mixtr(trial,1) ==3 && mixtr(trial,2)==2
+                    ori= 45;
+                    end
+                elseif stimtype==3 %target
+                            theans(trial,number_of_events)=randi(4);
+        ori=theoris(theans(trial,number_of_events));
+                elseif stimtype==2 %foil
+                    theans(trial,number_of_events)=5;
                 end
                 
-                Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
- 
+                if stimtype~=5
+                Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
+                end
+                %      resetflag=1;
+                
                 if exist('stimstar') == 0
-                    stim_start(trial)=eyetime2;
+                    stim_start(trial,number_of_events)=eyetime2;
                     stimstar=1;
                 end
                 
@@ -263,21 +289,38 @@ try
                     Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
                     Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
                 end
-
-                if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
-                    %after target presentation and a key is pressed
-                    number_of_events=10^4;
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime(trial)=secs;
-                end
-
-
             end
+            
+            
+            if sum(keyCode) ~=0
+                respcounter=respcounter+1;         
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs  indfirst]=min(thetimes);
+                respTime(trial, respcounter)=secs;
+                                    foo=(RespType==thekeys);
+
+                if foo(theans(trial,number_of_events))
+                    resp = 1;
+                    nswr(trial)=1;
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                else
+                                        resp = 0;
+                    nswr(trial)=0;
+                    PsychPortAudio('FillBuffer', pahandle, ErorrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                end      
+            
+            end
+            if eyetime2>=time_of_this_event(number_of_events)
+                number_of_events=number_of_events+1;
+                trial_time=GetSecs;
+            end
+            
             eyefixation5
             
             if ScotomaPresent == 1
@@ -376,7 +419,7 @@ try
             
             foo=(RespType==thekeys);
         end
-
+        
         
         if exist('stimstar')==0
             stim_start(trial)=0;
@@ -385,117 +428,116 @@ try
         
         
         if caliblock==0
-        time_stim(kk) = respTime(trial) - stim_start(trial);
-        totale_trials(kk)=trial;
-        coordinate(trial).x=theeccentricity_X/pix_deg;
-        coordinate(trial).y=theeccentricity_Y/pix_deg;
-        xxeye(trial).ics=xeye;
-        yyeye(trial).ipsi=yeye;
-        vbltimestamp(trial).ix=VBL_Timestamp;
-        
-        rispo(kk)=resp;
-
-        if exist('thekeys')
-            cheis(kk)=thekeys;
-        else
-            cheis(kk)=99;
-        end
-        if EyeTracker==1
-            EyeSummary.(TrialNum).EyeData = EyeData;
-            clear EyeData
-            EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
-            clear EyeCode
-            if exist('FixIndex')==0
-                FixIndex=0;
-            end
-            EyeSummary.(TrialNum).FixationIndices = FixIndex;
-            clear FixIndex
-            EyeSummary.(TrialNum).TotalEvents = CheckCount;
-            clear CheckCount
-            EyeSummary.(TrialNum).TotalFixations = FixCount;
-            clear FixCount
-            EyeSummary.(TrialNum).TargetX = theeccentricity_X/pix_deg;
-            EyeSummary.(TrialNum).TargetY = theeccentricity_Y/pix_deg;
-            EyeSummary.(TrialNum).EventData = EvtInfo;
-            clear EvtInfo
-            EyeSummary.(TrialNum).ErrorData = ErrorData;
-            clear ErrorData
-            if whichTask==1
-                EyeSummary.(TrialNum).VA= VAsize;
-            elseif whichTask==2
-                EyeSummary.(TrialNum).Separation = sep;
-            elseif whichTask==3
-            end
-            if exist('EndIndex')==0
-                EndIndex=0;
-            end
-            EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
-            clear EndIndex
-            EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
-            EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
-            clear ErrorInfo
-        end
-        if EyetrackerType==2
-            %read in eye data
-            Datapixx('RegWrRd');
-            status = Datapixx('GetTPxStatus');
-            toRead = status.newBufferFrames;
-            [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+            time_stim(kk) = respTime(trial) - stim_start(trial);
+            totale_trials(kk)=trial;
+            coordinate(trial).x=theeccentricity_X/pix_deg;
+            coordinate(trial).y=theeccentricity_Y/pix_deg;
+            xxeye(trial).ics=xeye;
+            yyeye(trial).ipsi=yeye;
+            vbltimestamp(trial).ix=VBL_Timestamp;
             
-            %bufferData is formatted as follows:
-            %1      --- Timetag (in seconds)
-            %2      --- Left Eye X (in pixels)
-            %3      --- Left Eye Y (in pixels)
-            %4      --- Left Pupil Diameter (in pixels)
-            %5      --- Right Eye X (in pixels)
-            %6      --- Right Eye Y (in pixels)
-            %7      --- Right Pupil Diameter (in pixels)
-            %8      --- Digital Input Values (24 bits)
-            %9      --- Left Blink Detection (0=no, 1=yes)
-            %10     --- Right Blink Detection (0=no, 1=yes)
-            %11     --- Digital Output Values (24 bits)
-            %12     --- Left Eye Fixation Flag (0=no, 1=yes)
-            %13     --- Right Eye Fixation Flag (0=no, 1=yes)
-            %14     --- Left Eye Saccade Flag (0=no, 1=yes)
-            %15     --- Right Eye Saccade Flag (0=no, 1=yes)
-            %16     --- Message code (integer)
-            %17     --- Left Eye Raw X (in pixels)
-            %18     --- Left Eye Raw Y (in pixels)
-            %19     --- Right Eye Raw X (in pixels)
-            %20     --- Right Eye Raw Y (in pixels)
+            rispo(kk)=resp;
             
-            %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
-            %in the console overlay. In tabletop and MEG setups, this view is
-            %inverted. This means "RIGHT" in our labelling convention corresponds
-            %to the participant's left eye. Similarly "LEFT" in our convention
-            %refers to left on the screen, which corresponds to the participant's
-            %right eye.
-            
-            %If you are using an MRI setup with an inverting mirror, "RIGHT" will
-            %correspond to the participant's right eye.
-            
-            %save eye data from trial as a table in the trial structure
-            Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
-                'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
-                'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
-            %interim save
-            % save(baseName, 'Pixxstruct');
-            % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-        end
-        
-        if (mod(trial,50))==1
-            if trial==1
+            if exist('thekeys')
+                cheis(kk)=thekeys;
             else
-                save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+                cheis(kk)=99;
             end
-        end
-        
-        if closescript==1
-            break;
-        end
-        
-        kk=kk+1;
+            if EyeTracker==1
+                EyeSummary.(TrialNum).EyeData = EyeData;
+                clear EyeData
+                EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
+                clear EyeCode
+                if exist('FixIndex')==0
+                    FixIndex=0;
+                end
+                EyeSummary.(TrialNum).FixationIndices = FixIndex;
+                clear FixIndex
+                EyeSummary.(TrialNum).TotalEvents = CheckCount;
+                clear CheckCount
+                EyeSummary.(TrialNum).TotalFixations = FixCount;
+                clear FixCount
+                EyeSummary.(TrialNum).TargetX = theeccentricity_X/pix_deg;
+                EyeSummary.(TrialNum).TargetY = theeccentricity_Y/pix_deg;
+                EyeSummary.(TrialNum).EventData = EvtInfo;
+                clear EvtInfo
+                EyeSummary.(TrialNum).ErrorData = ErrorData;
+                clear ErrorData
+                if whichTask==1
+                    EyeSummary.(TrialNum).VA= VAsize;
+                elseif whichTask==2
+                    EyeSummary.(TrialNum).Separation = sep;
+                elseif whichTask==3
+                end
+                if exist('EndIndex')==0
+                    EndIndex=0;
+                end
+                EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
+                clear EndIndex
+                EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
+                EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
+                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
+                clear ErrorInfo
+            end
+            if EyetrackerType==2
+                %read in eye data
+                Datapixx('RegWrRd');
+                status = Datapixx('GetTPxStatus');
+                toRead = status.newBufferFrames;
+                [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+                
+                %bufferData is formatted as follows:
+                %1      --- Timetag (in seconds)
+                %2      --- Left Eye X (in pixels)
+                %3      --- Left Eye Y (in pixels)
+                %4      --- Left Pupil Diameter (in pixels)
+                %5      --- Right Eye X (in pixels)
+                %6      --- Right Eye Y (in pixels)
+                %7      --- Right Pupil Diameter (in pixels)
+                %8      --- Digital Input Values (24 bits)
+                %9      --- Left Blink Detection (0=no, 1=yes)
+                %10     --- Right Blink Detection (0=no, 1=yes)
+                %11     --- Digital Output Values (24 bits)
+                %12     --- Left Eye Fixation Flag (0=no, 1=yes)
+                %13     --- Right Eye Fixation Flag (0=no, 1=yes)
+                %14     --- Left Eye Saccade Flag (0=no, 1=yes)
+                %15     --- Right Eye Saccade Flag (0=no, 1=yes)
+                %16     --- Message code (integer)
+                %17     --- Left Eye Raw X (in pixels)
+                %18     --- Left Eye Raw Y (in pixels)
+                %19     --- Right Eye Raw X (in pixels)
+                %20     --- Right Eye Raw Y (in pixels)
+                
+                %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
+                %in the console overlay. In tabletop and MEG setups, this view is
+                %inverted. This means "RIGHT" in our labelling convention corresponds
+                %to the participant's left eye. Similarly "LEFT" in our convention
+                %refers to left on the screen, which corresponds to the participant's
+                %right eye.
+                
+                %If you are using an MRI setup with an inverting mirror, "RIGHT" will
+                %correspond to the participant's right eye.
+                
+                %save eye data from trial as a table in the trial structure
+                Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
+                    'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
+                    'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
+                %interim save
+                % save(baseName, 'Pixxstruct');
+                % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+            end            
+            if (mod(trial,50))==1
+                if trial==1
+                else
+                    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+                end
+            end
+           
+            if closescript==1
+                break;
+            end
+            
+            kk=kk+1;
         elseif caliblock==1
             trial=trial-1;
             % caliblock=0;

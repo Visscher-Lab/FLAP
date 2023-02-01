@@ -20,6 +20,8 @@ thresho=permute(Threshlist,[3 1 2]);
 shapes_type={ '9 vs 6','2 vs 5', 'q vs p', 'b vs d', 'eggs', 'diagonal line', 'horizontal vs vertical line'};
 shapesoftheDay
 sz=size(thresho);
+
+%corr_mat = rispo;
 corr_mat = reshape(rispo,[166,3]);
 % for ui=1:sz(2)
 % % subplot(1,3,ui)

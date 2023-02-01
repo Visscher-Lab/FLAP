@@ -43,3 +43,5 @@
         theDot = double(circle) .* double(theDot)+gray * ~double(circle);
         theDot=Screen('MakeTexture', w, theDot);
                     [xc, yc] = RectCenter(wRect);
+                    
+

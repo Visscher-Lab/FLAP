@@ -203,7 +203,7 @@ try
         for cond = 1:length(mixcond)
             dummy = [];
             for block = 1:length(mixcond{cond,1})
-                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)];
+                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)];StartJitter
             end
             mixtr{cond,1} = dummy;
         end
