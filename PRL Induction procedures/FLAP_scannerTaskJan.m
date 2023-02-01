@@ -173,7 +173,7 @@ try
             activeblock=activeblockcue(totalblock,:);
             activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
             itiforrun=eval(['interTrialIntervals' runnum]);
-            itiforrun=[2 2 2 2 2 2 1 1 1 1 1 1];
+            %itiforrun=[2 2 2 2 2 2 1 1 1 1 1 1];
             % LOOP FOR TRIALS %%%%%%%%
             for trial=1:totaltrial
                 if trial==1 && totalblock==1 % it's the first trial of the first block
@@ -215,7 +215,7 @@ try
                 end
 
                 fixationscriptW;
-                while GetSecs < TimeToStartListening(totalblock,trial)+(TimeToStopListening(totalblock,trial)-TimeToStartListening(totalblock,trial))%TimeToStopListening(totalblock,trial)%% CueOnsetTime(totalblock,trial-1)+iti %resting for iti
+                while GetSecs < TimeToStartListening(totalblock,trial)+(TimeToStopListening(totalblock,trial)-TimeToStartListening(totalblock,trial))%resting for previousiti
                     [keyIsDown, keyTime, keyCode] = KbCheck;
                     if  keyIsDown
                         key(1,k) = find(keyCode, 1);
@@ -224,7 +224,7 @@ try
                             if k==1
                                 TTL_time(1,k)=keyTime;
                                 k=k+1;
-                            elseif keypresstime(1,k)-keypresstime(1,k-1)>=1.5
+                            elseif keypresstime(1,k)-keypresstime(1,k-1)>=1.5 %I added this because kbcheck gets ~30 keypresses since manual testing isn't quick enough
                                 TTL_time(1,k)=keyTime;
                                 k=k+1;
                             end
