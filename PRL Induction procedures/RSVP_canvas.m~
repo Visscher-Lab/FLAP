@@ -1,5 +1,6 @@
-% Visual Acuity/Crowding/cued-uncued attention task
-% written by Marcello A. Maniglia july 2021 %2017/2021
+% FLAP Attention task via RSVP streams on 4 peripheral locations
+% Marcello Maniglia 1/25/2023
+
 close all;
 clear;
 clc;
@@ -36,7 +37,6 @@ try
     end
     
 
-    
     if Isdemo==0
         filename=' RSVP_practice';
     elseif Isdemo==1
@@ -57,7 +57,7 @@ try
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
-    CommonParametersACA % load parameters for time and space
+    CommonParametersRSVP % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
     
@@ -111,6 +111,7 @@ try
         mixtr=mixtr(1:practicetrials,:);
     end
     
+   
     %% main loop
     HideCursor;
     ListenChar(2);
@@ -144,19 +145,9 @@ try
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
-    presentcue=0;
   
     
-    %sequences of events for each trial (single trial events)
- array_of_events=[ 1 2 2 3 2 2 3 3 2 3 3 4]
- 
- time_of_events=[1000000 0.2 0.5 0.3]; 
- %events type
- %1= C stays on screen until response
- %2= foil
- %3= target
- %4=cue
- %5= blank
+
  
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
@@ -169,22 +160,21 @@ try
         
         theeccentricity_X=eccentricity_X(mixtr(trial,1));
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
-        %  destination rectangle for the fixation dot
-        imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
-            imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
         
             trialTimeout=realtrialTimeout;
-
-
-            imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
-
-
-
-            currentpostfixationblank=postfixationblank(1);
-            currentcueISI=0;
-            currentcueduration=0;
-        trialTimeout=realtrialTimeout+currentpostfixationblank;
+   
+            
+            array_of_events=trialArray{trial};
+            number_of_events=0;
+            clear time_of_this_event
+   
+                % TRL
+    imageRect_circleoffs1=[imageRectcircles(1)+eccentricity_X(1), imageRectcircles(2)+eccentricity_Y(1),...
+        imageRectcircles(3)+eccentricity_X(1), imageRectcircles(4)+eccentricity_Y(1)];
+    imageRect_circleoffs2=[imageRectcircles(1)+eccentricity_X(2), imageRectcircles(2)+eccentricity_Y(2),...
+        imageRectcircles(3)+eccentricity_X(2), imageRectcircles(4)+eccentricity_Y(2)];
+    imageRect_circleoffs3=[imageRectcircles(1)+eccentricity_X(3), imageRectcircles(2)+eccentricity_Y(3),...
+        imageRectcircles(3)+eccentricity_X(3), imageRectcircles(4)+eccentricity_Y(3)];
         
         % compute response for trial
         theoris =[-180 0 -90 90];
@@ -198,26 +188,27 @@ try
             Pixxstruct(trial).TrialStart = Datapixx('GetTime');
             Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
         end
-        while number_of_events<length(array_of_events(mixtr(trial,1))
+        while number_of_events<length(array_of_events(mixtr(trial,1)))
+            if number_of_events==0
+                number_of_events=1;
+            end
+            time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
+            
             
             if ScotomaPresent == 1
                 fixationscriptW
-
             end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-            
-            % constrained fixation loop
+    %%         % constrained fixation loop at the beginning of the trial
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                presentcue=0;
                 %   IsFixatingSquare
                 [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
                 if exist('starfix')==0
                     startfix(trial)=eyetime2;
                     starfix=98;
                 end
-                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 trial_time = GetSecs;
@@ -228,47 +219,74 @@ try
                     Datapixx('RegWrRd');
                     Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
                 end
-                %      clear imageRect_offsCirc
-                clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
-                clear stimstar subimageRect_offs_cue
+                clear imageRect_offs stimstar
                 fixating=1500;
             end
             
-            % beginning of the trial after fixation criteria satisfied in
+      %%      % beginning of the trial after fixation criteria satisfied in
             % previous loop
-            if (eyetime2-trial_time)>=currentpostfixationblank && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                presentcue=1;
-                if whichTask ==3 % if it's attention task and cue time, prepare cue's destination rect
-                    if exist('subimageRect_offs_cue')==0
-                        subimageRect_offs_cue=imageRect_offs_cue(exocuearray(mixtr(trial,2)):exocuearray(mixtr(trial,2))+3,:);
-                        
-                        
-                        if exocuearray(mixtr(trial,2))==1
-                            subimageRect_offs_cue2=imageRect_offs_cue(exocuearray(2):exocuearray(2)+3,:);
-                        else
-                            subimageRect_offs_cue2=imageRect_offs_cue(exocuearray(1):exocuearray(1)+3,:);
-                        end
-                    end
-                    Screen('FillOval', w, [255  255 255], subimageRect_offs_cue');
-                    Screen('FillOval', w, [0], subimageRect_offs_cue2');
-                    
-                end
-            elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueISI+currentcueduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                presentcue=0;
-                %no cue
-            elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            if (eyetime2-trial_time)>=currentpostfixationblank && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration && fixating>400 && stopchecking>1 
+
+            elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1
                 % show target
-                if exist('imageRect_offs')==0
-                    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                stimtype=array_of_events(number_of_events);
+tloc=mixtr(trial,1);
+                                        Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue );
+
+                    
+
+
+                if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
+                    %after target presentation and a key is pressed
+              %      number_of_events=10^4;
+                    thekeys = find(keyCode);
+                    if length(thekeys)>1
+                        thekeys=thekeys(1);
+                    end
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes);
+                    respTime(trial)=secs;
                 end
-                
-                Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
- 
-                if exist('stimstar') == 0
-                    stim_start(trial)=eyetime2;
+
+
+            end
+            
+            
+            
+                    time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
+        % this looks into the timing of events array, looks at the array
+        % of events and the counter of number of events
+        cumulativeclock=sum(time_of_this_event);
+        %           if  resetflag==1
+        %              trial_time=GetSecs-eyetime2;
+        %               resetflag=0;
+        %           end
+        eyetime2=GetSecs-trial_time;
+        mao=[mao eyetime2];
+        %if eyetime2>=time_of_this_event(number_of_events) && eyetime2<=time_of_this_event(number_of_events)
+        if     (eyetime2-trial_time)<=time_of_this_event(number_of_events)
+            
+            if array_of_events(number_of_events)==1
+                todisplay='C until response';
+                counter=counter+1;
+            elseif array_of_events(number_of_events)==2
+                todisplay='foil';
+                counter2=counter2+1;               
+            elseif array_of_events(number_of_events)==3
+                todisplay='target';
+                counter3=counter3+1;               
+            elseif array_of_events(number_of_events)==4
+                todisplay='cue';
+                counter4=counter4+1;
+            elseif array_of_events(number_of_events)==5
+                todisplay='blank';
+                counter5=counter5+1;
+            end
+            
+            %      resetflag=1;
+            
+                            if exist('stimstar') == 0
+                    stim_start(trial,)=eyetime2;
                     stimstar=1;
                 end
                 
@@ -281,34 +299,31 @@ try
                     Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
                     Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
                 end
-
-                if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
-                    %after target presentation and a key is pressed
-                    number_of_events=10^4;
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime(trial)=secs;
-                end
-            elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
-                %after target presentation and no key pressed
-                
-                if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
-                    %after target presentation and a key is pressed
-                    number_of_events=10^4;
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
-                    end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime(trial)=secs;
-                end
-
-            end
+        end
+        if eyetime2>=time_of_this_event(number_of_events)
+            number_of_events=number_of_events+1;
+            trial_time=GetSecs;
+        end
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             eyefixation5
             
             if ScotomaPresent == 1

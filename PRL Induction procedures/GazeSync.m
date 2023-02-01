@@ -1,4 +1,4 @@
-% MNRead task
+% Gazesync task
 % written by Marcello A. Maniglia October 2022 %2017/2022
 close all; clear; clc;
 commandwindow
@@ -32,9 +32,9 @@ try
     end
     
     if Isdemo==0
-        filename='_FLAPMNReadpractice';
+        filename='_GazeSyncpractice';
     elseif Isdemo==1
-        filename='_FLAPMNRead';
+        filename='GazeSync';
     end
     if site==1
         baseName=['./data/' SUBJECT filename '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
@@ -46,7 +46,7 @@ try
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     defineSite % initialize Screen function and features depending on OS/Monitor
-    CommonParametersMNRead % load parameters for time and space
+    CommonParametersGaze % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
     
@@ -82,45 +82,49 @@ try
     
     
     %% creating stimuli
-        %creating face images
-    StimuliFolder='./Images/'; %to be updated! AS now updated.
+    %creating face images
+    StimuliFolder='./utilities/GazeImages/'; %to be updated! AS now updated.
     thefaces=dir([StimuliFolder '*_*']);
     
     counter=zeros(2);
+
+
     for i=1:length(thefaces)
-     %   inputImage=rgb2gray(imread([StimuliFolder thefaces(i).name]));
-                inputImage=imread([StimuliFolder thefaces(i).name]);
+        %   inputImage=rgb2gray(imread([StimuliFolder thefaces(i).name]));
+        inputImage=imread([StimuliFolder thefaces(i).name]);
         inputImage =imresize(inputImage,[nrw nrw],'bicubic');
-  %    r identity
+        %   actor identity
         if ~isempty(findstr('_a_',thefaces(i).name))
-        inputImage = double(circle) .* double(inputImage)+bg_index * ~double(circle);
-        
-  
-  % acto      e=1;
+            inputImage = double(circle) .* double(inputImage)+bg_index * ~double(circle);
+            
+            
+            e=1;
         elseif ~isempty(findstr('_b_',thefaces(i).name))
             e=2;
-                    elseif ~isempty(findstr('_c_',thefaces(i).name))
+        elseif ~isempty(findstr('_c_',thefaces(i).name))
             e=3;
         end
-                if ~isempty(findstr('_1_',thefaces(i).name))
+        %offset angle
+        
+        if ~isempty(findstr('_1_',thefaces(i).name))
             s=1;
         elseif ~isempty(findstr('_2_',thefaces(i).name))
             s=2;
-              elseif ~isempty(findstr('_3_',thefaces(i).name))
+        elseif ~isempty(findstr('_3_',thefaces(i).name))
             s=3;
-                    elseif ~isempty(findstr('_4_',thefaces(i).name))
+        elseif ~isempty(findstr('_4_',thefaces(i).name))
             s=3;
-                    elseif ~isempty(findstr('_5_',thefaces(i).name))
+        elseif ~isempty(findstr('_5_',thefaces(i).name))
             s=4;
-                    elseif ~isempty(findstr('_6_',thefaces(i).name))
+        elseif ~isempty(findstr('_6_',thefaces(i).name))
             s=5;
         end
         
-%         if ~isempty(findstr('_M_',thefaces(i).name))
-%             s=1;
-%         elseif ~isempty(findstr('_F_',thefaces(i).name))
-%             s=2;
-%         end
+        %         if ~isempty(findstr('_M_',thefaces(i).name))
+        %             s=1;
+        %         elseif ~isempty(findstr('_F_',thefaces(i).name))
+        %             s=2;
+        %         end
         counter(s,e)=counter(s,e)+1;
         TheFaces(counter(s,e),s,e)=Screen('MakeTexture', w, inputImage);
     end
@@ -128,14 +132,13 @@ try
     
     KbName('UnifyKeyNames');
     
-%     RespType(1) = KbName('1');
-%     RespType(2) = KbName('2');
-%     RespType(3) = KbName('3');
-%     RespType(4) = KbName('4');
+    %     RespType(1) = KbName('1');
+    %     RespType(2) = KbName('2');
+    %     RespType(3) = KbName('3');
+    %     RespType(4) = KbName('4');
     escapeKey = KbName('ESCAPE');	% quit key
-    
 
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
@@ -147,7 +150,7 @@ try
     
     %%
     
-    DrawFormattedText(w, 'Reading test  \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'You will see a series of pictures and will be asked to rate them \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
     WaitSecs(1.5);
@@ -166,10 +169,8 @@ try
     
     for trial=1:length(mixtr)
         
-        
         TrialNum = strcat('Trial',num2str(trial));
-        FLAPVariablesReset
-        
+        FLAPVariablesReset        
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
@@ -186,44 +187,49 @@ try
                     stim_start=GetSecs;
                     stimstar=1;
                 end
-                %Draw Target
-                Screen('DrawTexture', w, TheSentence(trial), [], [], 0 ,0);
+                %Show picture
+                
+                actor(trial)= mixtr(trial,1);
+                offset(trial)=mixtr(trial,2);
+                texture(trial)=TheFaces(actor(trial),offset(trial));
+                
+                Screen('DrawTexture', w, texture(trial), [], [], 0 ,0);
                 
                 
-            elseif (eyetime2-trial_time)>=facepresentationduration+ifi*5 
+            elseif (eyetime2-trial_time)>=facepresentationduration+ifi*5
                 if questionnumber==1
-                                        DrawFormattedText(w, 'question 1', 'center', 'center', [0 0 0]);
-                                        WaitSecs(0.5)
+                    DrawFormattedText(w, 'Is the person looking at you? (Y)es vs (N)o', 'center', 'center', [0 0 0]);
+                    WaitSecs(0.5)
                 elseif questionnumber==2
-                                        DrawFormattedText(w, 'question 2', 'center', 'center', [0 0 0]);
-                                                                                WaitSecs(0.5)
+                    DrawFormattedText(w, 'How confident are you? (1) not at all, (5) sure', 'center', 'center', [0 0 0]);
+                    WaitSecs(0.5)
                 elseif questionnumber==3
-                                        DrawFormattedText(w, 'question 3', 'center', 'center', [0 0 0]);
-                                                                                WaitSecs(0.5)
+                    DrawFormattedText(w, 'Is the person looking more up or more down? (U)p vs (D)own', 'center', 'center', [0 0 0]);
+                    WaitSecs(0.5)
                 end
                 
                 if sum(keyCode)~= 0 %wait for response
-                
-                stim_stop=GetSecs;
-                thekeys(trial,questionnumber) = find(keyCode);
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-questionnumber=questionnumber+1;
-if questionnumber==4
-    eyechecked=2^10;
-end
+                    
+                    stim_stop=GetSecs;
+                    thekeys(trial,questionnumber) = find(keyCode);
+                    thetimes=keyCode(thekeys);
+                    [secs  indfirst]=min(thetimes);
+                    questionnumber=questionnumber+1;
+                    if questionnumber==4
+                        eyechecked=2^10;
+                    end
+                end
             end
-        end
-            eyefixation5
+         %   eyefixation5
             
             if EyetrackerType==2
-
+                
             end
-            if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-                Screen('FillRect', w, white);
-            else
-                Screen('FillOval', w, scotoma_color, scotoma);
-            end
+%             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+%                 Screen('FillRect', w, white);
+%             else
+%                 Screen('FillOval', w, scotoma_color, scotoma);
+%             end
             
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
@@ -260,17 +266,16 @@ end
                     end
                 end
             end
-            [keyIsDown, keyCode] = KbQueueCheck;          
+            [keyIsDown, keyCode] = KbQueueCheck;
         end
-
-
+        
+        
         
         time_stim(kk) = stim_stop - stim_start;
         total_trials(kk)=trial;
         
-        cheiz(kk)=thekeys;
+        cheiz{kk}=thekeys;
         rispo(kk)=resp;
-        poke(trial)=TheSentence(trial);
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
@@ -286,7 +291,7 @@ end
             clear EyeCode
             if exist('FixIndex')==0
                 FixIndex=0;
-            end;
+            end
             EyeSummary.(TrialNum).FixationIndices = FixIndex;
             clear FixIndex
             EyeSummary.(TrialNum).TotalEvents = CheckCount;
@@ -306,7 +311,6 @@ end
             clear ErrorInfo
         end
         kk=kk+1;
-        clear PKnew2
         if closescript==1
             break
             %return
@@ -357,7 +361,7 @@ end
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
         Screen('Flip', w);
         Screen('CloseAll');
-   %     PsychPortAudio('Close', pahandle);
+        %     PsychPortAudio('Close', pahandle);
     end
     
     

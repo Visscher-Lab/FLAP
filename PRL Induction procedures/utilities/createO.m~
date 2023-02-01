@@ -44,4 +44,12 @@
         theDot=Screen('MakeTexture', w, theDot);
                     [xc, yc] = RectCenter(wRect);
                     
-
+                    whichLetter={theCircles}
+                    
+                    
+                    
+                    %1= C stays on screen until response
+%2= foil
+%3= target
+%4=cue
+%5= blank
