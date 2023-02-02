@@ -85,24 +85,27 @@ try
     %% STAIRCASES:
     if whichTask==1    % Acuity
         ca=1; %conditions; one
-        Sizelist=log_unit_down(StartSize, 0.03, 90);
+        Sizelist=log_unit_down(StartSize, 0.04, 90);
+        thresh(1:PRLlocations, 1:ca)=7;
     end
     if whichTask==2   % Crowding
         ca=2; % conditions: radial and tangential
-        Separationtlist=log_unit_down(max_separation, 0.03, 90);
+        Separationtlist=log_unit_down(max_separation, 0.04, 90); % maybe we want to use 0.03 to get finer thresholds?
+        thresh(1:PRLlocations, 1:ca)=7;
     end
     if whichTask==4    % Contrast
         ca=1; %conditions; one
-        Contlist=log_unit_down(StartCont, 0.03, 90);
+        Contlist=log_unit_down(StartCont, 0.06, 90);
         Contlist(1)=1;
+        thresh(1:PRLlocations, 1:ca)=7; %11;
     end
     if whichTask~=3
         % Threshold -> 79%
         sc.up = 1;                          % # of incorrect answers to go one step up
         sc.steps= [2 3];                    % # of correct answers to go one step down
-        stepsizes=[5 5 5 3 3 1];
+        stepsizes=[3 3 3 1 1 1];
         tr_per_condition=60;  %50
-        thresh(1:PRLlocations, 1:ca)=15; %25;
+%         thresh(1:PRLlocations, 1:ca)=9; %25;
         reversals(1:PRLlocations, 1:ca)=0;
         isreversals(1:PRLlocations, 1:ca)=0;
         staircounter(1:PRLlocations, 1:ca)=0;

@@ -160,7 +160,7 @@ try
     % initialize jitter matrix
     if AssessmentType==2
         shapes=2; % how many shapes per day?
-        JitList = 0:2:90;
+        JitList = 0:1:90;
         StartJitter=1;
     end
     
@@ -171,7 +171,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase
         else
-            trials=80;  %total number of trials per staircase % trials = 10; debugging
+            trials=60;  %total number of trials per staircase % trials = 10; debugging
         end
     else
         conditionOne=shapes; % shapes (training type 2)
@@ -214,7 +214,7 @@ try
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     if AssessmentType==1 || AssessmentType == 2
-        stepsizes=[5 5 5 3 3 1]; % step sizes for staircases
+        stepsizes=[3 3 3 1 1 1]; % step sizes for staircases
         % Threshold -> 79%
         sc.up = 1;                          % # of incorrect answers to go one step up
         sc.steps= [2 3];                    % # of correct answers to go one step down
