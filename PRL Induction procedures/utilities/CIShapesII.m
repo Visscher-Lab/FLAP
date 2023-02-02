@@ -26,13 +26,11 @@ xLim=((wRect(3)-(2*imsize))/pix_deg)/2; %bpk: this is in degrees
 yLim=((wRect(4)-(2*imsize))/pix_deg_vert)/2;
         imageRectSmall = CenterRect([0, 0, size(x0Small)], wRect);
 
-
 % size of the grid for the contour task
 xs=7;%60; 12;
 ys=7; %45;9;
 
 [x1,y1]=meshgrid(-xs:xs,-ys:ys); %possible positions of Gabors within grid; in degrees of visual angle
-
 
 Oscat= 0.5; %JitList(thresh(Ts,Tc));
 
@@ -69,7 +67,7 @@ Dcontr=0.98;        %distractor contrast
 clear Targori Targx Targy offsetx offsety
 shapeMatrix=[];
 
-% 9 vs 6 ------------------------------------------------------------------
+%% 9 vs 6 ------------------------------------------------------------------
 xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
 yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
 orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150] ;
@@ -86,7 +84,7 @@ Targori{1}=[orifoo; orifoo];
 offsetx{1}= [Xoff; -Xoff];
 offsety{1}=[Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
-% 2 vs 5 snakes -----------------------------------------------------------
+%% 2 vs 5 snakes -----------------------------------------------------------
 
 Targx{2}= [2    2    2   1   1   0   0   -1  -1  -2  -2  -2     0   -1      1
           -2   -2   -2  -1  -1   0   0    1   1   2   2   2     0    1     -1];
@@ -135,6 +133,8 @@ clear Xoff Yoff
 % offsetx{3}= [-Xoff; -Xoff];
 % offsety{3}=[-Yoff; -Yoff];
 
+
+%% d vs b ------------------------------------------------------------------
 Targx{3}= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1   
             2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
 Targy{3} =[-1      0       1       -2      2       -2      2       -2      -1      0       1       2       3       4       5 
@@ -150,7 +150,7 @@ offsetx{3}= [-Xoff; Xoff];
 offsety{3}=[-Yoff; -Yoff];
 clear Xoff Yoff
 
-% d vs b ------------------------------------------------------------------
+%% p vs q ------------------------------------------------------------------
 
 % Targx{4}= [-2    -2    -2    -1    -1     0     0     1     1     2     2     2     2     2    2
 %     -2    -2    -2    -1    -1     0     0     1     1     2     2     2     -2     -2    -2];
@@ -179,7 +179,7 @@ Yoff=[0     0           0       0       0       0.1096  -0.1827 0       0       
 offsetx{4}= [-Xoff; Xoff];
 offsety{4}=[-Yoff; -Yoff];
 clear Xoff Yoff
-%eggs ---------------------------------------------------------------------
+%% eggs ---------------------------------------------------------------------
 
 xfoo= [-4    -4    -4    -3    -3    -2    -2    -1    -1     0     0     1     1     2     2     2]+1;
 yfoo = [-1     0     1    -1     1    -2     2    -2     2    -2     2    -2     2    -1     0 1];
@@ -198,7 +198,7 @@ Targori{5}=[orifoo;twoorifoo];
 offsetx{5}= [-Xoff; Xoff];
 offsety{5}=[-Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
-% diagonal line -----------------------------------------------------------
+%% diagonal line -----------------------------------------------------------
 
 xfoo=[-3  -2    -1     0     1     2  3];
 yfoo= xfoo;
@@ -214,7 +214,7 @@ offsety{6}=[Yoff; Yoff];
 
 clear Xoff Yoff xfoo yfoo orifoo
 
-% horizontal vs vertical line ---------------------------------------------
+%% horizontal vs vertical line ---------------------------------------------
 
 
 matr=[90  -3     0     0     0
@@ -245,9 +245,10 @@ Targori{7}=[orifoo;orifoo+90];
 offsetx{7}= [Xoff; Xoff];
 offsety{7}=[Yoff; Yoff];
 
+clear Xoff Yoff xfoo yfoo orifoo
 
 
-%rotated eggs ---------------------------------------------------------------------
+%% rotated eggs ---------------------------------------------------------------------
 
 yfoo= [-4    -4    -4    -3    -3    -2    -2    -1    -1     0     0     1     1     2     2     2]+1;
 xfoo = [-1     0     1    -1     1    -2     2    -2     2    -2     2    -2     2    -1     0 1];
@@ -260,16 +261,71 @@ orifoo=orifoo+90;
 Yoff=[   -0.2198   -0.0122   -0.1954   -0.0855   -0.0488   -0.0122    0.0244         0    0.0367   0         0   -0.0611         0    0.1221    0.0122    0.1587];
 Xoff=[   -0.1832   -0.0367    0.0244    0.0977   -0.2320   -0.2198    0.1466   -0.0488   -0.0122    0         0   -0.1221    0.0855    0.0244    0.0122   -0.0732];
 
-
-% Targx{8}= [xfoo; -xfoo];
-% Targy{8}= [yfoo; yfoo];
 Targx{8}= [xfoo; xfoo];
 Targy{8}= [yfoo; -yfoo];
 Targori{8}=[orifoo;twoorifoo];
 
-% offsetx{8}= [-Xoff; Xoff];
-% offsety{8}=[-Yoff; -Yoff];
 
 offsetx{8}= [-Xoff; -Xoff];
 offsety{8}=[-Yoff; Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
+
+
+%% rotated 6/9---------------------------------------------------------------------
+
+
+yfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
+xfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  4];
+orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 150]+90 ;
+
+
+Yoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0];
+Xoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 1/4];
+
+Targx{9}= [xfoo; -xfoo];
+Targy{9}= [yfoo; -yfoo];
+
+Targori{9}=[orifoo; orifoo];
+
+offsetx{9}= [Xoff; -Xoff];
+offsety{9}=[Yoff; -Yoff];
+
+clear Xoff Yoff xfoo yfoo orifoo
+
+
+
+%% rotated b and d
+       
+     Targy{10}= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1   
+            2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
+Targx{10} =[-1      0       1       -2      2       -2      2       -2      -1      0       1       2       3       4       5 
+           -1      0       1       -2      2       -2      2       -2       2      -1       1       0       3       4       5];
+
+Targori{10} =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0
+             150     0       30     120      60     90      90      0       0       0       0       0       0       0       0]+90;
+
+Yoff=[0     0.2193      0       0       0       0       0       0       0       0       0       0       0       0       0];
+Xoff=[0     0           0       0       0       0.1096  -0.1827 0       0       0       0       0       0       0       0];
+
+
+offsetx{10}= [-Xoff; -Xoff];
+offsety{10}=[-Yoff; Yoff];
+
+clear Xoff Yoff xfoo yfoo orifoo
+
+
+%% rotated p and q
+  
+     Targy{11}= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1   
+            2        2       2       1       1      0       0       -1      -1      -1      -1      -1      -1      -1      -1];
+Targx{11} =[-1      0       1       -2      2       -2      2       -2      -1      0       1       2       -3       -4       -5 
+           -1      0       1       -2      2       -2      2       -2       2      -1       1       0       -3       -4       -5];
+
+Targori{11} =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0
+             150     0       30     120      60     90      90      0       0       0       0       0       0       0       0]+90;
+
+Yoff=[0     0.2193      0       0       0       0       0       0       0       0       0       0       0       0       0];
+Xoff=[0     0           0       0       0       0.1096  -0.1827 0       0       0       0       0       0       0       0];
+
+offsetx{11}= [-Xoff; -Xoff];
+offsety{11}=[-Yoff; Yoff];
