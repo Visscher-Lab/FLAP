@@ -7,9 +7,9 @@ if AssessmentType==1
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif AssessmentType==2
-    Jitpracticearray=[0 0 0 10 10 10 15 15  15]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
-    targethighercontrast=[1 1 1 1 1 1 0 0 0]; % target contrast
+    Jitpracticearray=[0 0 0 5 5 5 10 10 10 15 15 15]; %  stimulus ori practice
+    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3 0.2 0.2 0.2]; % stimulus duration practice
+    targethighercontrast=[1 1 1 1 1 1 0 0 0 0 0 0]; % target contrast
     Tscat=0;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end

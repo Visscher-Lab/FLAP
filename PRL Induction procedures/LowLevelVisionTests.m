@@ -85,13 +85,13 @@ try
     %% STAIRCASES:
     if whichTask==1    % Acuity
         ca=1; %conditions; one
-        Sizelist=log_unit_down(StartSize, 0.04, 90);
-        thresh(1:PRLlocations, 1:ca)=7;
+        Sizelist=log_unit_down(StartSize, 0.06, 90);
+        thresh(1:PRLlocations, 1:ca)=5;
     end
     if whichTask==2   % Crowding
         ca=2; % conditions: radial and tangential
-        Separationtlist=log_unit_down(max_separation, 0.04, 90); % maybe we want to use 0.03 to get finer thresholds?
-        thresh(1:PRLlocations, 1:ca)=7;
+        Separationtlist=log_unit_down(max_separation, 0.06, 90); % maybe we want to use 0.03 to get finer thresholds?
+        thresh(1:PRLlocations, 1:ca)=5;
     end
     if whichTask==4    % Contrast
         ca=1; %conditions; one
@@ -229,8 +229,11 @@ try
     
     
     
-    if whichTask~=1
+    if whichTask~=1 && whichTask ~= 2
         imageRect = CenterRect([0, 0, stimulussize stimulussize], wRect);
+    end
+    if whichTask == 2
+        imageRect = CenterRect([0,0, stimulussize_crowding stimulussize_crowding], wRect);
     end
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
