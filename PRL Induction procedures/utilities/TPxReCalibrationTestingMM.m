@@ -1,6 +1,19 @@
-function TPxCalibrationTestingMM(isTPX,screenNumber, baseName)
+function TPxReCalibrationTestingMM(isTPX,screenNumber, baseName)
 % TPxCalibrationTesting()
 %
+
+
+    prompt={'Attempt'};
+    
+    name= 'Calibration Name';
+    numlines=1;
+    defaultanswer={'1' };
+    answer=inputdlg(prompt,name,numlines,defaultanswer);
+    if isempty(answer)
+        return;
+    end
+    
+    attempt = answer{1,:}; %Gets Subject Name
 % This demo calibrates the current session for the TRACKPixx(TPx) or 
 % TRACKPixx /mini (TPx/m) trackers and displays the calibration results. 
 % Once the calibration is finished, a gaze follower is started
@@ -1144,7 +1157,7 @@ while (1)
             if (isTPX && ~file_recorded)
                 %save screen to file for further reference
                 imageArray = Screen('GetImage', windowPtr);          
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'ScaledRawData.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) ' attempt' attempt ' ScaledRawData.jpg'];
                 imwrite(imageArray,  titlename)
             end
             
@@ -1180,7 +1193,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
          %                       imwrite(imageArray, [  '0PolyResponse_R.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_R.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) ' attempt' attempt ' PolyResponse_R.jpg'];
 
                 imwrite(imageArray,  titlename)
             end
@@ -1212,7 +1225,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
           %      imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_L.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) ' attempt' attempt ' PolyResponse_L.jpg'];              
                 imwrite(imageArray,  titlename)
             end
             [~, keyCode, ~] = KbWait;
@@ -1256,7 +1269,7 @@ while (1)
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'Cal_points_error.jpg'];
+                titlename=[baseName(8:9) '_' baseName(end-11:end) ' attempt' attempt ' Cal_points_error.jpg'];
                 imwrite(imageArray,  titlename)
                 file_recorded = 1;
             end
