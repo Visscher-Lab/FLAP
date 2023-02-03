@@ -87,7 +87,7 @@ try
     %% Stimuli creation
     
     PreparePRLpatch % here I characterize PRL features
-            stimulusduration=1.2; % stimulus duration during actual sessions
+            stimulusduration=2.2; % stimulus duration during actual sessions
 
     % Gabor stimuli
     if trainingType==1 || trainingType==4
@@ -239,7 +239,7 @@ try
             
         %    shapeMat(:,1)= [5 2 7]; %[5 6 4]
                           %  shapeMat(:,1)= [1 2 3];
-                shapeMat(:,1)= [8 1 6];
+                shapeMat(:,1)= [1 6 8];
 
             shapesoftheDay=shapeMat(:,expDay);
         end
@@ -422,14 +422,15 @@ try
         end
         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
-   %         practicePassed=0;
-               practicePassed=1;
+            practicePassed=0;
+      %         practicePassed=1;
 
         end
         
         if trainingType<3
             while practicePassed==0
-                FLAPpractice
+          %      FLAPpractice
+          FLAPpracticenodistractors
             end
         end
         if practicePassed==2
