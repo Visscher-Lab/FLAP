@@ -558,6 +558,7 @@ try
                             DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
                             %    KbQueueWait;
                             eyechecked=10^4;
                         end
