@@ -161,7 +161,7 @@ try
     if AssessmentType==2
         shapes=2; % how many shapes per day?
         JitList = 0:1:90;
-        StartJitter=1;
+        StartJitter=11;
     end
     
     %define number of trials per condition
