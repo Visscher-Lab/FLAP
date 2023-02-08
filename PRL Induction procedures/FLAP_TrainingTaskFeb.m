@@ -37,7 +37,7 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day', 'Training type', 'practice (0) or session (1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
+    prompt={'Participant Name', 'day', 'Training type', 'debug (0) or session (1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
   %    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
 
    % practice (0) or session (1)
@@ -54,10 +54,8 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
-    site = 3 % training site (UAB vs UCR vs Vpixx)
     trainingType=str2num(answer{3,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     demo=str2num(answer{4,:}); % are we testing in debug mode?
-    test=demo;
     whicheye=str2num(answer{5,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
@@ -72,7 +70,8 @@ try
  filename='_FLAPtraining_type';
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     baseName=['./data/' SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
-    
+        site = 3; % training site (UAB vs UCR vs Vpixx)
+
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     CommonParametersFLAP % define common parameters
@@ -99,7 +98,7 @@ try
     
     % CI stimuli
     if trainingType==2 || trainingType==4
-        CIShapesIItest
+        CIShapesIII
     end
     
     % create flickering Os
@@ -238,11 +237,10 @@ try
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
                 shapeMat(:,1)= [8 1 6];
-            end
-            
-        %    shapeMat(:,1)= [5 2 7]; %[5 6 4]
-                          %  shapeMat(:,1)= [1 2 3];
-                shapeMat(:,1)= [1 6 8];
+            end            
+            shapeMat(:,1)= [1 2 3];
+            shapeMat(:,1)= [4 9 10];            
+            shapeMat(:,1)= [11 6 7 ];
 
             shapesoftheDay=shapeMat(:,expDay);
         end

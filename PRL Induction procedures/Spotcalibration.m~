@@ -37,9 +37,9 @@ viewingdist=str2num(answer{6,:});
     
     
     if Isdemo==0
-        filename='_practice';
+        filename='_Spot_calibration_practice';
     elseif Isdemo==1
-        filename='_';
+        filename='_FLAP_ACA';
     end
     
     
@@ -769,8 +769,8 @@ fixbox=fixtype(totaltrial);
                 Datapixx('RegWrRd');
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ==0
-                %  fixationscript3
-                fixationscriptWGoogle
+              %  fixationscript3
+              fixationscriptWGoogle
             elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ==0
                 if site<3
                     IsFixatingSquare
@@ -782,58 +782,84 @@ fixbox=fixtype(totaltrial);
                     starfix=98;
                 end
                 %  fixationscript3
-                fixationscriptWGoogle               
-            elseif (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ~=0               
-                fixationscriptWGoogle
-                eyenowx(totaltrial)=newsamplex;
-                eyenowy(totaltrial)=newsampley;
-                respTime=GetSecs;
-                thekeys = find(keyCode);
-                
-                if (thekeys==escapeKey) % esc pressed
-                    closescript = 1;
-                    break;
-                end
-                PsychPortAudio('Start', pahandle1);                
-                eyechecked=2;             
-            elseif (eyetime2-pretrial_time)>trialTimeout
-                eyechecked=2;               
+              fixationscriptWGoogle
+              
+            elseif (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ~=0
+
+                              fixationscriptWGoogle
+eyenowx(totaltrial)=newsamplex;
+eyenowy(totaltrial)=newsampley;
+                                                respTime=GetSecs;
+                                                                thekeys = find(keyCode);
+
+                                                                    if (thekeys==escapeKey) % esc pressed
+                       closescript = 1;
+                        break;
+                    end
+                                                                                                PsychPortAudio('Start', pahandle1);
+
+                eyechecked=2;
+%             elseif (eyetime2-pretrial_time)>ifi*65 && fixating>=fixTime/ifi && stopchecking>1 && fixating<10000 && (eyetime2-pretrial_time)<=trialTimeout
+%                 trial_time = GetSecs;
+%                 fixating=150000;
+%                                                 PsychPortAudio('Start', pahandle2);
+% 
+%                 respTime=GetSecs;
+%                 eyechecked=2;
+            
+                        elseif (eyetime2-pretrial_time)>trialTimeout
+                eyechecked=2;
+
             end
-            eyefixation5
-                       
+            
+
+                eyefixation5
+
+            
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
                 fixationlength=10;
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);                
+                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                
             end
-            if EyetrackerType==2                
+            if EyetrackerType==2
+                
                 if scotomavpixx==1
                     Datapixx('EnableSimulatedScotoma')
                     Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
                     %Datapixx('SetSimulatedScotomaMode'[,mode = 0]);
                     scotomaradiuss=round(pix_deg*6);
-                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);                   
+                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
+                    
                     mode=Datapixx('GetSimulatedScotomaMode');
                     status= Datapixx('IsSimulatedScotomaEnabled');
-                    radius= Datapixx('GetSimulatedScotomaRadius');                   
+                    radius= Datapixx('GetSimulatedScotomaRadius');
+                    
                 end
             end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);           
+%             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+%                 Screen('FillRect', w, gray);
+%             end
+            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+            
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             
-            if EyeTracker==1               
+            if EyeTracker==1
+                
                 if site<3
                     GetEyeTrackerData
                 elseif site ==3
                     GetEyeTrackerDatapixx
                 end
-                GetFixationDecision               
+                GetFixationDecision
+                
                 if EyeData(1)<8000 && stopchecking<0
                     trial_time = GetSecs;
                     stopchecking=10;
-                end                
+                end
+                
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -848,8 +874,10 @@ fixbox=fixtype(totaltrial);
                         end
                         FixIndex(FixCount,2) = CheckCount-1;
                         FixatingNow = 0;
-                    end                    
-                end              
+                    end
+                    
+                end
+                
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end

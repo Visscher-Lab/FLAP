@@ -83,8 +83,6 @@ Targori{1}=[orifoo; orifoo];
 offsetx{1}= [Xoff; -Xoff];
 offsety{1}=[Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
-
-
 %% 9 vs 6 18 elements ------------------------------------------------------------------
 xfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1];
 yfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  5];
@@ -103,7 +101,6 @@ offsetx{2}= [Xoff; -Xoff];
 offsety{2}=[Yoff; -Yoff];
 
 clear Xoff Yoff xfoo yfoo orifoo
-
 %% p and q ------------------------------------------------------------
 
 Targx{3}= [-2       -2      -2      -1      -1      0       0       1       1       1       1       1       1       1       1
