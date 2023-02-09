@@ -71,6 +71,8 @@ try
             deviceIndex =  k_id(i);
         end
     end
+    %     KbQueueCreate(deviceIndex); %checks for keyboard inputs
+    %     KbQueueStart(deviceIndex);
 
     %% draw everything on the instruction page
     HideCursor;
@@ -141,7 +143,10 @@ try
         end
     end
     disp(['Trigger received - ' startdatetime]);
+    %tic;
     fixationscriptW;
+    %     while GetSecs < startTime + TR; %  rest for 1.5 sec
+    %     end
 
     k=1;% number of TTLs in one TR
     j=1; % number of TTLs recorded in the whole session
@@ -168,8 +173,8 @@ try
             activeblockcue=eval(['activeblockcue' runnum]);
             activeblock=activeblockcue(totalblock,:);
             activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
-            %itiforrun=eval(['interTrialIntervals' runnum]);
-            itiforrun=[4 4 2 2 2 2 2 2 2 2 2 2]; % Pinar, remember to take out #kmv
+            itiforrun=eval(['interTrialIntervals' runnum]);
+            %itiforrun=[2 2 2 2 2 2 1 1 1 1 1 1];
             % LOOP FOR TRIALS %%%%%%%%
             for trial=1:totaltrial
                 if trial==1 && totalblock==1 % it's the first trial of the first block
@@ -186,16 +191,27 @@ try
                     %TimeToStartListening(totalblock,trial)=startTime;
                     %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+TR+(activeblocksuntilnow*58*TR)+(restblocksuntilnow*rest_duration);
                     trialstarttime(totalblock,trial)=TimeToStopListening(totalblock,trial);
+                    %                 elseif trial==1 && totalblock>1 && itiforrun(totalblock,trial-1)==1%if it's the first trial of the following blocks and iti is greater than 1TR
+                    %                     iti=1;
+                    %                     activeblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)~=4);
+                    %                     restblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)==4);
+                    %                     TimeToStartListening(totalblock,trial)=startTime;
+                    %                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+TR+(activeblocksuntilnow*58*TR)+(restblocksuntilnow*rest_duration);
+                    %                     trialstarttime(totalblock,trial)=TimeToStopListening(totalblock,trial);
                 elseif trial>1 && itiforrun(totalblock,trial-1)>1 %if it's not the first trial of the block and previous iti is greater than 1TR
                     %iti=itiforrun(totalblock,trial); % inter-trial-interval changes in each trial
                     itiprevious=itiforrun(totalblock,trial-1);
                     %TimeToStartListening(totalblock,trial)=trialstarttime(totalblock,trial-1);
                     TimeToStartListening(totalblock,trial)=GetSecs;
                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
+                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+(2*TR)+itiprevious+((iti-0.5)*TR);
                 elseif trial>1 && itiforrun(totalblock,trial-1)==1 %if it's not the first trial of the block and iti equals 1TR
+                    %iti=itiforrun(totalblock,trial);
                     itiprevious=itiforrun(totalblock,trial-1);
                     TimeToStartListening(totalblock,trial)=GetSecs;
                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
+                    %TimeToStartListening(totalblock,trial)=trialstarttime(totalblock,trial-1);
+                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((iti-0.5)*TR)+(2*TR);
                     trialstarttime(totalblock,trial)=trialstarttime(totalblock,trial-1)+((2+itiprevious)*TR);%there is no time to collect ttl pulses
                 end
 
@@ -209,21 +225,21 @@ try
                             if k==1
                                 TTL_time(j)=keyTime;
                                 k=k+1;
-                                j=j+1;
-                            elseif keypresstime(1,k)-keypresstime(1,k-1)>=.5 %I added this because kbcheck gets ~30 keypresses since manual testing isn't quick enough
+                                j=j+1
+                            elseif keypresstime(1,k)-keypresstime(1,k-1)>=1 %I added this because kbcheck gets ~30 keypresses since manual testing isn't quick enough
                                 TTL_time(j)=keyTime;
                                 k=k+1;
-                                j=j+1
+                                j=j+1;
                             end
                         end
                     end
                 end
                 if exist('TTL_time')
-                   % clear keyIsDown keyTime keyCode keypresstime key
+                    clear keyIsDown keyTime keyCode keypresstime key
                 end
                 if trial>1 && itiprevious>1 && trial<totaltrial
-                    trialstarttime(totalblock,trial)=TTL_time(j-1)+TR; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frames
-                    % clear TTL_time
+                    trialstarttime(totalblock,trial)=TTL_time(1,k-1)+TR; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frames
+                    clear TTL_time
                 end
                 cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
                 if cue==1

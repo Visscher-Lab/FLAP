@@ -1,7 +1,7 @@
 %% general visual parameters
 
-stimulusSize = 3; %2.5;% size of the stimulus in degrees of visual angle
-PRLsize = 6; %5; % diameter of the assigned PRL in degrees of visual angle
+stimulusSize = 3.25; %2.5;% size of the stimulus in degrees of visual angle
+PRLsize = 6.5; %5; % diameter of the assigned PRL in degrees of visual angle
 oval_thick=3;
 possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(TRLlocation) 0 ]; %eccentricity of PRL in deg

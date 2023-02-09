@@ -178,18 +178,11 @@ try
                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
                     trialstarttime(totalblock,trial)=startTime+TR;
                 elseif trial==1 && totalblock>1 %&& itiforrun(totalblock,trial-1)>1% it's the first trial of the following blocks and iti is greater than 1TR
-                    %iti=itiforrun(totalblock,trial); % inter-trial-interval changes in each trial
-                    %activeblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)~=4);
-                    %restblocksuntilnow=sum(activeblocktype(runnumber,1:totalblock)==4);
                     TimeToStartListening(totalblock,trial)=GetSecs;
                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial);
-                    %TimeToStartListening(totalblock,trial)=startTime;
-                    %TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+TR+(activeblocksuntilnow*58*TR)+(restblocksuntilnow*rest_duration);
                     trialstarttime(totalblock,trial)=TimeToStopListening(totalblock,trial);
                 elseif trial>1 && itiforrun(totalblock,trial-1)>1 %if it's not the first trial of the block and previous iti is greater than 1TR
-                    %iti=itiforrun(totalblock,trial); % inter-trial-interval changes in each trial
                     itiprevious=itiforrun(totalblock,trial-1);
-                    %TimeToStartListening(totalblock,trial)=trialstarttime(totalblock,trial-1);
                     TimeToStartListening(totalblock,trial)=GetSecs;
                     TimeToStopListening(totalblock,trial)=TimeToStartListening(totalblock,trial)+((itiprevious-0.5)*TR);
                 elseif trial>1 && itiforrun(totalblock,trial-1)==1 %if it's not the first trial of the block and iti equals 1TR
