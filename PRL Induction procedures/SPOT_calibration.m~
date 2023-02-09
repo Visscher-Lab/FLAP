@@ -440,16 +440,20 @@ coordmat= xcord(premat);
     
     
     for ui=1:length(eyenowx)
-        dist_diff(ui,1)=eyenowx(ui)-coordmat(ui,1)
-        dist_diff(ui,2)=eyenowy(ui)-coordmat(ui,2)
+        dist_diffx(ui,1)=eyenowx(ui)-coordmat(ui,1)
+        dist_diffy(ui)=eyenowy(ui)-coordmat(ui,2)
     end
-
+    coordinates=[-8.15	0.1
+-5.43	1.15
+-0.61	0.78
+-6.98	1.78
+-2.62	9.12]
 
 
 for ui=1:length(coordinates)
-[theta,rho] = cart2pol(dist_diff(ui,1),dist_diff(ui,2));
+[theta,rho] = cart2pol(coordinates(ui,1),coordinates(ui,2))
 
-radialDist(ui)=rho;
+radialDist(ui)=rho
 clear rho
 end
 
