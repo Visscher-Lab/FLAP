@@ -89,7 +89,20 @@ try
 CommonParametersAwareness
     createO
     
-    
+% from http://pngimg.com/upload/cat_PNG100.png
+[img, ~, alpha] = imread('imagescotoma.png');
+size(img)
+% 2557 x 1993 x 3 (rgb)
+% We'll make one texture without the alpha channel, and one with.
+[y, x, c]=size(img)
+
+    img2=imresize(img,scale_fact);
+
+
+texture1 = Screen('MakeTexture', w, img); %  image without the alpha channel.
+img(:, :, 4) = alpha;
+texture2 = Screen('MakeTexture', w, img); %image with the alpha channel.
+
     %% trial matrixc
     
     trials=50;
@@ -134,7 +147,7 @@ CommonParametersAwareness
     WaitSecs(1);
    
     Screen('FillRect', w, gray);
-    DrawFormattedText(w, 'Report whether the emoji is (h)appy or (s)ad by ressing the corresponding key \n \n \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'Report whether the emoji is (h)appy or (s)ad by pressing the corresponding key \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbQueueWait;
     WaitSecs(0.5);
@@ -225,14 +238,13 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             end
             eyefixation5
             
-            if ScotomaPresent == 1
-                Screen('FillOval', w, scotoma_color, scotoma);
-            else
-                fixationlength=10;
-                colorfixation = white;
-                Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+            if ScotomaPresent == 1              
                 
+                  imageRect_ScotomaLive =[scotomarect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
+                        scotomarect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
+
+           %     Screen('FillOval', w, scotoma_color, scotoma);
+                                    Screen('DrawTexture', w, texture, [], imageRect_ScotomaLive, [],[], 1);
             end
             if EyetrackerType==2
                 

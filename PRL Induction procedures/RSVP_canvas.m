@@ -232,6 +232,7 @@ try
                 fixating=1500;
             end           
             %%      % beginning of the trial after fixation criteria satisfied in
+           % clear stimstar
             time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
             % this looks into the timing of events array, looks at the array
             % of events and the counter of number of events
@@ -242,9 +243,14 @@ try
             %           end
             eyetime2=GetSecs-trial_time;
             mao=[mao eyetime2];
+            timereset=0;
             %if eyetime2>=time_of_this_event(number_of_events) && eyetime2<=time_of_this_event(number_of_events)
             if     (eyetime2-trial_time)<=time_of_this_event(number_of_events) && stopchecking>1 && fixating>1000
                 
+                if number_of_events>timereset
+                    clear stimstar
+                end
+                timereset=number_of_events;
                 stimtype=array_of_events(number_of_events);
                 tloc=mixtr(trial,1);
                 
@@ -268,6 +274,8 @@ try
         ori=theoris(theans(trial,number_of_events));
                 elseif stimtype==2 %foil
                     theans(trial,number_of_events)=5;
+                elseif stimtype==5 %blank
+             %                       theans(trial,number_of_events)= theans(trial,number_of_events-1);
                 end
                 
                 if stimtype~=5
@@ -286,8 +294,8 @@ try
                     Datapixx('RegWrVideoSync');
                     %collect marker data
                     Datapixx('RegWrRd');
-                    Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
-                    Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                    Pixxstruct(trial,number_of_events).TargetOnset = Datapixx('GetMarker');
+                    Pixxstruct(trial,number_of_events).TargetOnset2 = Datapixx('GetTime');
                 end
             end
             
@@ -303,17 +311,17 @@ try
                 respTime(trial, respcounter)=secs;
                                     foo=(RespType==thekeys);
 
-                if foo(theans(trial,number_of_events))
-                    resp = 1;
-                    nswr(trial)=1;
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
-                else
+                                    if foo(theans(trial,number_of_events)) || foo(theans(trial,number_of_events-1))
+                                        resp = 1;
+                                        nswr(trial)=1;
+                                        PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                                        PsychPortAudio('Start', pahandle);
+                                    else
                                         resp = 0;
-                    nswr(trial)=0;
-                    PsychPortAudio('FillBuffer', pahandle, ErorrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
-                end      
+                                        nswr(trial)=0;
+                                        PsychPortAudio('FillBuffer', pahandle, ErorrS' ); % loads data into buffer
+                                        PsychPortAudio('Start', pahandle);
+                                    end
             
             end
             if eyetime2>=time_of_this_event(number_of_events)
@@ -421,10 +429,7 @@ try
         end
         
         
-        if exist('stimstar')==0
-            stim_start(trial)=0;
-            stimnotshowed(trial)=99;
-        end
+
         
         
         if caliblock==0

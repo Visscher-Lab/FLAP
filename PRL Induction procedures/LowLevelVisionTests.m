@@ -9,11 +9,12 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
-    
+%    prompt={'Participant name', 'Assessment day','site? UCR eyelink (1), UAB eyelink (2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
+     prompt={'Participant name', 'Assessment day','scotoma old mode active', 'practice (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
+   
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '1', '2', '2', '0', '1' };
+    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '1' };
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -22,16 +23,18 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    PRLlocations=str2num(answer{7,:});
-    whicheye=str2num(answer{8,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    whichTask=str2num(answer{10,:}); % acuity (1), crowding (2), exo attention (3)
+    ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
+    
+    IsPractice=str2num(answer{4,:}); % full session or demo/practice
+    PRLlocations=str2num(answer{5,:});
+    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    whichTask=str2num(answer{8,:}); % acuity (1), crowding (2), exo attention (3)
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
+    site=3;  % VPixx
+    scotomavpixx= 0;
+    
     if exist('data')==0
         mkdir('data')
     end
@@ -46,9 +49,9 @@ try
         filename='Contrast';
     end
     
-    if Isdemo==0
+    if IsPractice==0
         filename2=' practice';
-    elseif Isdemo==1
+    elseif IsPractice==1
         filename2='';
     end
     
@@ -85,24 +88,27 @@ try
     %% STAIRCASES:
     if whichTask==1    % Acuity
         ca=1; %conditions; one
-        Sizelist=log_unit_down(StartSize, 0.03, 90);
+        Sizelist=log_unit_down(StartSize, 0.06, 90);
+        thresh(1:PRLlocations, 1:ca)=5;
     end
     if whichTask==2   % Crowding
         ca=2; % conditions: radial and tangential
-        Separationtlist=log_unit_down(max_separation, 0.03, 90);
+        Separationtlist=log_unit_down(max_separation, 0.06, 90); % maybe we want to use 0.03 to get finer thresholds?
+        thresh(1:PRLlocations, 1:ca)=5;
     end
     if whichTask==4    % Contrast
         ca=1; %conditions; one
-        Contlist=log_unit_down(StartCont, 0.03, 90);
+        Contlist=log_unit_down(StartCont, 0.06, 90);
         Contlist(1)=1;
+        thresh(1:PRLlocations, 1:ca)=7; %11;
     end
     if whichTask~=3
         % Threshold -> 79%
         sc.up = 1;                          % # of incorrect answers to go one step up
         sc.steps= [2 3];                    % # of correct answers to go one step down
-        stepsizes=[5 5 5 3 3 1];
+        stepsizes=[3 3 3 1 1 1];
         tr_per_condition=60;  %50
-        thresh(1:PRLlocations, 1:ca)=15; %25;
+%         thresh(1:PRLlocations, 1:ca)=9; %25;
         reversals(1:PRLlocations, 1:ca)=0;
         isreversals(1:PRLlocations, 1:ca)=0;
         staircounter(1:PRLlocations, 1:ca)=0;
@@ -180,7 +186,7 @@ try
             mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);whichTask==3
         end
     end
-    if Isdemo==0
+    if IsPractice==0
         mixtr=mixtr(1:practicetrials,:);
     end
     
@@ -226,8 +232,11 @@ try
     
     
     
-    if whichTask~=1
+    if whichTask~=1 && whichTask ~= 2
         imageRect = CenterRect([0, 0, stimulussize stimulussize], wRect);
+    end
+    if whichTask == 2
+        imageRect = CenterRect([0,0, stimulussize_crowding stimulussize_crowding], wRect);
     end
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
@@ -552,6 +561,7 @@ try
                             DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
                             %    KbQueueWait;
                             eyechecked=10^4;
                         end

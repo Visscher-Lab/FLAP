@@ -45,3 +45,15 @@ Screen('TextSize',w, 42);
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
 
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
+
+
+
+
+
+scotomadeg=10;
+
+
+scotoma=scotomadeg*pix_deg;
+scale_fact=scotoma/x;
+
+ 

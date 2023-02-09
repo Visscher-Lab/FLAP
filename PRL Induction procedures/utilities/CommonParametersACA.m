@@ -3,9 +3,10 @@ scotomadeg=6; % scotoma size in deg
 scotoma_color=[200 200 200];
 red=[255 0 0];
 attContr= 0.35; % contrast of the target
-StartSize=1; %starting size for VA
+StartSize= 2; %1; %starting size for VA
 StartCont=1.122; %starting value for contrast
-StimSize=1; %stimulus size for non-acuity tasks
+StimSize_crowding=0.8; %1 %stimulus size for crowding task
+StimSize = 1; % for contrast sensitivity with the C & exo attention
 fixwindow=3;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 PRLecc=7.5;         %%eccentricity of PRLs
         max_separation=8; %max deg for crowding
@@ -33,7 +34,7 @@ imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], w
 %% general temporal parameters (trial events)
 
 
-practicetrials=5; % if we run in demo mode, how many trials do I want?
+practicetrials=12; % if we run in demo mode, how many trials do I want?
 ITI=0.75; % time interval between trial start and forced fixation period
 fixationduration=0.5; %duration of forced fixation period
 postfixationblank=[0.2 0.1]; % time between end of the forced fixation period and the cue (value works for Acuity and
@@ -53,7 +54,8 @@ calibrationtolerance=2;
 %% visual stimuli common parameters
 bg_index =round(gray*255); %background color
 imsize=StartSize*pix_deg; %starting size for acuity
-stimulussize=StimSize*pix_deg; %stimulus size for nono-acuity tasks
+stimulussize=StimSize*pix_deg; %stimulus size for non-acuity tasks (contrast and exo attention)
+stimulussize_crowding = StimSize_crowding * pix_deg; % stimulus size for crowding task
 scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 fixwindowPix=fixwindow*pix_deg; % fixation window

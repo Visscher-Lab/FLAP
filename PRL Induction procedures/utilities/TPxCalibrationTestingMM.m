@@ -1143,8 +1143,9 @@ while (1)
             WaitSecs(0.3);
             if (isTPX && ~file_recorded)
                 %save screen to file for further reference
-                imageArray = Screen('GetImage', windowPtr);
-                imwrite(imageArray, 'ScaledRawData.jpg');
+                imageArray = Screen('GetImage', windowPtr);          
+                titlename=[baseName(8:9) '_' baseName(end-11:end) 'ScaledRawData.jpg'];
+                imwrite(imageArray,  titlename)
             end
             
             %wait for any keyboard entry before proceeding to the next result page
@@ -1255,7 +1256,8 @@ while (1)
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                imwrite(imageArray, 'Cal_points_error.jpg')
+                titlename=[baseName(8:9) '_' baseName(end-11:end) 'Cal_points_error.jpg'];
+                imwrite(imageArray,  titlename)
                 file_recorded = 1;
             end
 
