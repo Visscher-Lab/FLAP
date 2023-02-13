@@ -83,13 +83,9 @@ try
     %% Keys definition/kb initialization
     
     KbName('UnifyKeyNames');
-    
-    RespType(1) = KbName('LeftArrow');
-    RespType(2) = KbName('RightArrow');
-    RespType(3) = KbName('UpArrow');
-    RespType(4) = KbName('DownArrow');
-    RespType(5) = KbName('c'); % continue with study
-    RespType(6) = KbName('m'); %recalibrate
+  
+    RespType(1) = KbName('c'); % take coordinates 
+    RespType(2) = KbName('m'); %recalibrate
     escapeKey = KbName('ESCAPE');	% quit key
     
     % get keyboard for the key recording
@@ -158,13 +154,15 @@ premat=fullfact([3 3]);
 coordmat= xcord(premat);
 
     for trial=1:length(fixtype)
+        
+        countSamples=0;
         fixboxx=coordmat(trial,1);
         fixboxy=coordmat(trial,2);
 
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
         if trial==1
-                interblock_instruction_acuity
+                interblock_instruction_calibrtion
 
         end
         
@@ -193,7 +191,7 @@ coordmat= xcord(premat);
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ==0
                 fixationscriptSpot
-            elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ==0
+            elseif  (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && sum(keyCode) ==0
                 if site<3
                     IsFixatingSquare
                 elseif site==3
@@ -204,19 +202,24 @@ coordmat= xcord(premat);
                     starfix=98;
                 end
                     fixationscriptSpot
-            elseif (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1))+ keyCode(escapeKey) ~=0               
+            elseif (eyetime2-pretrial_time)>=ifi*65 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && sum(keyCode) ~=0               
                 fixationscriptWGoogle
-                eyenowx(totaltrial)=newsamplex;
-                eyenowy(totaltrial)=newsampley;
+               
+                 thekeys = find(keyCode);
+
+                 if thekeys==RespType(1)
+                     countSamples=countSamples+1;
+                eyenowx(totaltrial,countSamples)=newsamplex;
+                eyenowy(totaltrial,countSamples)=newsampley;
                 respTime=GetSecs;
-                thekeys = find(keyCode);
+                 elseif thekeys==RespType(2)
                 
-                if (thekeys==escapeKey) % esc pressed
+                                eyechecked=2;                            
+                 elseif thekeys==escapeKey % esc pressed
                     closescript = 1;
                     break;
                 end
                 PsychPortAudio('Start', pahandle1);                
-                eyechecked=2;             
             elseif (eyetime2-pretrial_time)>trialTimeout
                 eyechecked=2;               
             end
@@ -440,8 +443,8 @@ coordmat= xcord(premat);
     
     
     for ui=1:length(eyenowx)
-        dist_diff(ui,1)=eyenowx(ui)-coordmat(ui,1)
-        dist_diff(ui,2)=eyenowy(ui)-coordmat(ui,2)
+        dist_diff(ui,1)=eyenowx(ui)-coordmat(ui,1);
+        dist_diff(ui,2)=eyenowy(ui)-coordmat(ui,2);
     end
 
 
