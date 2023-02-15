@@ -114,4 +114,11 @@ end
 
 
 save RSVPmx.mat
+
+for ui=1:length(trialArray)
+    trialArray{ui}(length(trialArray{ui})+1)=6;
+end
+
+save RSVPmxII.mat
+
 %randx means a rand sequence 1-x long that ends in a target (T) distractor (D) or cue (C) 

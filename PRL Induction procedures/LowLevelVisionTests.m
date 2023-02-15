@@ -88,25 +88,25 @@ try
     %% STAIRCASES:
     if whichTask==1    % Acuity
         ca=1; %conditions; one
-        Sizelist=log_unit_down(StartSize, 0.06, 90);
-        thresh(1:PRLlocations, 1:ca)=5;
+        Sizelist=log_unit_down(StartSize, 0.1, 90);
+        thresh(1:PRLlocations, 1:ca)=3;
     end
     if whichTask==2   % Crowding
         ca=2; % conditions: radial and tangential
-        Separationtlist=log_unit_down(max_separation, 0.06, 90); % maybe we want to use 0.03 to get finer thresholds?
-        thresh(1:PRLlocations, 1:ca)=5;
+        Separationtlist=log_unit_down(max_separation, 0.1, 90); % maybe we want to use 0.03 to get finer thresholds?
+        thresh(1:PRLlocations, 1:ca)=2;
     end
     if whichTask==4    % Contrast
         ca=1; %conditions; one
-        Contlist=log_unit_down(StartCont, 0.06, 90);
+        Contlist=log_unit_down(StartCont, 0.1, 90);
         Contlist(1)=1;
-        thresh(1:PRLlocations, 1:ca)=7; %11;
+        thresh(1:PRLlocations, 1:ca)=4; %11;
     end
     if whichTask~=3
         % Threshold -> 79%
         sc.up = 1;                          % # of incorrect answers to go one step up
         sc.steps= [2 3];                    % # of correct answers to go one step down
-        stepsizes=[3 3 3 1 1 1];
+        stepsizes=[2 2 2 1 1 1];
         tr_per_condition=60;  %50
 %         thresh(1:PRLlocations, 1:ca)=9; %25;
         reversals(1:PRLlocations, 1:ca)=0;
@@ -232,10 +232,10 @@ try
     
     
     
-    if whichTask~=1 && whichTask ~= 2
-        imageRect = CenterRect([0, 0, stimulussize stimulussize], wRect);
-    end
-    if whichTask == 2
+%     if whichTask == 3
+%         imageRect = CenterRect([0, 0, stimulussize stimulussize], wRect);
+%     end
+    if whichTask ~= 1
         imageRect = CenterRect([0,0, stimulussize_crowding stimulussize_crowding], wRect);
     end
     for trial=1:length(mixtr)
@@ -325,10 +325,7 @@ try
         if whichTask == 4
             contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
         end
-        
-        
-        
-        
+               
         if whichTask ==3
             currentpostfixationblank=postfixationblank(2);
             currentcueISI=cueISI;
@@ -452,8 +449,8 @@ try
                             imageRect_offsFlankOne(3)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y1];
                         imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
                             imageRect_offsFlankOne(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
-                        imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.635*pix_deg) imageRect_offs_flank1(2)-(0.635*pix_deg) imageRect_offs_flank1(3)+(0.635*pix_deg) imageRect_offs_flank1(4)+(0.635*pix_deg) ];
-                        imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.635*pix_deg) imageRect_offs_flank2(2)-(0.635*pix_deg) imageRect_offs_flank2(3)+(0.635*pix_deg) imageRect_offs_flank2(4)+(0.635*pix_deg) ];
+                        imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.1*pix_deg) imageRect_offs_flank1(2)-(0.1*pix_deg) imageRect_offs_flank1(3)+(0.1*pix_deg) imageRect_offs_flank1(4)+(0.1*pix_deg) ];
+                        imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.1*pix_deg) imageRect_offs_flank2(2)-(0.1*pix_deg) imageRect_offs_flank2(3)+(0.1*pix_deg) imageRect_offs_flank2(4)+(0.1*pix_deg) ];
                         
                     end
                     Screen('FillOval',w, gray,imageRect_offscircle1); % letter to the left of target

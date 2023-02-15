@@ -45,7 +45,7 @@ try
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '2' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1', '2', '0', '2' , '0', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -146,7 +146,7 @@ try
     if trainingType==1
         conditionOne=1; %only Gabors
         conditionTwo=1; %currently not needed for this training type
-        if demo==1
+        if demo==0
             trials=5; %total number of trials per staircase
         else
             trials=500;  %total number of trials per staircase
@@ -154,7 +154,7 @@ try
     elseif trainingType==2
         conditionOne=shapes; % shapes (training type 2)
         conditionTwo=1; %currently not needed for this training type
-        if demo==1
+        if demo==0
             trials=5; %total number of trials per staircase (per shape)
         else
             trials= 6;  %total number of trials per staircase (per shape, we have 3 per day)
@@ -162,7 +162,7 @@ try
     elseif trainingType==3
         conditionOne=1; %only landolt C
         conditionTwo=2; % endogenous or exogenous cue
-        if demo==1
+        if demo==0
             trials=5;
         else
             trials=62;  %total number of trials per stimulus (250 trials
@@ -172,7 +172,7 @@ try
     elseif trainingType==4
         conditionOne=2; %gabors or contours
         conditionTwo=2; % high or low visibility cue
-        if demo==1
+        if demo==0
             trialsContrast=5;
             trialsShape=4;
         else
@@ -215,7 +215,7 @@ try
         mixtr_shapes=[repmat(mixcond,round(trialsShape/4),1) ];
         block_n=length(mixtr_shapes)/3;
         %         block_n=length(mixtr_gabor)/3;
-        if demo==1
+        if demo==0
             mixtr=[mixtr_gabor;mixtr_shapes];
         else
             mixtr=[mixtr_gabor(1:block_n,:);mixtr_shapes(1:block_n,:); mixtr_gabor(block_n+1:block_n*2,:); mixtr_shapes(block_n+1:block_n*2,:);mixtr_gabor(block_n*2+1:end,:);mixtr_shapes(block_n*2+1:end,:)];
@@ -235,13 +235,13 @@ try
         if trainingType==2 || trainingType==4
             load NewShapeMat.mat;         % shape parameters for each session of training
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
-            if demo==1
+            if demo==0
                 shapeMat(:,1)= [8 1 6];
             end            
             shapeMat(:,1)= [1 2 3];
             shapeMat(:,1)= [4 9 10];            
-            shapeMat(:,1)= [11 6 7 ];
-
+      %      shapeMat(:,1)= [11 6 7 ];
+shapeMat(:,1)= [9 11 7 ];
             shapesoftheDay=shapeMat(:,expDay);
         end
         
@@ -392,7 +392,7 @@ try
     
     %% Initialize trial loop
     HideCursor;
-    if demo==2
+    if demo==1
         ListenChar(2);
     end
     ListenChar(0);
@@ -427,11 +427,13 @@ try
       %         practicePassed=1;
 
         end
-        
+%         if demo==0
+%             practicePassed=1;
+%         end
         if trainingType<3
             while practicePassed==0
           %      FLAPpractice
-          FLAPpracticenodistractors
+          FLAPpractice
             end
         end
         if practicePassed==2
@@ -467,7 +469,7 @@ try
          %   trialTimeout=400000;
                         trialTimeout=realtrialTimeout+5;
 
-        elseif trainingType==1 || trainingType==2 || demo==1 %if it's a training type 1 or 2 trial, no flicker
+        elseif trainingType==1 || trainingType==2 || demo==0 %if it's a training type 1 or 2 trial, no flicker
             FlickerTime=0;
         end
         %% generate answer for this trial (training type 3 has no button response)
@@ -508,7 +510,7 @@ try
             endExp=GetSecs; %time at the end of the session
         end
         
-        if demo==2
+        if demo==1
             if mod(trial,round(length(mixtr)/8))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
@@ -662,7 +664,7 @@ try
                     flickswitch= flickswitch+flickeringrate;
                     flick=3-flick; % flicker/non flicker
                 end
-                if trainingType>2 && demo==2  % Force flicker here (training type 3 and 4)
+                if trainingType>2 && demo==1  % Force flicker here (training type 3 and 4)
                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
                 end
                 
@@ -688,7 +690,7 @@ try
                 end
                 cue_last=GetSecs;
                 
-                if trainingType>2 && counterflicker>=round(FlickerTime/ifi) || trainingType<3 || demo==1
+                if trainingType>2 && counterflicker>=round(FlickerTime/ifi) || trainingType<3 || demo==0
                     newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
                     flickerdone=10;
                     flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
@@ -723,9 +725,9 @@ try
                     end
                     %here I draw the target contour
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                    imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                    if demo==1
-                        Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                    imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0; % target coordinates
+                    if demo==0
+                        Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.99 );
                     end
                     % here I draw the circle within which I show the contour target
                     Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
@@ -787,7 +789,7 @@ fixationscriptW
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
             end
-            if demo==2
+            if demo==1
                 if penalizeLookaway>0
                     if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                         Screen('FillRect', w, gray);

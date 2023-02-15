@@ -1143,9 +1143,11 @@ while (1)
             WaitSecs(0.3);
             if (isTPX && ~file_recorded)
                 %save screen to file for further reference
-                imageArray = Screen('GetImage', windowPtr);          
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'ScaledRawData.jpg'];
-                imwrite(imageArray,  titlename)
+                imageArray = Screen('GetImage', windowPtr);   
+          %      imwrite(imageArray, 'xxxScaledRawData.jpg');
+               % titlename=[baseName(71:76) '_' baseName(end-15:end-4) ' ScaledRawData.jpg'];
+                              titlename=[baseName  ' ScaledRawData.jpg'];
+  imwrite(imageArray,  titlename)
             end
             
             %wait for any keyboard entry before proceeding to the next result page
@@ -1180,8 +1182,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
          %                       imwrite(imageArray, [  '0PolyResponse_R.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_R.jpg'];
-
+                         titlename=[baseName ' PolyResponse_R.jpg'];
                 imwrite(imageArray,  titlename)
             end
             [secs, keyCode, deltaSecs] = KbWait;
@@ -1212,7 +1213,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
           %      imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_L.jpg'];
+                                   titlename=[baseName ' PolyResponse_L.jpg'];
                 imwrite(imageArray,  titlename)
             end
             [~, keyCode, ~] = KbWait;
@@ -1256,7 +1257,7 @@ while (1)
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'Cal_points_error.jpg'];
+                titlename=[baseName ' Cal_points_error.jpg'];
                 imwrite(imageArray,  titlename)
                 file_recorded = 1;
             end
@@ -1302,7 +1303,7 @@ while (1)
         %Run a validation on the recent calibration
         %Display the target and record data in order to compare
         %expected gaze position to actual gaze postion
-        cal_status = TPxValidateCalibration(xy, isTPX, windowPtr, 0);
+        cal_status = TPxValidateCalibrationMM(xy, isTPX, windowPtr, baseName, 0);
         if cal_status
             break;
         end
@@ -1334,11 +1335,16 @@ end
 
 %fileID will contain the gaze position and its distance to the mouse
 %pointer when clicking mouse button 1
-fileID = fopen('error_measure.csv', 'a');
+
+
+                titlename=[baseName  'error_measure.csv'];
+
+fileID = fopen(titlename, 'a');
 
 %fileID2 will contain the raw eye data corresponding to the gaze position saved
 %in fileID
-fileID2 = fopen('raw_compare.csv', 'a');
+                titlename=[baseName  'raw_compare.csv'];
+fileID2 = fopen(titlename, 'a');
 
 fprintf(fileID, 'timetag,mouse X,mouse Y,right eye x,right eye y,left eye x,left eye y,error rigth x,error right y,error left x,error left y,pp left,pp right\n');
 
