@@ -374,7 +374,7 @@ try
                         foo=(RespType==thekeys);
                         
                         if foo(theans(trial,number_of_events))
-                            resp = 1;
+                            resp(trial,number_of_events) = 1;
                             nswr(trial)=1;
                             PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                             PsychPortAudio('Start', pahandle);
@@ -394,7 +394,7 @@ try
                             %       RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
                             
                         else
-                            resp = 0;
+                            resp(trial,number_of_events) = 0;
                             nswr(trial)=0;
                             PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
                             PsychPortAudio('Start', pahandle);
@@ -410,6 +410,14 @@ try
                     Pixxstruct(trial,number_of_events).TargetOnset = Datapixx('GetMarker');
                     Pixxstruct(trial,number_of_events).TargetOnset2 = Datapixx('GetTime');
                 end
+                
+              numcounter(trial, number_of_events)=1;
+              if stimtype==3 && resp(trial,number_of_events)==NaN
+                  RespMatrix(trial,number_of_events)=99;
+              end
+                
+                
+                
             end
             
             % if (eyetime2-trial_time)>0

@@ -87,6 +87,8 @@ fixationduration=0.5; %duration of forced fixation period
 
 %sequences of events for each trial (single trial events)
 time_of_events=[10 0.1 0.1 0.133 .4 0.133];
+%time_of_events=[10 0.1 1 0.133 .4 0.133];
+
 %time_of_events=[1 1 1 1 1 1]*5;
 calibrationtolerance=5; % accepted time with no eye info before calling for recalibration
 %events type
