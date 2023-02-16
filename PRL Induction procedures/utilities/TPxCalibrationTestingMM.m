@@ -1337,14 +1337,16 @@ end
 %pointer when clicking mouse button 1
 
 
-                titlename=[baseName  'error_measure.csv'];
+                titlename=[baseName(1:end-4)  'error_measure.csv'];
 
 fileID = fopen(titlename, 'a');
+%fileID = fopen('error_measure.csv', 'a');
 
 %fileID2 will contain the raw eye data corresponding to the gaze position saved
 %in fileID
-                titlename=[baseName  'raw_compare.csv'];
+                titlename=[baseName(1:end-4)  'raw_compare.csv'];
 fileID2 = fopen(titlename, 'a');
+%fileID2 = fopen('raw_compare.csv', 'a');
 
 fprintf(fileID, 'timetag,mouse X,mouse Y,right eye x,right eye y,left eye x,left eye y,error rigth x,error right y,error left x,error left y,pp left,pp right\n');
 

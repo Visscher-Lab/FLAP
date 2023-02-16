@@ -412,9 +412,9 @@ try
                 end
                 
               numcounter(trial, number_of_events)=1;
-              if stimtype==3 && resp(trial,number_of_events)==NaN
-                  RespMatrix(trial,number_of_events)=99;
-              end
+%              if stimtype==3 && RespMatrix(trial,number_of_events)==NaN
+%                   RespMatrix(trial,number_of_events)=99;
+%               end
                 
                 
                 

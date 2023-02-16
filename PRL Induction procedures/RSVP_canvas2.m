@@ -207,17 +207,18 @@ try
         respcounter=0;
         resetresponse=1;
         moveblock=2^11;
-          fixating=2^11;
+        fixating=2^11;
         if stopblock==1
             tlocblock=mixtr(trial,1);
-            oriblock=theoris(randi(4));
+            theansblock=randi(4);
+            oriblock=theoris(theansblock);
             moveblock=0;
             blocktime=GetSecs+1000;
             fixating=0;
         end
         
         
-      
+        
         stopchecking=10;
         checkout=0;
         counttime=0;
@@ -265,18 +266,32 @@ try
             %
             %                             end
             %           end
+            stimtype=array_of_events(number_of_events);
             
             
             if stopblock==1
                 if  (eyetime2-pretrial_time)>=0 && moveblock<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && fixating<1000
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tlocblock}, oriblock,[], targetAlphaValue);
                     if sum(keyCode) ~=0
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        foo=(RespType==thekeys);
+                        
+                        if foo(theansblock)
+                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                        else
+                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                        end
+                        PsychPortAudio('Start', pahandle);
                         moveblock=2^11;
                         blocktime=GetSecs;
                     end
                 elseif (eyetime2-pretrial_time)>=0 && (eyetime2-blocktime)<=0.5+ifi*3 && moveblock>1000 && fixating<1000
                     if (eyetime2-blocktime)>=0.5
-                        trial_time=GesSecs;
+                        trial_time=GetSecs;
                         fixating=2^11;
                     end
                 end
@@ -299,7 +314,7 @@ try
             if     (eyetime2-trial_time)<=time_of_this_event(number_of_events) && stopchecking>1 && fixating>1000 && moveblock>1000
                 
                 if number_of_events>timereset
-                   
+                    
                     tm(number_of_events)=GetSecs;
                     countthis=countthis+1;
                 end
@@ -311,7 +326,7 @@ try
                     theans(trial,number_of_events)=5;
                     % assign the correct response from two trials ago if it
                     % was a target trial
-                    if number_of_events>3 && array_of_events(number_of_events-2) == 3
+                    if number_of_events>=3 && array_of_events(number_of_events-2) == 3
                         theans(trial,number_of_events)=theans(trial,number_of_events-2);
                     end
                 elseif stimtype==3 %target
@@ -334,18 +349,18 @@ try
                     elseif mixtr(trial,1) ==3 && mixtr(trial,2)==2
                         ori= 45;
                     end
-                                        theans(trial,number_of_events)=5;
+                    theans(trial,number_of_events)=5;
                 elseif stimtype==5 %blank
                     % assign the correct response from one trial ago to the
                     % blank interval
                     theans(trial,number_of_events)= theans(trial,number_of_events-1);
                 elseif stimtype==6 %post cue blank
-                                        theans(trial,number_of_events)=5;
+                    theans(trial,number_of_events)=5;
                 end
                 if stimtype~=5 && stimtype~=6
-                    Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);               
+                    Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
                 end
-
+                
                 %      resetflag=1;
                 
                 if exist('stimstar') == 0 && eyetime2>0
@@ -364,9 +379,8 @@ try
                         thetimes=keyCode(thekeys);
                         [secs  indfirst]=min(thetimes);
                         respTime(trial, respcounter)=secs;
-                        
-                        
-                        testtime(trial, respcounter)=secs-stim_start(trial,number_of_events)
+          
+                        testtime(trial, respcounter)=secs-stim_start(trial,number_of_events);
                         if  thekeys==escapeKey
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
@@ -378,32 +392,34 @@ try
                             break;
                         end
                         foo=(RespType==thekeys);
-                        
-                        if foo(theans(trial,number_of_events))
-                            resp(trial,number_of_events) = 1;
-                            nswr(trial)=1;
-                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                            PsychPortAudio('Start', pahandle);
-                            crudeRT(trial,number_of_events)=secs;
-                            if  stimtype==3 %response during target
-                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events);
-                                this(trial,number_of_events)=1
-                            elseif stimtype==5 %response during blank post target
-                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
-                                that(trial,number_of_events)=1
-                            elseif stimtype==2 %response during foil post blank post target
-                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-2);
-                                those(trial,number_of_events)=1
+                        if resp(trial,number_of_events-1)~=1 && resp(trial,number_of_events-1)~=99 %&& stimtype
+                            
+                            if foo(theans(trial,number_of_events))
+                                resp(trial,number_of_events) = 1;
+                                nswr(trial)=1;
+                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                                PsychPortAudio('Start', pahandle);
+                                crudeRT(trial,number_of_events)=secs;
+                                if  stimtype==3 %response during target
+                                    RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events);
+                                    this(trial,number_of_events)=1
+                                elseif stimtype==5 %response during blank post target
+                                    RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
+                                    that(trial,number_of_events)=1
+                                elseif stimtype==2 %response during foil post blank post target
+                                    RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-2);
+                                    those(trial,number_of_events)=1
+                                end
+                                %         elseif foo(theans(trial,number_of_events-1))
+                                
+                                %       RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
+                            else
+                                resp(trial,number_of_events) = 99;
+                                nswr(trial)=0;
+                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                                PsychPortAudio('Start', pahandle);
                             end
-                            %         elseif foo(theans(trial,number_of_events-1))
                             
-                            %       RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
-                            
-                        else
-                            resp(trial,number_of_events) = 0;
-                            nswr(trial)=0;
-                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
-                            PsychPortAudio('Start', pahandle);
                         end
                     end
                 end
@@ -417,25 +433,17 @@ try
                     Pixxstruct(trial,number_of_events).TargetOnset2 = Datapixx('GetTime');
                 end
                 
-              numcounter(trial, number_of_events)=1;
-              if stimtype==3 && RespMatrix(trial,number_of_events)==NaN
-                  RespMatrix(trial,number_of_events)=99;
-              end
-                
-                
-                
+                numcounter(trial, number_of_events)=1;
+                if stimtype==3 && RespMatrix(trial,number_of_events)==NaN
+                    RespMatrix(trial,number_of_events)=99;
+                    resp(trial,number_of_events)=NaN;
+                end        
             end
-            
-            % if (eyetime2-trial_time)>0
-            
-            
-            
-            %    end
-            %  end
+
             if fixating> 1000 && moveblock>1000
                 if (eyetime2-trial_time)>=time_of_this_event(number_of_events)
                     number_of_events=number_of_events+1;
-                     clear stimstar
+                    clear stimstar
                     trial_time=GetSecs;
                     resetresponse=1;
                 end

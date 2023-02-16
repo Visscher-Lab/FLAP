@@ -1,6 +1,12 @@
 % SPOT test calibration
 
 
+close all; clear; clc;
+commandwindow
+
+
+
+addpath([cd '/utilities']); %add folder with utilities files
 prompt={'Participant Name', 'day' };
 name= 'Parameters';
 numlines=1;

@@ -1,5 +1,6 @@
 %% general visual parameters
 scotomadeg=10;    % scotoma size in deg
+scotoma=scotomadeg*pix_deg;
 PRLsize =10; % diameter PRL in deg
 attContr= 1; % contrast of the target
 
@@ -13,6 +14,8 @@ dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 randdegarray=[-11:0.5:11]; % randomize stimulus location
 
 stimulusSize=1.5;
+theeccentricity_X_scotoma=0*pix_deg;
+theeccentricity_Y_scotoma=0*pix_deg;
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
@@ -41,19 +44,24 @@ fixwindowPix=fixwindow*pix_deg; % fixation window
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
 
-
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
 
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
 
-
-
-
-
 scotomadeg=10;
-
-
-scotoma=scotomadeg*pix_deg;
+% from http://pngimg.com/upload/cat_PNG100.png
+[img, ~, alpha] = imread('imagescotoma.png');
+size(img);
+% 2557 x 1993 x 3 (rgb)
+% We'll make one texture without the alpha channel, and one with.
+[y, x, c]=size(img);
 scale_fact=scotoma/x;
+img2=imresize(img,scale_fact);
+
+
+texture1 = Screen('MakeTexture', w, img); %  image without the alpha channel.
+img(:, :, 4) = alpha;
+texture2 = Screen('MakeTexture', w, img); %image with the alpha channel.
+
 
  
