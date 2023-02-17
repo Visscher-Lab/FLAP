@@ -59,7 +59,9 @@ try
     
     CommonParametersRSVP % load parameters for time and space
     
-    load  RSVPmxII.mat
+    %load  RSVPmxII.mat
+    load RSVPmxIncong.mat
+
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
@@ -163,6 +165,7 @@ try
     theans=nan(length(mixtr), 39);
     contresp=zeros(length(mixtr), 39);
     RespMatrix=nan(length(mixtr),39);
+    resp=nan(length(mixtr),39);
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
@@ -434,9 +437,9 @@ try
                 end
                 
                 numcounter(trial, number_of_events)=1;
-                if stimtype==3 && RespMatrix(trial,number_of_events)==NaN
+                if stimtype==3 && isnan(RespMatrix(trial,number_of_events))
                     RespMatrix(trial,number_of_events)=99;
-                    resp(trial,number_of_events)=NaN;
+                    resp(trial,number_of_events)=7;
                 end        
             end
 

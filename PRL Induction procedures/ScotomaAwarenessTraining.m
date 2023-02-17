@@ -185,9 +185,9 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                     stim_start=eyetime2;
                 end
                 if theans(trial)==1
-                    Screen('DrawTexture', w, theHappyface, [], imageRect_offs, [],[], attContr);
+                    Screen('DrawTexture', w, Happyface, [], imageRect_offs, [],[], attContr);
                 elseif theans(trial)==2
-                    Screen('DrawTexture', w, theSadface, [], imageRect_offs, [],[], attContr);
+                    Screen('DrawTexture', w, Sadface, [], imageRect_offs, [],[], attContr);
                 end
             elseif (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout  && (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)) ~=0
                 % if a response has been produced
@@ -281,19 +281,22 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             
             if foo(theans(trial))
                 resp = 1;
-                PsychPortAudio('Start', pahandle1);
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 break;
             else
                 resp = 0;
-                PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
             end
         else
             
             resp = 0;
             respTime=0;
-            PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
         if trialTimedout(trial)==0
             stim_stop=secs;

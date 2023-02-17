@@ -49,6 +49,16 @@ Screen('TextSize',w, 42);
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
 
 scotomadeg=10;
+
+
+[img, sss, alpha] = imread('happyface.png');
+img(:, :, 4) = alpha;
+Happyface= Screen('MakeTexture', w, img);
+
+[img, sss, alpha] = imread('sadface.png');
+img(:, :, 4) = alpha;
+Sadface= Screen('MakeTexture', w, img);
+
 % from http://pngimg.com/upload/cat_PNG100.png
 [img, ~, alpha] = imread('imagescotoma.png');
 size(img);
