@@ -6,11 +6,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','Eyetracker or mouse', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','scotoma active','Eyetracker or mouse', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '0','2','0' };
+    defaultanswer={'test','1', '1','0', '0','2','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -18,12 +18,12 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    EyeTracker= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    site= 3; 
+    ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
+    EyeTracker= str2num(answer{4,:});
+    Isdemo=str2num(answer{5,:}); % full session or demo/practice
+    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -87,8 +87,7 @@ try
     thefaces=dir([StimuliFolder '*_*']);
     
     counter=zeros(2);
-
-
+    
     for i=1:length(thefaces)
         %   inputImage=rgb2gray(imread([StimuliFolder thefaces(i).name]));
         inputImage=imread([StimuliFolder thefaces(i).name]);
@@ -138,7 +137,6 @@ try
     %     RespType(4) = KbName('4');
     escapeKey = KbName('ESCAPE');	% quit key
 
-
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
@@ -148,8 +146,7 @@ try
     HideCursor(0);
     counter = 0;
     
-    %%
-    
+    %% 
     DrawFormattedText(w, 'You will see a series of pictures and will be asked to rate them \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
     KbWait;
@@ -268,12 +265,9 @@ try
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
-        
-        
-        
+          
         time_stim(kk) = stim_stop - stim_start;
-        total_trials(kk)=trial;
-        
+        total_trials(kk)=trial;      
         cheiz{kk}=thekeys;
         rispo(kk)=resp;
         xxeye(trial).ics=[xeye];
@@ -314,8 +308,7 @@ try
         if closescript==1
             break
             %return
-        end
-        
+        end     
     end
     
     DrawFormattedText(w, 'Task completed', 'center', 'center', white);
