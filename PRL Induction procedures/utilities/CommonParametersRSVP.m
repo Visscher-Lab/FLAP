@@ -13,7 +13,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 imageRectcircles = CenterRect([0, 0, [circle_size*pix_deg circle_size*pix_deg_vert]], wRect);
 fixationwindowRect = CenterRect([0, 0, [fixationwindow*pix_deg fixationwindow*pix_deg_vert]], wRect);
 fixwindowPix=fixationwindow*pix_deg; % fixation window
-
+                fixationlength=10; % if we don't want to have a simulated scotoma but a fixation cross
 % PRL_x_axis=0; % x eccentricity of TRL rings
 % PRL_y_axis=-7.5; % y eccentricity of TRL rings
 % 
