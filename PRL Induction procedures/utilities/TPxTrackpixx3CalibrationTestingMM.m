@@ -24,8 +24,8 @@ function TPxTrackpixx3CalibrationTestingMM(baseName)
 
 
 
-clear all;
-close all;
+%clear all;
+%close all;
 
 %Sets to which screen the calibration will be done, if the platform supports
 %multi screen.

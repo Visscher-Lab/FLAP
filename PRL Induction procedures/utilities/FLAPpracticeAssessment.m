@@ -213,7 +213,8 @@ for practicetrial=1:practicetrialnum
         foo=(RespType==thekeys);
         if foo(theans(practicetrial)) % if correct response
             resp = 1;
-            PsychPortAudio('Start', pahandle1); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle); 
         elseif (thekeys==escapeKey) % esc pressed
             practicePassed=2;
             closescript = 1;
@@ -221,12 +222,14 @@ for practicetrial=1:practicetrialnum
             break;
         else
             resp = 0; % if wrong response
-            PsychPortAudio('Start', pahandle2); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
     else
         resp = 0;
         respTime=0;
-        PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
     end
     practiceresp(practicetrial)=resp;
 end

@@ -75,7 +75,8 @@ elseif site==3   %UCR VPixx
     initRequired= calibration; %do we want vpixx calibration?
     if initRequired>0
         fprintf('\nInitialization required\n\nCalibrating the device...');
-        TPxTrackpixx3CalibrationTesting;
+        %TPxTrackpixx3CalibrationTesting;
+        TPxTrackpixx3CalibrationTestingMM(baseName)
     end
     
     %Connect to TRACKPixx3
@@ -146,7 +147,7 @@ try
 end
 
 % 
-pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
+% PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer

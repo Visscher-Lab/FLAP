@@ -38,6 +38,7 @@ xlocsCI=x1(:)';
 ylocsCI=y1(:)';
 ecccoeffCI=3; % grid separation
 ecccoeffCI=1.8;
+%ecccoeffCI=1;
 
 CIstimulussize=stimulusSize*2.6*pix_deg;
 %generate visual cue
@@ -232,8 +233,8 @@ Targx{9}=    [  -3    -3    -3    -2    -2    -1    -1     1     1     1     1  
 Targy{9} =[-1	0	1	-2	2	-2	2	-2	2	0	1	-1	-3	-4	-5 -2 2
     -1	0	1	-2	2	-2	2	-2	0	-1	1	2	-3	-4	-5 -2 2];
 
-Targori{9} =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0 180 180
-    150     0       30     120      60     90      90      0       0       0       0       0       0       0       0 180 180];
+Targori{9} =[30     0       150     60      120     90      90      0       0       0       0       0       0       0       0 90 90
+    150     0       30     120      60     90      90      0       0       0       0       0       0       0       0 90 90];
 
 Xoff=[-0.05 0.25 -0.05 0.125 0.125 0 0   -0.125   -0.125 -0.1250 -0.125  -0.125  -0.125 -0.125 -0.125 0  0];
 Yoff=-[-0.125	0	0.125	0.05	-0.05	0 0 	0.05	-0.05 zeros(1,8)];
@@ -268,8 +269,11 @@ yfoo= [ -1    0  1  -2  2 -2 2 -2  2 -1   0  1  2 2 2  1   0  -1 -2];
 xfoo= [ -2   -2  -2 -1 -1  0 0  1  1  2   2  2  2 3 4  5   5  5 4 ];
 
 %orifoo=[ 60  90 120 30 150 0 0 150 30 120 90 60 0 0 30 60 90 90 150 ]+90 ;
-orifoo= [60   180   165   120   150    90    90   150    75   120   180   150    90    90    15   150   180   180   240];
+orifoo= [    60   180   165    80   150    90    90   150    75   135   180   190    90    90    30   180   180   180   285];
 
+% orifoo(10)=orifoo(10)+15;
+% orifoo(15)=orifoo(15)+15;
+% orifoo(16)=orifoo(16)+30;
 
 Yoff= [0 0 0 1/4 -1/4 0 0 1/4 -1/4 0 0 0     0 0  -1/4 0 0 0 1/4 ];
 Xoff= [1/4 0 1/4 0 0  0 0   0 0  -1/4 0 -1/4 0 0 0 -1/4 0 -1/4 0];
@@ -283,3 +287,17 @@ offsetx{11}= [Xoff; -Xoff];
 offsety{11}=[Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
+
+
+
+%1: 9 vs 6 19 elements
+%2: 9 vs 6 18 elements
+%3: p vs q
+%4 d vs b
+%5 eggs
+%6: diagonal line
+%7:horizontal vs vertical line
+%8: rotated eggs
+% 9: d and b more elements
+%10: p and q more elements
+%11: %% rotated 6 vs 9 with 19 elements

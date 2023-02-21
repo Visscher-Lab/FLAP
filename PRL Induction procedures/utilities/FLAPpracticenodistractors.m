@@ -8,9 +8,9 @@ if trainingType==1
     stimulusdurationpracticearray=stimulusdurationpracticearray*8;
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif trainingType==2
-    Jitpracticearray=[0 0 0 10 10 10 15 15  15]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
-    targethighercontrast=[1 1 1 1 1 1 0 0 0]; % target contrast
+    Jitpracticearray=[0 0 0 0 0 0 0 0  0]; %  stimulus ori practice
+    stimulusdurationpracticearray=[3 3 3 3 3 3 3 3 3]; % stimulus duration practice
+    targethighercontrast=[1 1 1 1 1 1 1 1 1]; % target contrast
     Tscat=0;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
@@ -26,7 +26,7 @@ for practicetrial=1:practicetrialnum
         ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2
         Orijit=Jitpracticearray(practicetrial);
-        CIstimuliModPractice % add the offset/polarity repulsion
+        CIstimuliModIIPractice % add the offset/polarity repulsion
     end
             stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
 
@@ -123,7 +123,13 @@ for practicetrial=1:practicetrialnum
                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
                 if targethighercontrast(practicetrial)==1
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                
+                                 %   Screen('FillOval', w, [200 200 200], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc]);
+                            %                     Screen('FillOval', w, [200 200 200], imageRect_offsCI2' );
+
                 end
+                
+                
                 % here I draw the circle within which I show the contour target
                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
                 if skipmasking==0
@@ -209,7 +215,8 @@ for practicetrial=1:practicetrialnum
         foo=(RespType==thekeys);
         if foo(theans(practicetrial)) % if correct response
             resp = 1;
-            PsychPortAudio('Start', pahandle1); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         elseif (thekeys==escapeKey) % esc pressed
                 practicePassed=2;
 closescript = 1;
@@ -217,12 +224,14 @@ closescript = 1;
             break;
         else
             resp = 0; % if wrong response
-            PsychPortAudio('Start', pahandle2); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
     else
         resp = 0;
         respTime=0;
-        PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
     end
     practiceresp(practicetrial)=resp;
 end

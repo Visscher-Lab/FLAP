@@ -11,6 +11,7 @@ elseif trainingType==2
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     targethighercontrast=[1 1 1 1 1 1 0 0 0]; % target contrast
     Tscat=0;
+    distractorspresent=1;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
 FlickerTime=0;
@@ -25,10 +26,10 @@ for practicetrial=1:practicetrialnum
         ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2
         Orijit=Jitpracticearray(practicetrial);
-        CIstimuliModPractice % add the offset/polarity repulsion
+        CIstimuliModIIPractice % add the offset/polarity repulsion
     end
-            stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
-
+    stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
+    
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg; % if training type 1 or 2, stimulus always presented in the center
     eccentricity_X(practicetrial)= theeccentricity_X;
@@ -37,7 +38,7 @@ for practicetrial=1:practicetrialnum
     if practicetrial==1 &&  trainingType ==2
         InstructionShape
     elseif practicetrial==1 &&  trainingType ==1
-               InstructionFLAP(w,trainingType,gray,white)
+        InstructionFLAP(w,trainingType,gray,white)
     end
     
     %  destination rectangle for the target stimulus
@@ -118,7 +119,11 @@ for practicetrial=1:practicetrialnum
                 created2(practicetrial)=99;
                 
                 %here I draw the target contour
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                if distractorspresent==1
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                elseif distractorspresent==0
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0 );
+                end
                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
                 if targethighercontrast(practicetrial)==1
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
@@ -163,7 +168,7 @@ for practicetrial=1:practicetrialnum
         %% here I draw the scotoma, elements below are called every frame
         eyefixation5
         Screen('FillOval', w, scotoma_color, scotoma);
-     %   visiblePRLring
+        %   visiblePRLring
         if penalizeLookaway>0
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
@@ -208,28 +213,30 @@ for practicetrial=1:practicetrialnum
         foo=(RespType==thekeys);
         if foo(theans(practicetrial)) % if correct response
             resp = 1;
-            PsychPortAudio('Start', pahandle1); % sound feedback
+            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+            PsychPortAudio('Start', pahandle);
         elseif (thekeys==escapeKey) % esc pressed
-                practicePassed=2;
-closescript = 1;
+            practicePassed=2;
+            closescript = 1;
             ListenChar(0);
             break;
         else
             resp = 0; % if wrong response
-            PsychPortAudio('Start', pahandle2); % sound feedback
+            PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+            PsychPortAudio('Start', pahandle);
         end
     else
         resp = 0;
         respTime=0;
-        PsychPortAudio('Start', pahandle2);
+        PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+        PsychPortAudio('Start', pahandle);
     end
     practiceresp(practicetrial)=resp;
 end
 % do we exit the practice loop?
 if practicePassed~=2
-performance=sum(practiceresp)/practicetrial;
-if performance>=performanceThresh
-    practicePassed=1;
-end
-
+    performance=sum(practiceresp)/practicetrial;
+    if performance>=performanceThresh
+        practicePassed=1;
+    end
 end

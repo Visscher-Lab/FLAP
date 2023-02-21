@@ -1,7 +1,6 @@
 % new generate trial matrix for RSVP FLAP 2023
 clear all
 
-
 PRLlocations=3; % trained, untrained, additional location
 trycounter=0; %counting attempts at generating the mixtr
 
@@ -43,18 +42,18 @@ while satisfied<1
             if fff==1
                 nextbin=newmatrix;
             end
-            finder=(g2(:,1)==nextbin(:,1) & g2(:,2)==nextbin(:,2) & g2(:,3)==nextbin(:,3));            
+            finder=(g2(:,1)==nextbin(:,1) & g2(:,2)==nextbin(:,2) & g2(:,3)==nextbin(:,3));
             remover=find(finder);
             remover=remover(1);
             ttt{fff}=g2;
             g2(remover,:)=[];
             a=find(g2(:,1)==nextbin(2));
-            clear nextbin         
+            clear nextbin
             nextbin=g2(a(randi(length(a))),:);
             mixtr(fff,:)=nextbin;
-               if fff>=length(nextmat)-1
-            satisfied=1;
-        end
+            if fff>=length(nextmat)-1
+                satisfied=1;
+            end
         end
     end
 end
@@ -80,6 +79,11 @@ end
 %5= blank
 
 
+% add incongruent trials
+
+
+
+
 
 trialype{1}=[ 3 ones(randi(3),1)'*2 3 ones(randi(4),1)'*2 3 ones(randi(4),1)'*2 4 ];
 trialype{2}=[ 3 ones(randi(3),1)'*2 3 ones(randi(8),1)'*2 3 4 ];
@@ -88,8 +92,8 @@ trialype{3}=[ 3 ones(randi(3),1)'*2 3 ones(randi(2),1)'*2 3 ones(randi(3),1)'*2 
 trialArray=[];
 
 for ui=1:length(mixtr)
-         ttemp=[];
-
+    ttemp=[];
+    
     if mixtr(ui,3)==1
         tempo=[ 3 ones(randi(3),1)'*2 3 ones(randi(4),1)'*2 3 ones(randi(4),1)'*2 4 ];
     elseif mixtr(ui,3)==2
@@ -101,17 +105,73 @@ for ui=1:length(mixtr)
     for ii=1:length(tempo) % here we add the blank intervals
         
         temp=[tempo(ii) 5];
-            if tempo(ii)==4
+        if tempo(ii)==4
             temp=[tempo(ii)];
-            end
+        end
         ttemp=[ttemp temp];
     end
- 
+    
     trialArray{ui}=ttemp;
-     clear temp
-
+    clear temp
 end
 
 
-save RSVPmx.mat
+save RSVP2mx.mat
+
+for ui=1:length(trialArray)
+    trialArray{ui}(length(trialArray{ui})+1)=6;
+end
+
+save RSVP2mxII.mat
+
+
+oldmixtr=mixtr;
+%find switch groups
+one=mixtr(:,1)==1 & mixtr(:,2)==2;
+two=mixtr(:,1)==1 & mixtr(:,2)==3;
+three=mixtr(:,1)==2 & mixtr(:,2)==1;
+four=mixtr(:,1)==2 & mixtr(:,2)==3;
+five=mixtr(:,1)==3 & mixtr(:,2)==1;
+six=mixtr(:,1)==3 & mixtr(:,2)==2;
+
+%identify specific switch types in the mixtr
+onef=find(one==1);
+idx=onef(randperm(length(onef),5));
+
+mixtr(idx,2)=3;
+ddd(1,:)= idx;
+
+clear idx
+
+twof=find(two==1);
+idx=twof(randperm(length(twof),5));
+mixtr(idx,2)=2;
+ddd(2,:)= idx;
+clear idx
+
+threef=find(three==1);
+idx=threef(randperm(length(threef),5));
+mixtr(idx,2)=3;
+ddd(3,:)= idx;
+clear idx
+
+fourf=find(four==1);
+idx=fourf(randperm(length(fourf),5));
+mixtr(idx,2)=1;
+ddd(4,:)= idx;
+clear idx
+
+fivef=find(five==1);
+idx=fivef(randperm(length(fivef),5));
+mixtr(idx,2)=2;
+ddd(5,:)= idx;
+clear idx
+
+sixf=find(six==1);
+idx=sixf(randperm(length(sixf),5));
+mixtr(idx,2)=1;
+ddd(6,:)= idx;
+clear idx
+save RSVP2mxIII.mat
+
 %randx means a rand sequence 1-x long that ends in a target (T) distractor (D) or cue (C) 
