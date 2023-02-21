@@ -12,7 +12,6 @@ PRLecc=10;  %eccentricity of target locations in deg
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 randdegarray=[-11:0.5:11]; % randomize stimulus location
-
 stimulusSize=1.5;
 theeccentricity_X_scotoma=0*pix_deg;
 theeccentricity_Y_scotoma=0*pix_deg;
