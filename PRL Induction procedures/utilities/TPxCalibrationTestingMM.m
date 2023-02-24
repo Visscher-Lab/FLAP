@@ -1021,7 +1021,12 @@ while (1)
                 coeff_x_L(2) = 1;
                 coeff_y(3) = 1;
                 coeff_y_L(3) = 1;
-            end
+            end           
+            xcoeff_x=coeff_x ;
+            xcoeff_y=coeff_y;
+            xcoeff_x_L=coeff_x_L;
+            xcoeff_y_L=coeff_y_L;
+            
             %evaluate_bestpoly applies raw eye positions to the polynomial
             %and returns calibrated gaze position on screen.
             %Evaluate all the calibration points
@@ -1143,11 +1148,11 @@ while (1)
             WaitSecs(0.3);
             if (isTPX && ~file_recorded)
                 %save screen to file for further reference
-                imageArray = Screen('GetImage', windowPtr);   
-          %      imwrite(imageArray, 'xxxScaledRawData.jpg');
-               % titlename=[baseName(71:76) '_' baseName(end-15:end-4) ' ScaledRawData.jpg'];
-                              titlename=[baseName  ' ScaledRawData.jpg'];
-  imwrite(imageArray,  titlename)
+                imageArray = Screen('GetImage', windowPtr);
+                %      imwrite(imageArray, 'xxxScaledRawData.jpg');
+                % titlename=[baseName(71:76) '_' baseName(end-15:end-4) ' ScaledRawData.jpg'];
+                titlename=[baseName  ' ScaledRawData.jpg'];
+                imwrite(imageArray,  titlename)
             end
             
             %wait for any keyboard entry before proceeding to the next result page
@@ -1237,7 +1242,8 @@ while (1)
             Screen('DrawDots', windowPtr, [xy(1,:)' xy(2,:)']', [30]', [255 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval_L' y_eval_L']', [20]', [0 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval' y_eval']', [20]', [255 0 255]', [], 1);
-
+                titlename=[baseName(1:end-4)  'errorscore.csv'];
+%fileID3 = fopen(titlename, 'a');
             %Calculate the error between calibration points and the corresponding gaze position
             %mean_err_r and mean_err_l hold the error at the 13 points of the
             %calibration to calculate the error average 
@@ -1251,9 +1257,14 @@ while (1)
                 Screen('DrawText', windowPtr, sprintf('%.1f', err_r), xy(1,i) + 15, xy(2,i) + 20, [255 0 255]);
                 Screen('DrawText', windowPtr, sprintf('%.1f', err_l), xy(1,i) + 15, xy(2,i) - 20, [0 255 255]);
             end
-            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', mean(mean_err_r)), 800, 1000, [255 0 255]);
-            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', mean(mean_err_l)), 800, 1040, [0 255 255]);
+            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', nanmean(mean_err_r)), 800, 1000, [255 0 255]);
+            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', nanmean(mean_err_l)), 800, 1040, [0 255 255]);
             Screen('Flip', windowPtr);
+            
+            Cal_points_error_left=mean_err_l;
+            Cal_points_error_right=mean_err_r;
+        %    fprintf(fileID3, '%f,%f,\n', mean_err_l, mean_err_r);
+       
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
@@ -1628,5 +1639,6 @@ end
 
 fclose(fileID);
 fclose(fileID2);
-
+%fclose(fileID3);
+            save([baseName 'calibrationoutcome']);
 end

@@ -168,10 +168,10 @@ function calib_appected = TPxValidateCalibrationMM(targets, isTPX, screenHandle,
         std_error_l = zeros(nmb_pts,1);
         std_error_r = zeros(nmb_pts,1);
         for i=1:nmb_pts
-            avg_gaze_pos_l_x(i) = mean(results(:,1,i));
-            avg_gaze_pos_l_y(i) = mean(results(:,2,i));
-            avg_gaze_pos_r_x(i) = mean(results(:,3,i));
-            avg_gaze_pos_r_y(i) = mean(results(:,4,i));
+            avg_gaze_pos_l_x(i) = nanmean(results(:,1,i));
+            avg_gaze_pos_l_y(i) = nanmean(results(:,2,i));
+            avg_gaze_pos_r_x(i) = nanmean(results(:,3,i));
+            avg_gaze_pos_r_y(i) = nanmean(results(:,4,i));
             avg_error_l_x(i) = targets(1,i) - avg_gaze_pos_l_x(i);
             avg_error_l_y(i) = targets(2,i) - avg_gaze_pos_l_y(i);
             avg_error_r_x(i) = targets(1,i) - avg_gaze_pos_r_x(i);
@@ -191,8 +191,8 @@ function calib_appected = TPxValidateCalibrationMM(targets, isTPX, screenHandle,
                 Screen('DrawText', windowPtr, sprintf('%.1f', avg_error_r(i)), targets(1,i) + 15, targets(2,i) - 20, [255 0 30]);
             end
             
-            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', mean(avg_error_r)), 800, 1000, [255 0 30]);
-            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', mean(avg_error_l)), 800, 1040, [0 150 255]);
+            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', nanmean(avg_error_r)), 800, 1000, [255 0 30]);
+            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', nanmean(avg_error_l)), 800, 1040, [0 150 255]);
             Screen('Flip', windowPtr);
             WaitSecs(0.3);
             
@@ -234,7 +234,7 @@ function calib_appected = TPxValidateCalibrationMM(targets, isTPX, screenHandle,
             end
             
             %3rd result page to display; Left eye interpolation
-            DrawFormattedText(windowPtr, '\n Calibration results 3 of 3. \n Showing calibration dots and right eye gaze position recorded during validation. \n This gives an idea of the dispersion, noise and error. \n Press any key to continue. Y to acccept, N to restart.', 'center', 100, 255);
+            DrawFormattedText(windowPtr, '\n Calibration results 3 of 3. \n Showing calibration dots and right eye gaze position recorded during validation. \n This gives an idea of the dispersion, noise and error. \n Press any key to continue. Y to accept, N to restart.', 'center', 100, 255);
             Screen('DrawDots', windowPtr, [targets(1,:)' targets(2,:)']', [30]', [255 255 255]', [], 1);
             for i = 1:nmb_pts
                 Screen('DrawDots', windowPtr, [results(:,3,i) results(:,4,i)]', [3]', [255 0 30]', [], 1);
@@ -261,4 +261,10 @@ function calib_appected = TPxValidateCalibrationMM(targets, isTPX, screenHandle,
             Screen('CloseAll');
         end
     end
+    validation_left_x=avg_gaze_pos_l_x;
+    validation_left_y=avg_gaze_pos_l_y;
+    validation_right_x=avg_gaze_pos_r_x;
+    validation_right_y=avg_gaze_pos_r_y;
+    validation_results=results;
+    save([baseName 'validationoutcome']) %at the end of each block save the data
 end

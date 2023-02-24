@@ -26,7 +26,7 @@ for practicetrial=1:practicetrialnum
         ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2
         Orijit=Jitpracticearray(practicetrial);
-        CIstimuliModIIPractice % add the offset/polarity repulsion
+        CIstimuliModIIIPractice % add the offset/polarity repulsion
     end
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
     
