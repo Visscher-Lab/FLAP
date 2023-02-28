@@ -1,0 +1,24 @@
+
+%for ui=1:length(mixtr)
+    for ui=1:1
+
+ mixtr(trial,:)
+% RT of responses
+respTimeT=respTime(trial,1:totalresptrial(trial))
+respKeysT=respKeys(trial,1:totalresptrial(trial))
+
+
+respmat=[respTimeT' respKeysT' zeros(length(respTime(trial,:)),1)]
+% strimluis identityy
+theans(trial,:)';
+
+% triming of events
+stim_start(trial,:)';
+eventmat=[stim_start(trial,:)' theans(trial,:)' ones(length(stim_start(trial,:)),1)];
+eventmat(:,2)<5
+
+%
+matt=[ eventmat; respmat]
+matt2=matt;
+matt2=sortrows(matt2)
+end
