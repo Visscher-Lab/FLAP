@@ -57,7 +57,16 @@ ylim([-8 8])
 pbaspect([1 1 1]);
 set (gca,'YDir','reverse')
 
-     print(['CI_six_nine19'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+% subplot(2,2,4)
+% for ui=1:length(eccentricity_X)
+% text(eccentricity_X(ui), eccentricity_Y(ui),num2str(ui))
+% hold on
+% xlim([-8 8])
+% ylim([-8 8])
+% end
+% set (gca,'YDir','reverse')
+
+%      print(['CI_six_nine19'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 figure
 
 for ui=1:length(newxfoo{1}(1,:))
@@ -67,7 +76,13 @@ xlim([-8 8])
 ylim([-8 8])
 end
 
-
+for ui=1:length(newxfoo{1}(2,:))
+text(newxfoo{1}(2,ui), newyfoo{1}(2,ui), num2str(ui))
+hold on
+xlim([-8 8])
+ylim([-8 8])
+end
+set (gca,'YDir','reverse')
 
 clear all
 
