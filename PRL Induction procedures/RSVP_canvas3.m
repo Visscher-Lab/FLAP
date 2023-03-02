@@ -458,7 +458,6 @@ try
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
-                fixationlength=10;
                 Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
             end

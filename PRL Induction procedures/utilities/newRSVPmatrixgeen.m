@@ -116,13 +116,13 @@ for ui=1:length(mixtr)
 end
 
 
-save RSVP2mx.mat
+save RSVP3mx.mat
 
 for ui=1:length(trialArray)
     trialArray{ui}(length(trialArray{ui})+1)=6;
 end
 
-save RSVP2mxII.mat
+save RSVP3mxII.mat
 
 
 oldmixtr=mixtr;
@@ -172,6 +172,6 @@ idx=sixf(randperm(length(sixf),5));
 mixtr(idx,2)=1;
 ddd(6,:)= idx;
 clear idx
-save RSVP2mxIII.mat
+save RSVP3mxIII.mat
 
 %randx means a rand sequence 1-x long that ends in a target (T) distractor (D) or cue (C) 
