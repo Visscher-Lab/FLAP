@@ -14,7 +14,7 @@ fixdotcolor2=[0 0 0]; % color of the fixation dot for training type 4 when dot i
 skipmasking=1; % if we want to allow masking of the target when it is not within the assigned PRL (default is no masking)
 fixationlength=10; % if we don't want the scotoma (pixel size)
 colorfixation = [200 200 200]; % if we don't want the scotoma
-maskthickness=pix_deg*6;
+maskthickness = pix_deg*6;
 %% general temporal parameters (trial events)
 
 preCueISI=0.75; % time between beginning of trial and first event in the trial (fixations, cues or targets)
@@ -28,10 +28,10 @@ else
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
-    
-    eyetime2=0; % trial-based timer, will later be populated with eyetracker data 
-    closescript=0; % to allow ESC use
-    kk=1; % trial counter
+
+eyetime2=0; % trial-based timer, will later be populated with eyetracker data
+closescript=0; % to allow ESC use
+kk=1; % trial counter
 %% training type-specific parameters
 
 % training type 1

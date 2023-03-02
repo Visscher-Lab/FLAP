@@ -48,7 +48,11 @@
             %distribution gathered during the previous phase. It quickly
             %indicates if one or more points are invalid.
             
-            
+%             [xRawRight yRawRight xRawLeft yRawLeft] = Datapixx('GetEyeDuringCalibrationRaw', xScreen, yScreen [,eyeToVerify = 3]);
+%             
+%             During calibration, tell the tracker to acquire Eye Data NOW with
+%             the current marker coordinates (xScreen, yScreen).Returns the raw coordinates
+%             that will be used for the calculations.
                         figure('Name','raw_data_right');
             H = scatter(raw_vector(:,1), raw_vector(:,2));
             grid on;
@@ -76,7 +80,7 @@
             grid minor;
             saveas(H, 'scaledraw_data_left.fig', 'fig')
 
- %% 'FinishCalibration' uses the data captured in the preceeding steps and
+ %% Datapixx('FinishCalibration') uses the data captured in the preceeding steps and
  %runs a mathematical process to determine the formula that
  %will convert raw eye data to a calibrated gaze position on screen.
  

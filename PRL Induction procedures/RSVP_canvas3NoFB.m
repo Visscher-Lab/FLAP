@@ -297,14 +297,14 @@ try
 %2: foil
 %3: target
 %4: cue
-%> blank
+%5 blank
 %6: post cue blank
 
 %the ans
 %1-4: target
 %5: foil
-%6: blank
-%7: cue
+%6: cue
+%7: blank
 %8:post cue blank
                 elseif stimtype==3 %target
                     if resetresponse==1
@@ -326,7 +326,7 @@ try
                     elseif mixtr(trial,1) ==3 && mixtr(trial,2)==2
                         ori= 45;
                     end
-                    theans(trial,number_of_events)=9;  
+                    theans(trial,number_of_events)=6;  
                 elseif stimtype==5 %blank
                     % assign the correct response from one trial ago to the
                     % blank interval

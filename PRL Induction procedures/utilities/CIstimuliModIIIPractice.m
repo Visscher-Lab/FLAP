@@ -16,7 +16,7 @@ newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
 
 
 if practicePassed==0
-targetcord =newTargy(theans(practicetrial),:)+yTrans  + (newTargx(theans(practicetrial),:)+xTrans - 1)*ymax;
+targetcord =newTargy(theanspractice(practicetrial),:)+yTrans  + (newTargx(theanspractice(practicetrial),:)+xTrans - 1)*ymax;
 else
     targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
 end
@@ -45,8 +45,8 @@ yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 
 
 if practicePassed==0
-xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:))/ecccoeffCI;%+xJitLoc(targetcord);
-yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theanspractice(practicetrial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theanspractice(practicetrial),:))/ecccoeffCI;%+xJitLoc(targetcord);
 else
 xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
 yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
@@ -60,11 +60,11 @@ theori=180*rand(1,length(eccentricity_XCI));
 
 
 if practicePassed==0
-    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(practicetrial),:) +Orijit;
+    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theanspractice(practicetrial),:) +Orijit;
 else 
 theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
 end
-if demo==1
+if demo==0
     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);
 end
 
