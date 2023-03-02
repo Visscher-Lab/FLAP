@@ -238,12 +238,20 @@ try
             load NewShapeMat.mat;         % shape parameters for each session of training
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
+<<<<<<< Updated upstream
                 shapeMat(:,1)= [10 6 7];
+=======
+                shapeMat(:,1)= [1 5 9];
+>>>>>>> Stashed changes
             end
             
         %    shapeMat(:,1)= [5 2 7]; %[5 6 4]
                           %  shapeMat(:,1)= [1 2 3];
+<<<<<<< Updated upstream
                 shapeMat(:,1)= [10 6 7];
+=======
+                shapeMat(:,1)= [1 5 9];
+>>>>>>> Stashed changes
 
             shapesoftheDay=shapeMat(:,expDay);
         end
