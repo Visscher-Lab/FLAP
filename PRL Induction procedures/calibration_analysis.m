@@ -5,6 +5,7 @@
 %right eye x axis, right eye y axis, 
 %left eye x axis and left eye y axis.
 
+<<<<<<< Updated upstream
 %% Coordinate system:
 %Psychtoolbox uses a coordinate system having an origin at the top left
 %corner of the screen.  We propose functions to convert back and forth 
@@ -112,6 +113,36 @@
 %             y_eval = xy_eval(:,2)';
 %             x_eval_L = xy_eval_L(:,1)';
 %             y_eval_L = xy_eval_L(:,2)';
+=======
+%%calibration results
+
+
+
+% I get raw eye data from calibration procedure
+% I estimate coefficients through Datapixx function(Datapixx('GetCalibrationCoeff'))
+% I use 'evaluate_bestpoly' to apply raw eye positions to the polynomial and returns calibrated gaze position on screen.
+
+
+%raw_vector + coeff= x_eval
+
+
+
+
+
+
+
+ %'GetCalibrationCoeff' returns an array of coefficients
+                %calculated by the calibration process. Positions 
+                % - 1 to 9 are the coefficients for the right eye x axis.
+                % - 10 to 18 are the coefficients for the right eye y axis.  
+                % - 19 to 27 are the coefficients for the left eye x axis. 
+                % - 28 to 36 are the coefficients for the left eye y axis.
+%                 calibrations_coeff = Datapixx('GetCalibrationCoeff');
+%evaluate_bestpoly applies raw eye positions to the polynomial
+%and returns calibrated gaze position on screen.
+%Evaluate all the calibration points
+
+>>>>>>> Stashed changes
 
             %*_interpol_raw* variables contain raw interpolation points
             %between two calibration points.
@@ -136,6 +167,23 @@
 
 
 
+<<<<<<< Updated upstream
+=======
+
+            %*_interpol_raw* variables contain raw interpolation points
+            %between two calibration points.
+            %*_interpol* variables hold the corresponding calibrated data
+            %*_interpol_cartesian holds the coordinate system converted data
+            %*_eye_interpol holds the raw data interpolation points in x
+            %and y. Data organisation for convertion
+            %xy_interpol* holds the calibrated and converted interpolation
+            %data
+            % We have 12 segments and create 10 points each (for now)
+
+            
+            
+            %validation results
+>>>>>>> Stashed changes
 %results
 %target_result = [leftEyeTopLeft(:,1) leftEyeTopLeft(:,2) rightEyeTopLeft(:,1) rightEyeTopLeft(:,2)];
 
