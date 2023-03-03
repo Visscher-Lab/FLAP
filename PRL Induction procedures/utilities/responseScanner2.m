@@ -10,12 +10,12 @@ if cue==1 % we are showing cue during the stimulus presentation
 else
     DrawFormattedText(w, '>', 'center',cueloc, white);
 end
-while GetSecs<trialstarttime(totalblock,trial)+cue_duration%cue presentation time is 250 ms
+while GetSecs<CueOnsetTime(totalblock,trial)+cue_duration%cue presentation time is 250 ms
 end
 StimulusOnsetTime(totalblock,trial)=Screen('Flip',w); %show stimulus
 ListenChar(2);
 %while GetSecs<StimulusOnsetTime(totalblock,trial)+0.200 %stimulus presentation time is 200 ms
-while GetSecs<trialstarttime(totalblock,trial)+(stim_duration+cue_duration) %stimulus presentation time is 200 ms
+while GetSecs<CueOnsetTime(totalblock,trial)+(stim_duration+cue_duration) %stimulus presentation time is 200 ms
     [ keyIsDown, keyTime, keyCode ] = KbCheck;
     responsekey = find(keyCode, 1);
     if keyIsDown && responsekey==leftfingerresp ||keyIsDown && responsekey==rightfingerresp %if participant gives a response during presentation time
@@ -24,10 +24,10 @@ while GetSecs<trialstarttime(totalblock,trial)+(stim_duration+cue_duration) %sti
         ResponseKey{totalblock,trial}=KbName(responsekey);
         conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
         if any(conditions)==1
-            PsychPortAudio('Start', pahandle1); % feedback for true response
+            %PsychPortAudio('Start', pahandle1); % feedback for true response
             ResponseType{totalblock,trial}='correct';
         else
-            PsychPortAudio('Start', pahandle2); %feedback for false response
+            %PsychPortAudio('Start', pahandle2); %feedback for false response
             ResponseType{totalblock,trial}='false';
         end
         clear conditions;
@@ -84,10 +84,10 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
             ResponseKey{totalblock,trial}=KbName(responsekey);
             conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
             if any(conditions)==1
-                PsychPortAudio('Start', pahandle1); % feedback for true response
+                %PsychPortAudio('Start', pahandle1); % feedback for true response
                 ResponseType{totalblock,trial}='correct';
             else
-                PsychPortAudio('Start', pahandle2); %feedback for false response
+                %PsychPortAudio('Start', pahandle2); %feedback for false response
                 ResponseType{totalblock,trial}='false';
             end
             clear conditions;
