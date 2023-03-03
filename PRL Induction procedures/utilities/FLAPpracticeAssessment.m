@@ -7,9 +7,9 @@ if AssessmentType==1
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif AssessmentType==2
-    Jitpracticearray=[0 0 0 5 5 5 10 10 10 15 15 15]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3 0.2 0.2 0.2]; % stimulus duration practice
-    targethighercontrast=[1 1 1 1 1 1 0 0 0 0 0 0]; % target contrast
+    Jitpracticearray=[0 2 4 6 8 10 12 14 16 18 20 22 24]; %  stimulus ori practice
+    stimulusdurationpracticearray=[0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]; % stimulus duration practice
+    targethighercontrast=[0 0 0 0 0 0 0 0 0 0 0 0]; % target contrast
     Tscat=0;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
@@ -20,15 +20,15 @@ performanceThresh=0.75;
 
 for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
-    theans(practicetrial)=randi(2);
+    theanspractice(practicetrial)=randi(2);
     
     if AssessmentType ==1
-        ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
+        ori=theoris(theanspractice(practicetrial)); % -45 and 45 degrees for the orientation of the target
     else
         Orijit=Jitpracticearray(practicetrial);
         stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
 %         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
-        CIstimuliModPractice
+        CIstimuliModIIIPractice
     end
     theeccentricity_Y=0;
     theeccentricity_X=LocX(mixtr(trial,2))*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
@@ -85,10 +85,10 @@ for practicetrial=1:practicetrialnum
                 skipcounterannulus=1000;
             else %force fixation for Assessment types 1 and 2
                 if AssessmentType<3
-                    [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    [counterannulus, framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                 elseif AssessmentType>2
-                    [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
+                    [counterannulus, framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus);
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
                 end
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
@@ -148,7 +148,7 @@ for practicetrial=1:practicetrialnum
                 thekeys=thekeys(1);
             end
             thetimes=keyCode(thekeys);
-            [secs  indfirst]=min(thetimes);
+            [secs,  indfirst]=min(thetimes);
             respTime=GetSecs;
         elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
             eyechecked=10^4; % exit loop for this practicetrial
@@ -157,7 +157,7 @@ for practicetrial=1:practicetrialnum
                 thekeys=thekeys(1);
             end
             thetimes=keyCode(thekeys);
-            [secs  indfirst]=min(thetimes);
+            [secs,  indfirst]=min(thetimes);
             respTime=GetSecs;
         elseif (eyetime2-pretrial_time)>=trialTimeout
             stim_stop=GetSecs;
@@ -211,9 +211,10 @@ for practicetrial=1:practicetrialnum
     
     if trialTimedout(practicetrial)== 0
         foo=(RespType==thekeys);
-        if foo(theans(practicetrial)) % if correct response
+        if foo(theanspractice(practicetrial)) % if correct response
             resp = 1;
-            PsychPortAudio('Start', pahandle1); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle); 
         elseif (thekeys==escapeKey) % esc pressed
             practicePassed=2;
             closescript = 1;
@@ -221,12 +222,14 @@ for practicetrial=1:practicetrialnum
             break;
         else
             resp = 0; % if wrong response
-            PsychPortAudio('Start', pahandle2); % sound feedback
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
     else
         resp = 0;
         respTime=0;
-        PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
     end
     practiceresp(practicetrial)=resp;
 end

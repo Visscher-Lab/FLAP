@@ -1021,7 +1021,12 @@ while (1)
                 coeff_x_L(2) = 1;
                 coeff_y(3) = 1;
                 coeff_y_L(3) = 1;
-            end
+            end           
+            xcoeff_x=coeff_x ;
+            xcoeff_y=coeff_y;
+            xcoeff_x_L=coeff_x_L;
+            xcoeff_y_L=coeff_y_L;
+            
             %evaluate_bestpoly applies raw eye positions to the polynomial
             %and returns calibrated gaze position on screen.
             %Evaluate all the calibration points
@@ -1143,8 +1148,10 @@ while (1)
             WaitSecs(0.3);
             if (isTPX && ~file_recorded)
                 %save screen to file for further reference
-                imageArray = Screen('GetImage', windowPtr);          
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'ScaledRawData.jpg'];
+                imageArray = Screen('GetImage', windowPtr);
+                %      imwrite(imageArray, 'xxxScaledRawData.jpg');
+                % titlename=[baseName(71:76) '_' baseName(end-15:end-4) ' ScaledRawData.jpg'];
+                titlename=[baseName  ' ScaledRawData.jpg'];
                 imwrite(imageArray,  titlename)
             end
             
@@ -1180,8 +1187,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
          %                       imwrite(imageArray, [  '0PolyResponse_R.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_R.jpg'];
-
+                         titlename=[baseName ' PolyResponse_R.jpg'];
                 imwrite(imageArray,  titlename)
             end
             [secs, keyCode, deltaSecs] = KbWait;
@@ -1212,7 +1218,7 @@ while (1)
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
           %      imwrite(imageArray, [ baseName 'PolyResponse_L.jpg'])
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'PolyResponse_L.jpg'];
+                                   titlename=[baseName ' PolyResponse_L.jpg'];
                 imwrite(imageArray,  titlename)
             end
             [~, keyCode, ~] = KbWait;
@@ -1236,7 +1242,8 @@ while (1)
             Screen('DrawDots', windowPtr, [xy(1,:)' xy(2,:)']', [30]', [255 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval_L' y_eval_L']', [20]', [0 255 255]', [], 1);
             Screen('DrawDots', windowPtr, [x_eval' y_eval']', [20]', [255 0 255]', [], 1);
-
+                titlename=[baseName(1:end-4)  'errorscore.csv'];
+%fileID3 = fopen(titlename, 'a');
             %Calculate the error between calibration points and the corresponding gaze position
             %mean_err_r and mean_err_l hold the error at the 13 points of the
             %calibration to calculate the error average 
@@ -1250,13 +1257,18 @@ while (1)
                 Screen('DrawText', windowPtr, sprintf('%.1f', err_r), xy(1,i) + 15, xy(2,i) + 20, [255 0 255]);
                 Screen('DrawText', windowPtr, sprintf('%.1f', err_l), xy(1,i) + 15, xy(2,i) - 20, [0 255 255]);
             end
-            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', mean(mean_err_r)), 800, 1000, [255 0 255]);
-            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', mean(mean_err_l)), 800, 1040, [0 255 255]);
+            Screen('DrawText', windowPtr, sprintf('Right eye mean error = %.2f', nanmean(mean_err_r)), 800, 1000, [255 0 255]);
+            Screen('DrawText', windowPtr, sprintf('Left eye mean error  = %.2f', nanmean(mean_err_l)), 800, 1040, [0 255 255]);
             Screen('Flip', windowPtr);
+            
+            Cal_points_error_left=mean_err_l;
+            Cal_points_error_right=mean_err_r;
+        %    fprintf(fileID3, '%f,%f,\n', mean_err_l, mean_err_r);
+       
             WaitSecs(0.3);
             if(~file_recorded)
                 imageArray = Screen('GetImage', windowPtr);
-                titlename=[baseName(8:9) '_' baseName(end-11:end) 'Cal_points_error.jpg'];
+                titlename=[baseName ' Cal_points_error.jpg'];
                 imwrite(imageArray,  titlename)
                 file_recorded = 1;
             end
@@ -1302,7 +1314,7 @@ while (1)
         %Run a validation on the recent calibration
         %Display the target and record data in order to compare
         %expected gaze position to actual gaze postion
-        cal_status = TPxValidateCalibration(xy, isTPX, windowPtr, 0);
+        cal_status = TPxValidateCalibrationMM(xy, isTPX, windowPtr, baseName, 0);
         if cal_status
             break;
         end
@@ -1334,11 +1346,18 @@ end
 
 %fileID will contain the gaze position and its distance to the mouse
 %pointer when clicking mouse button 1
-fileID = fopen('error_measure.csv', 'a');
+
+
+                titlename=[baseName(1:end-4)  'error_measure.csv'];
+
+fileID = fopen(titlename, 'a');
+%fileID = fopen('error_measure.csv', 'a');
 
 %fileID2 will contain the raw eye data corresponding to the gaze position saved
 %in fileID
-fileID2 = fopen('raw_compare.csv', 'a');
+                titlename=[baseName(1:end-4)  'raw_compare.csv'];
+fileID2 = fopen(titlename, 'a');
+%fileID2 = fopen('raw_compare.csv', 'a');
 
 fprintf(fileID, 'timetag,mouse X,mouse Y,right eye x,right eye y,left eye x,left eye y,error rigth x,error right y,error left x,error left y,pp left,pp right\n');
 
@@ -1620,5 +1639,6 @@ end
 
 fclose(fileID);
 fclose(fileID2);
-
+%fclose(fileID3);
+            save([baseName 'calibrationoutcome']);
 end

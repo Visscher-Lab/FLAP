@@ -7,11 +7,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '1','0', '0','2','0' };
+    defaultanswer={'test','1', '1','0', '0','2','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -19,12 +19,12 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    site= 3  %0; 1=bits++; 2=display++
+    ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
+    scotomavpixx= str2num(answer{4,:});
+    Isdemo=str2num(answer{5,:}); % full session or demo/practice
+    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
@@ -65,43 +65,12 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     end
     
-    %% Sound
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
     
     %% creating stimuli
 CommonParametersAwareness
     createO
     
-% from http://pngimg.com/upload/cat_PNG100.png
-[img, ~, alpha] = imread('imagescotoma.png');
-size(img)
-% 2557 x 1993 x 3 (rgb)
-% We'll make one texture without the alpha channel, and one with.
-[y, x, c]=size(img)
 
-    img2=imresize(img,scale_fact);
-
-
-texture1 = Screen('MakeTexture', w, img); %  image without the alpha channel.
-img(:, :, 4) = alpha;
-texture2 = Screen('MakeTexture', w, img); %image with the alpha channel.
 
     %% trial matrixc
     
@@ -195,8 +164,9 @@ FLAPVariablesReset
             end
             
             if  (eyetime2-pretrial_time)>=0 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                IsFixatingSquare % check for the eyes to stay in the fixation window for enough (fixTime) frames
-                
+             %   IsFixatingSquare % check for the eyes to stay in the fixation window for enough (fixTime) frames
+                                [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
+
                 if ScotomaPresent == 1
                     fixationscriptW
                 end
@@ -215,9 +185,9 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                     stim_start=eyetime2;
                 end
                 if theans(trial)==1
-                    Screen('DrawTexture', w, theHappyface, [], imageRect_offs, [],[], attContr);
+                    Screen('DrawTexture', w, Happyface, [], imageRect_offs, [],[], attContr);
                 elseif theans(trial)==2
-                    Screen('DrawTexture', w, theSadface, [], imageRect_offs, [],[], attContr);
+                    Screen('DrawTexture', w, Sadface, [], imageRect_offs, [],[], attContr);
                 end
             elseif (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout  && (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)) ~=0
                 % if a response has been produced
@@ -244,7 +214,7 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                         scotomarect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
 
            %     Screen('FillOval', w, scotoma_color, scotoma);
-                                    Screen('DrawTexture', w, texture, [], imageRect_ScotomaLive, [],[], 1);
+                                    Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
             end
             if EyetrackerType==2
                 
@@ -311,19 +281,22 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             
             if foo(theans(trial))
                 resp = 1;
-                PsychPortAudio('Start', pahandle1);
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 break;
             else
                 resp = 0;
-                PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
             end
         else
             
             resp = 0;
             respTime=0;
-            PsychPortAudio('Start', pahandle2);
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
         if trialTimedout(trial)==0
             stim_stop=secs;

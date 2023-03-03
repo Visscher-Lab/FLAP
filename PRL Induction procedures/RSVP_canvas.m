@@ -59,7 +59,7 @@ try
     
     CommonParametersRSVP % load parameters for time and space
     
-    load RSVPmx.mat
+    load  RSVPmxII.mat
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
@@ -74,8 +74,8 @@ try
     %% creating stimuli
     createO
     
-    whichLetter={theDot theCircles theLetter theArrow};
-    
+    %  whichLetter={theDot theCircles theLetter theArrow};
+    whichLetter(1)=theCircles;
     whichLetter(2)=theCircles;
     whichLetter(3)=theLetter;
     whichLetter(4)=theArrow;
@@ -85,7 +85,7 @@ try
     %3= target
     %4=cue
     %5= blank
-    
+    %post cuie blank
     %% STAIRCASES:
     %mixtr to be created
     %% Keys definition/kb initialization
@@ -159,12 +159,19 @@ try
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
+    
+    theans=nan(length(mixtr), 39);
+    contresp=zeros(length(mixtr), 39);
+    
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
         
-        
-        if mod(trial,tr_per_condition+1)==0 && trial~= length(mixtr)
+        stopblock=0;
+        if  mod(trial,25)==0
+            stopblock=1;
+        end
+        if mod(trial,(length(mixtr)+1)/6)==0 && trial~= length(mixtr)
             interblock_instruction
         end
         
@@ -172,7 +179,7 @@ try
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
         
         trialTimeout=realtrialTimeout;
-       
+        
         array_of_events=trialArray{trial};
         number_of_events=0;
         clear time_of_this_event
@@ -187,7 +194,7 @@ try
         
         % compute response for trial
         theoris =[-180 0 -90 90];
-
+        
         
         FLAPVariablesReset
         if EyetrackerType ==2
@@ -198,12 +205,25 @@ try
         end
         
         respcounter=0;
-        while number_of_events<length(array_of_events(mixtr(trial,1)))
+        resetresponse=1;
+        if stopblock==1
+            tlocblock=mixtr(trial,1);
+            oriblock=theoris(randi(4));
+            moveblock=0;
+        end
+        
+        
+        fixating=2^11;
+        stopchecking=10;
+        checkout=0;
+        counttime=0;
+        countthis=0;
+        while number_of_events<=length(array_of_events) && checkout<1
             if number_of_events==0
                 number_of_events=1;
             end
             time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
-                     
+            
             if ScotomaPresent == 1
                 fixationscriptW
             end
@@ -211,28 +231,55 @@ try
                 Datapixx('RegWrRd');
             end
             %%         % constrained fixation loop at the beginning of the trial
-            if  (eyetime2-pretrial_time)>=ITI && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                %   IsFixatingSquare
-                [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
-                if exist('starfix')==0
-                    startfix(trial)=eyetime2;
-                    starfix=98;
+            %           if stopblock==0
+            %               if  (eyetime2-pretrial_time)>=0 && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            %                 [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
+            %                 if exist('starfix')==0
+            %                     startfix(trial)=eyetime2;
+            %                     starfix=98;
+            %                 end
+            %             elseif (eyetime2-pretrial_time)>0 && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
+            %                 % forced fixation time satisfied
+            %                 trial_time = GetSecs;
+            %                 if EyetrackerType ==2
+            %                     Datapixx('SetMarker');
+            %                     Datapixx('RegWrVideoSync');
+            %                     %collect marker data
+            %                     Datapixx('RegWrRd');
+            %                     Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
+            %                 end
+            %                 clear stimstar
+            %                 fixating=1500;
+            %             end
+            %
+            %           elseif stopblock==0
+            %                             if  (eyetime2-pretrial_time)>=0 && moveblock<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            %                                            Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tlocblock}, oriblock,[], targetAlphaValue);
+            %                             if sum(keyCode) ~=0
+            %                                 moveblock=2^11;
+            %                             end
+            %
+            %                             end
+            %           end
+            
+            
+            if stopblock==1
+                if  (eyetime2-pretrial_time)>=0 && moveblock<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && fixating<1000
+                    Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tlocblock}, oriblock,[], targetAlphaValue);
+                    if sum(keyCode) ~=0
+                        moveblock=2^11;
+                        blocktime=GetSecs;
+                    end
+                elseif (eyetime2-pretrial_time)>=0 && (eyetime2-blocktime)<=0.5+ifi*3 && moveblock>1000
+                    if (eyetime2-blocktime)>=0.5
+                        trial_time=GesSecs;
+                        fixating=2^11;
+                    end
                 end
-            elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
-                % forced fixation time satisfied
-                trial_time = GetSecs;
-                if EyetrackerType ==2
-                    Datapixx('SetMarker');
-                    Datapixx('RegWrVideoSync');
-                    %collect marker data
-                    Datapixx('RegWrRd');
-                    Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
-                end
-                clear imageRect_offs stimstar
-                fixating=1500;
-            end           
+            end
+            
             %%      % beginning of the trial after fixation criteria satisfied in
-           % clear stimstar
+            % clear stimstar
             time_of_this_event(number_of_events)=time_of_events(array_of_events(number_of_events));
             % this looks into the timing of events array, looks at the array
             % of events and the counter of number of events
@@ -241,53 +288,119 @@ try
             %              trial_time=GetSecs-eyetime2;
             %               resetflag=0;
             %           end
-            eyetime2=GetSecs-trial_time;
-            mao=[mao eyetime2];
+            %   eyetime2=GetSecs-trial_time;
+            %  mao=[mao eyetime2];
             timereset=0;
             %if eyetime2>=time_of_this_event(number_of_events) && eyetime2<=time_of_this_event(number_of_events)
             if     (eyetime2-trial_time)<=time_of_this_event(number_of_events) && stopchecking>1 && fixating>1000
                 
                 if number_of_events>timereset
-                    clear stimstar
+                   
+                    tm(number_of_events)=GetSecs;
+                    countthis=countthis+1;
                 end
                 timereset=number_of_events;
                 stimtype=array_of_events(number_of_events);
                 tloc=mixtr(trial,1);
                 
                 if stimtype==4 %cue
-                     
+                    
                     if mixtr(trial,1) ==1 && mixtr(trial,2)==2
-                   ori= 90;
+                        ori= 90;
                     elseif mixtr(trial,1) ==1 && mixtr(trial,2)==3
-                    ori= 135;
+                        ori= 135;
                     elseif mixtr(trial,1) ==2 && mixtr(trial,2)==1
-                    ori= -90;
+                        ori= -90;
                     elseif mixtr(trial,1) ==2 && mixtr(trial,2)==3
-                    ori= -135;
+                        ori= -135;
                     elseif mixtr(trial,1) ==3 && mixtr(trial,2)==1
-                    ori= -45;
+                        ori= -45;
                     elseif mixtr(trial,1) ==3 && mixtr(trial,2)==2
-                    ori= 45;
+                        ori= 45;
                     end
                 elseif stimtype==3 %target
-                            theans(trial,number_of_events)=randi(4);
-        ori=theoris(theans(trial,number_of_events));
+                    if resetresponse==1
+                        theans(trial,number_of_events)=randi(4);
+                        ori=theoris(theans(trial,number_of_events));
+                        resetresponse=0;
+                    end
                 elseif stimtype==2 %foil
                     theans(trial,number_of_events)=5;
+                    % assign the correct response from two trials ago if it
+                    % was a target trial
+                    if number_of_events>3 && array_of_events(number_of_events-2) == 3
+                        theans(trial,number_of_events)=theans(trial,number_of_events-2);
+                    end
                 elseif stimtype==5 %blank
-             %                       theans(trial,number_of_events)= theans(trial,number_of_events-1);
+                    % assign the correct response from one trial ago to the
+                    % blank interval
+                    theans(trial,number_of_events)= theans(trial,number_of_events-1);
                 end
                 
-                if stimtype~=5
-                Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
+                if stimtype~=5 && stimtype~=6
+                    Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
                 end
                 %      resetflag=1;
                 
-                if exist('stimstar') == 0
+                if exist('stimstar') == 0 && eyetime2>0
                     stim_start(trial,number_of_events)=eyetime2;
                     stimstar=1;
+                    counttime=counttime+1;
                 end
-                
+                if (eyetime2-trial_time)>0
+                    if sum(keyCode) ~=0 && contresp(trial, number_of_events)==0 %&& theans(trial,number_of_events)
+                        contresp(trial,number_of_events)=9;
+                        respcounter=respcounter+1;
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        respTime(trial, respcounter)=secs;
+                        
+                        
+                        testtime(trial, respcounter)=secs-stim_start(trial,number_of_events)
+                        if  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            %   number_of_events=10^4;
+                            checkout=2;
+                            break;
+                        end
+                        foo=(RespType==thekeys);
+                        
+                        if foo(theans(trial,number_of_events))
+                            resp(trial,number_of_events) = 1;
+                            nswr(trial)=1;
+                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                            PsychPortAudio('Start', pahandle);
+                            crudeRT(trial,number_of_events)=secs;
+                            if  stimtype==3 %response during target
+                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events);
+                                this(trial,number_of_events)=1
+                            elseif stimtype==5 %response during blank post target
+                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
+                                that(trial,number_of_events)=1
+                            elseif stimtype==2 %response during foil post blank post target
+                                RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-2);
+                                those(trial,number_of_events)=1
+                            end
+                            %         elseif foo(theans(trial,number_of_events-1))
+                            
+                            %       RespMatrix(trial,number_of_events)=secs-stim_start(trial,number_of_events-1);
+                            
+                        else
+                            resp(trial,number_of_events) = 0;
+                            nswr(trial)=0;
+                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                            PsychPortAudio('Start', pahandle);
+                        end
+                    end
+                end
                 if EyetrackerType ==2
                     %set a marker to get the exact time the screen flips
                     Datapixx('SetMarker');
@@ -297,40 +410,34 @@ try
                     Pixxstruct(trial,number_of_events).TargetOnset = Datapixx('GetMarker');
                     Pixxstruct(trial,number_of_events).TargetOnset2 = Datapixx('GetTime');
                 end
+                
+              numcounter(trial, number_of_events)=1;
+%              if stimtype==3 && RespMatrix(trial,number_of_events)==NaN
+%                   RespMatrix(trial,number_of_events)=99;
+%               end
+                
+                
+                
             end
             
+            % if (eyetime2-trial_time)>0
             
-            if sum(keyCode) ~=0
-                respcounter=respcounter+1;         
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
+            
+            
+            %    end
+            %  end
+            if fixating> 1000
+                if (eyetime2-trial_time)>=time_of_this_event(number_of_events)
+                    number_of_events=number_of_events+1;
+                     clear stimstar
+                    trial_time=GetSecs;
+                    resetresponse=1;
                 end
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                respTime(trial, respcounter)=secs;
-                                    foo=(RespType==thekeys);
-
-                                    if foo(theans(trial,number_of_events)) || foo(theans(trial,number_of_events-1))
-                                        resp = 1;
-                                        nswr(trial)=1;
-                                        PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                                        PsychPortAudio('Start', pahandle);
-                                    else
-                                        resp = 0;
-                                        nswr(trial)=0;
-                                        PsychPortAudio('FillBuffer', pahandle, ErorrS' ); % loads data into buffer
-                                        PsychPortAudio('Start', pahandle);
-                                    end
-            
             end
-            if eyetime2>=time_of_this_event(number_of_events)
-                number_of_events=number_of_events+1;
-                trial_time=GetSecs;
-            end
-            
             eyefixation5
-            
+            Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
+            Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
+            Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
@@ -359,7 +466,6 @@ try
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             
             if EyeTracker==1
-                
                 if site<3
                     GetEyeTrackerData
                 elseif site ==3
@@ -370,7 +476,6 @@ try
                     trial_time = GetSecs;
                     stopchecking=10;
                 end
-                
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
                     trialTimeout=100000;
                     caliblock=1;
@@ -385,25 +490,26 @@ try
                             WaitSecs(1);
                             %  KbQueueWait;
                             closescript = 1;
-                            number_of_events=10^4;
+                            %       number_of_events=10^4;
+                            checkout=2;
                         elseif thekeys==RespType(5)
                             DrawFormattedText(w, 'continue', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %  KbQueueWait;
                             % trial=trial-1;
-                            number_of_events=10^4;
+                            % number_of_events=10^4;
+                            checkout=2;
                         elseif thekeys==RespType(6)
                             DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %    KbQueueWait;
-                            number_of_events=10^4;
+                            %    number_of_events=10^4;
+                            checkout=2;
                         end
                     end
                 end
-                
-                
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -423,31 +529,28 @@ try
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
-        if  caliblock==0
-            
-            foo=(RespType==thekeys);
-        end
-        
-        
-
-        
+        %         if  caliblock==0
+        %
+        %             foo=(RespType==thekeys);
+        %         end
         
         if caliblock==0
-            time_stim(kk) = respTime(trial) - stim_start(trial);
-            totale_trials(kk)=trial;
+            %             time_stim(kk) = respTime(trial) - stim_start(trial);
+            %  totale_trials(kk)=trial;
             coordinate(trial).x=theeccentricity_X/pix_deg;
             coordinate(trial).y=theeccentricity_Y/pix_deg;
             xxeye(trial).ics=xeye;
             yyeye(trial).ipsi=yeye;
             vbltimestamp(trial).ix=VBL_Timestamp;
+            arrays{trial}=time_of_this_event;
+            trialTime=cumulativeclock;
+            %   rispo(kk)=resp;
             
-            rispo(kk)=resp;
-            
-            if exist('thekeys')
-                cheis(kk)=thekeys;
-            else
-                cheis(kk)=99;
-            end
+            %             if exist('thekeys')
+            %                 cheis(kk)=thekeys;
+            %             else
+            %                 cheis(kk)=99;
+            %             end
             if EyeTracker==1
                 EyeSummary.(TrialNum).EyeData = EyeData;
                 clear EyeData
@@ -468,12 +571,6 @@ try
                 clear EvtInfo
                 EyeSummary.(TrialNum).ErrorData = ErrorData;
                 clear ErrorData
-                if whichTask==1
-                    EyeSummary.(TrialNum).VA= VAsize;
-                elseif whichTask==2
-                    EyeSummary.(TrialNum).Separation = sep;
-                elseif whichTask==3
-                end
                 if exist('EndIndex')==0
                     EndIndex=0;
                 end
@@ -530,18 +627,16 @@ try
                 %interim save
                 % save(baseName, 'Pixxstruct');
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-            end            
+            end
             if (mod(trial,50))==1
                 if trial==1
                 else
                     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
                 end
             end
-           
             if closescript==1
                 break;
             end
-            
             kk=kk+1;
         elseif caliblock==1
             trial=trial-1;
