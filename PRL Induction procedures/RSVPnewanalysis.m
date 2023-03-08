@@ -25,7 +25,7 @@ for ui=1:trial-1
    % matt3=matt2;
     
     for i=2:length(matt2)
-        matt2(i,1)=(matt2(i,1)-matt2(1,1))
+        matt2(i,1)=(matt2(i,1)-matt2(1,1));
         
     end
     matt2(1,1)=0;
