@@ -36,9 +36,11 @@ Oscat= 0.5; %JitList(thresh(Ts,Tc));
 
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
-ecccoeffCI=3; % grid separation
-ecccoeffCI=1.8;
-%ecccoeffCI=1;
+% ecccoeffCI=3; % grid separation
+% ecccoeffCI=1.8;
+% ecccoeffCI=1.5;
+% ecccoeffCI=1.3;
+ecccoeffCI=1;
 
 CIstimulussize=stimulusSize*2.6*pix_deg;
 %generate visual cue
@@ -174,7 +176,6 @@ clear Xoff Yoff xfoo yfoo orifoo
 
 %% horizontal vs vertical line (cardinal lines) ---------------------------------------------
 
-
 matr=[90  -3     0     0     0
     90    -2     0     0     0
     90    -1     0     0     0
@@ -235,7 +236,7 @@ offsetx{8}= [-Xoff; -Xoff];
 offsety{8}=[-Yoff; Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
-%% d and b more elements (sloan font)---------------------------------------------------------------------
+%% d and b more elements (Sloan Fonts)---------------------------------------------------------------------
 
 Targx{9}=    [  -3    -3    -3    -2    -2    -1    -1     1     1     1     1     1     1     1     1     0     0
     3     3     3     2     2     1     1    -1    -1    -1    -1    -1    -1    -1    -1     0     0];
@@ -252,7 +253,8 @@ offsetx{9}= [-Xoff; Xoff];
 offsety{9}=[-Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
-%% p and q more elements (sloan font) ---------------------------------------------------------------------
+%% p and q more elements (Sloan Font) ---------------------------------------------------------------------
+
 
 Targy{10} =[-1	0	1	-2	2	-2	2	-2	2	0	1	-1	3	4	5 -2 2
     -1	0	1	-2	2	-2	2	-2	0	-1	1	2	3	4	5 -2 2];

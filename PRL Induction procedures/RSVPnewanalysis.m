@@ -1,33 +1,47 @@
 
 %for ui=1:length(mixtr)
-    for ui=1:1
-
- mixtr(trial,:)
-% RT of responses
-respTimeT=respTime(trial,1:totalresptrial(trial))
-respKeysT=respKeys(trial,1:totalresptrial(trial))
-
-
-respmat=[respTimeT' respKeysT' zeros(length(respTime(trial,:)),2)]
-% strimluis identityy
-theans(trial,:)';
-
-% triming of events
-stim_start(trial,:)';
-eventmat=[stim_start(trial,:)' theans(trial,:)' ones(length(stim_start(trial,:)),1) trialArray{trial}'];
-stimulimat=eventmat(eventmat(:,2)<5,:);
-
-
-%[time - answer - event or resp - stimulus type]
-%
-matt=[ eventmat; respmat];
-matt2=sortrows(matt)
-matt3=matt2;
-
-for i=2:length(matt2)
-    matt2(i,1)=(matt2(i,1)-matt2(1,1))
-
-end
-matt2(1,1)=0;
-
+for ui=1:trial-1
+    
+    mixtr(ui,:)
+    % RT of responses
+    respTimeT=respTime(ui,1:totalresptrial(ui));
+    respKeysT=respKeys(ui,1:totalresptrial(ui));
+    
+    
+    respmat=[respTimeT' respKeysT' zeros(length(respTimeT),2)];
+    % stimluis identity
+    theans(ui,:)';
+    
+    % triming of events
+    stim_start(ui,:)';
+    eventmat=[stim_start(ui,1:length(trialArray{ui}))' theans(ui,1:length(trialArray{ui}))' ones(length(stim_start(ui,1:length(trialArray{ui}))),1) trialArray{ui}'];
+    stimulimat=eventmat(eventmat(:,2)<5,:);
+    
+    
+    %[time - answer - event or resp - stimulus type]
+    %
+    matt=[ eventmat; respmat];
+    matt2=sortrows(matt);
+   % matt3=matt2;
+    
+    for i=2:length(matt2)
+        matt2(i,1)=(matt2(i,1)-matt2(1,1));
+        
     end
+    matt2(1,1)=0;
+    trialMax{ui}=matt2;
+    clear matt matt2 
+    
+    
+    % find response to the first target (switch target)
+    trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.5,:)
+        % find CORRECT response to the first target (switch target)
+    trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<=0.55 & trialMax{ui}(:,2) == trialMax{ui}(1,2) ,:)
+        % find late CORRECT response to the first target (switch target)
+    trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<1.55 & trialMax{ui}(:,2) == trialMax{ui}(1,2) ,:)
+
+    % responses to stimuli in the stream
+%     for ii=1:
+%     
+% end
+end

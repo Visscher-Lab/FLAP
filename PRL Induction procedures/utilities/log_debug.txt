@@ -132228,3 +132228,1663 @@ Final BestPoly X (error: 13.448371):  94.273263 + 25.721880*x + -28.231144*y + 0
 Final BestPoly Y (error: 6.812298):  291.313350 + -18.810024*x + -165.014538*y + -14.952814*x^2 + 10.697825*y^2 + 0.000000*xy^2 + 0.000000*xy + 3.266189*x^2y + -0.150769*x^2y^2
 Final BestPoly X_L (error: 4.357848):  -109.582009 + 40.176371*x + 0.000000*y + -0.562567*x^2 + 0.078686*y^2 + 0.028027*x^3 + 0.344023*xy + 0.000000*x^2y + 0.002340*x^2y^2
 Final BestPoly Y_L (error: 6.298238):  -67.764569 + 0.000000*x + -68.458919*y + 0.000000*x^2 + 4.577095*y^2 + -0.064324*xy^2 + 0.413122*xy + -0.151789*x^2y + 0.015608*x^2y^2
+
+
+ RIGHT EYE
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Check all 1 terms poly !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+------ Building Polynomial ------>
+Term selected: 1
+(x|y), 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 1
+horizontal position can't be solved
+Iteration 1
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 2
+x^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 2
+horizontal position can't be solved
+Iteration 2
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 4
+y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 4
+horizontal position can't be solved
+Iteration 4
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 8
+x^3|xy^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 8
+horizontal position can't be solved
+Iteration 8
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 16
+xy, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 16
+horizontal position can't be solved
+Iteration 16
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 32
+x^2y, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 32
+horizontal position can't be solved
+Iteration 32
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 64
+x^2y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 64
+horizontal position can't be solved
+Iteration 64
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 128
+
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 128
+horizontal position can't be solved
+Iteration 128
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+x polynomial selected : iteration 0
+A + Bx 
+y polynomial selected : iteration 0
+A + By 
+
+ LEFT EYE
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Check all 1 terms poly !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+------ Building Polynomial ------>
+Term selected: 1
+(x|y), 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 1
+horizontal position can't be solved
+Iteration 1
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 2
+x^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 2
+horizontal position can't be solved
+Iteration 2
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 4
+y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 4
+horizontal position can't be solved
+Iteration 4
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 8
+x^3|xy^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 8
+horizontal position can't be solved
+Iteration 8
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 16
+xy, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 16
+horizontal position can't be solved
+Iteration 16
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 32
+x^2y, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 32
+horizontal position can't be solved
+Iteration 32
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 64
+x^2y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 64
+horizontal position can't be solved
+Iteration 64
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 128
+
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 128
+horizontal position can't be solved
+Iteration 128
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+x polynomial selected : iteration 0
+A + Bx 
+y polynomial selected : iteration 0
+A + By 
+
+ LEFT EYE : coef[0] X = 0  Y = 6.95245e-310
+
+ RIGHT EYE : coef[0] X = 6.95245e-310  Y = 2.02369e-319
+
+ LEFT EYE : coef[1] X = 4.94066e-324  Y = 0
+
+ RIGHT EYE : coef[1] X = 0  Y = 0
+
+ LEFT EYE : coef[2] X = 9.88131e-324  Y = 3.5217e-316
+
+ RIGHT EYE : coef[2] X = 6.9523e-310  Y = 3.5217e-316
+
+ LEFT EYE : coef[3] X = 6.95245e-310  Y = 6.95243e-310
+
+ RIGHT EYE : coef[3] X = 6.95245e-310  Y = 3.52179e-316
+
+ LEFT EYE : coef[4] X = 1.62222e-314  Y = 6.95245e-310
+
+ RIGHT EYE : coef[4] X = 3.52171e-316  Y = 0
+
+ LEFT EYE : coef[5] X = 6.95243e-310  Y = 0
+
+ RIGHT EYE : coef[5] X = 1.28825e-309  Y = 1.70749e-320
+
+ LEFT EYE : coef[6] X = 0  Y = 0
+
+ RIGHT EYE : coef[6] X = 1.06093e-314  Y = 9.88131e-324
+
+ LEFT EYE : coef[7] X = 3.52171e-316  Y = 2.33647e-307
+
+ RIGHT EYE : coef[7] X = 1.06093e-314  Y = 0
+
+ LEFT EYE : coef[8] X = 6.23038e-307  Y = 6.95245e-310
+
+ RIGHT EYE : coef[8] X = 0  Y = 6.95243e-310
+
+Final BestPoly X (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*x^3 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly Y (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*xy^2 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly X_L (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*x^3 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly Y_L (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*xy^2 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+
+
+ RIGHT EYE
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Check all 1 terms poly !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+------ Building Polynomial ------>
+Term selected: 1
+(x|y), 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 1
+horizontal position can't be solved
+Iteration 1
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 2
+x^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 2
+horizontal position can't be solved
+Iteration 2
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 4
+y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 4
+horizontal position can't be solved
+Iteration 4
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 8
+x^3|xy^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 8
+horizontal position can't be solved
+Iteration 8
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 16
+xy, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 16
+horizontal position can't be solved
+Iteration 16
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 32
+x^2y, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 32
+horizontal position can't be solved
+Iteration 32
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 64
+x^2y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 64
+horizontal position can't be solved
+Iteration 64
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 128
+
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 128
+horizontal position can't be solved
+Iteration 128
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+x polynomial selected : iteration 0
+A + Bx 
+y polynomial selected : iteration 0
+A + By 
+
+ LEFT EYE
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Check all 1 terms poly !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+------ Building Polynomial ------>
+Term selected: 1
+(x|y), 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 1
+horizontal position can't be solved
+Iteration 1
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 2
+x^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 2
+horizontal position can't be solved
+Iteration 2
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 4
+y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 4
+horizontal position can't be solved
+Iteration 4
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 8
+x^3|xy^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 8
+horizontal position can't be solved
+Iteration 8
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 16
+xy, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 16
+horizontal position can't be solved
+Iteration 16
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 32
+x^2y, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 32
+horizontal position can't be solved
+Iteration 32
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 64
+x^2y^2, 
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 64
+horizontal position can't be solved
+Iteration 64
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+------ Building Polynomial ------>
+Term selected: 128
+
+					Sx				Sy
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+++++++++++ Eigen magic :) ++++++++++
+
+
+Iteration 128
+horizontal position can't be solved
+Iteration 128
+vertical position can't be solved
+CoeffX 0 = 0.000000
+CoeffY 0 = 0.000000
+CoeffX 1 = 0.000000
+CoeffY 1 = 0.000000
+CoeffX 2 = 0.000000
+CoeffY 2 = 0.000000
+Gathering coefficient calculated ..............
+A+B(x)+C(y)+Dx^2+Ey^2+F(x^3|xy^2)+Gxy+Hx^2y+Ix^2y^2
+
+
+
+			Sx				Sy
+A	0.0000000000	0.0000000000
+B	0.0000000000	0.0000000000
+C	0.0000000000	0.0000000000
+D	0.0000000000	0.0000000000
+E	0.0000000000	0.0000000000
+F	0.0000000000	0.0000000000
+G	0.0000000000	0.0000000000
+H	0.0000000000	0.0000000000
+I	0.0000000000	0.0000000000
+
+>>>>>>>>>>>>>> Error measurement >>>>>>>>>>>>>>
+
+Applying coefficient to validation point
+
+$$$$$$$$$$$$$$$$$ average error measured ->
+			horizontal			vertical
+	-nan(ind)	-nan(ind)
+
+~~~~~~~~~~~~~~~~~ Select Poly ~~~~~~~~~~~~~~~~~>
+
+x polynomial selected : iteration 0
+A + Bx 
+y polynomial selected : iteration 0
+A + By 
+
+ LEFT EYE : coef[0] X = 4.30715e-315  Y = 6.95245e-310
+
+ RIGHT EYE : coef[0] X = 0  Y = 1.6235e-314
+
+ LEFT EYE : coef[1] X = 2.122e-314  Y = -nan
+
+ RIGHT EYE : coef[1] X = 4.94066e-324  Y = 1.887e-315
+
+ LEFT EYE : coef[2] X = 3.52171e-316  Y = 5.18719e-315
+
+ RIGHT EYE : coef[2] X = 1.62269e-314  Y = 1.6235e-314
+
+ LEFT EYE : coef[3] X = 0  Y = 3.52171e-316
+
+ RIGHT EYE : coef[3] X = 3.52182e-316  Y = 1.62269e-314
+
+ LEFT EYE : coef[4] X = 3.61596e-316  Y = 4.92583e-321
+
+ RIGHT EYE : coef[4] X = 4.24399e-314  Y = 2.122e-314
+
+ LEFT EYE : coef[5] X = 3.52217e-316  Y = 4.31051e-315
+
+ RIGHT EYE : coef[5] X = 3.5217e-316  Y = 5.18719e-315
+
+ LEFT EYE : coef[6] X = 7.90505e-323  Y = 9.88131e-324
+
+ RIGHT EYE : coef[6] X = 2.122e-314  Y = 0
+
+ LEFT EYE : coef[7] X = 7.77098e-318  Y = 6.95239e-310
+
+ RIGHT EYE : coef[7] X = 3.51962e-316  Y = 0
+
+ LEFT EYE : coef[8] X = 0  Y = 7.90505e-323
+
+ RIGHT EYE : coef[8] X = 7.58419e-315  Y = 0
+
+Final BestPoly X (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*x^3 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly Y (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*xy^2 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly X_L (error: 1000.000000):  0.000000 + 0.000000*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*x^3 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2
+Final BestPoly Y_L (error: 1000.000000):  0.000000 + -nan*x + 0.000000*y + 0.000000*x^2 + 0.000000*y^2 + 0.000000*xy^2 + 0.000000*xy + 0.000000*x^2y + 0.000000*x^2y^2

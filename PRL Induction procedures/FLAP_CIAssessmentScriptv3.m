@@ -42,7 +42,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '2' , '2', '0', '1', '1'};
+    defaultanswer={'test','1', '3', '2', '1' , '2', '0', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -58,7 +58,6 @@ try
     calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    %     TRLlocation= str2num(answer{10,:}); %1=left, 2=right
     TRLlocation = 2;
     
     %create a data folder if it doesn't exist already
@@ -68,7 +67,7 @@ try
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPAssessment_type_' num2str(AssessmentType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT '_FLAPCIAssessment_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
@@ -97,7 +96,6 @@ try
     
     % CI stimuli
     if AssessmentType==2
-        %         CIAssessmentShapes
         CIShapesIII
     end
     
@@ -135,7 +133,7 @@ try
     if AssessmentType==2
         shapes=2; % how many shapes per day?
         JitList = 0:1:90;
-        StartJitter=11;
+        StartJitter=1;
     end
     
     %define number of trials per condition
@@ -208,9 +206,9 @@ try
         end
         if AssessmentType==2
             if demo==0
-                shapeMat(:,1)= [2 5];
+                shapeMat(:,1)= [1 5];
             end
-            shapeMat(:,1)= [2 5];
+            shapeMat(:,1)= [1 5];
             
 %1: 9 vs 6 19 elements
 %2: 9 vs 6 18 elements
@@ -280,13 +278,14 @@ try
     
     
     %% HERE starts trial loop
-    mixtr = mixtr{1,1};% this is just for debugging, for the actual study, this needs to be the mod of
+    randpick = randi(4);
+    mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
     %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
     checkcounter = 0;
     resetcounter(1:2) = 1;
-    for trial=1:length(mixtr)
-        checkcounter = checkcounter + 1;
+   for trial=1:length(mixtr)
+         checkcounter = checkcounter + 1;
         if trial > 1 && mixtr(trial,2) == mixtr(trial-1,2) && mixtr(trial,1) == mixtr(trial-1,1)
             trialcounter = trialcounter + 1;
         else
@@ -295,7 +294,7 @@ try
             end
         end
         % practice
-        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && (AssessmentType==2 || AssessmentType == 1)
+        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2) && (AssessmentType==2 || AssessmentType == 1)
             practicePassed=0;
         end
         
@@ -340,7 +339,7 @@ try
         end
         % -------------------------------------------------------------------------
         if demo==1
-            if mod(trial,trials)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            if mod(trial,60)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
             
