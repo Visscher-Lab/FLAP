@@ -248,7 +248,15 @@ ylim([0 1080]);
 % cartesian transformation
 
 
+
+
+
+
+
+
+
 validation_results=results;
+
 
 matsize=size(validation_results);
 %size(results)
@@ -258,6 +266,7 @@ matsize=size(validation_results);
 %1: points
 %2: coordinates (left x, left y, right x, right y)
 %3:locations
+
 
 
 % nmb_pts=matsize(3);
@@ -303,6 +312,9 @@ set (gca,'YDir','reverse')
 
 xlim([0 1920]);
 ylim([0 1080]);
+
+
+
 
 %% compare calibration with validation
 
