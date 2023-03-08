@@ -37,10 +37,10 @@ Oscat= 0.5; %JitList(thresh(Ts,Tc));
 xlocsCI=x1(:)';
 ylocsCI=y1(:)';
 % ecccoeffCI=3; % grid separation
-% ecccoeffCI=1.8;
+ecccoeffCI=1.8;
 % ecccoeffCI=1.5;
 % ecccoeffCI=1.3;
-ecccoeffCI=1;
+% ecccoeffCI=1;
 
 CIstimulussize=stimulusSize*2.6*pix_deg;
 %generate visual cue

@@ -151,7 +151,7 @@ try
         if demo==0
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
+            trials=10;  %total number of trials per staircase (per shape) % trials = 10; debugging
         end
     end
     
@@ -206,9 +206,11 @@ try
         end
         if AssessmentType==2
             if demo==0
-                shapeMat(:,1)= [1 5];
+                shapeMat(:,1)= [9 9];
+%                 shapeMat(:,1)= [1 5];
             end
-            shapeMat(:,1)= [1 5];
+%             shapeMat(:,1)= [1 5];
+            shapeMat(:,1)= [9 9];
             
 %1: 9 vs 6 19 elements
 %2: 9 vs 6 18 elements
