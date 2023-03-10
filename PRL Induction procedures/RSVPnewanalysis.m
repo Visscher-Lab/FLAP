@@ -57,24 +57,38 @@ for ui=1
     matt2(1,1)=0;
     trialMax{ui}=matt2;
     clear matt matt2 
-    % find response to the first target (switch target)
-   respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95,:)
+ %% switch cost
+ % find response to the first target (switch target)
+   respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95,:);
    % find RT response to the first target (switch target)  
    respFirstTargetRT=respFirstTarget(1);
 
 pointerResp=find(trialMax{ui}(:,1)==respFirstTargetRT);
 %check if the response is correct
+corrresp=trialMax{ui}(pointerResp,2)==trialMax{ui}(1,2);
 
-trialMax{ui}(pointerResp,2)==trialMax{ui}(1,2)
-
-        % find CORRECT response to the first target (switch target)
-  corrrespFirstTargetRT=  trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<=0.95 & trialMax{ui}(:,2) == trialMax{ui}(1,2) ,:);
-  
-        % find late CORRECT response to the first target (switch target)
-%     trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<1.55 & trialMax{ui}(:,2) == trialMax{ui}(1,2) ,:)
+%% sustained attention RT
 
     % responses to stimuli in the stream
 %     for ii=1:
 %     
 % end
+%analysis of button press x target number
+TotalResp(ui)= length(respKeysT);
+TotalTarget(ui)=sum(trialArray{ui}==3);
+respratio(ui)=TotalResp(ui)/TotalTarget(ui);
+
+% resp accuracy + RT 
+targetarray(ui,:)=find(trialArray{ui}==3);
+newtargetarray(ui,:)=targetarray(ui,targetarray(ui,:)>1)
+%look for events around target presentation
+for i=1:TotalTarget(i)
+    %time stamp of the target
+   timestamptarget(i,:)=trialMax{ui}(newtargetarray(ui,i),:);
+  % candidate responses (events 'response' that took place after
+  % target presentation)
+trialMax{ui}(trialMax{ui}(:,1)>timestamptarget(i,1) & trialMax{ui}(:,3)==0, :)
+
+%  trialMax{ui}(:,1)<timestamptarget(i,1) && trialMax{ui}(:,end)==3
+end
 end

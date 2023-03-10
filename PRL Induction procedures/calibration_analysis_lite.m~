@@ -272,43 +272,11 @@ x = [960 960 1560 960 360 1560 360 1560 360 1260 660 660 1260];
 y = [540 890 540 190 540 890 890 190 190 715 715 365 365];
 z = [1.2450 1.7453 11.4313 1.1994 -7.8870 11.2800 -7.2230 11.1132 -9.1896 5.8908 -2.8528 -3.1911 6.5344];
 
-z2= [5.9377
-    1.3619
-    7.5133
-   12.9373
-    6.2685
-    2.3452
-    0.4560
-   13.1628
-   13.0640
-    4.7474
-    3.9025
-    9.9113
-   10.4464];
 % Create polynomial features up to degree 3
 X = [ones(size(x)), x, y, x.^2, y.^2, x.*y, x.^2.*y, x.*y.^2, x.^3];
-X = [ones(size(x)), x, y, x.^2, y.^2, x.*y, x.^2.*y, y.^2.*x.^2, x.^3, y.^3];
+X = [ones(size(x)), x, y, x.^2, y.^2, x.*y, x.^2.*y, y.^2.*x.^2, x.^3, y.^3]
 % Perform linear regression
-coeff = X\z2';
+coeff = X\z';
 
 % Print coefficients
 disp(coeff');
-
-
-%% find x and y from coefficient (reverse-engineering datapixx script to generate x and y from their coefficients)
-% define the coefficients
-coeff = [-112.7053; 69.8383; 2.2812; 0; 0; -0.0390; -0.5724; -0.0276; 0.0039];
-
-% define the z values
-z = [1.2450; 1.7453; 11.4313; 1.1994; -7.8870; 11.2800; -7.2230; 11.1132; -9.1896; 5.8908; -2.8528; -3.1911; 6.5344];
-
-% create the matrix X
-x = [960; 960; 1560; 960; 360; 1560; 360; 1560; 360; 1260; 660; 660; 1260];
-y = [540; 890; 540; 190; 540; 890; 890; 190; 190; 715; 715; 365; 365];
-X = [ones(size(x)), x, y, x.^2, y.^2, x.*y, x.^2.*y, x.*y.^2, x.^3];
-
-
-% estimate x and y
-xy_est = X * coeff;
-x_est = xy_est(1:length(xy_est)/2);
-y_est = xy_est(length(xy_est)/2+1:end);
