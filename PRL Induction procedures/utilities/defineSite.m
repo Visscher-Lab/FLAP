@@ -141,13 +141,21 @@ elseif site==3 % Windows
     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 end
+
+% feedback sounds
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
     [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
 end
 
-% 
-pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+%pure tone sound (beef) if needed
+bip_dur=0.15;
+Fs = 44100;                                     % Sampling Frequency
+t = (0:1/Fs:bip_dur-1/Fs);
+w = 2*pi*500;                                  % Radian Value To Create 1kHz Tone
+s = sin(w*t);                                   % Create Tone
+bip_sound=[s' s'];
+
 % pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 % PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer

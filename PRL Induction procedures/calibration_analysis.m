@@ -1,11 +1,4 @@
-%% the relationship between raw eye data and screen gaze position is 
-%determined by 4 different polynomials representing each axis of each eye. 
-%The same calibration process will be performed for each independant axis 
-%and eye giving four independent calibration processes and results: 
-%right eye x axis, right eye y axis, 
-%left eye x axis and left eye y axis.
 
-<<<<<<< Updated upstream
 %% Coordinate system:
 %Psychtoolbox uses a coordinate system having an origin at the top left
 %corner of the screen.  We propose functions to convert back and forth 
@@ -23,10 +16,15 @@
 %must pay particular attention to different systems if switching between applications
 %or toolboxes using different coordinates systems.
 
-%% xy and 'targets' is the calibration point array. It contains all the points that should
+%% xy and 'targets' is the 13-point calibration array. It contains all the points that should
 %be calibrated as part of the present calibration. standard 13 points
 
 
+%% raw_vector from 'GetEyeDuringCalibrationRaw' (degree)
+%GetEyeDuringCalibrationRaw acquires eye data from tracker.
+%It also saves that data in memory and is used (once all
+%targets are run) to calculate the formula used to convert
+%raw eye data to calibrate screen position.
 %raw_vector contains the raw eye information from the tracker. The first
 %dimension represents each of the 13 calibration points. The second
 %dimension represents each eye and axis.
@@ -37,51 +35,75 @@
 
 
 
-                %GetEyeDuringCalibrationRaw acquires eye data from tracker.
-                %It also saves that data in memory and is used (once all
-                %targets are run) to calculate the formula used to convert 
-                %raw eye data to calibrate screen position.
+%% plot calibration results
+%Plot the results of the calibrations.  This can be used as
+%part of the calibration evaluation. It displays the raw data
+%distribution gathered during the previous phase. It quickly
+%indicates if one or more points are invalid.
+            
 
-%% raw_vector from 'GetEyeDuringCalibrationRaw' (degree?)
+figure('Name','raw_data_right');
+H = scatter(raw_vector(:,1), raw_vector(:,2));
+xlabel('x dva')
+xlabel('y dva')
+grid on;
+grid minor;
+%Save the figure for later reference
+saveas(H, 'raw_data_right.fig', 'fig')
 
-            %Plot the results of the calibrations.  This can be used as
-            %part of the calibration evaluation. It displays the raw data
-            %distribution gathered during the previous phase. It quickly
-            %indicates if one or more points are invalid.
-            
-%             [xRawRight yRawRight xRawLeft yRawLeft] = Datapixx('GetEyeDuringCalibrationRaw', xScreen, yScreen [,eyeToVerify = 3]);
-%             
-%             During calibration, tell the tracker to acquire Eye Data NOW with
-%             the current marker coordinates (xScreen, yScreen).Returns the raw coordinates
-%             that will be used for the calculations.
-                        figure('Name','raw_data_right');
-            H = scatter(raw_vector(:,1), raw_vector(:,2));
-            grid on;
-            grid minor;
-            %Save the figure for later reference
-            saveas(H, 'raw_data_right.fig', 'fig')
-            
-            figure('Name','raw_data_left');
-            H = scatter(raw_vector(:,3), raw_vector(:,4));
-            grid on;
-            grid minor;
-            saveas(H, 'raw_data_left.fig', 'fig')
-            
-                            %Show raw data scaled to screen proportion
-                        figure('Name','scaled raw_data_right');
-            H = scatter(raw_vector_sc(:,1), raw_vector_sc(:,2));
-            grid on;
-            grid minor;
-            %Save the figure for later reference
-            saveas(H, 'scaledraw_data_right.fig', 'fig')
-            
-            figure('Name','scaled raw_data_left');
-            H = scatter(raw_vector_sc(:,3), raw_vector_sc(:,4));
-            grid on;
-            grid minor;
-            saveas(H, 'scaledraw_data_left.fig', 'fig')
+figure('Name','raw_data_left');
+H = scatter(raw_vector(:,3), raw_vector(:,4));
+grid on;
+grid minor;
+xlabel('x dva')
+xlabel('y dva')
+saveas(H, 'raw_data_left.fig', 'fig')
 
- %% Datapixx('FinishCalibration') uses the data captured in the preceeding steps and
+
+
+figure
+subplot(2,1,1)
+scatter(raw_vector(:,1), raw_vector(:,2), 'b');
+xlabel('x dva')
+xlabel('y dva')
+title('right eye raw calib')
+pbaspect([1.5 1 1]);
+
+subplot(2,1,2)
+scatter(raw_vector(:,3), raw_vector(:,4), 'r');
+xlabel('x dva')
+xlabel('y dva')
+title('left eye raw calib')
+pbaspect([1.5 1 1]);
+
+print('raw calib points', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+figure
+scatter(raw_vector(:,1), raw_vector(:,2), 'b');
+hold on
+scatter(raw_vector(:,3), raw_vector(:,4), 'r');
+xlabel('x dva')
+xlabel('y dva')
+title('bino raw calib')
+pbaspect([1.5 1 1]);
+
+print('raw calib points bino', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+%Show raw data scaled to screen proportion
+figure('Name','scaled raw_data_right');
+H = scatter(raw_vector_sc(:,1), raw_vector_sc(:,2));
+grid on;
+grid minor;
+%Save the figure for later reference
+saveas(H, 'scaledraw_data_right.fig', 'fig')
+
+figure('Name','scaled raw_data_left');
+H = scatter(raw_vector_sc(:,3), raw_vector_sc(:,4));
+grid on;
+grid minor;
+saveas(H, 'scaledraw_data_left.fig', 'fig')
+
+ %% 'FinishCalibration' uses the data captured in the preceeding steps and
  %runs a mathematical process to determine the formula that
  %will convert raw eye data to a calibrated gaze position on screen.
  
@@ -99,6 +121,25 @@
 %% evaluate_bestpoly applies raw eye positions to the polynomial and returns calibrated gaze position on screen.
 %Evaluate all the calibration points
 
+%% the relationship between raw eye data and screen gaze position is 
+%determined by 4 different polynomials representing each axis of each eye. 
+%The same calibration process will be performed for each independant axis 
+%and eye giving four independent calibration processes and results: 
+%right eye x axis, right eye y axis, 
+%left eye x axis and left eye y axis.
+
+
+%%
+%we present 13 dots
+% we collect 13 eye positions (a 4 way vector with right x, right y, left
+% x, left y)
+% we compute coefficients knowing the eye positions and the calibration
+% dots coordinates
+% we evaluate a polynomial based on the raw data and the coefficient
+% we convert the scores back to PsychToolbox coordinate system for display 
+
+%%
+
 % 
 %          [x_eval_cartesian,y_eval_cartesian] = evaluate_bestpoly(raw_vector(:,1)', raw_vector(:,2)', coeff_x, coeff_y);
 %             [x_eval_L_cartesian,y_eval_L_cartesian] = evaluate_bestpoly(raw_vector(:,3)', raw_vector(:,4)', coeff_x_L, coeff_y_L);
@@ -108,41 +149,10 @@
 %             xy_eval = Datapixx('ConvertCoordSysToCustom', right_eye_eval);
 %             xy_eval_L = Datapixx('ConvertCoordSysToCustom', left_eye_eval);
 
-%convert back to PsychToolbox coordinate system for display
 %             x_eval = xy_eval(:,1)';
 %             y_eval = xy_eval(:,2)';
 %             x_eval_L = xy_eval_L(:,1)';
 %             y_eval_L = xy_eval_L(:,2)';
-=======
-%%calibration results
-
-
-
-% I get raw eye data from calibration procedure
-% I estimate coefficients through Datapixx function(Datapixx('GetCalibrationCoeff'))
-% I use 'evaluate_bestpoly' to apply raw eye positions to the polynomial and returns calibrated gaze position on screen.
-
-
-%raw_vector + coeff= x_eval
-
-
-
-
-
-
-
- %'GetCalibrationCoeff' returns an array of coefficients
-                %calculated by the calibration process. Positions 
-                % - 1 to 9 are the coefficients for the right eye x axis.
-                % - 10 to 18 are the coefficients for the right eye y axis.  
-                % - 19 to 27 are the coefficients for the left eye x axis. 
-                % - 28 to 36 are the coefficients for the left eye y axis.
-%                 calibrations_coeff = Datapixx('GetCalibrationCoeff');
-%evaluate_bestpoly applies raw eye positions to the polynomial
-%and returns calibrated gaze position on screen.
-%Evaluate all the calibration points
-
->>>>>>> Stashed changes
 
             %*_interpol_raw* variables contain raw interpolation points
             %between two calibration points.
@@ -152,9 +162,11 @@
             %and y. Data organisation for convertion
             %xy_interpol* holds the calibrated and converted interpolation
             %data
+            % We have 12 segments and create 10 points each (for now)
 
 
             %Interpolate raw data between calibration points
+                x_interpol_raw(i,:) = linspace(raw_vector(p_p(i,1),1),raw_vector(p_p(i,2),1), n_points);
 
             
             %Apply calibration to the interpolated raw data and convert to the
@@ -167,23 +179,6 @@
 
 
 
-<<<<<<< Updated upstream
-=======
-
-            %*_interpol_raw* variables contain raw interpolation points
-            %between two calibration points.
-            %*_interpol* variables hold the corresponding calibrated data
-            %*_interpol_cartesian holds the coordinate system converted data
-            %*_eye_interpol holds the raw data interpolation points in x
-            %and y. Data organisation for convertion
-            %xy_interpol* holds the calibrated and converted interpolation
-            %data
-            % We have 12 segments and create 10 points each (for now)
-
-            
-            
-            %validation results
->>>>>>> Stashed changes
 %results
 %target_result = [leftEyeTopLeft(:,1) leftEyeTopLeft(:,2) rightEyeTopLeft(:,1) rightEyeTopLeft(:,2)];
 
@@ -202,11 +197,29 @@ xlim([0 1920]);
 ylim([0 1080]);
 set (gca,'YDir','reverse')
             
-            
+            print('scaled raw data', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
+
+            
+            
+            figure            
+            scatter(x_interpol_raw(:),y_interpol_raw(:),'b')
+ title( 'interpolated raw_data right');
+           
+                        print('interpolated raw data right', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+                        figure
+                        
+            scatter(x_interpol_raw_L(:),y_interpol_raw_L(:), 'r')
+ title( 'interpolated raw_data left');
+           
+                        print('interpolated raw data left', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+                        
+                        
+                        
 figure
             %2nd result page to display: right eye interpolation
-scatter(targets(1,:),targets(2,:), 'filled');
+scatter(targets(1,:),targets(2,:), 'k','filled');
 hold on
 scatter(x_eval,y_eval, 'filled'); % estimated eye location next to calibration dots
 hold on
@@ -215,6 +228,8 @@ title( 'calibration right eye');
 xlim([0 1920]);
 ylim([0 1080]);
 set (gca,'YDir','reverse')
+
+            print('interpolated right eye data', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 
 figure
@@ -228,6 +243,8 @@ title( 'calibration left eye');
 xlim([0 1920]);
 ylim([0 1080]);
 set (gca,'YDir','reverse')
+            print('interpolated left eye data', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
 
             %Calculate the error between calibration points and the corresponding gaze position
             %mean_err_r and mean_err_l hold the error at the 13 points of the
@@ -245,6 +262,8 @@ hold on
 text(x_eval,y_eval,num2str(mean_err_r));
 set (gca,'YDir','reverse')
 
+            print('error  eye data', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
 xlim([0 1920]);
 ylim([0 1080]);
 
@@ -255,16 +274,7 @@ ylim([0 1080]);
 % target_results collects the data from 'GetEyePosition' after some
 % cartesian transformation
 
-
-
-
-
-
-
-
-
 validation_results=results;
-
 
 matsize=size(validation_results);
 %size(results)
@@ -274,7 +284,6 @@ matsize=size(validation_results);
 %1: points
 %2: coordinates (left x, left y, right x, right y)
 %3:locations
-
 
 
 % nmb_pts=matsize(3);
@@ -322,10 +331,7 @@ xlim([0 1920]);
 ylim([0 1080]);
 
 
-
-
 %% compare calibration with validation
-
 
         for i=1:nmb_pts
 %             avg_gaze_pos_l_x(i) = nanmean(results(:,1,i));

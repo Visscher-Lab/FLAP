@@ -41,7 +41,7 @@ dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 % training type 2
 jitterCI=1; % jitter for countour stimuli of training type 2 and 4
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
-JitRat = 2;
+JitRat = 4;
 % training type 3/4
 updatecounter = 0; % starts the counter for the blocks in which we evaluate whether it's time to update the TRL size or the persistent flickering duration
 holdtrial = 1; %for training type 3 and 4: we force a series of consecutive trials to be in the same location
@@ -70,5 +70,5 @@ fixwindowPix=fixwindow*pix_deg;
 midgray=0.5;
 
 % Select specific text font, style and size:
-Screen('TextFont',w, 'Arial');
-Screen('TextSize',w, 42);
+% Screen('TextFont',w, 'Arial');
+% Screen('TextSize',w, 42);
