@@ -258,11 +258,15 @@ try
 
                 fixationscriptW;
 
-%                 if cue==1
-%                     %DrawFormattedText(w, '<', 'center',cueloc, white);
-%                 else
-%                     %DrawFormattedText(w, '>', 'center',cueloc, white);
-%                 end
+                if cue==1
+                    %DrawFormattedText(w, '<', 'center',cueloc, white);
+                    %sound(snd_left,sampRate);
+                    PsychPortAudio('Start', pahandle1);
+                else
+                    %DrawFormattedText(w, '>', 'center',cueloc, white);
+                    %sound(snd_right,sampRate);
+                    PsychPortAudio('Start', pahandle1);
+                end
                 clear keyIsDown keyTime keyCode
                 while GetSecs < TimeToStopListening(totalblock,trial)%resting for previousiti
                     [keyIsDown, keyTime, keyCode] = KbCheck;
@@ -299,13 +303,7 @@ try
                     end
                 % show the cue
                 CueOnsetTime(totalblock,trial)=Screen('Flip',w);
-                                if cue==1
-
-                    PsychPortAudio('Start', pahandle1);
-                                else
-                    PsychPortAudio('Start', pahandle2);
-                end
-
+                % while showing the cue, prepare the stimulus
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
                     stimulusdirection_leftstim_num=stimulusdirection_leftstim;stimulusdirection_rightstim_num=stimulusdirection_rightstim; %what are shown in left and right is set

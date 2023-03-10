@@ -69,27 +69,14 @@ rand('twister',theseed );
 % Select specific text font, style and size:
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
-%% Sound
+%% Cue Sound
 InitializePsychSound(1); %'optionally providing
-% the 'reallyneedlowlatency' flag set to one to push really hard for low
-% latency'.
-if site==1
-    pahandle1 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-elseif site==2
-    pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-elseif site==3
+    load('cuesounds.mat');
+    %sampRate=8192;
     pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-end
-try
-    [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-    [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-end
-
-PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+pahandle2= PsychPortAudio('Open', [], 1, 0, 44100, 2);%44100
+PsychPortAudio('FillBuffer', pahandle1, snd_left' ); % loads data into buffer
+PsychPortAudio('FillBuffer', pahandle2, snd_right' ); % loads data into buffer
 %% Trigger Setup for Mac
 if site==2
     a                               = cd;
