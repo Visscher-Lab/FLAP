@@ -183,7 +183,7 @@ try
         if whichTask==3
             %attention
             mixtrtemp=repmat(fullfact([2 2]),tr_per_condition,1);
-            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);whichTask==3
+            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
         end
     end
     if IsPractice==0
@@ -229,12 +229,7 @@ try
         resetcounter(1:PRLlocations, 1:ca)=1; %25;
         Threshlist(1:PRLlocations, 1:ca)=0;
     end
-    
-    
-    
-%     if whichTask == 3
-%         imageRect = CenterRect([0, 0, stimulussize stimulussize], wRect);
-%     end
+
     if whichTask ~= 1
         imageRect = CenterRect([0,0, stimulussize_crowding stimulussize_crowding], wRect);
     end
@@ -300,7 +295,9 @@ try
             ecc_y=xxyy(2);
             eccentricity_X1=ecc_x;
             eccentricity_Y1=ecc_y;
-            
+                    imageRect_offsFlankOne =[imageRectFlankOne(1)+theeccentricity_X, imageRectFlankOne(2)+theeccentricity_Y,...
+                imageRectFlankOne(3)+theeccentricity_X, imageRectFlankOne(4)+theeccentricity_Y];
+                
             %Compute flank two
             ecc_t2=-crowding_angle;
             cs= [cos(ecc_t2), sin(ecc_t2)];
@@ -309,24 +306,19 @@ try
             ecc_y2=xxyy2(2);
             eccentricity_X2=ecc_x2;
             eccentricity_Y2=ecc_y2;
-            imageRect_offsFlankOne =[imageRectFlankOne(1)+theeccentricity_X, imageRectFlankOne(2)+theeccentricity_Y,...
-                imageRectFlankOne(3)+theeccentricity_X, imageRectFlankOne(4)+theeccentricity_Y];
-            
+
             imageRect_offsFlankTwo =[imageRectFlankTwo(1)+theeccentricity_X, imageRectFlankTwo(2)+theeccentricity_Y,...
                 imageRectFlankTwo(3)+theeccentricity_X, imageRectFlankTwo(4)+theeccentricity_Y];
             
             anglout = radtodeg(crowding_angle+pi/2);
             anglout2=radtodeg(crowding_angle);
         end
-        if whichTask == 3
-            imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
-            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
-        end
-        if whichTask == 4
-            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-        end
+
+
                
         if whichTask ==3
+                      imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
+            imageRectCirc= CenterRect([0, 0, circleSize*pix_deg circleSize*pix_deg], wRect);
             currentpostfixationblank=postfixationblank(2);
             currentcueISI=cueISI;
             currentcueduration=cueduration;
@@ -336,6 +328,10 @@ try
             currentcueISI=0;
             currentcueduration=0;
         end
+           if whichTask == 4
+            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        end     
+        
         trialTimeout=realtrialTimeout+currentpostfixationblank;
         
         % compute response for trial

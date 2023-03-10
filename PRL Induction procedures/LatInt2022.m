@@ -36,14 +36,14 @@ cc = clock; %Current date and time as date vector. [year month day hour minute s
 %create a folder if it doesn't exist already
 if exist('data')==0
     mkdir('data')
-end;
+end
 
 baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
     
        %% eyetracker initialization (eyelink)
   defineSite
     
-    CommonParametersFLAP % define common parameters  
+    CommonParametersLatint % define common parameters  
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -52,32 +52,7 @@ baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end
-    
-    
-    
-% lat int variables    
-fixat=1;
-fixationlength = 40; % pixels    
 
-red=[255 0 0];
-
-VA_threshold=.8;
-
-fixwindow=2;
-fixTime=0.2;
-fixTime2=0.2;
-
-PRL_x_axis=-4;
-PRL_y_axis=0;
-NoPRL_x_axis=4;
-NoPRL_y_axis=0;
-flankersContrast=.6;
-
-presentationtime=.333;
-ISIinterval=0.5;
-
-
-    
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
@@ -88,33 +63,7 @@ ISIinterval=0.5;
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end
-    
-    %% Sound
-    
-    InitializePsychSound(1); %'optionally providing
-    % the 'reallyneedlowlatency' flag set to one to push really hard for low
-    % latency'.
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle3 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-
-    elseif site==3 % Windows
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle3 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    end
-    try
-        [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    
-
+ 
 %% STAIRCASE
 cndt=2;
 ca=2;
@@ -127,21 +76,14 @@ corrcounter(1:cndt, 1:ca)=0;
 thresh(1:cndt, 1:ca)=StartCont;
         step=5;
                     currentsf=1;
-% Threshold -> 79%
+% Threshold -> 66%
 sc.up = 1;                          % # of incorrect answers to go one step up
-sc.down = 3;                        % # of correct answers to go one step down
+sc.down = 2;                        % # of correct answers to go one step down
    max_contrast=.7;
     Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
     Contlist(1)=1;
     
     stepsizes=[4 4 3 2 1];
-    
-    SFthreshmin=0.01;
-    
-    SFthreshmax=Contlist(StartCont);
-    SFadjust=10;
-    
-stepsizes=[8 4 3 2 1];
 
 
       lok=2; %location: PRL vs no PRL
@@ -155,104 +97,45 @@ stepsizes=[8 4 3 2 1];
           blocks=1 %10;   
               n_blocks=round(trials/blocks);   %number of trials per miniblock
                   mixtr=[];    
-        for j=1:blocks;
+        for j=1:blocks
             for i=1:numsc
                 mixtr=[mixtr;repmat(condlist(i,:),n_blocks,1)];
-            end;
-        end;
-
-        
-        
+            end
+        end
+               
         b=mixtr(randperm(length(mixtr)),:);
-
-
-
-
-    %% gabor settings and fixation point
-    sf=3;
-    lambdaSeparation=4;
-    lambda=1/sf;
-    sigma_deg=lambda;
-    sigma_pix = sigma_deg*pix_deg;
-    lambdadeg=lambdaSeparation*lambda*pix_deg;
-    imsize=(sigma_pix*2.5) %/2;
-       imsizeTarget=(sigma_pix*2.5);
-    [x,y]=meshgrid(-imsize:imsize,-imsize:imsize);
-        [xta,yta]=meshgrid(-imsizeTarget:imsizeTarget,-imsizeTarget:imsizeTarget);
-
-    G = exp(-((x/sigma_pix).^2)-((y/sigma_pix).^2));
-    fixationlength = 10; % pixels
-    [r, c] = size(G);
-    
-    
-    
-%    phases= [pi, pi/2, 2/3*pi, 1/3*pi];
-     phases=pi;
-   
-        grayG=0.5;
-    %circular mask
-    xylim = imsize; %radius of circular mask
-    circle = x.^2 + y.^2 <= xylim^2;
-    rot=0*pi/180; %redundant but theoretically correct
-    Gmaxcontrast=1; %same
-    for i=1:(length(sf));
-        for g=1:length(phases)
-            f_gabor=(sf(i)/pix_deg)*2*pi;
-            a=cos(rot)*f_gabor;
-            b=sin(rot)*f_gabor;
-            m=Gmaxcontrast*sin(a*x+b*y+phase(phases(g))).*G;
-          %  TheGabors(i,g)=Screen('MakeTexture', w, gray+inc*m,[],[],2);           
-            m=m+grayG;
-            m = double(circle) .* double(m)+grayG * ~double(circle);                       
-            %TheGabors(i,g)=Screen('MakeTexture', w, gray+inc*m,[],[],2);            
-            TheGabors(i,g)=Screen('MakeTexture', w, m,[],[],2);
-            
-        end;
-    end;
-
-
-%% stimulus settings
- rand('twister', sum(100*clock));
-
-
+%% create stimuli
+createGaborsLatint
 
 %% response
-
-
 KbName('UnifyKeyNames')
 
-    RespType(1) = KbName('a');
-    RespType(2) = KbName('b');
+RespType(1) = KbName('a');
+RespType(2) = KbName('b');
 
-  escapeKey = KbName('ESCAPE');	% quit key
-      % get keyboard for the key recording
-    deviceIndex = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            deviceIndex =  k_id(i);
-        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
-            deviceIndex =  k_id(i);
-        end
+escapeKey = KbName('ESCAPE');	% quit key
+% get keyboard for the key recording
+deviceIndex = -1; % reset to default keyboard
+[k_id, k_name] = GetKeyboardIndices();
+for i = 1:numel(k_id)
+    if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
+        deviceIndex =  k_id(i);
+    elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
+        deviceIndex =  k_id(i);
     end
+end
 
-                        KbQueueCreate(deviceIndex);
-            KbQueueStart(deviceIndex);
-
-        
+KbQueueCreate(deviceIndex);
+KbQueueStart(deviceIndex);
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
-
-
 %% main loop
 HideCursor;
 counter = 0;
 
-
 fixwindowPix=fixwindow*pix_deg;
-
 
 WaitSecs(1);
 % Select specific text font, style and size:
@@ -271,7 +154,6 @@ WaitSecs(1.5);
 xlocs=[PRL_x_axis NoPRL_x_axis];
 ylocs=[PRL_y_axis NoPRL_y_axis];
 
-
 eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
 eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
 
@@ -286,10 +168,7 @@ eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
     end
     
 
-    
-
-    imageRect = CenterRect([0, 0, size(x)], wRect);
-    
+    imageRect = CenterRect([0, 0, size(x)], wRect);    
         imageRectTarget = CenterRect([0, 0, size(xta)], wRect);
 
     % widthFactor is news
@@ -320,7 +199,7 @@ heightFactor=2.69;
      
     
      
-
+FLAPVariablesReset
 for trial=1:length(mixtr)
     
        % if   (mod(trial,tr*2)==1)
