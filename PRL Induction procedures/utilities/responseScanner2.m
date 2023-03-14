@@ -5,16 +5,15 @@ fixationscriptW;
 ResponseType{totalblock,trial}='miss';
 RTraw(totalblock,trial)=0;
 ResponseKey{totalblock,trial}=0;
-if cue==1 % we are showing cue during the stimulus presentation
-    DrawFormattedText(w, '<', 'center',cueloc, white);%688
-else
-    DrawFormattedText(w, '>', 'center',cueloc, white);
-end
+% if cue==1 % we are showing cue during the stimulus presentation
+%     DrawFormattedText(w, '<', 'center',cueloc, white);%688
+% else
+%     DrawFormattedText(w, '>', 'center',cueloc, white);
+% end
 while GetSecs<CueOnsetTime(totalblock,trial)+cue_duration%cue presentation time is 250 ms
 end
 StimulusOnsetTime(totalblock,trial)=Screen('Flip',w); %show stimulus
 ListenChar(2);
-%while GetSecs<StimulusOnsetTime(totalblock,trial)+0.200 %stimulus presentation time is 200 ms
 while GetSecs<CueOnsetTime(totalblock,trial)+(stim_duration+cue_duration) %stimulus presentation time is 200 ms
     [ keyIsDown, keyTime, keyCode ] = KbCheck;
     responsekey = find(keyCode, 1);

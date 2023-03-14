@@ -12,9 +12,14 @@ xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
 xJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
+
 %% 6/9 stimulus
 newTargynum=Targynum+jitteryci;
 newTargxnum=Targxnum+jitterxci;
+xJitLocnum=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
+yJitLocnum=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
+xJitLocnum2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
+yJitLocnum2=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
 %% both egg and 6/9 stimulus
 if stimulusdirection_rightstim==1 % nine is shown in right side or egg points left in the right side
     targetcord =newTargy(1,:)+yTrans  + (newTargx(1,:)+xTrans - 1)*ymax;
@@ -155,32 +160,32 @@ yModLoc=zeros(1,length(eccentricity_XCI));
 xJitLoc(xJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLoc(xJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLoc(yJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 %sum(replacementcounterx~=99)
 xJitLoc2(xJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLoc2(xJitLoc2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLoc2(yJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-yJitLoc2(yJitLoc2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+yJitLoc2(yJitLoc2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 
 if stimulusdirection_rightstim==1 % egg points left on the right side
-    xJitLoc(targetcord)=pix_deg*(offsetx(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLoc(targetcord)=pix_deg*(offsety(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLoc(targetcord)=pix_deg*(offsetx(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI xJitLoc(targetcord)=pix_deg*(offsetx(1,:))/ecccoeffCI;
+    yJitLoc(targetcord)=pix_deg*(offsety(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI yJitLoc(targetcord)=pix_deg*(offsety(1,:))/ecccoeffCI;
     theori=180*rand(1,length(eccentricity_XCI));
     theori(targetcord)=Targori(1,:)+Orijit;
 else %egg points right on the right side
-    xJitLoc(targetcord)=pix_deg*(offsetx(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLoc(targetcord)=pix_deg*(offsety(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLoc(targetcord)=pix_deg*(offsetx(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI xJitLoc(targetcord)=pix_deg*(offsetx(2,:))/ecccoeffCI;
+    yJitLoc(targetcord)=pix_deg*(offsety(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI  yJitLoc(targetcord)=pix_deg*(offsety(2,:))/ecccoeffCI;
     theori=180*rand(1,length(eccentricity_XCI));
     theori(targetcord)=Targori(2,:)+Orijit;
 end
 if stimulusdirection_leftstim==1 % eggs points left on the left side
-    xJitLoc2(targetcord2)=pix_deg*(offsetx(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLoc2(targetcord2)=pix_deg*(offsety(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLoc2(targetcord2)=pix_deg*(offsetx(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI xJitLoc2(targetcord2)=pix_deg*(offsetx(1,:))/ecccoeffCI;
+    yJitLoc2(targetcord2)=pix_deg*(offsety(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI yJitLoc2(targetcord2)=pix_deg*(offsety(1,:))/ecccoeffCI;
     theori2=180*rand(1,length(eccentricity_XCI));
     theori2(targetcord2)=Targori(1,:)+Orijit;
 else %eggs points right on the left side
-    xJitLoc2(targetcord2)=pix_deg*(offsetx(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLoc2(targetcord2)=pix_deg*(offsety(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLoc2(targetcord2)=pix_deg*(offsetx(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI  xJitLoc2(targetcord2)=pix_deg*(offsetx(2,:))/ecccoeffCI;
+    yJitLoc2(targetcord2)=pix_deg*(offsety(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI yJitLoc2(targetcord2)=pix_deg*(offsety(2,:))/ecccoeffCI;
     theori2=180*rand(1,length(eccentricity_XCI));
     theori2(targetcord2)=Targori(2,:)+Orijit;
 end
@@ -242,8 +247,8 @@ end
 
 %yJitLocnum=newyJitLoc; %before marcello changed it
 %xJitLocnum=newxJitLoc;
-xJitLocnum=xJitLoc; %marcello prefers
-yJitLocnum=yJitLoc;
+%xJitLocnum=xJitLoc; %marcello prefers
+%yJitLocnum=yJitLoc;
 %clear newyJitLoc newxJitLoc;
 
 % for i=1:length(xJitLoc2)
@@ -302,39 +307,39 @@ yJitLocnum=yJitLoc;
 
 %yJitLocnum2=newyJitLoc; %before marcello changed it
 %xJitLocnum2=newxJitLoc;
-yJitLocnum2=yJitLoc2; %marcello prefers
-xJitLocnum2=xJitLoc2;
+%yJitLocnum2=yJitLoc2; %marcello prefers
+%xJitLocnum2=xJitLoc2;
 
 %clear newyJitLoc newxJitLoc
 xJitLocnum(xJitLocnum>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLocnum(xJitLocnum< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLocnum(yJitLocnum>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-yJitLocnum(yJitLocnum< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+yJitLocnum(yJitLocnum< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 
 xJitLocnum2(xJitLocnum2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLocnum2(xJitLocnum2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLocnum2(yJitLocnum2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
-yJitLocnum2(yJitLocnum2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+yJitLocnum2(yJitLocnum2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 
 if stimulusdirection_rightstim_num==1 % 9 is shown on the right side
-    xJitLocnum(targetcordnum)=pix_deg*(offsetxnum(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLocnum(targetcordnum)=pix_deg*(offsetynum(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLocnum(targetcordnum)=pix_deg*(offsetxnum(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI xJitLocnum(targetcordnum)=pix_deg*(offsetxnum(1,:))/ecccoeffCI;
+    yJitLocnum(targetcordnum)=pix_deg*(offsetynum(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI yJitLocnum(targetcordnum)=pix_deg*(offsetynum(1,:))/ecccoeffCI;
     theorinum=180*rand(1,length(eccentricity_XCI));
     theorinum(targetcordnum)=Targorinum(1,:)+Orijit;
 else %6 is shown on the right side
-    xJitLocnum(targetcordnum)=pix_deg*(offsetxnum(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLocnum(targetcordnum)=pix_deg*(offsetynum(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLocnum(targetcordnum)=pix_deg*(offsetxnum(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI
+    yJitLocnum(targetcordnum)=pix_deg*(offsetynum(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI
     theorinum=180*rand(1,length(eccentricity_XCI));
     theorinum(targetcordnum)=Targorinum(2,:)+Orijit;
 end
 if stimulusdirection_leftstim_num==1 % 9 is shown on the left side
-    xJitLocnum2(targetcordnum2)=pix_deg*(offsetxnum(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLocnum2(targetcordnum2)=pix_deg*(offsetynum(1,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLocnum2(targetcordnum2)=pix_deg*(offsetxnum(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI
+    yJitLocnum2(targetcordnum2)=pix_deg*(offsetynum(1,:))/coeffCI;%I changed coeffCI with ecccoeffCI
     theorinum2=180*rand(1,length(eccentricity_XCI));
     theorinum2(targetcordnum2)=Targorinum(1,:)+Orijit;
 else %6 is shown on the left side
-    xJitLocnum2(targetcordnum2)=pix_deg*(offsetxnum(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
-    yJitLocnum2(targetcordnum2)=pix_deg*(offsetynum(2,:))/ecccoeffCI;%I changed coeffCI with ecccoeffCI
+    xJitLocnum2(targetcordnum2)=pix_deg*(offsetxnum(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI
+    yJitLocnum2(targetcordnum2)=pix_deg*(offsetynum(2,:))/coeffCI;%I changed coeffCI with ecccoeffCI
     theorinum2=180*rand(1,length(eccentricity_XCI));
     theorinum2(targetcordnum2)=Targorinum(2,:)+Orijit;
 end
@@ -629,10 +634,10 @@ examplexJitLocnum2(examplexJitLocnum2< - pix_deg/ecccoeffCI_example/3)=-pix_deg/
 exampleyJitLocnum2(exampleyJitLocnum2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
 exampleyJitLocnum2(exampleyJitLocnum2< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetxnum(1,:))/ecccoeffCI_example;%I changed coeffCI with ecccoeffCI
-exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsetynum(1,:))/ecccoeffCI_example;%I changed coeffCI with ecccoeffCI
-examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetxnum(2,:))/ecccoeffCI_example;%I changed coeffCI with ecccoeffCI
-exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetynum(2,:))/ecccoeffCI_example;%I changed coeffCI with ecccoeffCI
+examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetxnum(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsetynum(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetxnum(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetynum(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
 
 exampletheorinum=180*rand(1,length(eccentricity_XCI_example));
 exampletheorinum2=exampletheorinum;
