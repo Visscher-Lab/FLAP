@@ -8,7 +8,7 @@ multFac=2.^(noteNumbers/12);
 allFreqs=freqC*multFac;
 dur=.2;
 ISI=1;
-sampRate=8192;
+sampRate=44100;
 nTimeSamples=dur*sampRate;
 t=linspace(0,dur,nTimeSamples);
 tic

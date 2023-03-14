@@ -63,8 +63,8 @@ try
 
     KbName('UnifyKeyNames');
 
-    leftfingerresp = KbName('b');% left oriented gabor or six
-    rightfingerresp = KbName('r');% right oriented gabor or nine
+    leftfingerresp = KbName('r');% left oriented gabor or six
+    rightfingerresp = KbName('b');% right oriented gabor or nine
     escapeKey = KbName('ESCAPE');	% quit key
 
     % get keyboard for the key recording
@@ -216,7 +216,7 @@ try
             activeblock=activeblockcue(totalblock,:);
             activeblockstim=eval(['activeblockstimulus' runnum]);% direction of gabors or being 6 or9 in both location
             itiforrun=eval(['interTrialIntervals' runnum]);
-           %%%%%%% LOOP FOR TRIALS %%%%%%%%
+            %%%%%%% LOOP FOR TRIALS %%%%%%%%
             for trial=1:totaltrial
                 cue=activeblock(trial); %if it's 1 attend to left, if it's 2 attend right
                 kt(totalblock,trial)=1;%counts how many TR is catched in each block
@@ -258,15 +258,11 @@ try
 
                 fixationscriptW;
 
-                if cue==1
-                    %DrawFormattedText(w, '<', 'center',cueloc, white);
-                    %sound(snd_left,sampRate);
-                    PsychPortAudio('Start', pahandle1);
-                else
-                    %DrawFormattedText(w, '>', 'center',cueloc, white);
-                    %sound(snd_right,sampRate);
-                    PsychPortAudio('Start', pahandle1);
-                end
+                %                 if cue==1
+                %                     %DrawFormattedText(w, '<', 'center',cueloc, white);
+                %                 else
+                %                     %DrawFormattedText(w, '>', 'center',cueloc, white);
+                %                 end
                 clear keyIsDown keyTime keyCode
                 while GetSecs < TimeToStopListening(totalblock,trial)%resting for previousiti
                     [keyIsDown, keyTime, keyCode] = KbCheck;
@@ -299,11 +295,17 @@ try
                     trialstarttime(totalblock,trial)=TTL_time(j-1)+TR; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frame
                 end
 
-                    while GetSecs < trialstarttime(totalblock,trial)-0.001 %TimeToStopListening(totalblock,trial)+(TR/2) %leftover iti wait
-                    end
+                while GetSecs < trialstarttime(totalblock,trial)-0.001 %TimeToStopListening(totalblock,trial)+(TR/2) %leftover iti wait
+                end
                 % show the cue
                 CueOnsetTime(totalblock,trial)=Screen('Flip',w);
-                % while showing the cue, prepare the stimulus
+                if cue==1
+
+                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle1,1, [],[]);
+                else
+                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle2);
+                end
+                AudioCueOffsetTime(totalblock,trial)=GetSecs;
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
                     stimulusdirection_leftstim_num=stimulusdirection_leftstim;stimulusdirection_rightstim_num=stimulusdirection_rightstim; %what are shown in left and right is set
@@ -335,7 +337,7 @@ try
                     imageRect_offsCIright2=imageRect_offsCIright;
                     imageRect_offsCIright2(setdiff(1:length(imageRect_offsCIright),targetcord),:)=0;
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIright2'+ [xJitLoc; yJitLoc; xJitLoc; yJitLoc], theori,[], Dcontr);
-                    
+
                     %stimulus that is shown on the left side
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIleft'+ [xJitLoc2; yJitLoc2; xJitLoc2; yJitLoc2], theori2,[], Dcontr);
                     imageRect_offsCIleft2=imageRect_offsCIleft;
