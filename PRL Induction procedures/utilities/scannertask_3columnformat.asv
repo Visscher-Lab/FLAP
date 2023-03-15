@@ -1,0 +1,60 @@
+%this script was written by Pinar Demirayak in March 2023 to create FSL
+%formatted 3 cloumn design files from the actual experiment
+stim_present=StimulusOnsetTime-startTime;
+for z=1:5
+    b=activeblocktype(runnumber,z);
+    if b==1 %gabors
+        if exist('gabor_analysis_matrix')==1
+            for zz=17:32
+            if z==1
+                gabor_analysis_matrix(zz,1)=stim_present(z,zz);
+                gabor_analysis_matrix(zz,2)=0.200;
+                gabor_analysis_matrix(zz,3)=1;
+            else
+                gabor_analysis_matrix((z*16)+zz,1)=stim_present(z,zz);
+                gabor_analysis_matrix(zz,2)=0.200;
+                gabor_analysis_matrix(zz,3)=1;
+            end
+        end
+        else
+        for zz=1:16
+            if z==1
+                gabor_analysis_matrix(zz,1)=stim_present(z,zz);
+                gabor_analysis_matrix(zz,2)=0.200;
+                gabor_analysis_matrix(zz,3)=1;
+            else
+                gabor_analysis_matrix((z*16)+zz,1)=stim_present(z,zz);
+                gabor_analysis_matrix(zz,2)=0.200;
+                gabor_analysis_matrix(zz,3)=1;
+            end
+        end
+        end
+    elseif b==2 %eggs
+        for zz=1:16
+            if z==1
+                eggs_analysis_matrix(zz,1)=stim_present(z,zz);
+                eggs_analysis_matrix(zz,2)=0.200;
+                eggs_analysis_matrix(zz,3)=1;
+            else
+                eggs_analysis_matrix((z*16)+zz,1)=stim_present(z,zz);
+                eggs_analysis_matrix(zz,2)=0.200;
+                eggs_analysis_matrix(zz,3)=1;
+            end
+        end
+    elseif b==3 %b/d
+        for zz=1:16
+            if z==1
+                bd_analysis_matrix(zz,1)=stim_present(z,zz);
+                bd_analysis_matrix(zz,2)=0.200;
+                bd_analysis_matrix(zz,3)=1;
+            else
+                bd_analysis_matrix((z*16)+zz,1)=stim_present(z,zz);
+                bd_analysis_matrix(zz,2)=0.200;
+                bd_analysis_matrix(zz,3)=1;
+            end
+        end
+    end
+end
+%writematrix(gabor_analysis_matrix,'gabor_3columnformat.txt','Delimiter','\t');
+%writematrix(eggs_analysis_matrix,'eggs_3columnformat.txt','Delimiter','\t');
+%writematrix(bd_analysis_matrix,'bd_3columnformat.txt','Delimiter','\t');
