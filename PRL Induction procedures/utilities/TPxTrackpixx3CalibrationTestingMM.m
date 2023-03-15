@@ -31,7 +31,7 @@ function TPxTrackpixx3CalibrationTestingMM(baseName)
 %multi screen.
 %Screen('Preference', 'SkipSyncTests', 1); 
  
-screenNumber = 2; %3 originally
+screenNumber = 0; %3 originally
 
 TPxCalibrationTestingMM(1,screenNumber, baseName)
 
