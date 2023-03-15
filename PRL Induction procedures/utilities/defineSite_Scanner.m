@@ -72,7 +72,7 @@ Screen('TextSize',w, 42);
 %% Cue Sound
 InitializePsychSound(1); %'optionally providing
 load('cuesounds.mat');
-sampRate=8192;
+%sampRate=8192;
 pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
 pahandle2= PsychPortAudio('Open', [], 1, 0, 44100, 2);%44100
 PsychPortAudio('FillBuffer', pahandle1, snd_left' ); % loads data into buffer

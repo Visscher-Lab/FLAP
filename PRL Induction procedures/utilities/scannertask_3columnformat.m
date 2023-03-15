@@ -36,6 +36,6 @@ base=[SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumb
 writematrix(gabor_analysis_matrix,[base '_gabor_3columnformat.txt'],'Delimiter','\t');
 writematrix(eggs_analysis_matrix,[base '_eggs_3columnformat.txt'],'Delimiter','\t');
 writematrix(bd_analysis_matrix,[base '_bd_3columnformat.txt'],'Delimiter','\t');
-movefile([base_ 'gabor_3columnformat.txt'], './data/');
-movefile([base 'eggs_3columnformat.txt'], './data/');
-movefile([base 'bd_3columnformat.txt'], './data/');
+movefile([base '_gabor_3columnformat.txt'], './data/');
+movefile([base '_eggs_3columnformat.txt'], './data/');
+movefile([base '_bd_3columnformat.txt'], './data/');
