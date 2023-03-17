@@ -1,4 +1,4 @@
-function TPxCalibrationTestingMM(isTPX,screenNumber, baseName)
+function TPxCalibrationTestingMM(isTPX,screenNumber, baseName, original, pix_deg)
 % TPxCalibrationTesting()
 %
 % This demo calibrates the current session for the TRACKPixx(TPx) or 
@@ -716,8 +716,8 @@ else
     else
         cx = 1920/2; % Point center in x
         cy = 1080/2; % Point center in y
-        dx = 200; % How big of a range to cover in X
-        dy = 117; % How big of a range to cover in Y     
+        dx = 300; %200; % How big of a range to cover in X
+        dy = 175; %117; % How big of a range to cover in Y     
     end
     xy = [  cx cy;...
         cx cy+dy;...
@@ -873,7 +873,7 @@ while (1)
     if (showing_dot && t - t3 >= 0.05)
       
         
-        if dynamic==1
+        if original==1
             %shrink target
         big_circle = big_circle - 3;
         small_circle = small_circle - 1;
@@ -886,6 +886,7 @@ while (1)
         else
             circle_colour = 0;
         end
+        
         %update target
         Screen('DrawDots', windowPtr, [xy(:,mod(i,nmb_pts)+1) xy(:,mod(i,nmb_pts)+1)], [big_circle;small_circle]', [255 255 255; circle_colour 0 0]', [], 1);
         Screen('DrawLine', windowPtr, [0,190,0], xy(1,mod(i,nmb_pts)+1) + small_circle/2, xy(2,mod(i,nmb_pts)+1), xy(1,mod(i,nmb_pts)+1) - small_circle/2, xy(2,mod(i,nmb_pts)+1),2);
@@ -894,13 +895,21 @@ while (1)
         
         coordt=xy(:,mod(i,nmb_pts)+1)';
         
-        widthWag=10;
+      widthWag=10;
         widthfix=7;
         squaresize=10;
         wsquaresize=20;
         distWag=0;
-        imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
-imageRectWW=[imageRectWW(1)+coordt(1) imageRectWW(2)+coordt(2) imageRectWW(3)+coordt(3) imageRectWW(4)+coordt(4)];
+        color_w=255;
+        CardinalOrdiagonal=1;
+        if CardinalOrdiagonal==1
+            diagon=45;
+        else
+            diagon=0;
+        end
+        imageRectWW2=CenterRect([0, 0, round(wsquaresize*pix_deg), round(wsquaresize*pix_deg)], windowRect);
+
+imageRectWW=[imageRectWW2(1)+coordt(1)-windowRect(3)/2 imageRectWW2(2)+coordt(2)-windowRect(4)/2 imageRectWW2(3)+coordt(1)-windowRect(3)/2 imageRectWW2(4)+coordt(2)-windowRect(4)/2];
 
         imageRectLeft=[imageRectWW(1)-(round(distWag*pix_deg)) imageRectWW(2) imageRectWW(3)-(round(distWag*pix_deg)) imageRectWW(4) ];
         imageRectRight=[imageRectWW(1)+(round(distWag*pix_deg)) imageRectWW(2) imageRectWW(3)+(round(distWag*pix_deg)) imageRectWW(4) ];
@@ -911,6 +920,7 @@ imageRectWW=[imageRectWW(1)+coordt(1) imageRectWW(2)+coordt(2) imageRectWW(3)+co
         Screen('FillArc',windowPtr,color_w,imageRectLeft,90-(widthWag/2)-180-diagon,widthWag)
         Screen('FillArc',windowPtr,color_w,imageRectUp,180-(widthWag/2)-180-diagon,widthWag)
         Screen('FillArc',windowPtr,color_w,imageRectRight,270-(widthWag/2)-180-diagon,widthWag)
+        
         
         
         
