@@ -188,6 +188,7 @@ try
                 end
             else
                 pastexptime=(((restorder-1)*43)+1)*TR;
+                pastexptime=(CueOnsetTime((restorder-1),totaltrial)+(2*TR)+(itiforrun((restorder-1),totaltrial)*TR))-startTime;
                 %pastexptime2=GetSecs-startTime;
                 while GetSecs < RestTime + rest_duration; %  rest for 15 sec
                     [keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
@@ -301,7 +302,7 @@ try
                 CueOnsetTime(totalblock,trial)=Screen('Flip',w);
                 if cue==1
 
-                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle1,1, [],[]);
+                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle1);
                 else
                     AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle2);
                 end
@@ -384,6 +385,7 @@ try
 
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    scannertask_3columnformat;
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     ShowCursor;
     Screen('CloseAll');
