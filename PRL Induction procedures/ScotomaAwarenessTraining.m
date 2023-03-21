@@ -19,7 +19,7 @@ try
     
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= 3  %0; 1=bits++; 2=display++
+    site= 4;  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
     scotomavpixx= str2num(answer{4,:});
     Isdemo=str2num(answer{5,:}); % full session or demo/practice
@@ -42,7 +42,7 @@ try
         baseName=['./data/' SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
         baseName=[cd '\data\' SUBJECT filename '_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-    elseif site==3
+    elseif site>2
         baseName=[cd '\data\' SUBJECT filename 'Pixx_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     

@@ -12,7 +12,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '2' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1', '4', '2', '2' , '2', '0', '1', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -37,13 +37,13 @@ try
     if exist('data')==0
         mkdir('data')
     end
-    
+    noiseOn=1;
     baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
     
     %% eyetracker initialization (eyelink)
     defineSite
     
-    CommonParametersLatint % define common parameters
+    CommonParametersLatInt % define common parameters
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -51,18 +51,11 @@ try
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
     
-    %% eyetracker initialization (eyelink)
     
-    if EyeTracker==1
-        if site==3
-            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
-        else
-            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
-        end
-        eyetrackerparameters % set up Eyelink eyetracker
-    end
     
     %% STAIRCASE
     cndt=2;
@@ -105,8 +98,7 @@ try
     
     b=mixtr(randperm(length(mixtr)),:);
     %% create stimuli
-    createGaborsLatint
-    
+    createGabors
     %% response
     KbName('UnifyKeyNames')
     
@@ -166,9 +158,7 @@ try
         Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(mixtr), 6);
     end
-    
-    
-    FLAPVariablesReset
+    noisestop=0;
     for trial=1:length(mixtr)
         
         % if   (mod(trial,tr*2)==1)
@@ -181,7 +171,7 @@ try
         %         end
         %   end
         
-        
+        FLAPVariablesReset
         TrialNum = strcat('Trial',num2str(trial));
         contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
         isorto=mixtr(trial,2);
@@ -195,8 +185,7 @@ try
         theintervals=[1 2];
         theans(trial)=randi(2); %generates answer for this trial
         interval=theintervals(theans(trial));
-        playsound=0;
-
+        
         %% Initialization/reset of several trial-based variables
         FLAPVariablesReset % reset some variables used in each trial
         while eyechecked<1
@@ -209,6 +198,8 @@ try
                     startfix(trial)=eyetime2;
                     starfix=98;
                 end
+                playsound=1;
+                isinoise=0;
                 %  Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                 fixationscript
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
@@ -228,79 +219,129 @@ try
             
             % beginning of the trial after fixation criteria satisfied in
             % previous loop
-
-            if (eyetime2-trial_time)>=waittime+ifi*2 && (eyetime2-trial_time)<waittime+ifi*2+presentationtime && fixating>400 && stopchecking>1
+            
+            if (eyetime2-trial_time)>= ifi*2 && (eyetime2-trial_time)< ifi*2+presentationtime && fixating>400 && stopchecking>1
                 if playsound==1
                     PsychPortAudio('FillBuffer', pahandle, bip_sound' )
                     PsychPortAudio('Start', pahandle);
                     playsound=0;
                 end
-                
+          
                 imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
                 
                 imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
-                
+                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];          
                 
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-              
-                Screen('DrawTexture',w, TheGabors(1,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
-                Screen('DrawTexture',w, TheGabors(1,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
-                if interval==1                  
-                    Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[], contr);
+                if noiseOn ==1
+                    createNoise
+                    %   Screen('DrawTexture', w, noisetex)
+                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[], 1);
+                    %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
+                    %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
+                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                   % Screen('FillOval',w, gray,imageRect_offscircle);
+                   Screen('FrameOval', w,[red], imageRect_offscircle, maskthickness/2, maskthickness/2);
+                   noisestop=1;
+                end
+         if noiseOn ==0
+                Screen('DrawTexture',w, TheGabors(3,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
+                Screen('DrawTexture',w, TheGabors(3,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
+         end
+         if interval==1
+                    Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], contr);
+                else
+              %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
                 end
                 
                 %     Screen('DrawTexture', w, texture(trial), [], imageRect_offs{tloc}, ori,[], contr );
                 stim_start = eyetime2;
-            
-            elseif (eyetime2-trial_time)>=waittime+ifi*2+presentationtime && (eyetime2-trial_time)<waittime+ifi*2+presentationtime+ISIinterval && fixating>400 && stopchecking>1
+                
+            elseif (eyetime2-trial_time)>= ifi*2+presentationtime && (eyetime2-trial_time)< ifi*2+presentationtime+ISIinterval && fixating>400 && stopchecking>1
                 %blank ISI
+                if isinoise==0
+                    noisestop=0;
+                isinoise=1;
+                end
                 playsound=1;
-
-            elseif (eyetime2-trial_time)>waittime+ifi*3+presentationtime+ISIinterval && (eyetime2-trial_time)<waittime+ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && stopchecking>1
+                %                 if noiseOn ==1
+                %                     createNoise
+                %                     %   Screen('DrawTexture', w, noisetex)
+                %                     Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[], []);
+                %
+                %                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
+                %                     %      Screen('DrawTexture', w, aperture, [], dstRect, [], 0)
+                %                     noisestop=1;
+                %                 end
+                
+                if noiseOn ==1
+                    createNoise
+                    %   Screen('DrawTexture', w, noisetex)
+                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[],0.5);
+                    %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
+                    %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
+                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+              %      Screen('FillOval',w, gray,imageRect_offscircle);
+              Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
+              noisestop=1;
+                end
+            elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval && (eyetime2-trial_time)< ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && stopchecking>1
                 if playsound==1
                     PsychPortAudio('FillBuffer', pahandle, bip_sound' )
                     PsychPortAudio('Start', pahandle);
                     playsound=0;
+                    noisestop=0;
                 end
-            
+                
                 imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];                
+                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
                 imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];                         
+                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-         
-                Screen('DrawTexture',w, TheGabors(1,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
-                Screen('DrawTexture',w, TheGabors(1,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
-                if interval==2                 
-                    Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[], contr);
+                 if noiseOn ==1
+                    createNoise
+                    %   Screen('DrawTexture', w, noisetex)
+                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[], 0.5);
+                    %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
+                    %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
+                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+              %      Screen('FillOval',w, gray,imageRect_offscircle);
+                    noisestop=1;
                 end
-                
-            elseif (eyetime2-trial_time)>waittime+ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ==0 && stopchecking>1; %present pre-stimulus and stimulus
+              if noiseOn==0
+                  Screen('DrawTexture',w, TheGabors(3,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
+                Screen('DrawTexture',w, TheGabors(3,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
+              end
+              if interval==2
+                    Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], contr);
+                else
+         %           Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
+                end
+            elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ==0 && stopchecking>1; %present pre-stimulus and stimulus
                 %   Screen('Close');
                 
-            elseif (eyetime2-trial_time)>waittime+ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ~=0 && stopchecking>1; %present pre-stimulus and stimulus
-                eyechecked=10^4;                
+            elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ~=0 && stopchecking>1; %present pre-stimulus and stimulus
+                eyechecked=10^4;
                 thekeys = find(keyCode);
                 thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);               
+                [secs  indfirst]=min(thetimes);
             end
             
-            eyefixation5            
+            eyefixation5
             Screen('FillOval', w, scotoma_color, scotoma);
-           
+            
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-           
+            
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             
             %% process eyedata in real time (fixation/saccades)
             if EyeTracker==1
-                if site<3
+                if EyetrackerType==1
                     GetEyeTrackerData
-                elseif site ==3
+                elseif EyetrackerType==2
                     GetEyeTrackerDatapixx
                 end
                 GetFixationDecision
@@ -324,9 +365,13 @@ try
                         FixatingNow = 0;
                     end
                 end
+            else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
+                end
             end
             [keyIsDown, keyCode] = KbQueueCheck;
-            
         end
         
         %Screen('Close', texture);
@@ -337,8 +382,6 @@ try
         
         staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
         Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=contr;
-        
-        
         
         if foo(theans(trial))
             resp = 1;
@@ -386,7 +429,6 @@ try
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
-        flipptime(trial).ix=[fliptime];
         angl(trial).a=FlankersOri;
         
         rispo(kk)=resp;
@@ -405,9 +447,6 @@ try
             clear EyeData
             EyeSummary.(TrialNum).EyeData(:,6) = EyeCode';
             clear EyeCode
-            
-            
-            
             if exist('FixIndex')==0
                 FixIndex=0;
             end
@@ -424,9 +463,7 @@ try
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
-            
             EyeSummary.(TrialNum).Separation = lambdaSeparation;
-            
             if exist('EndIndex')==0
                 EndIndex=0;
             end
@@ -440,21 +477,16 @@ try
             EyeSummary.(TrialNum).TimeStamps.Stimulus = stim_start;
             %StimStamp(TrialCounter,1);
             clear ErrorInfo
-            
         end
         
         if (mod(trial,50))==1 && trial>1
-            
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end
-        
         
         if closescript==1
             break;
         end
-        
         kk=kk+1;
-        
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');

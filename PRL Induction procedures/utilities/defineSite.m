@@ -99,7 +99,25 @@ elseif site==3   %UCR VPixx
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+ elseif site==4   %padova eyelink
+    %% psychtoobox settings
+
+    v_d=70; % viewing distance
+    screenNumber=max(Screen('Screens'));
+    PsychImaging('PrepareConfiguration');
+    %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+    PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+    %
+    oldResolution=Screen('Resolution',screenNumber,1920,1080);
+    SetResolution(screenNumber, oldResolution);
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
+    screencm=[69.8, 40];
+    %debug window
+    %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    %ScreenParameters=Screen('Resolution', screenNumber); %close all
+    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT  
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -134,14 +152,14 @@ InitializePsychSound(1); %'optionally providing
 % the 'reallyneedlowlatency' flag set to one to push really hard for low
 % latency'.
 %   pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-if site<3
-    pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-elseif site==3 % Windows
-    pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-%    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
-end
-
+% if site<3
+%     pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+%     pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
+% elseif site==3 % Windows
+%     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% end
+pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % feedback sounds
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -152,8 +170,8 @@ end
 bip_dur=0.15;
 Fs = 44100;                                     % Sampling Frequency
 t = (0:1/Fs:bip_dur-1/Fs);
-w = 2*pi*500;                                  % Radian Value To Create 1kHz Tone
-s = sin(w*t);                                   % Create Tone
+wv = 2*pi*500;                                  % Radian Value To Create 1kHz Tone
+s = sin(wv*t);                                   % Create Tone
 bip_sound=[s' s'];
 
 % pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
