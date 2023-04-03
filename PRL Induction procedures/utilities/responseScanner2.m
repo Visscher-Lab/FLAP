@@ -108,7 +108,7 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
 else % key was pressed during stimulus presentation
     while GetSecs<(ResponseFixationOnsetTime(totalblock,trial)+MaximumResponseTime2(totalblock,trial))
     end
-    afterafterresponseduringpresentation(totalblock,trial)=GetSecs;
+    %afterafterresponseduringpresentation(totalblock,trial)=GetSecs;
 end
 %%% end
 if exist ('responsekey','var')

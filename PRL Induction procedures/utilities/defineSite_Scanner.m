@@ -21,7 +21,7 @@ if site==1  % Windows @UAB Lab
     xloc=(resolution.height/2)+10;
 elseif site==2 %Pinar's Mac
     screencm=[70.8, 39.8];
-    v_d=123;
+    v_d=70; %123;
     AssertOpenGL;
     oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));

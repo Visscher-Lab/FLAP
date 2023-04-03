@@ -47,10 +47,11 @@ try
     % CI stimuli
     CIShapes_Scanner
     % define stimulus durations
-    cue_duration  = round(.250/ifi) * ifi; % cue duration in units of inter-frame intervals
+    %cue_duration  = round(.250/ifi) * ifi; % cue duration in units of inter-frame intervals
+    cue_duration= 0.250;
     stim_duration = round(.200/ifi) * ifi; % stimulus duration in units of inter-frame intervals
-    rest_duration = round(15/ifi)*ifi;
-
+    %rest_duration = round(15/ifi)*ifi;
+    rest_duration=15;
     eccentricity_X=[PRLx -PRLx]*pix_deg;
     eccentricity_Y=[PRLy PRLy]*pix_deg;
     k=1;% number of TTLs during active block
@@ -63,8 +64,8 @@ try
 
     KbName('UnifyKeyNames');
 
-    leftfingerresp = KbName('r');% left oriented gabor or six
-    rightfingerresp = KbName('b');% right oriented gabor or nine
+    leftfingerresp = KbName('b');% left oriented gabor or six, b works in mac
+    rightfingerresp = KbName('r');% right oriented gabor or nine, r works in mac
     escapeKey = KbName('ESCAPE');	% quit key
 
     % get keyboard for the key recording
@@ -161,13 +162,20 @@ try
         blocktype=activeblocktype(runnumber,totalblock);
         %totalblockstr=num2str(totalblock);
         if blocktype==4 % rest
+            restorder=find(activeblocktype(runnumber,:)==4);
+            if restorder==1
+                while GetSecs < startTime + TR 
+                end
+            else
+                while GetSecs < startTime + ((43*(restorder-1))*TR) -0.001 
+                end
+            end
             fixationscriptW;
             DrawFormattedText(w, 'x', 'center', xloc, white);%685
             RestTime=Screen('Flip',w);
-            clear keyIsDown keyTime keyCode
-            restorder=find(activeblocktype(runnumber,:)==4);
+            clear keyIsDown keyTime keyCode  
             if restorder==1
-                while GetSecs < RestTime + rest_duration; %  rest for 15 sec
+                while GetSecs < RestTime + (rest_duration-0.500); %  rest for 15 sec
                     [keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
                     if  keyIsDown
                         keyr(1,kr) = find(keyCode, 1);
@@ -187,10 +195,8 @@ try
                     end
                 end
             else
-                pastexptime=(((restorder-1)*43)+1)*TR;
                 pastexptime=(CueOnsetTime((restorder-1),totaltrial)+(2*TR)+(itiforrun((restorder-1),totaltrial)*TR))-startTime;
-                %pastexptime2=GetSecs-startTime;
-                while GetSecs < RestTime + rest_duration; %  rest for 15 sec
+                while GetSecs < RestTime + (rest_duration-0.500); %  rest for 15 sec
                     [keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
                     if  keyIsDown
                         keyr(1,kr) = find(keyCode, 1);
@@ -204,7 +210,7 @@ try
                             elseif keypresstime(1,kr)-keypresstime(1,kr-1)>=.5 %I added this because kbcheck gets ~30 keypresses since manual testing isn't quick enough
                                 TTL_timeforrest(jr)=keyTime;
                                 kr=kr+1;
-                                jr=jr+1
+                                jr=jr+1;
                             end
                         end
                     end
@@ -230,7 +236,7 @@ try
                 elseif trial==1 && totalblock>1 && activeblocktype(runnumber,totalblock-1)==4% it's the first trial of the following blocks and previous block is rest
                     %trialcase=2;
                     TimeToStopListening(totalblock,trial)=RestTime+rest_duration; %not functioning
-                    trialstarttime(totalblock,trial)=RestTime+rest_duration; %sonradan
+                    trialstarttime(totalblock,trial)=RestTime+rest_duration; 
                 elseif trial==1 && totalblock>1 && activeblocktype(runnumber,totalblock-1)~=4% it's the first trial of the following blocks and previous block is one of the active blocks
                     itiprevious=itiforrun(totalblock-1,totaltrial);
                     PreviousCueTime=CueOnsetTime(totalblock-1,totaltrial);
@@ -241,15 +247,15 @@ try
                     else
                         % trialcase32;
                         TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);
-                        trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+itiprevious; %sonradan
+                        trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
                     end
                 elseif trial>1 && itiforrun(totalblock,trial-1)>0 %if it's not the first trial of the block and previous iti is greater than 1TR
                     % trialcase=4;
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);
                     TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);%maybe functioning
-                    trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+itiprevious;%sonradan
-                elseif trial>1 && itiforrun(totalblock,trial-1)==0 %if it's not the first trial of the block and iti equals 1TR
+                    trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
+                elseif trial>1 && itiforrun(totalblock,trial-1)==0 %if it's not the first trial of the block and previous iti equals 0TR
                     %trialcase=5;
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);
@@ -299,14 +305,13 @@ try
                 while GetSecs < trialstarttime(totalblock,trial)-0.001 %TimeToStopListening(totalblock,trial)+(TR/2) %leftover iti wait
                 end
                 % show the cue
-                CueOnsetTime(totalblock,trial)=Screen('Flip',w);
+                %CueOnsetTime(totalblock,trial)=Screen('Flip',w);
+                CueOnsetTime(totalblock,trial)=GetSecs;
                 if cue==1
-
-                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle1);
+                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle1,[],[],[],CueOnsetTime(totalblock,trial)+cue_duration);
                 else
-                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle2);
+                    AudioCueOnsetTime(totalblock,trial)=PsychPortAudio('Start', pahandle2,[],[],[],CueOnsetTime(totalblock,trial)+cue_duration);
                 end
-                AudioCueOffsetTime(totalblock,trial)=GetSecs;
                 if totalblock==1
                     stimulusdirection_leftstim=activeblockstim(trial,1);stimulusdirection_rightstim=activeblockstim(trial,2); %what are shown in left and right is set
                     stimulusdirection_leftstim_num=stimulusdirection_leftstim;stimulusdirection_rightstim_num=stimulusdirection_rightstim; %what are shown in left and right is set
