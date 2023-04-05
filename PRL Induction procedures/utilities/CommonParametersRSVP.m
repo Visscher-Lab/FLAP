@@ -86,7 +86,7 @@ ITI=0.75; % time interval between trial start and forced fixation period
 fixationduration=0.5; %duration of forced fixation period
 
 %sequences of events for each trial (single trial events)
-time_of_events=[10 0.1 0.1 0.133 .4 0.133];
+time_of_events=[100 0.1 0.1 0.133 .4 0.133];
 %time_of_events=[10 0.1 1 0.133 .4 0.133];
 %time_of_events=[10 0.1 0.1 0.9133 .4 0.133];
 

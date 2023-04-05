@@ -88,7 +88,7 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     end
     
-
+    
     % Gabor stimuli
     if AssessmentType==1
         createGabors
@@ -207,22 +207,22 @@ try
         if AssessmentType==2
             if demo==0
                 shapeMat(:,1)= [1 9];
-%                 shapeMat(:,1)= [1 5];
+                %                 shapeMat(:,1)= [1 5];
             end
-%             shapeMat(:,1)= [1 5];
-            shapeMat(:,1)= [9 1];
+            %             shapeMat(:,1)= [1 5];
+            shapeMat(:,1)= [1 9];
             
-%1: 9 vs 6 19 elements
-%2: 9 vs 6 18 elements
-%3: p vs q
-%4 d vs b
-%5 eggs
-%6: diagonal line
-%7:horizontal vs vertical line
-%8: rotated eggs
-% 9: d and b more elements
-%10: p and q more elements
-%11: %% rotated 6 vs 9 with 19 elements
+            %1: 9 vs 6 19 elements
+            %2: 9 vs 6 18 elements
+            %3: p vs q
+            %4 d vs b
+            %5 eggs
+            %6: diagonal line
+            %7:horizontal vs vertical line
+            %8: rotated eggs
+            % 9: d and b more elements
+            %10: p and q more elements
+            %11: %% rotated 6 vs 9 with 19 elements
             
             shapesoftheDay=shapeMat;
             AllShapes=size((Targy));
@@ -282,12 +282,12 @@ try
     %% HERE starts trial loop
     randpick = 1;
     mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
-  % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
+    % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
     checkcounter = 0;
     resetcounter(1:2) = 1;
-   for trial=1:length(mixtr)
-         checkcounter = checkcounter + 1;
+    for trial=1:length(mixtr)
+        checkcounter = checkcounter + 1;
         if trial > 1 && mixtr(trial,2) == mixtr(trial-1,2) && mixtr(trial,1) == mixtr(trial-1,1)
             trialcounter = trialcounter + 1;
         else
@@ -295,22 +295,27 @@ try
                 trialcounter = 0;
             end
         end
-%         % practice
-%         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2) && (AssessmentType==2 || AssessmentType == 1)
-%             practicePassed=0;
-%         end
-%         
-%         if AssessmentType==2 || AssessmentType == 1
-%             while practicePassed==0
-%                 FLAPpracticeAssessment
-%             end
-%         end
-%         if practicePassed==2
-%             closescript=1;
-%             break
-%         end
+        %         % practice
+                if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+                    practicePassed=0;
+                end
+        if trial == 1
+            while practicePassed == 0
+                FLAPpracticeAssessment
+            end
+        elseif trial > 1           
+            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+                while practicePassed==0
+                    FLAPpracticeAssessment
+                end
+            end
+        end
+        %         if practicePassed==2
+        %             closescript=1;
+        %             break
+        %         end
         
-        practicePassed=1;
+%         practicePassed=1;
         %% training type-specific staircases
         
         if AssessmentType==1   %if it's a Gabor trial
@@ -557,7 +562,7 @@ try
                             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
                         imageRect_offsCI2=imageRect_offsCI;
                         %                         imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                        imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness ], wRect);
+                        imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
                         imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
                             imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
                     end
@@ -568,10 +573,10 @@ try
                         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
                     end
                     % here I draw the circle within which I show the contour target
-                    if trial>4
-                    Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);                     
-                                     Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-                    end
+%                     if trial>4
+                        Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+                        Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+%                     end
                     if skipmasking==0
                         assignedPRLpatch
                     end
@@ -682,9 +687,9 @@ try
             end
             if foo(theans(trial)) % if correct response
                 resp = 1;
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
-                    %                 if AssessmentType~=3
+                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
+                %                 if AssessmentType~=3
                 corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
                 if reversals(mixtr(trial,1),mixtr(trial,2))<2
                     sc.down=sc.steps(1);
@@ -786,9 +791,9 @@ try
                 break;
             else
                 resp = 0; % if wrong response
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
-                    resetcounter(mixtr(trial)) = 0;
+                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
+                resetcounter(mixtr(trial)) = 0;
                 if reversals(mixtr(trial,1),mixtr(trial,2)) < 2
                     sc.down = sc.steps(1);
                 elseif reversals(mixtr(trial,1),mixtr(trial,2)) >= 2
@@ -840,18 +845,18 @@ try
             %             end
         elseif AssessmentType==3 % no response to be recorded here
             if closescript==1
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
             else
-                    PsychPortAudio('FillBuffer', pahandle, corrS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+                PsychPortAudio('FillBuffer', pahandle, corrS'); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
             end
         else
             resp = 0;
             respTime=0;
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
-                    if reversals(mixtr(trial,1),mixtr(trial,2))<2
+            PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+            PsychPortAudio('Start', pahandle);
+            if reversals(mixtr(trial,1),mixtr(trial,2))<2
                 sc.down=sc.steps(1);
             elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
                 sc.down=sc.steps(2);

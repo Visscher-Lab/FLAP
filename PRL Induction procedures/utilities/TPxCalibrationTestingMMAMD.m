@@ -731,6 +731,8 @@ else
         cy = 1080/2; % Point center in y
         dx = 300; %200; % How big of a range to cover in X
         dy = 175; %117; % How big of a range to cover in Y     
+                dx = 600; %200; % How big of a range to cover in X
+        dy = 350; %117; % How big of a range to cover in Y     
 %     xy = [cx cy;...
 %        cx+dx cy;...
 %        cx-dx cy;...
@@ -741,7 +743,7 @@ else
 %        cx-dx cy+dy;...
 %        cx-dx cy-dy;...
 %        ];
-      
+       % 9 point calibration
           xy = [  cx cy;...
         cx cy+dy;...
         cx+dx cy;...
@@ -752,6 +754,20 @@ else
         cx+dx cy-dy;...
         cx-dx cy-dy];
    
+    % cross
+     xy = [  cx cy;...
+        cx cy+dy;...
+        cx+dx cy;...
+        cx cy-dy;...
+        cx-dx cy];
+     %   cx+dx cy+dy;...
+    %    cx-dx cy+dy;...
+    %    cx+dx cy-dy;...
+    %    cx-dx cy-dy];
+    
+        xy = [  cx cy;...
+        cx+dx cy+dy;...
+        cx-dx cy-dy]; 
         dx = 600; % How big of a range to cover in X
         dy = 350; % How big of a range to cover in Y
        xy2 = [  cx cy;...
@@ -869,7 +885,7 @@ end
 %loop until break or return;
 while (1)
     %Ensure that at least 2 seconds have elapsed since the previous target display
-    if ((t - t2) > 1.2) 
+    if ((t - t2) > 2.2) 
         if isTPX
             %====================== Chinrest ==============================
             %Screen position to calibrate in cartesian coordinates
@@ -910,7 +926,7 @@ while (1)
         end
     end
     %update the target dynamically every 0.07 seconds in showing_dot state
-    if (showing_dot && t - t3 >= 0.05)
+    if (showing_dot && t - t3 >= 0.15)
       
         
         if original==1
@@ -971,7 +987,7 @@ imageRectWW=[imageRectWW2(1)+coordt(1)-windowRect(3)/2 imageRectWW2(2)+coordt(2)
     
     %calibrate target if it has been displayed for at least .75 seconds and
     % we are currently in the showing_dot state
-    if (showing_dot && (t - t2) > 0.85)
+    if (showing_dot && (t - t2) > 1.85)
         % Get some samples!
         Screen('DrawDots', windowPtr, [xy(:,mod(i,nmb_pts)+1) xy(:,mod(i,nmb_pts)+1)], [14;9]', [255 255 255; 230 0 0]', [], 1);
         Screen('DrawLine', windowPtr, [0,190,0], xy(1,mod(i,nmb_pts)+1) + small_circle/2, xy(2,mod(i,nmb_pts)+1), xy(1,mod(i,nmb_pts)+1) - small_circle/2, xy(2,mod(i,nmb_pts)+1),1);
