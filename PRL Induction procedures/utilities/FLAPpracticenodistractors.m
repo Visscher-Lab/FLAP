@@ -20,10 +20,10 @@ performanceThresh=0.75;
 
 for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
-    theans(practicetrial)=randi(2);
+    theanspractice(practicetrial)=randi(2);
     
     if trainingType ==1
-        ori=theoris(theans(practicetrial)); % -45 and 45 degrees for the orientation of the target
+        ori=theoris(theanspractice(practicetrial)); % -45 and 45 degrees for the orientation of the target
     elseif trainingType ==2
         Orijit=Jitpracticearray(practicetrial);
         CIstimuliModIIIPractice % add the offset/polarity repulsion
@@ -213,7 +213,7 @@ for practicetrial=1:practicetrialnum
     
     if trialTimedout(practicetrial)== 0
         foo=(RespType==thekeys);
-        if foo(theans(practicetrial)) % if correct response
+        if foo(theanspractice(practicetrial)) % if correct response
             resp = 1;
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);

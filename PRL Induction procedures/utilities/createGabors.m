@@ -2,7 +2,7 @@
         
             sigma_pix = sigma_deg*pix_deg; % Gabor sigma
         max_contrast=1;
-        sflist=[1 2 3 4:2:18]; %cpd
+        sflist=1:18; %cpd
         G = exp(-((ax/sigma_pix).^2)-((ay/sigma_pix).^2));
         fixationlength = 10; % pixels
         [r, c] = size(G);

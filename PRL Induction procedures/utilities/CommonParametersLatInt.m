@@ -9,6 +9,7 @@ PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 
 maskthickness=pix_deg*1/4;
+maskthickness=pix_deg*3/4;
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
@@ -51,8 +52,8 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 
 %% gabor settings 
-sf=3; %spatial frequency of the gabor
-lambdaSeparation=4; %flankers distance in lamba (wavelength)
+sf=6; %spatial frequency of the gabor
+lambdaSeparation=3; %flankers distance in lamba (wavelength)
 lambda=1/sf; %lamba (wavelength)
 sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
 sigma_pix = sigma_deg*pix_deg;

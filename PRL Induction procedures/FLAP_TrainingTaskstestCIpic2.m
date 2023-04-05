@@ -45,7 +45,7 @@ try
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '2' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1', '2', '0', '2' , '0', '1', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -54,7 +54,7 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
-    site = 3 % training site (UAB vs UCR vs Vpixx)
+    site = 3; % training site (UAB vs UCR vs Vpixx)
     trainingType=str2num(answer{3,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     demo=str2num(answer{4,:}); % are we testing in debug mode?
     test=demo;
@@ -63,7 +63,9 @@ try
     ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
     TRLlocation= str2num(answer{9,:}); %1=left, 2=right
-    
+    if EyeTracker==0
+    calibration=0;
+    end
     %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -78,14 +80,16 @@ try
     CommonParametersFLAP % define common parameters
     
     %% eyetracker initialization (eyelink)
-    
-    if EyeTracker==1
+
+        if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
     %% Stimuli creation
     
@@ -238,21 +242,9 @@ try
             load NewShapeMat.mat;         % shape parameters for each session of training
             shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
             if demo==1
-<<<<<<< Updated upstream
-                shapeMat(:,1)= [10 6 7];
-=======
                 shapeMat(:,1)= [1 5 9];
->>>>>>> Stashed changes
             end
-            
-        %    shapeMat(:,1)= [5 2 7]; %[5 6 4]
-                          %  shapeMat(:,1)= [1 2 3];
-<<<<<<< Updated upstream
-                shapeMat(:,1)= [10 6 7];
-=======
-                shapeMat(:,1)= [1 5 9];
->>>>>>> Stashed changes
-
+                shapeMat(:,1)= [9 5 1];
             shapesoftheDay=shapeMat(:,expDay);
         end
         
@@ -438,7 +430,10 @@ try
       %         practicePassed=1;
 
         end
-        
+
+        if test==0    
+           practicePassed=1; 
+        end
         if trainingType<3
             while practicePassed==0
           %      FLAPpractice
@@ -488,7 +483,7 @@ try
             ori=theoris(theans(trial));
         elseif trainingType==2 || (trainingType==4 && mixtr(trial,3)==2)
             theans(trial)=randi(2);
-            CIstimuliModII % add the offset/polarity repulsion
+            CIstimuliModIItest % add the offset/polarity repulsion
         end
         %% target location calculation
         if trainingType==1 || trainingType==2 % if training type 1 or 2, stimulus always presented in the center
@@ -742,9 +737,9 @@ try
                     Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
               %                    Screen('FrameOval', w,[gray*1.5], imageRect_offsCImask, 1, 1);
 fixationscriptW
-                                  if skipmasking==0
-                        assignedPRLpatch
-                    end
+if skipmasking==0
+    assignedPRLpatch
+end
                     imagearray{trial}=Screen('GetImage', w);
                     
                 end
@@ -809,10 +804,11 @@ fixationscriptW
             
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             %% process eyedata in real time (fixation/saccades)
-            if EyeTracker==1
-                if site<3
+          dd=49;
+          if EyeTracker==1
+                if EyetrackerType==1
                     GetEyeTrackerData
-                elseif site ==3
+                elseif EyetrackerType==2
                     GetEyeTrackerDatapixx
                 end
                 GetFixationDecision
@@ -835,6 +831,11 @@ fixationscriptW
                         FixIndex(FixCount,2) = CheckCount-1;
                         FixatingNow = 0;
                     end
+                end
+            else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
                 end
             end
             [keyIsDown, keyCode] = KbQueueCheck;

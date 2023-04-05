@@ -53,10 +53,7 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     else
         EyetrackerType=0;
-    end
-    
-    
-    
+    end   
     %% STAIRCASE
     cndt=2;
     ca=2;
@@ -73,9 +70,11 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 2;                        % # of correct answers to go one step down
     max_contrast=.7;
+    max_noise=1;
     Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
     Contlist(1)=1;
-    
+    Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
+    Noiselist=fliplr(Noiselist);
     stepsizes=[4 4 3 2 1];
     
     
@@ -86,8 +85,8 @@ try
     
     n_blocks=1;
     
-    trials=10 %100;
-    blocks=1 %10;
+    trials=10; %100;
+    blocks=;1 %10;
     n_blocks=round(trials/blocks);   %number of trials per miniblock
     mixtr=[];
     for j=1:blocks
@@ -173,7 +172,13 @@ try
         
         FLAPVariablesReset
         TrialNum = strcat('Trial',num2str(trial));
-        contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+                    contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+
+        if noiseOn==1
+       noise_level= Noiselist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        else 
+            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+    end
         isorto=mixtr(trial,2);
         if isorto==1
             FlankersOri=0;
@@ -226,34 +231,40 @@ try
                     PsychPortAudio('Start', pahandle);
                     playsound=0;
                 end
-          
+                
                 imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
                 
                 imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];          
+                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
                 
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                 if noiseOn ==1
-                    createNoise
+                    subNoise
                     %   Screen('DrawTexture', w, noisetex)
-                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[], 1);
+                    if interval==1
+                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [],[],  contr);
+                    else
+                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                    end
+                    
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
                     %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                   % Screen('FillOval',w, gray,imageRect_offscircle);
-                   Screen('FrameOval', w,[red], imageRect_offscircle, maskthickness/2, maskthickness/2);
-                   noisestop=1;
+                    imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
+                    % Screen('FillOval',w, gray,imageRect_offscircle);
+                    Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
+                    noisestop=1;
                 end
-         if noiseOn ==0
-                Screen('DrawTexture',w, TheGabors(3,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
-                Screen('DrawTexture',w, TheGabors(3,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
-         end
-         if interval==1
-                    Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], contr);
+                if noiseOn ==0
+                    Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
+                    Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
+                
+                if interval==1
+                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
                 else
-              %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
+                end
+                %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
                 end
                 
                 %     Screen('DrawTexture', w, texture(trial), [], imageRect_offs{tloc}, ori,[], contr );
@@ -263,7 +274,7 @@ try
                 %blank ISI
                 if isinoise==0
                     noisestop=0;
-                isinoise=1;
+                    isinoise=1;
                 end
                 playsound=1;
                 %                 if noiseOn ==1
@@ -277,16 +288,17 @@ try
                 %                 end
                 
                 if noiseOn ==1
-                    createNoise
+                    subNoise
                     %   Screen('DrawTexture', w, noisetex)
-                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[],0.5);
+                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
                     %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-              %      Screen('FillOval',w, gray,imageRect_offscircle);
-              Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
-              noisestop=1;
+                    %      Screen('FillOval',w, gray,imageRect_offscircle);
+                    Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
+                    noisestop=1;
                 end
+            
             elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval && (eyetime2-trial_time)< ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && stopchecking>1
                 if playsound==1
                     PsychPortAudio('FillBuffer', pahandle, bip_sound' )
@@ -301,24 +313,30 @@ try
                     imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                 if noiseOn ==1
-                    createNoise
+                if noiseOn ==1
+                    subNoise
                     %   Screen('DrawTexture', w, noisetex)
-                    Screen('DrawTexture', w, noisetex, [], imageRect_offs, [],[], 0.5);
-                    %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
-                    %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-              %      Screen('FillOval',w, gray,imageRect_offscircle);
+                    if interval==2
+                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [],[],  contr);
+                    else
+                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                    end
+                     imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
+                    % Screen('FillOval',w, gray,imageRect_offscircle);
+                    Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
                 end
-              if noiseOn==0
-                  Screen('DrawTexture',w, TheGabors(3,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
-                Screen('DrawTexture',w, TheGabors(3,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
-              end
-              if interval==2
-                    Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], contr);
+                
+              
+                if noiseOn==0
+                    Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
+                    Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
+                
+                if interval==2
+                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
                 else
-         %           Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
+                    %           Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
+                end
                 end
             elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ==0 && stopchecking>1; %present pre-stimulus and stimulus
                 %   Screen('Close');
