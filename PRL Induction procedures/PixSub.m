@@ -215,6 +215,7 @@ try
                   fixationscript
               end
               skiptrial=0;
+              soundon=1;
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 trial_time = eyetime2;
@@ -228,12 +229,16 @@ try
                 clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
                 clear stimstar subimageRect_offs_cue
                 fixating=1500;
-            elseif (eyetime2-pretrial_time)>ITI && fixating<1000 && (eyetime2-pretrial_time)>trialTimeout
-                                   PsychPortAudio('FillBuffer', pahandle, errorS');
-            PsychPortAudio('Start', pahandle);
-            skiptrial=1;
+            elseif (eyetime2-pretrial_time)>ITI && fixating<1000 && (eyetime2-pretrial_time)>trialTimeout && sum(keyCode)==0
+                                     DrawFormattedText(w, 'Chiama lo sperimentatore', 'center', 'center', white);
+                                     if soundon==1
+                                         PsychPortAudio('FillBuffer', pahandle, errorS');
+                                         PsychPortAudio('Start', pahandle);
+                                         soundon=0;
+                                     end
+            elseif (eyetime2-pretrial_time)>ITI && fixating<1000 && (eyetime2-pretrial_time)>trialTimeout && sum(keyCode)>0
+                  skiptrial=1;
             eyechecked=10^4;
-
             end
             
             % beginning of the trial after fixation criteria satisfied in
