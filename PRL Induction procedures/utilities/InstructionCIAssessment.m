@@ -2,31 +2,31 @@
 
 Screen('FillRect', w, gray);
 if mixtr(trial,1)==1
-    if trial == 1 || mod(trial,60)==0 && mixtr(trial,2) == 1
+    if trial == 1 || mod(trial,trials)==1 && mixtr(trial,2) == 1
         DrawFormattedText(w, 'Here you will see the target on the LEFT side of the scotoma \n\n Press the left arrow key if you see a 9 \n \n Press the right arrow key if you see a 6  \n \n \n \n Press any key to start',...
             'center','center',white);
     else
-        if mod(trial,60) == 0 && mixtr(trial,2) == 2
+        if mod(trial,trials) == 1 && mixtr(trial,2) == 2
             DrawFormattedText(w, 'Here you will see the target on the RIGHT side of the scotoma \n\n Press the left arrow key if you see a 9 \n \n Press the right arrow key if you see a 6  \n \n \n \n Press any key to start',...
                 'center','center',white);
         end
     end
 elseif mixtr(trial,1)==2
-    if mod(trial,60)==0 && mixtr(trial,2) == 1
-        DrawFormattedText(w, 'Here you will see the target on the LEFT side of the scotoma \n\n Press the left arrow key if you see an egg pointed to the left \n \n Press  the right arrow key if you see an egg pointed to the right \n \n \n \n Press any key to start',...
+    if mod(trial,trials)==1 && mixtr(trial,2) == 1
+        DrawFormattedText(w, 'Here you will see the target on the LEFT side of the scotoma \n\n Press the left arrow key if you see a d \n \n Press  the right arrow key if you see a b \n \n \n \n Press any key to start',...
             'center','center',white);
     else
-        if mod(trial,60) == 0 && mixtr(trial,2) == 2
-            DrawFormattedText(w, 'Here you will see the target on the RIGHT side of the scotoma \n\n Press the left arrow key if you see an egg pointed to the left \n \n Press  the right arrow key if you see an egg pointed to the right  \n \n \n \n Press any key to start',...
+        if mod(trial,trials) == 1 && mixtr(trial,2) == 2
+            DrawFormattedText(w, 'Here you will see the target on the RIGHT side of the scotoma \n\n Press the left arrow key if you see a d \n \n Press  the right arrow key if you see a b  \n \n \n \n Press any key to start',...
                 'center','center',white);
         end
     end
 end
-
-imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
-    imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
-imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
-    imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
+theeccentricity_X_instructions = 6.5*pix_deg;
+imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X_instructions, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X_instructions,...
+    imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X_instructions, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X_instructions]; % defining the rect of the shape or image for one of the two sub images
+imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X_instructions, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X_instructions,...
+    imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X_instructions, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X_instructions]; % defining the rect of the shape or image for one of the two sub images
 imageRect_offsCI2instr=imageRect_offsCIinstr;
 imageRect_offsCI2instr2=imageRect_offsCIinstr2;
 

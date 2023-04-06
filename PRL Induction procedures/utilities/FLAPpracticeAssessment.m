@@ -7,16 +7,16 @@ if AssessmentType==1
     stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
     practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
 elseif AssessmentType==2
-    Jitpracticearray=[0 2 4 6 8 10 12 14 16 18 20 22 24]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]; % stimulus duration practice
-    targethighercontrast=[0 0 0 0 0 0 0 0 0 0 0 0]; % target contrast
+    Jitpracticearray=[0 0 1 1 2 2 3 3 4 4 5 5]; %  stimulus ori practice
+    stimulusdurationpracticearray=[0.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2]; % stimulus duration practice
+    targethighercontrast=[1 0 1 0 1 0 1 0 1 0 0 0]; % target contrast
     Tscat=0;
     practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 end
 trialTimeout=20;
 FlickerTime=0;
 trialTimeout=10;
-performanceThresh=0.75;
+performanceThresh=0.7;
 
 for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response

@@ -3,13 +3,15 @@
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 
     scotomadeg=10; % size of the scotoma in degrees of visual angle
+    smallscotomadeg=1;
     stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
    scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
+   smallscotomarect = CenterRect([0, 0, smallscotomadeg*pix_deg, smallscotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
 
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 
 maskthickness=pix_deg*1/4;
-maskthickness=pix_deg*3/4;
+maskthickness=pix_deg*1.85;
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
@@ -26,20 +28,23 @@ NoPRL_x_axis=7.5;
 NoPRL_y_axis=0;
 flankersContrast=.6;
 
-presentationtime=2.333;
-ISIinterval=0.5;
-
 %% general temporal parameters (trial events)
 
 ITI=0.75; % time interval between trial start and forced fixation period
 fixationduration=0.5; %duration of forced fixation period
-ISIinterval=0.5; % time interval between two stimulus intervals
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
 if exist('test', 'var')
     if test==1
-        stimulusduration=2.133; % stimulus duration during debugging
-    else
-        stimulusduration=0.2; % stimulus duration during actual sessions
+        presentationtime=2.133; % stimulus duration during debugging
+   ISIinterval=0.5;
+ else
+        if  trainingType==0
+            presentationtime=0.2; % stimulus duration during actual sessions
+            ISIinterval=0.5; % time interval between two stimulus intervals
+        else
+            presentationtime=0.05; % stimulus duration during actual sessions
+            ISIinterval=0.3; % time interval between two stimulus intervals
+        end
     end
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
@@ -52,17 +57,33 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 
 %% gabor settings 
-sf=6; %spatial frequency of the gabor
-lambdaSeparation=3; %flankers distance in lamba (wavelength)
-lambda=1/sf; %lamba (wavelength)
-sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
-sigma_pix = sigma_deg*pix_deg;
-lambdadeg=lambdaSeparation*lambda*pix_deg;
+if trainingType==0
+    sf=6; %spatial frequency of the gabor
+    lambdaSeparation=3; %flankers distance in lamba (wavelength)
+    lambda=1/sf; %lamba (wavelength)
+    sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
+    lambdadeg=lambdaSeparation*lambda*pix_deg;
+    ori=0; % Gaboer target orientation
+    sigma_pix = sigma_deg*pix_deg;
 imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
+else
+    sf=1; %spatial frequency of the gabor
+    sigma_deg=2.5; % from Shibata et al. (2017)
+    ori=30; % Gaboer target orientation
+    sigma_pix = sigma_deg*pix_deg;
+imsize=sigma_pix; %Gabor mask (effective stimulus size)
+end
+
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
 imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
 [xc, yc] = RectCenter(wRect);
 fixwindowPix=fixwindow*pix_deg;
 midgray=0.5;
-ori=0; % Gaboer target orientation
+
+
+    xlocs=[PRL_x_axis NoPRL_x_axis];
+    ylocs=[PRL_y_axis NoPRL_y_axis];
+    
+    eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
+    eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
