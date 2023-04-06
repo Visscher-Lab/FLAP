@@ -8,14 +8,15 @@
 %         noisetex=Screen('MakeTexture', w, noisemat, [], [],2); 
 %         
         
-                    sigma_pix = sigma_deg*pix_deg; % Gabor sigma
+  %                  sigma_pix = sigma_deg*pix_deg; % Gabor sigma
         max_contrast=1;
-        sflist=[1 2 3 4:2:18]; %cpd
+     %   sflist=[1 2 3 4:2:18]; %cpd
+     sflist=sf;
         G = exp(-((ax/sigma_pix).^2)-((ay/sigma_pix).^2));
         fixationlength = 10; % pixels
         [r, c] = size(G);
         phases= [pi, pi/2, 2/3*pi, 1/3*pi];
-        
+        phases= [rand rand rand]*pi;
         circle = ax.^2 + ay.^2 <= imsize^2;         %circular mask for Gabor patch
         rot=0*pi/180; %redundant but theoretically correct
                 f_gabor=(sflist(1)/pix_deg)*2*pi;
@@ -33,7 +34,7 @@
         idx=randperm(numel(noisemat));
         idx=idx(1:round(numel(noisemat)*noise_level));
         m(idx)=noisemat(idx);
-                TheGabors(3,1)=Screen('MakeTexture', w, m,[],[],2);
+                TheGabors=Screen('MakeTexture', w, m,[],[],2);
         
         TheNoise=Screen('MakeTexture', w, noisemat,[],[],2);
         end
