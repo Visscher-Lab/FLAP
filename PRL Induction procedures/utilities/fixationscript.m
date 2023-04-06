@@ -2,7 +2,7 @@
 
 
 
- fixationlength = 40; 
+ fixationlength = 10; 
 
  widthfix=5;
     p1x=-4;
