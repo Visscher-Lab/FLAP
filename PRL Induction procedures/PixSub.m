@@ -67,7 +67,7 @@ try
         Contlist(1)=1;
     else % orientation discrimination in noise
         trials=40; %100;
-              trials=5; %100;
+            %  trials=5; %100;
   blocks=8; %10;
         mixtr=[];
         for ii=1:blocks
@@ -76,12 +76,12 @@ try
         cndt=1; % Eccentricity (left vs right side)
        % ca=1; % empty variable
        ca=blocks;
-        StartNoise=64;  %15
+        StartNoise=13;  %15
         thresh(1:cndt, 1:blocks)=StartNoise;
         max_noise=1;
         
         Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
-        Noiselist=fliplr(Noiselist);
+     %   Noiselist=fliplr(Noiselist);
     end
     reversals(1:cndt, 1:ca)=0;
     isreversals(1:cndt, 1:ca)=0;
@@ -142,8 +142,12 @@ try
     
     Screen('FillRect', w, gray);
     colorfixation = white;
-    DrawFormattedText(w, 'Press (a) if target in the first interval, press (b) if in the second \n \n \n \n Press any key to start', 'center', 'center', white);
-    Screen('Flip', w);
+    if site==4
+        DrawFormattedText(w, 'Premi (a) se vedi la griglia nel primo intervallo, premi (b) se si trova nel secondo \n \n \n \n Premi qualsiasi tasto per iniziare', 'center', 'center', white);
+    else
+        DrawFormattedText(w, 'Press (a) if target in the first interval, press (b) if in the second \n \n \n \n Press any key to start', 'center', 'center', white);
+    end
+   Screen('Flip', w);
     KbQueueWait;
         WaitSecs(0.7);
 
@@ -207,7 +211,10 @@ try
                 playsound=1;
                 isinoise=0;
                 %  Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                fixationscript
+              if ScotomaPresent==1
+                  fixationscript
+              end
+              skiptrial=0;
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 trial_time = eyetime2;
@@ -221,6 +228,12 @@ try
                 clear imageRect_offs imageRect_offs_flank1 imageRect_offs_flank2 imageRect_offscircle imageRect_offscircle1 imageRect_offscircle2
                 clear stimstar subimageRect_offs_cue
                 fixating=1500;
+            elseif (eyetime2-pretrial_time)>ITI && fixating<1000 && (eyetime2-pretrial_time)>trialTimeout
+                                   PsychPortAudio('FillBuffer', pahandle, errorS');
+            PsychPortAudio('Start', pahandle);
+            skiptrial=1;
+            eyechecked=10^4;
+
             end
             
             % beginning of the trial after fixation criteria satisfied in
@@ -283,14 +296,14 @@ try
                 %                     %      Screen('DrawTexture', w, aperture, [], dstRect, [], 0)
                 %                     noisestop=1;
                 %                 end
-                
-                if trainingType ==1
-                    subNoise
-                    Screen('DrawTexture', w, TheNoise, [], imageRect_offs, ori,[]);
-          %          imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                    Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
-                    noisestop=1;
-                end
+              
+                % if we want noise during ISI
+%                 if trainingType ==1
+%                     subNoise
+%                     Screen('DrawTexture', w, TheNoise, [], imageRect_offs, ori,[]);
+%                     Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
+%                     noisestop=1;
+%                 end
                 
             elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval && (eyetime2-trial_time)< ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && stopchecking>1
                 if playsound==1
@@ -394,7 +407,7 @@ try
         end
         
         % code the response
-
+if skiptrial==0
         foo=(RespType==thekeys);
         
         staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
@@ -459,7 +472,7 @@ try
            angl(trial).a=FlankersOri;
                    kontrast(kk)=contr;
        else
-                              kontrast(kk)=noise_level;
+                              noisevalues(kk)=noise_level;
 
        end
         rispo(kk)=resp;
@@ -504,7 +517,7 @@ try
             %StimStamp(TrialCounter,1);
             clear ErrorInfo
         end
-        
+    end
         if (mod(trial,50))==1 && trial>1
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end

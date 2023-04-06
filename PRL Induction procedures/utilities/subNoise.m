@@ -32,7 +32,7 @@
         
         % replace signal with noise
         idx=randperm(numel(noisemat));
-        idx=idx(1:round(numel(noisemat)*noise_level));
+        idx=idx(1:round(numel(noisemat)*(1-noise_level)));
         m(idx)=noisemat(idx);
                 TheGabors=Screen('MakeTexture', w, m,[],[],2);
         

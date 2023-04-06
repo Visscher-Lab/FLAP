@@ -210,7 +210,7 @@ try
                 %                 shapeMat(:,1)= [1 5];
             end
             %             shapeMat(:,1)= [1 5];
-            shapeMat(:,1)= [1 9];
+            shapeMat(:,1)= [9 1];
             
             %1: 9 vs 6 19 elements
             %2: 9 vs 6 18 elements
