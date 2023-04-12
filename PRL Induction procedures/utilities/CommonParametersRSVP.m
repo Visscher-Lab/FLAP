@@ -80,14 +80,15 @@ imsize=stimulussize*pix_deg;
     
 %% Temporal parameters
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
-trialTimeout = 8; % how long (seconds) should a trial last without a response
+trialTimeout = 38; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
 ITI=0.75; % time interval between trial start and forced fixation period
 fixationduration=0.5; %duration of forced fixation period
 
 %sequences of events for each trial (single trial events)
-time_of_events=[10 0.1 0.1 0.133 .4 0.133];
+time_of_events=[100 0.1 0.1 0.133 .4 0.133];
 %time_of_events=[10 0.1 1 0.133 .4 0.133];
+%time_of_events=[10 0.1 0.1 0.9133 .4 0.133];
 
 %time_of_events=[1 1 1 1 1 1]*5;
 calibrationtolerance=5; % accepted time with no eye info before calling for recalibration

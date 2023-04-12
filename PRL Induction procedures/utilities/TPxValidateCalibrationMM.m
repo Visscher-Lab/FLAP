@@ -261,10 +261,13 @@ function calib_appected = TPxValidateCalibrationMM(targets, isTPX, screenHandle,
             Screen('CloseAll');
         end
     end
+    
+    if exist('avg_gaze_pos_l_x')
     validation_left_x=avg_gaze_pos_l_x;
     validation_left_y=avg_gaze_pos_l_y;
     validation_right_x=avg_gaze_pos_r_x;
     validation_right_y=avg_gaze_pos_r_y;
     validation_results=results;
+    end
     save([baseName 'validationoutcome']) %at the end of each block save the data
 end

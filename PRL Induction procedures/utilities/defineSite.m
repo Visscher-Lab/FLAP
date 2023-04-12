@@ -71,12 +71,12 @@ elseif site==2   %UAB
     fixationlengthx=10;
 elseif site==3   %UCR VPixx
     %% psychtoobox settings
-    
+    screenNumber=max(Screen('Screens'));
     initRequired= calibration; %do we want vpixx calibration?
     if initRequired>0
         fprintf('\nInitialization required\n\nCalibrating the device...');
         %TPxTrackpixx3CalibrationTesting;
-        TPxTrackpixx3CalibrationTestingMM(baseName)
+        TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
     end
     
     %Connect to TRACKPixx3
@@ -84,13 +84,13 @@ elseif site==3   %UCR VPixx
     Datapixx('SetTPxAwake');
     Datapixx('RegWrRd');
     v_d=70; % viewing distance
-    screenNumber=max(Screen('Screens'));
+    
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     %
-    oldResolution=Screen('Resolution',screenNumber,1920,1080);
-    SetResolution(screenNumber, oldResolution);
+   % oldResolution=Screen('Resolution',screenNumber,1920,1080);
+    %SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
     screencm=[69.8, 40];
