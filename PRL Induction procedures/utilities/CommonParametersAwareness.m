@@ -24,7 +24,7 @@ prefixationsquare=0.5; % time interval between trial start and forced fixation p
 cueonset=0.2; % time between end of the forced fixation period and the cue (value works for Acuity and
 %crowding, for attention the value is jittered to increase time uncertainty
 Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
-fixTime=0.5/3;
+fixTime=0.5;
 effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
 
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data

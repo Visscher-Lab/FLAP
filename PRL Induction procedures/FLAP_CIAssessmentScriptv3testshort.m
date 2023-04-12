@@ -77,8 +77,7 @@ try
     LocX = [-7.5, 7.5];
     LocY = [0, 0];
     
-    %% eyetracker initialization (eyelink)
-    
+    %% eyetracker initialization (eyelink)   
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -86,8 +85,9 @@ try
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
-    
     
     % Gabor stimuli
     if AssessmentType==1
@@ -301,7 +301,7 @@ try
                 end
         if trial == 1
             while practicePassed == 0
-                FLAPpracticeAssessment
+                FLAPpracticeAssessmentfb
             end
         elseif trial > 1           
             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
@@ -642,9 +642,9 @@ try
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             %% process eyedata in real time (fixation/saccades)
             if EyeTracker==1
-                if site<3
+                if EyetrackerType==1
                     GetEyeTrackerData
-                elseif site ==3
+                elseif EyetrackerType==2
                     GetEyeTrackerDatapixx
                 end
                 GetFixationDecision
@@ -668,6 +668,11 @@ try
                         FixatingNow = 0;
                     end
                 end
+                                          else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
+                end  
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end

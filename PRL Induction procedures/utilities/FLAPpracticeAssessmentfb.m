@@ -17,8 +17,10 @@ trialTimeout=20;
 FlickerTime=0;
 trialTimeout=10;
 performanceThresh=0.7;
-
+feedbackduration=1;
 for practicetrial=1:practicetrialnum
+    presentfeedback=0;
+    respTime=10^6;
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
     theanspractice(practicetrial)=randi(2);
     
@@ -104,7 +106,7 @@ for practicetrial=1:practicetrialnum
             break;
         end
         %% target loop
-        if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10 && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+        if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10 && (eyetime2-pretrial_time)<=trialTimeout  && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET
             if AssessmentType==1
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
@@ -141,29 +143,46 @@ for practicetrial=1:practicetrialnum
                 stim_start_frame=eyetime2;
                 stimstar=1;
             end
-        elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus && flickerdone>1
-        %    eyechecked=10^4; % exit loop for this practicetrial
-            thekeys = find(keyCode);
-            if length(thekeys)>1
-                thekeys=thekeys(1);
+            
+            if  sum(keyCode) ~=0
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs,  indfirst]=min(thetimes);
+                respTime=eyetime2;
+                      presentfeedback=1;
+  end
+
+        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+        
+            if  sum(keyCode) ~=0
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs,  indfirst]=min(thetimes);
+                respTime=eyetime2;
+            presentfeedback=1;
             end
-            thetimes=keyCode(thekeys);
-            [secs,  indfirst]=min(thetimes);
-            respTime=secs;
-                        eyechecked=10^4; % exit loop for this practicetrial
-        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
-        %    eyechecked=10^4; % exit loop for this practicetrial
-            thekeys = find(keyCode);
-            if length(thekeys)>1
-                thekeys=thekeys(1);
-            end
-            thetimes=keyCode(thekeys);
-            [secs,  indfirst]=min(thetimes);
-            respTime=secs;
-                        eyechecked=10^4; % exit loop for this practicetrial
+        elseif  presentfeedback==1 && (eyetime2-respTime)<= feedbackduration
+   %here I draw the target contour
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                if targethighercontrast(practicetrial)==1
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                end
+                %                 % here I draw the circle within which I show the contour target
+                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+                        elseif  presentfeedback==1 && (eyetime2-respTime)> feedbackduration
+presentfeedback=2;
         elseif (eyetime2-pretrial_time)>=trialTimeout
-            stim_stop=GetSecs;
             trialTimedout(practicetrial)=1;
+            presentfeedback=1;
+        elseif  presentfeedback>1 
+            stim_stop=GetSecs;
             %    [secs  indfirst]=min(thetimes);
             eyechecked=10^4; % exit loop for this practicetrial
         end
@@ -181,11 +200,11 @@ for practicetrial=1:practicetrialnum
         VBL_Timestamp=[VBL_Timestamp eyetime2];
         %% process eyedata in real time (fixation/saccades)
         if EyeTracker==1
-                if EyetrackerType==1
-                    GetEyeTrackerData
-                elseif EyetrackerType==2
-                    GetEyeTrackerDatapixx
-                end
+            if site<3
+                GetEyeTrackerData
+            elseif site ==3
+                GetEyeTrackerDatapixx
+            end
             GetFixationDecision
             if EyeData(end,1)<8000 && stopchecking<0
                 trial_time = GetSecs; %start timer if we have eye info
@@ -207,7 +226,7 @@ for practicetrial=1:practicetrialnum
                     FixatingNow = 0;
                 end
             end
-                                                  else
+                                                 else
                 if stopchecking<0
                     trial_time = eyetime2; %start timer if we have eye info
                     stopchecking=10;
