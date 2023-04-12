@@ -167,7 +167,7 @@ try
                 while GetSecs < startTime + TR 
                 end
             else
-                while GetSecs < startTime + ((43*(restorder-1))*TR) -0.001 
+                while GetSecs < startTime + ((43*(restorder-1))*TR) +TR -0.001 
                 end
             end
             fixationscriptW;
