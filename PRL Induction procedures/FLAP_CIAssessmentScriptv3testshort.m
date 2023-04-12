@@ -42,7 +42,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '1' , '2', '0', '1', '1'};
+    defaultanswer={'test','1', '3', '2', '1' , '2', '0', '1', '0'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;

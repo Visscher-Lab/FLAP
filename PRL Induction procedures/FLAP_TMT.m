@@ -7,11 +7,11 @@ commandwindow
 addpath([cd '/utilities']);
 addpath([cd '/trailtask']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '0','2','0' };
+    defaultanswer={'test','1', '3', '1','0', '0','2','0','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -25,7 +25,8 @@ try
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    
+        EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -46,19 +47,20 @@ try
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    EyeTracker = 1; %0=mouse, 1=eyetracker
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
-    
+    defineSite
     if EyeTracker==1
         if site==3
-            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
-            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
@@ -113,8 +115,7 @@ try
     counter = 0;
     
     %%
-    
-    % check EyeTracker status
+  % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
@@ -122,8 +123,19 @@ try
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
-        
-        location =  zeros(4, 6);
+        location =  zeros(length(mixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
     if Isdemo==0
         FLAP_TMT_practice
@@ -252,24 +264,25 @@ try
                         
                     end
                 end
-                if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+          if EyeTracker==1
+              if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                     Screen('FillRect', w, white);
                 else
                     Screen('FillOval', w, scotoma_color, scotoma);
                 end
-                
+          end  
                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 
                 VBL_Timestamp=[VBL_Timestamp eyetime2];
-                
-                if EyeTracker==1
-                    
-                    if site<3
-                        GetEyeTrackerData
-                    elseif site ==3
-                        GetEyeTrackerDatapixx
-                    end
-                    GetFixationDecision
+            %% process eyedata in real time (fixation/saccades)
+            
+            if EyeTracker==1
+                if EyetrackerType==1
+                    GetEyeTrackerData
+                elseif EyetrackerType==2
+                    GetEyeTrackerDatapixx
+                end
+                GetFixationDecision
                     
                     if EyeData(end,1)<8000 && stopchecking<0
                         trial_time = GetSecs;
@@ -292,7 +305,12 @@ try
                             FixatingNow = 0;
                         end
                     end
+                            else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
                 end
+            end
                 if sum(buttons)>1 && (eyetime2-StartTime(numresp,block))>2
                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
@@ -354,7 +372,54 @@ try
                 EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
                 clear ErrorInfo
             end
-            kk=kk+1;
+             if EyetrackerType==2
+                %read in eye data
+                Datapixx('RegWrRd');
+                status = Datapixx('GetTPxStatus');
+                toRead = status.newBufferFrames;
+                [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+                
+                %bufferData is formatted as follows:
+                %1      --- Timetag (in seconds)
+                %2      --- Left Eye X (in pixels)
+                %3      --- Left Eye Y (in pixels)
+                %4      --- Left Pupil Diameter (in pixels)
+                %5      --- Right Eye X (in pixels)
+                %6      --- Right Eye Y (in pixels)
+                %7      --- Right Pupil Diameter (in pixels)
+                %8      --- Digital Input Values (24 bits)
+                %9      --- Left Blink Detection (0=no, 1=yes)
+                %10     --- Right Blink Detection (0=no, 1=yes)
+                %11     --- Digital Output Values (24 bits)
+                %12     --- Left Eye Fixation Flag (0=no, 1=yes)
+                %13     --- Right Eye Fixation Flag (0=no, 1=yes)
+                %14     --- Left Eye Saccade Flag (0=no, 1=yes)
+                %15     --- Right Eye Saccade Flag (0=no, 1=yes)
+                %16     --- Message code (integer)
+                %17     --- Left Eye Raw X (in pixels)
+                %18     --- Left Eye Raw Y (in pixels)
+                %19     --- Right Eye Raw X (in pixels)
+                %20     --- Right Eye Raw Y (in pixels)
+                
+                %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
+                %in the console overlay. In tabletop and MEG setups, this view is
+                %inverted. This means "RIGHT" in our labelling convention corresponds
+                %to the participant's left eye. Similarly "LEFT" in our convention
+                %refers to left on the screen, which corresponds to the participant's
+                %right eye.
+                
+                %If you are using an MRI setup with an inverting mirror, "RIGHT" will
+                %correspond to the participant's right eye.
+                
+                %save eye data from trial as a table in the trial structure
+                Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
+                    'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
+                    'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
+                %interim save
+                % save(baseName, 'Pixxstruct');
+                % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+             end
+             kk=kk+1;
             clear PKnew2
             if closescript==1
                 break

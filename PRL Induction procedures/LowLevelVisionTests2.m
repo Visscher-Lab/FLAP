@@ -415,6 +415,7 @@ try
                     imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+
                 end
                 
                 Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
@@ -427,19 +428,18 @@ try
                 end
                 if exist('stimstar') == 0
                     stim_start(trial)=eyetime2;
+                    if EyetrackerType ==2
+                        %set a marker to get the exact time the screen flips
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
+                        Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                    end
                     stimstar=1;
                 end
-                
-                if EyetrackerType ==2
-                    %set a marker to get the exact time the screen flips
-                    Datapixx('SetMarker');
-                    Datapixx('RegWrVideoSync');
-                    %collect marker data
-                    Datapixx('RegWrRd');
-                    Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
-                    Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
-                end
-                
+             
                 if whichTask == 2 % show flankers for crowding
                     if exist('imageRect_offs_flank1')==0
                         

@@ -17,6 +17,7 @@ trialTimeout=20;
 FlickerTime=0;
 trialTimeout=10;
 performanceThresh=0.7;
+gapfeedback= 0.5;
 feedbackduration=1;
 for practicetrial=1:practicetrialnum
     presentfeedback=0;
@@ -29,7 +30,7 @@ for practicetrial=1:practicetrialnum
     else
         Orijit=Jitpracticearray(practicetrial);
         stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
-%         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
+        %         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
         CIstimuliModIIIPractice
     end
     theeccentricity_Y=0;
@@ -46,8 +47,7 @@ for practicetrial=1:practicetrialnum
     
     %  destination rectangle for the target stimulus
     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-    
+        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];    
     %  destination rectangle for the fixation dot
     imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
         imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
@@ -59,24 +59,18 @@ for practicetrial=1:practicetrialnum
         if EyetrackerType ==2
             Datapixx('RegWrRd'); %inbuilt DataPixx function
         end
-        fixationscriptW % visual aids on screen
-        
-        fixating=1500;
-        
+        fixationscriptW % visual aids on screen       
+        fixating=1500;       
         %% here is where the first time-based practicetrial loop starts (until first forced fixation is satisfied)
-        if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-            
-            % pre-event empty space, allows for some cleaning
-            
-            counterflicker=-10000;
-            
+        if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout           
+            % pre-event empty space, allows for some cleaning            
+            counterflicker=-10000;            
         elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
             if exist('startrial') == 0
                 startrial=1;
                 trialstart(practicetrial)=GetSecs;
                 trialstart_frame(practicetrial)=eyetime2;
-            end
-            
+            end            
         elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout %&& counterflicker<FlickerTime/ifi
             % here I need to reset the practicetrial time in order to preserve
             % timing for the next events (first fixed fixation event)
@@ -115,7 +109,7 @@ for practicetrial=1:practicetrialnum
                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
                     imageRect_offsCI2=imageRect_offsCI;
-%                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    %                     imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
                     imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness ], wRect);
                     imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
                         imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
@@ -135,14 +129,38 @@ for practicetrial=1:practicetrialnum
                 %                 if skipmasking==0
                 %                     assignedPRLpatch
                 %                 end
-            end
-            
+            end            
             imagearray{practicetrial}=Screen('GetImage', w);
             if exist('stimstar')==0
                 stim_start = GetSecs;
                 stim_start_frame=eyetime2;
                 stimstar=1;
+            end            
+            if  sum(keyCode) ~=0
+                thekeys = find(keyCode);
+                if length(thekeys)>1
+                    thekeys=thekeys(1);
+                end
+                thetimes=keyCode(thekeys);
+                [secs,  indfirst]=min(thetimes);
+                respTime=eyetime2;
+                foo=(RespType==thekeys);
+                if foo(theanspractice(practicetrial)) % if correct response
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                elseif (thekeys==escapeKey) % esc pressed
+                    practicePassed=2;
+                    closescript = 1;
+                    ListenChar(0);
+                    break;
+                else
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                end
+                presentfeedback=1;
             end
+            
+        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
             
             if  sum(keyCode) ~=0
                 thekeys = find(keyCode);
@@ -152,36 +170,37 @@ for practicetrial=1:practicetrialnum
                 thetimes=keyCode(thekeys);
                 [secs,  indfirst]=min(thetimes);
                 respTime=eyetime2;
-                      presentfeedback=1;
-  end
-
-        elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
-        
-            if  sum(keyCode) ~=0
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
+                foo=(RespType==thekeys);
+                if foo(theanspractice(practicetrial)) % if correct response
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                elseif (thekeys==escapeKey) % esc pressed
+                    practicePassed=2;
+                    closescript = 1;
+                    ListenChar(0);
+                    break;
+                else
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
                 end
-                thetimes=keyCode(thekeys);
-                [secs,  indfirst]=min(thetimes);
-                respTime=eyetime2;
-            presentfeedback=1;
             end
-        elseif  presentfeedback==1 && (eyetime2-respTime)<= feedbackduration
-   %here I draw the target contour
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                if targethighercontrast(practicetrial)==1
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
-                end
-                %                 % here I draw the circle within which I show the contour target
-                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-                        elseif  presentfeedback==1 && (eyetime2-respTime)> feedbackduration
-presentfeedback=2;
-        elseif (eyetime2-pretrial_time)>=trialTimeout
+        elseif (eyetime2-newtrialtime)>=trialTimeout
             trialTimedout(practicetrial)=1;
-            presentfeedback=1;
-        elseif  presentfeedback>1 
+            PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+            PsychPortAudio('Start', pahandle);
+            respTime=eyetime2;
+        end
+        
+        if  (eyetime2-respTime)>=gapfeedback && (eyetime2-respTime)<= feedbackduration
+            %here I draw the target contour
+            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+            imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+        %    if targethighercontrast(practicetrial)==1
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
+         %   end
+            %                 % here I draw the circle within which I show the contour target
+            Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+        elseif  (eyetime2-respTime)> feedbackduration
             stim_stop=GetSecs;
             %    [secs  indfirst]=min(thetimes);
             eyechecked=10^4; % exit loop for this practicetrial
@@ -226,11 +245,11 @@ presentfeedback=2;
                     FixatingNow = 0;
                 end
             end
-                                                 else
-                if stopchecking<0
-                    trial_time = eyetime2; %start timer if we have eye info
-                    stopchecking=10;
-                end
+        else
+            if stopchecking<0
+                trial_time = eyetime2; %start timer if we have eye info
+                stopchecking=10;
+            end
         end
         [keyIsDown, keyCode] = KbQueueCheck;
     end
@@ -239,8 +258,8 @@ presentfeedback=2;
         foo=(RespType==thekeys);
         if foo(theanspractice(practicetrial)) % if correct response
             resp = 1;
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle); 
+  %          PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+   %         PsychPortAudio('Start', pahandle);
         elseif (thekeys==escapeKey) % esc pressed
             practicePassed=2;
             closescript = 1;
@@ -248,14 +267,14 @@ presentfeedback=2;
             break;
         else
             resp = 0; % if wrong response
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+      %      PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+      %      PsychPortAudio('Start', pahandle);
         end
     else
         resp = 0;
         respTime=0;
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+        PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+        PsychPortAudio('Start', pahandle);
     end
     practiceresp(practicetrial)=resp;
 end
@@ -265,5 +284,4 @@ if practicePassed~=2
     if performance>=performanceThresh
         practicePassed=1;
     end
-    
 end

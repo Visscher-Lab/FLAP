@@ -34,9 +34,9 @@ try
     end
     
     if Isdemo==0
-        filename='_carrasco_practice';
+        filename='_scotoma_awareness_practice';
     elseif Isdemo==1
-        filename='_carrasco';
+        filename='_scotoma_awareness';
     end
     
     if site==1

@@ -1,7 +1,11 @@
 %function [fixating x y area_eye evt ]=IsFixating(el,eye_used,fixr,rect,driftoffsetx,driftoffsety)
 function [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix)
 
-
+% fixating: variable resets every time eyes are outside fixation window
+%counter: variable keeps the score. When eyes move out of the fixation
+%window it doesn't reset
+%framecounter: variable counts the overall number of frames in which the
+%function is used
 % if EyetrackerType == 1
 %     error=Eyelink('CheckRecording');
 %     evt=error;
