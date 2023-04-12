@@ -391,8 +391,8 @@ coordmat= xcord(premat);
         end
         
         kk=kk+1;
-        elseif caliblock==1
-            trial=trial-1;
+%         elseif caliblock==1
+%             trial=trial-1;
             % caliblock=0;
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);

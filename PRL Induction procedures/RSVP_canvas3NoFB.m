@@ -10,11 +10,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '1', '2', '2', '0', '1' };
+    defaultanswer={'test','1', '3', '1','0', '1', '2', '2', '0', '0'};
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -30,7 +30,8 @@ try
     PRLlocations=str2num(answer{7,:});
     whicheye=str2num(answer{8,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    c = clock; %Current date and time as date vector. [year month day hour minute seconds]
+        EyeTracker = str2num(answer{10,:}); %0=mouse, 1=eyetracker
+c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -53,8 +54,6 @@ try
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    EyeTracker = 1; %0=mouse, 1=eyetracker
-    
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     CommonParametersRSVP % load parameters for time and space
@@ -63,16 +62,19 @@ try
     load RSVPmxIncong.mat
 
     %% eyetracker initialization (eyelink)
+    defineSite
     
     if EyeTracker==1
         if site==3
-            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
-            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
-    
+  
     %% creating stimuli
     createO
     
@@ -219,7 +221,7 @@ try
             blocktime=GetSecs+1000;
             fixating=0;
         end
-        stopchecking=10;
+    %    stopchecking=10;
         checkout=0;
         counttime(trial)=0;
         countthis=0;
@@ -399,7 +401,8 @@ try
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
-            if ScotomaPresent == 1
+           teet=111;
+           if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
                 Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
@@ -426,9 +429,9 @@ try
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             
             if EyeTracker==1
-                if site<3
+                if EyetrackerType==1
                     GetEyeTrackerData
-                elseif site ==3
+                elseif EyetrackerType==2
                     GetEyeTrackerDatapixx
                 end
                 GetFixationDecision
@@ -486,6 +489,11 @@ try
                         FixatingNow = 0;
                     end
                 end
+            else
+                            if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
+                            end
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end

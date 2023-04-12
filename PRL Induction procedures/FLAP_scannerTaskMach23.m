@@ -64,8 +64,8 @@ try
 
     KbName('UnifyKeyNames');
 
-    leftfingerresp = KbName('b');% left oriented gabor or six, b works in mac
-    rightfingerresp = KbName('r');% right oriented gabor or nine, r works in mac
+    leftfingerresp = KbName('r');% left oriented gabor or six, b works in mac
+    rightfingerresp = KbName('y');% right oriented gabor or nine, r works in mac
     escapeKey = KbName('ESCAPE');	% quit key
 
     % get keyboard for the key recording
@@ -167,7 +167,7 @@ try
                 while GetSecs < startTime + TR 
                 end
             else
-                while GetSecs < startTime + ((43*(restorder-1))*TR) +TR -0.001 
+                while GetSecs < startTime + ((43*(restorder-1))*TR) +TR-0.001 
                 end
             end
             fixationscriptW;
