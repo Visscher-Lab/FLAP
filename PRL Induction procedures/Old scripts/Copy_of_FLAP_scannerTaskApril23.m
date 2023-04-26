@@ -64,8 +64,8 @@ try
 
     KbName('UnifyKeyNames');
 
-    leftfingerresp = KbName('y');% left oriented gabor or six, b works in mac
-    rightfingerresp = KbName('r');% right oriented gabor or nine, r works in mac
+    leftfingerresp = KbName('r');% left oriented gabor or six
+    rightfingerresp = KbName('y');% right oriented gabor or nine
     escapeKey = KbName('ESCAPE');	% quit key
 
     % get keyboard for the key recording

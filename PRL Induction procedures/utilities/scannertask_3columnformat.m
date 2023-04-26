@@ -32,7 +32,7 @@ for z=1:5
         end
     end
 end
-base=[SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumber)];
+base=[SUBJECT '_FLAP_Scanner_PrePost' num2str(prepost) '_RunNum' num2str(runnumber) '_' TimeStart];
 writematrix(gabor_analysis_matrix,[base '_gabor_3columnformat.txt'],'Delimiter','\t');
 writematrix(eggs_analysis_matrix,[base '_eggs_3columnformat.txt'],'Delimiter','\t');
 writematrix(bd_analysis_matrix,[base '_bd_3columnformat.txt'],'Delimiter','\t');
