@@ -72,6 +72,7 @@ elseif site==2   %UAB
 elseif site==3   %UCR VPixx
     %% psychtoobox settings
     screenNumber=max(Screen('Screens'));
+%     screenNumber=min(Screen('Screens'));
     if EyeTracker==1
         initRequired= calibration; %do we want vpixx calibration?
         if initRequired>0
@@ -175,7 +176,8 @@ t = (0:1/Fs:bip_dur-1/Fs);
 wv = 2*pi*500;                                  % Radian Value To Create 1kHz Tone
 s = sin(wv*t);                                   % Create Tone
 bip_sound=[s' s'];
-
+bip_sound_left= [s' zeros(length(bip_sound)',1)];
+bip_sound_right= [zeros(length(bip_sound)',1) s'];
 % pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 % PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer

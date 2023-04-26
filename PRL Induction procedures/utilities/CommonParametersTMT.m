@@ -16,6 +16,8 @@ fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 %if mouse calibration is needed
 MouseCalib=1;
 xoff=-1920; %ucr uses 1920, uab uses 0
+% xoff = 1920;
+% yoff = 1080;
 %xoff=0; %ucr uses 1920, uab uses 0
 %Mscreen=[1920 1080];
 
@@ -34,7 +36,7 @@ RespTol=3*ppd; %specifies radius of the circles in ppd
 
 
 
-    scotomadeg=10; % size of the scotoma in degrees of visual angle
+    scotomadeg=5; % size of the scotoma in degrees of visual angle
     stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)

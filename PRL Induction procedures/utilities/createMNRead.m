@@ -1,8 +1,17 @@
     
         
     
+if expDay==2
     StimuliFolder='./utilities/MNRead_sentences/ChartB/'; %to be updated! AS now updated.
-        
+elseif expDay==1
+    StimuliFolder='./utilities/MNRead_sentences/ChartA/'; %to be updated! AS now updated.
+elseif expDay==3
+    StimuliFolder='./utilities/MNRead_sentences/ChartC/'; %to be updated! AS now updated.
+elseif expDay==4
+    StimuliFolder='./utilities/MNRead_sentences/ChartD/'; %to be updated! AS now updated.
+elseif expDay==5
+    StimuliFolder='./utilities/MNRead_sentences/ChartB/'; %to be updated! AS now updated.
+end
     thesentences=dir([StimuliFolder '*sentenc*']);
    
     conversionfactor=2.5313; %2.2730

@@ -175,7 +175,7 @@ try
         for cond = 1:length(mixcond)
             dummy = [];
             for block = 1:length(mixcond{cond,1})
-                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)];StartJitter
+                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)]; %StartJitter
             end
             mixtr{cond,1} = dummy;
         end
@@ -281,7 +281,7 @@ try
     
     %% HERE starts trial loop
     randpick = 1;
-    mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
+    mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
     checkcounter = 0;
@@ -306,7 +306,7 @@ try
         elseif trial > 1           
             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
                 while practicePassed==0
-                    FLAPpracticeAssessment
+                    FLAPpracticeAssessmentfb
                 end
             end
         end
