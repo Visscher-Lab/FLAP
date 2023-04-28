@@ -181,3 +181,32 @@ bip_sound_right= [zeros(length(bip_sound)',1) s'];
 % pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 % PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
+
+
+%% keyboard
+    %% Keys definition/kb initialization
+    
+    KbName('UnifyKeyNames');
+    
+    RespType(1) = KbName('LeftArrow');
+    RespType(2) = KbName('RightArrow');
+    RespType(3) = KbName('UpArrow');
+    RespType(4) = KbName('DownArrow');
+    RespType(5) = KbName('c'); % continue with study
+    RespType(6) = KbName('m'); %recalibrate
+    escapeKey = KbName('ESCAPE');	% quit key
+    
+    % get keyboard for the key recording
+    deviceIndex = -1; % reset to default keyboard
+    [k_id, k_name] = GetKeyboardIndices();
+    for i = 1:numel(k_id)
+        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
+            deviceIndex =  k_id(i);
+        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
+            deviceIndex =  k_id(i);
+        end
+    end
+    
+    KbQueueCreate(deviceIndex);
+    KbQueueStart(deviceIndex);
+    
