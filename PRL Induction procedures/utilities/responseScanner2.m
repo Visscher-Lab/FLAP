@@ -21,7 +21,7 @@ while GetSecs<CueOnsetTime(totalblock,trial)+(stim_duration+cue_duration) %stimu
         RTraw(totalblock,trial)=keyTime;
         %RT(totalblock,trial)=keyTime-StimulusOnsetTime(totalblock,trial);
         ResponseKey{totalblock,trial}=KbName(responsekey);
-        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
+        conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==leftfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==rightfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==leftfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==rightfingerresp); %conditions that are true
         if any(conditions)==1
             %PsychPortAudio('Start', pahandle1); % feedback for true response
             ResponseType{totalblock,trial}='correct';
@@ -29,6 +29,7 @@ while GetSecs<CueOnsetTime(totalblock,trial)+(stim_duration+cue_duration) %stimu
             %PsychPortAudio('Start', pahandle2); %feedback for false response
             ResponseType{totalblock,trial}='false';
         end
+        conditionstotal{totalblock,trial}=conditions;
         clear conditions;
         FlushEvents;
         %while GetSecs<200-(keyTime-StimulusOnsetTime(totalblock,trial))
@@ -81,7 +82,7 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
             %RT(totalblock,trial)=keyTime-ResponseFixationOnsetTime;
             %RT(totalblock,trial)=keyTime-StimulusOnsetTime(totalblock,trial);
             ResponseKey{totalblock,trial}=KbName(responsekey);
-            conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==rightfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==leftfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==rightfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==leftfingerresp); %conditions that are true
+            conditions(1)=logical(cue==1 && stimulusdirection_leftstim==1 && responsekey==leftfingerresp);conditions(2)=logical(cue==1 && stimulusdirection_leftstim==2 && responsekey==rightfingerresp);conditions(3)=logical(cue==2 && stimulusdirection_rightstim==1 && responsekey==leftfingerresp);conditions(4)=logical(cue==2 && stimulusdirection_rightstim==2 && responsekey==rightfingerresp); %conditions that are true
             if any(conditions)==1
                 %PsychPortAudio('Start', pahandle1); % feedback for true response
                 ResponseType{totalblock,trial}='correct';
@@ -89,6 +90,7 @@ if RTraw(totalblock,trial)==0 %no key press during stimulus presentation
                 %PsychPortAudio('Start', pahandle2); %feedback for false response
                 ResponseType{totalblock,trial}='false';
             end
+            conditionstotal{totalblock,trial}=conditions;
             clear conditions;
             FlushEvents;
 
