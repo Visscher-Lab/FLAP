@@ -78,7 +78,8 @@ try
             deviceIndex =  k_id(i);
         end
     end
-
+%KbQueueCreate(deviceIndex);
+%KbQueueStart(deviceIndex);
     %% draw everything on the instruction page
     HideCursor;
     %stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
@@ -177,6 +178,7 @@ try
             if restorder==1
                 while GetSecs < RestTime + (rest_duration-0.500); %  rest for 15 sec
                     [keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
+                    %[keyIsDown, keyCode]=KbQueueCheck;
                     if  keyIsDown
                         keyr(1,kr) = find(keyCode, 1);
                         keypresstimer(1,kr)=keyTime;
