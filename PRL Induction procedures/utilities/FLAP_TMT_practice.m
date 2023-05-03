@@ -34,6 +34,7 @@
             
             if MouseCalib
                 x=round(x*wRect(3)/wRect(3))-xoff;
+%                 x=round(x*wRect(3)/wRect(3))+xoff;
                 y=round(y*wRect(4)/wRect(4));
             end
             if sum(buttons)~=0

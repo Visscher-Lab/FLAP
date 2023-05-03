@@ -1,6 +1,15 @@
 %% general visual parameters
-scotomadeg=10;    % scotoma size in deg
-scotoma=scotomadeg*pix_deg;
+scotomadeg=14;    % scotoma size in deg
+scotomadegx=6.6;    % scotoma size in deg
+scotomadegy=2.7;    % scotoma size in deg
+
+
+scotomadegx=14;    % scotoma size in deg
+scotomadegy=14;    % scotoma size in deg
+
+scotomax=scotomadegx*pix_deg;
+scotomay=scotomadegy*pix_deg;
+
 PRLsize =10; % diameter PRL in deg
 attContr= 1; % contrast of the target
 
@@ -12,9 +21,12 @@ PRLecc=10;  %eccentricity of target locations in deg
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 randdegarray=[-11:0.5:11]; % randomize stimulus location
-stimulusSize=1.5;
-theeccentricity_X_scotoma=0*pix_deg;
-theeccentricity_Y_scotoma=0*pix_deg;
+stimulusSize=3.72;
+theeccentricity_X_scotoma=1.7*pix_deg;
+theeccentricity_Y_scotoma=0.3*pix_deg;
+
+%theeccentricity_X_scotoma=-0.6*pix_deg;
+%theeccentricity_Y_scotoma=0*pix_deg;
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
@@ -35,7 +47,7 @@ kk=1; % trial counter
 bg_index =round(gray*255); %background color
 imsize=stimulusSize*pix_deg; %stimulus size
 
-scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
+scotomasize=[scotomadegx*pix_deg scotomadegy*pix_deg];
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 fixwindowPix=fixwindow*pix_deg; % fixation window
 
@@ -47,7 +59,7 @@ Screen('TextSize',w, 42);
 
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
 
-scotomadeg=10;
+%scotomadeg=13.5;
 
 
 [img, sss, alpha] = imread('happyface.png');
@@ -59,18 +71,20 @@ img(:, :, 4) = alpha;
 Sadface= Screen('MakeTexture', w, img);
 
 % from http://pngimg.com/upload/cat_PNG100.png
-[img, ~, alpha] = imread('imagescotoma.png');
+[img, ~, alpha] = imread('Scotoma_01.png');
+%[img, ~, alpha] = imread('Scotoma_02.png');
+
 size(img);
 % 2557 x 1993 x 3 (rgb)
 % We'll make one texture without the alpha channel, and one with.
 [y, x, c]=size(img);
-scale_fact=scotoma/x;
+scale_fact=scotomax/x;
 img2=imresize(img,scale_fact);
+alpha2=imresize(alpha,scale_fact);
 
-
-texture1 = Screen('MakeTexture', w, img); %  image without the alpha channel.
-img(:, :, 4) = alpha;
-texture2 = Screen('MakeTexture', w, img); %image with the alpha channel.
+texture1 = Screen('MakeTexture', w, img2); %  image without the alpha channel.
+img2(:, :, 4) = alpha2;
+texture2 = Screen('MakeTexture', w, img2); %image with the alpha channel.
 
 
  

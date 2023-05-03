@@ -1,17 +1,17 @@
 %% This script displays the instruction page for the CI Assessment Task
 
 Screen('FillRect', w, gray);
-if mixtr(trial,1)==1
-    if trial == 1 || mod(trial,trials)==1 && mixtr(trial,2) == 1
+if mixtr(trial,1)==2
+    if trial == 1 || mod(trial,trials)==2 && mixtr(trial,2) == 1
         DrawFormattedText(w, 'Here you will see the target on the LEFT side of the scotoma \n\n Press the left arrow key if you see a 9 \n \n Press the right arrow key if you see a 6  \n \n \n \n Press any key to start',...
             'center','center',white);
     else
-        if mod(trial,trials) == 1 && mixtr(trial,2) == 2
+        if mod(trial,trials) == 2 && mixtr(trial,2) == 2
             DrawFormattedText(w, 'Here you will see the target on the RIGHT side of the scotoma \n\n Press the left arrow key if you see a 9 \n \n Press the right arrow key if you see a 6  \n \n \n \n Press any key to start',...
                 'center','center',white);
         end
     end
-elseif mixtr(trial,1)==2
+elseif mixtr(trial,1)==1
     if mod(trial,trials)==1 && mixtr(trial,2) == 1
         DrawFormattedText(w, 'Here you will see the target on the LEFT side of the scotoma \n\n Press the left arrow key if you see a d \n \n Press  the right arrow key if you see a b \n \n \n \n Press any key to start',...
             'center','center',white);
@@ -22,7 +22,7 @@ elseif mixtr(trial,1)==2
         end
     end
 end
-theeccentricity_X_instructions = 6.5*pix_deg;
+theeccentricity_X_instructions = 10*pix_deg;
 imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X_instructions, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X_instructions,...
     imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X_instructions, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X_instructions]; % defining the rect of the shape or image for one of the two sub images
 imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X_instructions, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X_instructions,...

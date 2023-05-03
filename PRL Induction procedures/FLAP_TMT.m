@@ -51,7 +51,6 @@ try
     CommonParametersTMT % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
-    defineSite
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -138,9 +137,9 @@ try
         Datapixx('RegWrVideoSync');
     end
     if Isdemo==0
-        FLAP_TMT_practice
+ %       FLAP_TMT_practice
     else
-        FLAP_TMT_practice
+     %   FLAP_TMT_practice
         for block=1:4
             askcalib=0;
             %figu res out locations
@@ -266,7 +265,7 @@ try
                 end
           if EyeTracker==1
               if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-                    Screen('FillRect', w, white);
+                   Screen('FillRect', w, white);
                 else
                     Screen('FillOval', w, scotoma_color, scotoma);
                 end
@@ -314,11 +313,13 @@ try
                 if sum(buttons)>1 && (eyetime2-StartTime(numresp,block))>2
                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
+%                     y=origx-yoff;
                 elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
                     
                 elseif sum(buttons)==0
                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
+%                     y=origx-yoff;
                 end
                 if numrespCorr==length(stimx)
                     stim_stop=GetSecs;

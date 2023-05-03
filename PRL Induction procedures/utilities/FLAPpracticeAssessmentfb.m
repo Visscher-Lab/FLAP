@@ -39,7 +39,7 @@ for practicetrial=1:practicetrialnum
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     
     if practicetrial==1 && AssessmentType ==2
-        InstructionCIAssessment
+        InstructionCIAssessmentPractice
     end
     if practicetrial == 1 && AssessmentType == 1
         Instruction_Contrast_Assessment
