@@ -78,7 +78,8 @@ try
             deviceIndex =  k_id(i);
         end
     end
-
+%KbQueueCreate(deviceIndex);
+%KbQueueStart(deviceIndex);
     %% draw everything on the instruction page
     HideCursor;
     %stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
@@ -177,6 +178,7 @@ try
             if restorder==1
                 while GetSecs < RestTime + (rest_duration-0.500); %  rest for 15 sec
                     [keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
+                    %[keyIsDown, keyCode]=KbQueueCheck;
                     if  keyIsDown
                         keyr(1,kr) = find(keyCode, 1);
                         keypresstimer(1,kr)=keyTime;
@@ -245,14 +247,14 @@ try
                     else
                         TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);
                         trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
-                        cond=true;
+                        %cond=true;
                     end
                 elseif trial>1 && itiforrun(totalblock,trial-1)>0 %if it's not the first trial of the block and previous iti is greater than 0TR
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);
                     TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);
                     trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
-                    cond=true;
+                    %cond=true;
                 elseif trial>1 && itiforrun(totalblock,trial-1)==0 %if it's not the first trial of the block and previous iti equals 0TR
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);

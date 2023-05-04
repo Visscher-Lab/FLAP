@@ -247,14 +247,14 @@ try
                     else
                         TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);
                         trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
-                        cond=true;
+                        %cond=true;
                     end
                 elseif trial>1 && itiforrun(totalblock,trial-1)>0 %if it's not the first trial of the block and previous iti is greater than 0TR
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);
                     TimeToStopListening(totalblock,trial)=PreviousCueTime+((itiprevious-0.5)*TR);
                     trialstarttime(totalblock,trial)=PreviousCueTime+(2*TR)+(itiprevious*TR);
-                    cond=true;
+                    %cond=true;
                 elseif trial>1 && itiforrun(totalblock,trial-1)==0 %if it's not the first trial of the block and previous iti equals 0TR
                     itiprevious=itiforrun(totalblock,trial-1);
                     PreviousCueTime=CueOnsetTime(totalblock,trial-1);
@@ -299,7 +299,7 @@ try
                 end
                 if trial==1 && totalblock>1 && activeblocktype(runnumber,totalblock-1)==4
                     trialstarttime(totalblock,trial)=TTL_timeforrest(jr-1)+TR;
-                elseif cond==1% kt(totalblock,trial)>1 %trial>1 && itiprevious>1 && trial<totaltrial
+                elseif kt(totalblock,trial)>1 %trial>1 && itiprevious>1 && trial<totaltrial
                     trialstarttime(totalblock,trial)=TTL_time(j-1)+TR; % this is when the TTL occurs.  Trials 'start' in sync with the MRI frame
                 clear cond
                 end
