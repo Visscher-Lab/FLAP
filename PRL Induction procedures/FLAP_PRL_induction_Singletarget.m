@@ -531,8 +531,9 @@ try
             %read in eye data
             Datapixx('RegWrRd');
             status = Datapixx('GetTPxStatus');
-            toRead = status.newBufferFrames;
-            [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+              toRead = status.newBufferFrames;
+                   if toRead>0
+   [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
             
             %bufferData is formatted as follows:
             %1      --- Timetag (in seconds)
@@ -574,7 +575,7 @@ try
             % save(baseName, 'Pixxstruct');
             % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
         end
-        
+        end
         if (mod(trial,100))==1
             if trial==1
             else

@@ -178,7 +178,8 @@
 
 
 
-
+close all 
+clear all
 %%
 rect= [ 0 0 34 34]
 
@@ -231,13 +232,32 @@ dotX = [dotX; - dotX];
 dotY = [dotY; dotY];
 
 % apply orientation offset of 45 degrees
-theta = deg2rad(45);
+theta = deg2rad(135);
 rotationMatrix = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+
+
+
+
+rotcompens=(90-mod(rad2deg(theta), 90))/100;
+
+
+
 dotPositions = rotationMatrix * [dotX'; dotY'];
+
 dotX = dotPositions(1,:)';
 dotY = dotPositions(2,:)';
 % dotX=dotX(2:end)
 % dotY=dotY(2:end)
+
+Xc=(max(dotX)+min(dotX))/2;
+Yc=(max(dotY)+min(dotY))/2;
+
+newXc=rotcompens*Xc
+newYc=1-rotcompens*Yc
+
+Xr =  (dotX)*cos(theta) + (dotY)*sin(theta) + Xc;
+Yr = -(dotX)*sin(theta) + (dotY)*cos(theta) + Yc;
+
 % convert positions to pixels
 dotXpix = dotX * rect(3);
 dotYpix = dotY * rect(4);
@@ -251,7 +271,8 @@ for i = 1:length(dotX)
     scatter(dotX(i), dotY(i), dotSizePix,'filled', 'r');
     hold on
 end
-close all
+hold on
+    scatter(Xc, Xc, dotSizePix,'filled', 'y');
 
 figure
 for i = 1:length(dotX)
@@ -262,8 +283,37 @@ end
 set(gca,'color',[0.5 0.5 0.5])
 xlim([-5 5])
 ylim([-5 5])
+title('sym')
+hold on
+    scatter(Xc, Yc, dotSizePix,'filled', 'r');
+
 print('symmetric_dots', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
+figure
+for i = 1:length(dotX)
+%    Screen('DrawDots', win, [dotX(i) dotY(i)], dotSizePix, dotColor, [], 1);
+    scatter(dotX(i)-Xc, dotY(i)-Yc, 35,'filled', 'w');
+    hold on
+end
+set(gca,'color',[0.5 0.5 0.5])
+xlim([-5 5])
+ylim([-5 5])
+title('sym')
+hold on
+    scatter(0, 0, dotSizePix,'filled', 'r');
+
+print('symmetric_dots_transf', '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+% 
+% figure
+% for i = 1:length(dotX)
+% %    Screen('DrawDots', win, [dotX(i) dotY(i)], dotSizePix, dotColor, [], 1);
+%     scatter(Xr(i), Yr(i), 35,'filled', 'w');
+%     hold on
+% end
+% set(gca,'color',[0.5 0.5 0.5])
+% xlim([-5 5])
+% ylim([-5 5])
 
 %% figure 2: comparisons
 

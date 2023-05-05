@@ -2,9 +2,9 @@ if EyeTracker==0
     [posx posy]=GetMouse(0);
     newsamplex=posx;
     newsampley=posy;
-   % newsamplex=wRect(3)/2;
-   % newsampley=wRect(4)/2;
-
+    % newsamplex=wRect(3)/2;
+    % newsampley=wRect(4)/2;
+    
 elseif EyeTracker==1
     if EyetrackerType==1
         err=Eyelink('CheckRecording');
@@ -25,9 +25,15 @@ elseif EyeTracker==1
         [xScreenLeft, yScreenLeft,xScreenRight, yScreenRight , ~, ~, ~, ~, ~] = Datapixx('GetEyePosition');
         if whicheye==1
             pos = Datapixx('ConvertCoordSysToCustom', [xScreenLeft, yScreenLeft]);
+            [Left_Major, Left_Minor]= Datapixx('GetPupilSize');
+            newpupil_maj=Left_Major;
+            newpupil_min=Left_Minor;
         elseif whicheye==2
             pos = Datapixx('ConvertCoordSysToCustom', [xScreenRight, yScreenRight]);
-        end       
+            [~, ~,Right_Major, Right_Minor]= Datapixx('GetPupilSize');
+            newpupil_maj=Right_Major;
+            newpupil_min=Right_Minor;
+        end
         newsamplex=pos(1);
         newsampley=pos(2);
     end
@@ -37,6 +43,8 @@ occhi(2)=newsampley;
 
 xeye=[xeye newsamplex];
 yeye=[yeye newsampley];
+pupilmaj=[pupilmaj newpupil_maj];
+pupilmin=[pupilmin newpupil_min];
 
 scotoma = [scotomarect(1)+(occhi(1)-wRect(3)/2), scotomarect(2)+(occhi(2)-wRect(4)/2), scotomarect(3)+(occhi(1)-wRect(3)/2), scotomarect(4)+(occhi(2)-wRect(4)/2)];
 
