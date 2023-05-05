@@ -62,7 +62,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
     load RSVPmxIncong.mat
 
     %% eyetracker initialization (eyelink)
-    defineSite
+%     defineSite
     
     if EyeTracker==1
         if site==3
@@ -168,6 +168,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
 %     contresp=zeros(length(mixtr), 39);
 %     RespMatrix=nan(length(mixtr),39);
 %     resp=nan(length(mixtr),39);
+ 
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
@@ -338,9 +339,17 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
                 elseif stimtype==6 %post cue blank
                     theans(trial,number_of_events)= 6;
                 end
-                if stimtype~=5 && stimtype~=6
+%                 if stimtype==2
+% %                     targetAlphaValue1 = 1;
+%                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], 1);
+%                 end
+                if stimtype~=5 && stimtype~=6 
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
                 end
+                if number_of_events == 1 && array_of_events(number_of_events) == 3 && stimtype~=5 && stimtype~=6 
+                    Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], 1);
+                end
+                
                 if exist('stimstar') == 0 && eyetime2>0
                     stim_start(trial,number_of_events)=eyetime2;
                     stimstar=1;
