@@ -546,11 +546,7 @@ try
             %% process eyedata in real time (fixation/saccades)
             
             if EyeTracker==1
-                if EyetrackerType==1
-                    GetEyeTrackerData
-                elseif EyetrackerType==2
-                    GetEyeTrackerDatapixx
-                end
+                    GetEyeTrackerDataNew
                 GetFixationDecision
                 if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;

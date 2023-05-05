@@ -1,5 +1,7 @@
 xeye=[]; %x coordinates from eyetracker
 yeye=[];   %y coordinates from eyetracker
+pupilmaj=[]; %major axis dimension of the pupil
+pupilmin=[];   %minor axis dimension of the pupil
 VBL_Timestamp=[]; %array to collect frame time stamp
 FixCount=0;
 FixatingNow=0;
