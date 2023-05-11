@@ -59,8 +59,8 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
     CommonParametersRSVP % load parameters for time and space
     
     %load  RSVPmxII.mat
-    load RSVPmxIncong.mat
-
+ %   load RSVPmxIncong.mat
+load RSVP3mxIII.mat
     %% eyetracker initialization (eyelink)
 %     defineSite
     
@@ -404,6 +404,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
                     clear stimstar
                     trial_time=GetSecs;
                     resetresponse=1;
+                    stopchecking=-10;
                 end
             end
             eyefixation5

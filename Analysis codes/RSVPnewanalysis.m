@@ -42,11 +42,13 @@ for ui=1:length(respTime)
     %8:post cue blank
     
     % timing of events:
-    % 1:timing
+    % 1:stim_start
     % 2: the ans (1-4: target ori, 5: foil, 6: cue, 7: blank, 8: post cue
     % blank)
     %3: identifier or stimulus item
-    %4: stimulus identity
+    %4: stimulus identity (4: cue, 6: post cue interval)
+    
+        
     
     %stim type
     %1: target stays on screen until response
@@ -56,6 +58,9 @@ for ui=1:length(respTime)
     %5 blank
     %6: post cue blank
     
+    
+    %stim_start: timing of the events
+    % the ans: identity
     eventmat=[stim_start(ui,1:length(trialArray{ui}))' theans(ui,1:length(trialArray{ui}))' ones(length(stim_start(ui,1:length(trialArray{ui}))),1) trialArray{ui}'];
     stimulimat=eventmat(eventmat(:,2)<5,:);
    
