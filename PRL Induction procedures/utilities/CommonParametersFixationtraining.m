@@ -20,7 +20,7 @@ theeccentricity_Y_scotoma=0*pix_deg;
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
-
+ITI = 0.5;
 practicetrials=5; % if we run in demo mode, how many trials do I want?
 prefixationsquare=0.5; % time interval between trial start and forced fixation period
 cueonset=0.2; % time between end of the forced fixation period and the cue (value works for Acuity and
