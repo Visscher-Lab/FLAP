@@ -43,8 +43,9 @@ occhi(2)=newsampley;
 
 xeye=[xeye newsamplex];
 yeye=[yeye newsampley];
+if EyeTracker>0
 pupilmaj=[pupilmaj newpupil_maj];
 pupilmin=[pupilmin newpupil_min];
-
+end
 scotoma = [scotomarect(1)+(occhi(1)-wRect(3)/2), scotomarect(2)+(occhi(2)-wRect(4)/2), scotomarect(3)+(occhi(1)-wRect(3)/2), scotomarect(4)+(occhi(2)-wRect(4)/2)];
 

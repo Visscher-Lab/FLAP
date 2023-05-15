@@ -19,7 +19,7 @@ switch EyetrackerType
         [SummaryData EyeTrackerData ErrorData] = CheckTracker(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh,el);
     
         case 2 % VPixx
-        [SummaryData EyeTrackerData ErrorData] = CheckTrackerpixx(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh);
+        [SummaryData EyeTrackerData ErrorData] = CheckTrackerpixx(EyetrackerType,whicheye,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh);
 
     case 3 % Arrington
         [SummaryData EyeTrackerData ErrorData] = CheckTracker(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh);

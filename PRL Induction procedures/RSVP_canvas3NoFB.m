@@ -10,11 +10,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma (1) or not (0)', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '1', '2', '2', '0', '0'};
+    defaultanswer={'test','1', '3', '1', '1', '2', '2', '0', '0'};
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -25,12 +25,13 @@ try
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    PRLlocations=str2num(answer{7,:});
-    whicheye=str2num(answer{8,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
-        EyeTracker = str2num(answer{10,:}); %0=mouse, 1=eyetracker
+    Isdemo=str2num(answer{5,:}); % full session or demo/practice
+    PRLlocations=str2num(answer{6,:});
+    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
+        EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
+            scotomavpixx= 0;
+
 c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -226,6 +227,7 @@ load RSVP3mxIII.mat
         checkout=0;
         counttime(trial)=0;
         countthis=0;
+        isfixatingnow=0;
         while number_of_events<=length(array_of_events) && checkout<1
             if number_of_events==0
                 number_of_events=1;
@@ -258,7 +260,7 @@ load RSVP3mxIII.mat
                             PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
                         end
                         PsychPortAudio('Start', pahandle);
-                        moveblock=2^11;
+                        moveblock=2^11; %time to move to next event
                         blocktime=GetSecs;
                     end
                 elseif (eyetime2-pretrial_time)>=0 && (eyetime2-blocktime)<=0.5+ifi*3 && moveblock>1000 && fixating<1000
@@ -365,7 +367,6 @@ load RSVP3mxIII.mat
                         thetimes=keyCode(thekeys);
                         [secs  indfirst]=min(thetimes);
                         respTime(trial, respcounter)=secs;
-                                                
                                             if thekeys==RespType(1)
                                                   respKeys(trial, respcounter)=1;  
                                                 elseif thekeys==RespType(2)
@@ -373,8 +374,7 @@ load RSVP3mxIII.mat
                                                 elseif thekeys==RespType(3)
                                                     respKeys(trial, respcounter)=3; 
                                                 elseif thekeys==RespType(4)
-                                                    respKeys(trial, respcounter)=4; 
-                                                    
+                                                    respKeys(trial, respcounter)=4;                                                
                                                 elseif  thekeys==escapeKey
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
@@ -397,17 +397,19 @@ load RSVP3mxIII.mat
                     Pixxstruct(trial,number_of_events).TargetOnset2 = Datapixx('GetTime');
                 end
             end
+            eyefixation5
 
             if fixating> 1000 && moveblock>1000
-                if (eyetime2-trial_time)>=time_of_this_event(number_of_events)
+                                [isfixatingnow counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,isfixatingnow,framecounter,counter,fixwindowPix);
+                if (eyetime2-trial_time)>=time_of_this_event(number_of_events) && isfixatingnow>0
                     number_of_events=number_of_events+1;
                     clear stimstar
                     trial_time=GetSecs;
                     resetresponse=1;
+                    isfixatingnow=0;
                     stopchecking=-10;
                 end
             end
-            eyefixation5
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);

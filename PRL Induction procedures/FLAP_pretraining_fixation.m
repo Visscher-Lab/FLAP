@@ -7,11 +7,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1','0', '0','2','0', '0' };
+    defaultanswer={'test','1', '1', '0','2','0', '0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -21,12 +21,12 @@ try
     expDay=str2num(answer{2,:});
     site= 3;  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{4,:});
-    Isdemo=str2num(answer{5,:}); % full session or demo/practice
-    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
-    
+    Isdemo=str2num(answer{4,:}); % full session or demo/practice
+    whicheye=str2num(answer{5,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
+        scotomavpixx= 0;
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -48,9 +48,7 @@ try
     end
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
     defineSite % initialize Screen function and features depending on OS/Monitor
-    
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
@@ -64,8 +62,7 @@ try
     end
     %% creating stimuli
     CommonParametersFixationtraining
-    createO
-    
+    createO    
     %% trial matrixc
     
     trials=5;
@@ -82,11 +79,8 @@ try
     mixtr=newmixtr;
     if Isdemo==0
         mixtr=mixtr(1:5,:); % if it's practice time, just assign random mixtr combination
-    end
-    
-    totalmixtr=trials;
-
-    
+    end   
+    totalmixtr=trials;    
     if EyetrackerType==1
         eyelinkCalib % calibrate eyetracker, if Eyelink
     end
@@ -149,7 +143,7 @@ try
                 Datapixx('RegWrRd');
             end
             
-            if  (eyetime2-pretrial_time)>=0 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            if  (eyetime2-pretrial_time)>=ITI && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 %   IsFixatingSquare % check for the eyes to stay in the fixation window for enough (fixTime) frames
                 [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
                 if onsett==0
@@ -168,7 +162,10 @@ try
                 if ScotomaPresent == 1
                     fixationscriptWtraining
                 end
-                
+                if keyCode(escapeKey)>0
+                    closescript = 1;
+                    eyechecked=10^4;
+                end
                 
                 if  (eyetime2-pretrial_time)>=2 && trial>10 
                     Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target

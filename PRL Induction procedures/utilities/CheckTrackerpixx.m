@@ -38,18 +38,18 @@ switch EyetrackerType
             
        %        [xScreenRight, yScreenRight, ~, ~, ~, ~, ~, ~, ~] = Datapixx('GetEyePosition');
    % pos = Datapixx('ConvertCoordSysToCustom', [xScreenRight, yScreenRight]);    
-%      [xScreenLeft, yScreenLeft,xScreenRight, yScreenRight , ~, ~, ~, ~, ~] = Datapixx('GetEyePosition');
-%         if whicheye==1
-%             pos = Datapixx('ConvertCoordSysToCustom', [xScreenLeft, yScreenLeft]);
-%             [Left_Major, Left_Minor]= Datapixx('GetPupilSize');
-%             newpupil_maj=Left_Major;
-%             newpupil_min=Left_Minor;
-%         elseif whicheye==2
-%             pos = Datapixx('ConvertCoordSysToCustom', [xScreenRight, yScreenRight]);
-%             [~, ~,Right_Major, Right_Minor]= Datapixx('GetPupilSize');
-%             newpupil_maj=Right_Major;
-%             newpupil_min=Right_Minor;
-%         end   
+      [xScreenLeft, yScreenLeft,xScreenRight, yScreenRight , ~, ~, ~, ~, ~] = Datapixx('GetEyePosition');
+        if eye_used==1
+            pos = Datapixx('ConvertCoordSysToCustom', [xScreenLeft, yScreenLeft]);
+            [Left_Major, Left_Minor]= Datapixx('GetPupilSize');
+            newpupil_maj=Left_Major;
+            newpupil_min=Left_Minor;
+        elseif eye_used==2
+            pos = Datapixx('ConvertCoordSysToCustom', [xScreenRight, yScreenRight]);
+            [~, ~,Right_Major, Right_Minor]= Datapixx('GetPupilSize');
+            newpupil_maj=Right_Major;
+            newpupil_min=Right_Minor;
+        end   
             SummaryData(1) = pos(1)-driftoffsetx; % +1 to eye used as we're accessing a MATLAB array
                 SummaryData(2) = pos(2)-driftoffsety;
                 SummaryData(3) = newpupil_maj; %CurEyelinkEvt.pa(eye_used+1);
