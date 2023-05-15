@@ -8,7 +8,7 @@ addpath([cd '/utilities']); %add folder with utilities files
 
 %RTBox('clear');a
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type (lat int (0), noise (1) )', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'fovea (1) or pperiphery (2}'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type (lat int (0), noise (1) )', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'fovea (1) or periphery (2}'};
     
     name= 'Parameters';
     numlines=1;
