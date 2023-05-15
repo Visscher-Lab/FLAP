@@ -8,11 +8,11 @@ addpath([cd '/utilities']); %add folder with utilities files
 
 %RTBox('clear');a
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type (lat int (0), noise (1) )', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type (lat int (0), noise (1) )', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'fovea (1) or pperiphery (2}'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1', '2' , '2', '0', '0', '0'};
+    defaultanswer={'test','1', '3', '1', '2' , '2', '0', '0', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -29,6 +29,8 @@ try
     calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
+    TargetLoc = str2num(answer{10,:}); %0=mouse, 1=eyetracker
+
     %load (['../PRLocations/' name]);
     cc = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -202,6 +204,8 @@ try
         
         %% Initialization/reset of several trial-based variables
         FLAPVariablesReset % reset some variables used in each trial
+        
+        presentationtime=2;
         while eyechecked<1
             %   fixationtype(w, wRect, fixat,fixationlength, white,pix_deg,AMD);
             
@@ -264,6 +268,8 @@ try
                end
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                                imageRectDot2_offs=[imageRectDot2(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectDot2(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                    imageRectDot2(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectDot2(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                 if trainingType ==1
                     subNoise
                     if interval==1
@@ -271,6 +277,7 @@ try
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, ori,[]);
                     end
+                                    Screen('FillOval', w, [0.5 0.5 0.5], imageRectDot2_offs);
                     imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
                     Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
@@ -328,7 +335,9 @@ try
                     imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
           end
           imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];                
+                                imageRectDot2_offs=[imageRectDot2(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectDot2(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                    imageRectDot2(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRectDot2(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                 if trainingType ==1
                     subNoise
                     if interval==2
@@ -336,6 +345,7 @@ try
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, ori,[]);
                     end
+                                    Screen('FillOval', w, [0.5 0.5 0.5], imageRectDot2_offs);
                     imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
                     Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
@@ -429,8 +439,8 @@ if skiptrial==0
             resp = 1;
             corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
 
-                            PsychPortAudio('FillBuffer', pahandle, corrS' )
-            PsychPortAudio('Start', pahandle);
+      %                      PsychPortAudio('FillBuffer', pahandle, corrS' )
+    %        PsychPortAudio('Start', pahandle);
             
             if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down
                                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
@@ -459,8 +469,8 @@ if skiptrial==0
                 isreversals(mixtr(trial,1),mixtr(trial,2))=1;
             end
             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-            PsychPortAudio('FillBuffer', pahandle, errorS');
-            PsychPortAudio('Start', pahandle);
+         %   PsychPortAudio('FillBuffer', pahandle, errorS');
+         %   PsychPortAudio('Start', pahandle);
             thestep=max(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
             if thestep>5
                 thestep=5;
@@ -526,7 +536,6 @@ end
             clear ErrorInfo
         end
 
-end
         if (mod(trial,50))==1 && trial>1
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end

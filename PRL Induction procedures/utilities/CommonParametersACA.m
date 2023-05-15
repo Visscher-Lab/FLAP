@@ -16,6 +16,9 @@ if PRLlocations==4
 elseif PRLlocations==2
     xlocs=[-PRLecc  PRLecc];
     ylocs=[0  0];
+    elseif PRLlocations==3
+    xlocs=[-PRLecc  PRLecc 0];
+    ylocs=[0  0 PRLecc];
 end
 fixdotcolor=[177 177 177]; % color of the fixation dot before target appearance
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
