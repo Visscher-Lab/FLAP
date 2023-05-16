@@ -117,6 +117,7 @@ try
     end
     if whichTask==3
         tr_per_condition=40;
+                tr_per_condition=60;
     end
     %% Keys definition/kb initialization
     
@@ -252,7 +253,7 @@ try
             end
         end
         
-        if mod(trial,tr_per_condition+1)==0 && trial~= length(mixtr)
+        if mod(trial,tr_per_condition/2+1)==0 && trial~= length(mixtr)
             interblock_instruction
         end
         
@@ -327,8 +328,7 @@ try
             anglout = radtodeg(crowding_angle+pi/2);
             anglout2=radtodeg(crowding_angle);
         end
-        
-        
+       
         
         if whichTask ==3
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
@@ -336,7 +336,6 @@ try
             currentpostfixationblank=postfixationblank(2);
             currentcueISI=cueISI;
             currentcueduration=cueduration;
-            postfixationblank
         else
             currentpostfixationblank=postfixationblank(1);
             currentcueISI=0;
@@ -364,9 +363,9 @@ try
             
             if ScotomaPresent == 1
                 fixationscriptW
-                if whichTask==3 && presentcue==0
-                    ACAExoStimuli
-                end
+            end
+            if whichTask==3 && presentcue==0
+                ACAExoStimuli
             end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
@@ -438,17 +437,24 @@ try
             elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % show target
                 if exist('imageRect_offs')==0
-                    imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                  if whichTask~=3
+                      imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-
+                  elseif whichTask==3
+                   imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+                        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
+                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                  end
                 end
                 
                 Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
                 if whichTask<3
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
                 elseif whichTask==3
-                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
+              %      Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
+                                        Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 0.7);
+
                 elseif whichTask==4
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], contr );
                 end
@@ -519,16 +525,17 @@ try
             if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
-                fixationlength=10;
+                fixationlength=30;
                 Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, white, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-            end
+             %             Screen('FillOval', w, scotoma_color, scotoma);
+   end
             
             if fixationpresent==1
                 colorfixation=0;
                 % a fixation cross and no scotoma
-                Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+            %    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+           %     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                            Screen('FillOval', w, colorfixation, imageRectDot);
 
             end

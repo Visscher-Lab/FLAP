@@ -21,7 +21,7 @@ elseif PRLlocations==2
     ylocs=[0  0 PRLecc];
 end
 fixdotcolor=[177 177 177]; % color of the fixation dot before target appearance
-dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
+dotsize=0.46; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 oval_thick=6; %thickness of the cue's oval during the Attention task
 ContCirc= [200 200 200];
