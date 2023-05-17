@@ -13,7 +13,8 @@ PRLecc=10;  %eccentricity of target locations in deg
 
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
-randdegarray=[-11:0.5:11]; % randomize stimulus location
+randdegarray=[-12:0.5:12]; % randomize stimulus location
+randdegarray=randdegarray(randdegarray>scotomadeg/2 | randdegarray<-scotomadeg/2);
 stimulusSize=1.5;
 theeccentricity_X_scotoma=0*pix_deg;
 theeccentricity_Y_scotoma=0*pix_deg;
@@ -29,7 +30,7 @@ Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
 %fixTime_values=[0.5 1 1.5 2];
 fixTime_values=[5 10]; % consecutive time to spend with the scotoma in the box in seconds
 
-effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
+effectivetrialtimeout=20; %max time duration for a trial (otherwise it counts as elapsed)
 
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
@@ -50,8 +51,6 @@ Screen('TextSize',w, 42);
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
 
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
-
-scotomadeg=10;
 
 
 [img, sss, alpha] = imread('happyface.png');

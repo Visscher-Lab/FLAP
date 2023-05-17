@@ -14,7 +14,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '1', '0', '1' };
+    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '3', '1', '1' };
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -359,6 +359,40 @@ try
             Pixxstruct(trial).TrialStart = Datapixx('GetTime');
             Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
         end
+        
+        
+        
+        if responsebox==1
+            
+           Bpress=0;
+timestamp=-1;
+TheButtons=-1;
+inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error 
+                         % saying that inter_buttonpress was not assigned. 
+                         % 26 June 2018
+RespTime=[];
+binaryvals=[];
+bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+                         
+Datapixx('RegWrRd');
+buttonLogStatus = Datapixx('GetDinStatus');
+
+if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+    Datapixx('SetDinLog'); %added by Jerry
+    Datapixx('StartDinLog');
+    Datapixx('RegWrRd');
+    buttonLogStatus = Datapixx('GetDinStatus');
+    Datapixx('RegWrRd');
+end
+if ~exist('starttime','var') % var added by Jason 
+    Datapixx('RegWrRd');
+    starttime=Datapixx('GetTime');
+elseif  isempty(starttime)  % modified by Jerry from else to elseif
+    Datapixx('RegWrRd');
+    starttime=Datapixx('GetTime');
+end   
+        end
         while eyechecked<1
             
             if ScotomaPresent == 1
@@ -513,12 +547,18 @@ try
                     thetimes=keyCode(thekeys);
                     [secs  indfirst]=min(thetimes);
                     respTime(trial)=secs;
+                    if responsebox==1
+                        Datapixx('StopDinLog');
+                    end
                 end
                 
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
+                if responsebox==1
+                   Datapixx('StopDinLog'); 
+                end
             end
             eyefixation5
             
@@ -625,6 +665,10 @@ try
                 end
             end
             [keyIsDown, keyCode] = KbQueueCheck;
+            
+if responsebox==1
+ 
+end
         end
         if trialTimedout(trial)== 0 && caliblock==0
             

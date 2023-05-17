@@ -11,7 +11,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '0','2','0', '0' };
+    defaultanswer={'test','1', '1', '1','2','0', '1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -80,7 +80,8 @@ try
     if Isdemo==0
         mixtr=mixtr(1:5,:); % if it's practice time, just assign random mixtr combination
     end   
-    totalmixtr=trials;    
+    mixtr=mixtr(end-4:end,:);
+    totalmixtr=length(mixtr);    
     if EyetrackerType==1
         eyelinkCalib % calibrate eyetracker, if Eyelink
     end
@@ -113,10 +114,10 @@ try
     for trial=1:totalmixtr
         trialTimedout(trial)=0; % count trials that trialed-out
         TrialNum = strcat('Trial',num2str(trial));
-        trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
-        trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
+     %   trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
+   %     trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
         trialonsettime=0; % if we want the stimulus to appear right after fixation has been acquired
-        % compute target location
+       % compute target location
         theeccentricity_X=randdegarray(randi(length(randdegarray)))*pix_deg;
         theeccentricity_Y=randdegarray(randi(length(randdegarray)))*pix_deg;
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -133,6 +134,10 @@ try
  
         fixwindowPix=fixwindow_values(mixtr(trial,2))*pix_deg;        
         fixTime=fixTime_values(mixtr(trial,1));
+               trialTimeout=fixTime*5;
+               if fixwindowPix/pix_deg<1.5
+                                  trialTimeout=fixTime*6;
+               end
         Priority(0);
         KbQueueFlush()
         FLAPVariablesReset
@@ -171,7 +176,7 @@ try
                     Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1 );
                 end
-            elseif (eyetime2-pretrial_time)>ifi && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-pretrial_time)>ifi && fixating>=fixTime/ifi && stopchecking>1 && fixating<10000 && (eyetime2-pretrial_time)<=trialTimeout
                 trial_time = eyetime2;
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
@@ -182,11 +187,12 @@ try
                     Pixxstruct(trial).Trialend2 = Datapixx('GetTime');
                 end
                 clear imageRect_offs
-                fixating=1500;
+                fixating=15000;
                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
+                completedtrial(trial)=1;
                 eyechecked=10^4;
-                
+                framesoffixation(trial)=fixating;
             elseif (eyetime2-pretrial_time)>trialTimeout
                 trial_time = eyetime2;
                 if EyetrackerType ==2
@@ -198,7 +204,8 @@ try
                     Pixxstruct(trial).Trialend2 = Datapixx('GetTime');
                 end
                 clear imageRect_offs
-                fixating=1500;
+                                completedtrial(trial)=0;
+                fixating=15000;
                 PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
                 eyechecked=10^4;
@@ -316,7 +323,7 @@ try
             clear EndIndex
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
-            EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
+            EyeSummary.(TrialNum).TimeStamps.Fixation = trial_start;
             clear ErrorInfo
             
         end
@@ -325,7 +332,8 @@ try
             Datapixx('RegWrRd');
             status = Datapixx('GetTPxStatus');
             toRead = status.newBufferFrames;
-            [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+          if toRead>0
+              [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
             
             %bufferData is formatted as follows:
             %1      --- Timetag (in seconds)
@@ -366,11 +374,13 @@ try
             %interim save
             % save(baseName, 'Pixxstruct');
             % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+          end
         end
         if (mod(trial,50))==1
             if trial==1
             else
                 save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+                tx(trial)=99;
             end
         end
         
@@ -379,8 +389,7 @@ try
         end
         
         kk=kk+1;
-        %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-        
+        %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');     
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
