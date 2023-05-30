@@ -1,11 +1,17 @@
 %% general visual parameters
-scotomadeg=14;    % scotoma size in deg
+% scotomadeg=14;    % scotoma size in deg
+
+%SPOT 2
 scotomadegx=6.6;    % scotoma size in deg
 scotomadegy=2.7;    % scotoma size in deg
-
-
+%SPOT 1
 scotomadegx=14;    % scotoma size in deg
 scotomadegy=14;    % scotoma size in deg
+
+
+%SPOT 3
+scotomadegx=12.83;    % scotoma size in deg
+scotomadegy=14.78;    % scotoma size in deg
 
 scotomax=scotomadegx*pix_deg;
 scotomay=scotomadegy*pix_deg;
@@ -22,9 +28,13 @@ dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 randdegarray=[-11:0.5:11]; % randomize stimulus location
 stimulusSize=3.72;
-theeccentricity_X_scotoma=1.7*pix_deg;
-theeccentricity_Y_scotoma=0.3*pix_deg;
-
+% %SPOT 1
+% theeccentricity_X_scotoma=1.7*pix_deg;
+% theeccentricity_Y_scotoma=0.3*pix_deg;
+%SPOT 3
+theeccentricity_X_scotoma=-1*pix_deg;
+theeccentricity_Y_scotoma=1.95*pix_deg;
+%SPOT 2
 %theeccentricity_X_scotoma=-0.6*pix_deg;
 %theeccentricity_Y_scotoma=0*pix_deg;
 %% general temporal parameters (trial events)
@@ -71,9 +81,9 @@ img(:, :, 4) = alpha;
 Sadface= Screen('MakeTexture', w, img);
 
 % from http://pngimg.com/upload/cat_PNG100.png
-[img, ~, alpha] = imread('Scotoma_01.png');
+%[img, ~, alpha] = imread('Scotoma_01.png');
 %[img, ~, alpha] = imread('Scotoma_02.png');
-
+[img, ~, alpha] = imread('Scotoma_03.png');
 size(img);
 % 2557 x 1993 x 3 (rgb)
 % We'll make one texture without the alpha channel, and one with.

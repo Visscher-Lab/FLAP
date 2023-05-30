@@ -1,4 +1,4 @@
-% Exogenous/endogenous switch task
+% Scotoma awareness training for SPOT
 % written by Marcello A. Maniglia August 2022
 close all;
 clear all;

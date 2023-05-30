@@ -2,6 +2,8 @@
 % Written by Marcello Maniglia, 2023
 
 close all
+addpath([cd '/AnalysisUtilities']); %add folder with utilities files
+
 %uab=0;
 newdir= [cd '\PilotFigures\'];
 if length(baseName)>55
@@ -13,6 +15,8 @@ else
 end
 
 subj=baseName(71:72);
+subj=[baseName(71:72) 'scotoma'];
+
 %subj=baseName(51:58);
 
 time_stim(time_stim<0)=nan;
@@ -48,11 +52,11 @@ Attleft_incongr_corr_only=Attleft_congr(Attleft_incongr(:,3)==1,:);
 Attright_congr_corr_only=Attright_congr(Attright_congr(:,3)==1,:);
 Attright_incongr_corr_only=Attright_incongr(Attright_incongr(:,3)==1,:);
 
-Attleft_congr_corrRT=mean(Attleft_congr_corr_only(:,4));
-Attleft_incongr_corrRT=mean(Attleft_incongr_corr_only(:,4));
+Attleft_congr_corrRT=nanmean(Attleft_congr_corr_only(:,4));
+Attleft_incongr_corrRT=nanmean(Attleft_incongr_corr_only(:,4));
 
-Attright_congr_corrRT=mean(Attright_congr_corr_only(:,4));
-Attright_incongr_corrRT=mean(Attright_incongr_corr_only(:,4));
+Attright_congr_corrRT=nanmean(Attright_congr_corr_only(:,4));
+Attright_incongr_corrRT=nanmean(Attright_incongr_corr_only(:,4));
 
 Attleft_congr_corrSTD=nanstd(Attleft_congr_corr_only(:,4));
 Attleft_incongr_corrSTD=nanstd(Attleft_incongr_corr_only(:,4));
@@ -120,8 +124,8 @@ end
 Attleft_congr_corrRTclean=nanmean(cleanedAttleft_congr_corr_only(:,4));
 Attleft_incongr_corrRTclean=nanmean(cleanedAttleft_incongr_corr_only(:,4));
 
-Attright_congr_corrRTclean=mean(cleanedAttright_congr_corr_only(:,4));
-Attright_incongr_corrRTclean=mean(cleanedAttright_incongr_corr_only(:,4));
+Attright_congr_corrRTclean=nanmean(cleanedAttright_congr_corr_only(:,4));
+Attright_incongr_corrRTclean=nanmean(cleanedAttright_incongr_corr_only(:,4));
 
 Attleft_congr_corrSTDclean=nanstd(cleanedAttleft_congr_corr_only(:,4));
 Attleft_incongr_corrSTDclean=nanstd(cleanedAttleft_incongr_corr_only(:,4));
@@ -221,7 +225,9 @@ suptitle([baseName(end-35:end-33) ' attention task'] )
 
 %suptitle([baseName(end-34:end-33) ' attention task'] )
 
-print([baseName(end-34:end-33) ' attention'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print([subj ' attention'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+%print([baseName(end-34:end-33) ' attention'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 %print([baseName(end-34:end-33) ' attention'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
@@ -287,6 +293,7 @@ title('Right side % corr')
 suptitle([baseName(end-35:end-33) ' attention task no outlier'] )
 
 %print([baseName(end-35:end-33) ' attentionNoOut'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+print([subj ' attentionNoOut'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
-print([baseName(end-34:end-33) ' attentionNoOut'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%print([baseName(end-34:end-33) ' attentionNoOut'], '-dpng', '-r300'); %<-Save as PNG with 300 DPI%
   
