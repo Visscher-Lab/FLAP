@@ -209,7 +209,6 @@ bip_sound_right= [zeros(length(bip_sound)',1) s'];
     
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
-    responsebox=1;
     
     if responsebox==1
  % Open Datapixx, and stop any schedules which might already be running

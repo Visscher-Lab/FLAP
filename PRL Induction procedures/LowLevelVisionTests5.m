@@ -10,11 +10,11 @@ commandwindow
 addpath([cd '/utilities']);
 try
     %    prompt={'Participant name', 'Assessment day','site? UCR eyelink (1), UAB eyelink (2), Vpixx(3)','scotoma old mode active','scotoma Vpixx active', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
-    prompt={'Participant name', 'Assessment day','scotoma on (1) or off (0)', 'practice (0) or session (1)', 'Locations: (2), (3) or (4)',  'eye? left(1) or right(2)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'fixation present? yes(1), no(0)'};
+    prompt={'Participant name', 'Assessment day','scotoma on (1) or off (0)', 'practice (0) or session (1)', 'Locations: (2), (3) or (4)',  'eye? left(1) or right(2)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'fixation present? yes(1), no(0)', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '3', '1', '1' };
+    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '3', '1', '1', '0' };
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -32,6 +32,7 @@ try
     whichTask=str2num(answer{8,:}); % acuity (1), crowding (2), exo attention (3)
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
     fixationpresent=str2num(answer{10,:});
+        responsebox=str2num(answer{11,:});
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     site=3;  % VPixx
