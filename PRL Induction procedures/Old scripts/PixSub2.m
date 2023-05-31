@@ -1,5 +1,4 @@
-% Contrast threshold measurement with randomized position of the target -
-% wait until response
+% Orientation detection in noise based on Shibata et al. (2016; 2017) 
 close all; clear all; clc;
 commandwindow
 
@@ -29,7 +28,7 @@ try
     calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    TargetLoc = str2num(answer{10,:}); %0=mouse, 1=eyetracker
+    TargetLoc = str2num(answer{10,:}); 
 
     %load (['../PRLocations/' name]);
     cc = clock; %Current date and time as date vector. [year month day hour minute seconds]
@@ -68,7 +67,7 @@ try
         Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
         Contlist(1)=1;
     else % orientation discrimination in noise
-        trials=40; %100;
+        trials=70; %100;
             %  trials=5; %100;
   blocks=8; %10;
         mixtr=[];
@@ -442,10 +441,12 @@ if skiptrial==0
       %                      PsychPortAudio('FillBuffer', pahandle, corrS' )
     %        PsychPortAudio('Start', pahandle);
             
-            if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down
+            if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && reversals(mixtr(trial,1),mixtr(trial,2))>= 2
+                                        % non streaking after 3 reversals
                                         isreversals(mixtr(trial,1),mixtr(trial,2))=1;
                 if isreversals(mixtr(trial,1),mixtr(trial,2))==1
                     reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                                                    resetcounter(mixtr(trial,1),mixtr(trial,2))=1;
                     isreversals(mixtr(trial,1),mixtr(trial,2))=0;
                 end
                 thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
@@ -453,13 +454,40 @@ if skiptrial==0
                     thestep=5;
                 end
                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+%                 if trainingType==0
+%                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+%                 else
+%                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
+%                 end
+                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+
+                                elseif corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,2))<2
+                        %  streaking in the first 3 reversals
+                        % if we want to avoid the first 3 in a row before the sc moves down, we
+                        % replace  'elseif corrcounterVA(mixtrVA(trial))>=sc.down &&
+                        % reversalsVA(mixtrVA(trial))<3' with just 'else'
+                        if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                            rever(trial)=1;
+                            isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                            if reversals(mixtr(trial,1),mixtr(trial,2))==2
+                                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                                resetcounter(mixtr(trial,1),mixtr(trial,2))=1;
+                            end
+                        end
+                thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                if thestep>5
+                    thestep=5;
+                end
+                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                    end
                 if trainingType==0
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
                 else
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
-                end
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-            end
+                end            
+     
+         %   end
         elseif (thekeys==escapeKey) % esc pressed
             closescript = 1;
             break;
@@ -467,6 +495,10 @@ if skiptrial==0
             resp = 0;
             if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
                 isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            end
+            
+            if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
             end
             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
          %   PsychPortAudio('FillBuffer', pahandle, errorS');
@@ -540,7 +572,13 @@ end
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end
         
-        if closescript==1
+        if closescript==1 
+            break;
+        end
+        
+        
+        if reversals(mixtr(trial,1),mixtr(trial,2))==maxreversals
+            closescript=1;
             break;
         end
         kk=kk+1;

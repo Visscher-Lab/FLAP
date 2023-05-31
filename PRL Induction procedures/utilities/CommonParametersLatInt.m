@@ -26,7 +26,7 @@ PRL_y_axis=0;
 NoPRL_x_axis=7.5;
 NoPRL_y_axis=0;
 flankersContrast=.6;
-
+maxreversals=10;
 %% general temporal parameters (trial events)
 
 ITI=0.75; % time interval between trial start and forced fixation period
