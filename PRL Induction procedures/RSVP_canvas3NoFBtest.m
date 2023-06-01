@@ -413,6 +413,7 @@ end
                     if sum(keyCode) ~=0
                         respcounter=respcounter+1;
                         thekeys = find(keyCode);
+                                                PsychPortAudio('Start', pahandle);
                         if length(thekeys)>1
                             thekeys=thekeys(1);
                         end

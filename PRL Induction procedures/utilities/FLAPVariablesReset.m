@@ -30,9 +30,16 @@ KbQueueFlush(); % flushes all the keyboard responses (resets)
 stopchecking=-100;
 skipcounterannulus=1;
 flickerdone=0;
-pretrial_time=GetSecs; % trial timing
+if datapixxtime==1
+    pretrial_time=Datapixx('GetTime'); % trial timing
+trial_time=Datapixx('GetTime');% trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
+newtrialtime=Datapixx('GetTime'); % real value to be assigned later, after flicker is done
+else
+    pretrial_time=GetSecs; % trial timing
 trial_time=GetSecs;  % trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
 newtrialtime=GetSecs; % real value to be assigned later, after flicker is done
+end
+
 caliblock=0;
 clear EyeData
 clear FixIndex

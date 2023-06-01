@@ -14,7 +14,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '3', '1', '1', '0' };
+    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '1', '0', '1', '0' };
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -37,6 +37,7 @@ try
     %create a folder if it doesn't exist already
     site=3;  % VPixx
     scotomavpixx= 0;
+    datapixxtime=1;
     
     if exist('data')==0
         mkdir('data')
@@ -369,10 +370,6 @@ inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
 %     starttime=Datapixx('GetTime');
 % end   
 
-
-
-
-if responsebox==1
    % Configure digital input system for monitoring button box
 Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
 Datapixx('EnableDinDebounce');                          % Debounce button presses
@@ -387,9 +384,11 @@ Datapixx('RegWrRd');
     Datapixx('SetDinLog');
     Datapixx('RegWrRd'); 
 end
-        end
         while eyechecked<1
-            
+                     if datapixxtime==1
+                         eyetime2=Datapixx('GetTime');
+                     end
+                         
             if ScotomaPresent == 1
                 fixationscriptW
             end
@@ -406,7 +405,12 @@ end
                 %   IsFixatingSquare
                 [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
                 if exist('starfix')==0
-                    startfix(trial)=eyetime2;
+                    
+                    if datapixxtime==1
+                        startfix(trial)=Datapixx('GetTime');
+                    else
+                        startfix(trial)=eyetime2;
+                    end
                     starfix=98;
                 end
                 if whichTask ==3 
@@ -426,7 +430,11 @@ end
                 end
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
-                trial_time = GetSecs;
+                                  if datapixxtime==1
+                                trial_time = Datapixx('GetTime');
+                                  else
+                                        trial_time = GetSecs;
+                                  end
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
                     Datapixx('RegWrVideoSync');
@@ -609,9 +617,14 @@ end
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
+            if datapixxtime==1
+            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime3];
+ else
+                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end
             %% process eyedata in real time (fixation/saccades)
             
             if EyeTracker==1

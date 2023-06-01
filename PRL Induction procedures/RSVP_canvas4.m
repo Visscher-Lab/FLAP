@@ -97,31 +97,7 @@ load RSVP3mxIII.mat
     %mixtr to be created
     %% Keys definition/kb initialization
     
-    KbName('UnifyKeyNames');
-    
-    RespType(1) = KbName('LeftArrow');
-    RespType(2) = KbName('RightArrow');
-    RespType(3) = KbName('UpArrow');
-    RespType(4) = KbName('DownArrow');
-    RespType(5) = KbName('c'); % continue with study
-    RespType(6) = KbName('m'); %recalibrate
-    RespType(7) = KbName('w'); %foil 'wrong' response
-    escapeKey = KbName('ESCAPE');	% quit key
-    
-    % get keyboard for the key recording
-    deviceIndex = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            deviceIndex =  k_id(i);
-        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
-            deviceIndex =  k_id(i);
-        end
-    end
-    
-    KbQueueCreate(deviceIndex);
-    KbQueueStart(deviceIndex);
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
@@ -222,7 +198,7 @@ load RSVP3mxIII.mat
             theansblock=randi(4);
             oriblock=theoris(theansblock);
             moveblock=0;
-            blocktime=GetSecs+1000;
+            blocktime=eyetime2+1000;
             fixating=0;
         end
     %    stopchecking=10;
@@ -281,6 +257,9 @@ end
         
         
         while number_of_events<=length(array_of_events) && checkout<1
+                                 if datapixxtime==1
+                         eyetime2=Datapixx('GetTime');
+                     end
             if number_of_events==0
                 number_of_events=1;
             end
@@ -298,7 +277,8 @@ end
             if stopblock==1
                 if  (eyetime2-pretrial_time)>=0 && moveblock<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && fixating<1000
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tlocblock}, oriblock,[], targetAlphaValue);
-                    if sum(keyCode) ~=0
+              if responsebox==0
+                  if sum(keyCode) ~=0
                         thekeys = find(keyCode);
                         if length(thekeys)>1
                             thekeys=thekeys(1);
@@ -313,11 +293,31 @@ end
                         end
                         PsychPortAudio('Start', pahandle);
                         moveblock=2^11; %time to move to next event
-                        blocktime=GetSecs;
+                        blocktime=eyetime2;
                     end
+                elseif responsebox==1
+                       Datapixx('RegWrRd');
+             buttonLogStatus = Datapixx('GetDinStatus');
+                if (buttonLogStatus.newLogFrames > 0)
+                    [thekeys secs] = Datapixx('ReadDinLog');
+                foo=(RespType==thekeys);
+                                        if foo(theansblock)
+                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                        else
+                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                        end
+                        PsychPortAudio('Start', pahandle);
+                        moveblock=2^11; %time to move to next event
+                        blocktime=eyetime2;
+              end
+              end
                 elseif (eyetime2-pretrial_time)>=0 && (eyetime2-blocktime)<=0.5+ifi*3 && moveblock>1000 && fixating<1000
                     if (eyetime2-blocktime)>=0.5
-                        trial_time=GetSecs;
+                        if datapixxtime==1
+                            trial_time=Datapixx('GetTime');
+                        else
+                            trial_time=eyetime2;
+                        end              
                         fixating=2^11;
                     end
                 end
@@ -341,7 +341,7 @@ end
                 
                 if number_of_events>timereset
                     
-                    tm(number_of_events)=GetSecs;
+                    tm(number_of_events)=eyetime2;
                     countthis=countthis+1;
                 end
                 timereset=number_of_events;
@@ -410,9 +410,12 @@ end
                     counttime(trial)=counttime(trial)+1;
                 end
                 if (eyetime2-trial_time)>0
-                    if sum(keyCode) ~=0
+                  if responsebox==0
+                      if sum(keyCode) ~=0
                         respcounter=respcounter+1;
                         thekeys = find(keyCode);
+                                                PsychPortAudio('Start', pahandle);
+
                         if length(thekeys)>1
                             thekeys=thekeys(1);
                         end
@@ -437,7 +440,35 @@ end
                             checkout=2;
                             break;
                         end
-                    end
+                      end
+                  elseif responsebox==1              
+             Datapixx('RegWrRd');
+             buttonLogStatus = Datapixx('GetDinStatus');
+                if (buttonLogStatus.newLogFrames > 0)
+                    [thekeys secs] = Datapixx('ReadDinLog');
+             
+                   respcounter=respcounter+1;
+                                                PsychPortAudio('Start', pahandle);     
+                                                                                            if thekeys==RespType(1)
+                                                  respKeys(trial, respcounter)=1;  
+                                                elseif thekeys==RespType(2)
+                                                    respKeys(trial, respcounter)=2; 
+                                                elseif thekeys==RespType(3)
+                                                    respKeys(trial, respcounter)=3; 
+                                                elseif thekeys==RespType(4)
+                                                    respKeys(trial, respcounter)=4;                                                
+                                                elseif  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            %   number_of_events=10^4;
+                            checkout=2;
+                            break;
+                        end
+                 end
+                  end
                 end
                 if EyetrackerType ==2
                     %set a marker to get the exact time the screen flips
@@ -456,10 +487,14 @@ end
                 if (eyetime2-trial_time)>=time_of_this_event(number_of_events) && isfixatingnow>0
                     number_of_events=number_of_events+1;
                     clear stimstar
-                    trial_time=GetSecs;
+                    trial_time=eyetime2;
                     resetresponse=1;
                     isfixatingnow=0;
                     stopchecking=-10;
+                    
+                                    if responsebox==1
+             %      Datapixx('StopDinLog'); 
+                end
                 end
             end
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
@@ -488,9 +523,14 @@ end
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+            if datapixxtime==1
+            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime3];
+ else
+                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end
             
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
             
             if EyeTracker==1
                 if EyetrackerType==1
@@ -500,7 +540,7 @@ end
                 end
                 GetFixationDecision
                 if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs;
+                    trial_time = eyetime2;
                     stopchecking=10;
                 end
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
