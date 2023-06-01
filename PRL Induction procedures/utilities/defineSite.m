@@ -228,10 +228,12 @@ dinRed      = hex2dec('0000FFFE');
 dinGreen    = hex2dec('0000FFFB');
 dinBlue=hex2dec('0000FFF7');
 dinYellow=hex2dec('0000FFFD');
+dinWhite=hex2dec('0000FFEF');
 RespType=[dinGreen;
     dinRed;
     dinYellow;
     dinBlue]';
+escapeKey=dinWhite;
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
     end
     
