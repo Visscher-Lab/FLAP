@@ -1,7 +1,7 @@
 function [SummaryData EyeTrackerData ErrorData] = CheckTrackerpixx(EyetrackerType,eye_used,ScreenHeightPix,ScreenWidthPix,driftoffsetx,driftoffsety,ViewpointRefresh,el,datapixxtime)
-if(nargin==7)
-    el = 0;
-end
+% if(nargin==7)
+%     el = 0;
+% end
 switch EyetrackerType
     case 1 % EyeLink
         EyelinkError=Eyelink('CheckRecording');

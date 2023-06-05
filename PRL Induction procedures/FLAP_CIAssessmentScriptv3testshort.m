@@ -38,7 +38,7 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Assessment type', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Assessment type', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
@@ -58,7 +58,8 @@ try
     calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    TRLlocation = 2;
+            responsebox=str2num(answer{10,:});
+TRLlocation = 2;
     
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -99,29 +100,7 @@ try
         CIShapesIII
     end
     
-    %% Keys definition/kb initialization
-    
-    KbName('UnifyKeyNames');
-    
-    RespType(1) = KbName('LeftArrow');
-    RespType(2) = KbName('RightArrow');
-    RespType(3) = KbName('UpArrow');
-    RespType(4) = KbName('DownArrow');
-    escapeKey = KbName('ESCAPE');	% quit key
-    
-    % get keyboard for the key recording
-    deviceIndex = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            deviceIndex =  k_id(i);
-        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
-            deviceIndex =  k_id(i);
-        end
-    end
-    
-    KbQueueCreate(deviceIndex); %checks for keyboard inputs
-    KbQueueStart(deviceIndex);
+
     
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
@@ -387,6 +366,53 @@ try
             startExp=GetSecs; %time at the beginning of the session
         end
         stimulusduration=2;
+        
+        
+                if responsebox==1
+            
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
+            
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
@@ -587,7 +613,17 @@ try
                     stim_start = GetSecs;
                     stim_start_frame=eyetime2;
                     stimstar=1;
+                              
+                                    if responsebox==1
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        stim_startBox2(trial)= Datapixx('GetMarker');
+                        stim_startBox(trial)=Datapixx('GetTime');
+                    end
                 end
+
                 % start counting timeout for the non-fixed time training
                 % types 3 and 4
                 %                 if AssessmentType>2
@@ -597,29 +633,50 @@ try
                 %                     end
                 %                 end
                 
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
-                eyechecked=10^4; % exit loop for this trial
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+         
+                if responsebox==0
+                    if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        respTime=GetSecs;
+                        eyechecked=10^4; % exit loop for this trial
+                    end
+                                   elseif responsebox==1
+                if (buttonLogStatus.newLogFrames > 0)
+                    respTime(trial)=secs;
+                     eyechecked=10^4;
+                end  
                 end
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                respTime=GetSecs;
-                
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0 && stopchecking>1 %present pre-stimulus and stimulus
-                eyechecked=10^4; % exit loop for this trial
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
-                end
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                respTime=GetSecs;
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+                             if responsebox==0
+                    if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        respTime=GetSecs;
+                        eyechecked=10^4; % exit loop for this trial
+                    end
+               elseif responsebox==1
+                if (buttonLogStatus.newLogFrames > 0)
+                    respTime(trial)=secs;
+                     eyechecked=10^4;
+                end      
+                             end
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
+                                if responsebox==1
+                   Datapixx('StopDinLog'); 
+                end
                 eyechecked=10^4; % exit loop for this trial
             end
             %% here I draw the scotoma, elements below are called every frame
@@ -674,7 +731,22 @@ try
                     stopchecking=10;
                 end  
             end
-            [keyIsDown, keyCode] = KbQueueCheck;
+            
+                        if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+                %  [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(0, TargList);
+             Datapixx('RegWrRd');
+             buttonLogStatus = Datapixx('GetDinStatus');
+                if (buttonLogStatus.newLogFrames > 0)
+                    [thekeys secs] = Datapixx('ReadDinLog');
+                end              
+       %         [keyIsDown, keyCode] = KbQueueCheck;
+            else % AYS: UCR and UAB?
+                [keyIsDown, keyCode] = KbQueueCheck;
+            end
+            
+            
+            
+            
         end
         %% response processing
         if trialTimedout(trial)== 0 && AssessmentType~=3
@@ -946,6 +1018,14 @@ try
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;
         flickTwo(trial)=flickerpersistallowed;
+        
+          if responsebox==1 && trialTimedout(trial)==0
+                time_stim(kk) = respTime(trial) - stim_startBox2(trial);
+                                time_stim2(kk) = respTime(trial) - stim_startBox(trial);
+    else
+            time_stim(kk) = respTime(trial) - stim_start(trial);
+          end
+        
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;

@@ -26,7 +26,8 @@ try
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
     EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
         scotomavpixx= 0;
-
+    responsebox=0;
+    datapixxtime=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -79,8 +80,8 @@ try
     mixtr=newmixtr;
     if Isdemo==0
         mixtr=mixtr(1:5,:); % if it's practice time, just assign random mixtr combination
-    end   
-    mixtr=mixtr(end-4:end,:);
+       mixtr=mixtr(end-4:end,:);
+ end   
     totalmixtr=length(mixtr);    
     if EyetrackerType==1
         eyelinkCalib % calibrate eyetracker, if Eyelink
@@ -142,6 +143,10 @@ try
         KbQueueFlush()
         FLAPVariablesReset
         onsett=0;
+        
+                if mod(trial,round(length(mixtr)/3))==0
+            interblock_instruction
+        end
         while eyechecked<1
             
             if EyetrackerType ==2

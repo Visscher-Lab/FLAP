@@ -4,11 +4,11 @@
 close all; clear; clc;
 commandwindow
 try
-    prompt={'Participant name', 'Assessment day','scotoma on (1) or off (0)', 'scotoma size in dva','practice (0) or session (1)',  'TRL to the left(1) or to the right(2)', 'number of TRLs', 'eye? left(1) or right(2)','Calibration? yes(1), no(0)',  'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'Assessment day','scotoma on (1) or off (0)', 'scotoma size in dva','practice (0) or session (1)',  'TRL to the left(1) or to the right(2)', 'number of TRLs', 'eye? left(1) or right(2)','Calibration? yes(1), no(0)',  'Eyetracker(1) or mouse(0)?','response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '10','1', '1','1', '1', '0', '0'};
+    defaultanswer={'test','1', '1', '10','1', '1','1', '1', '0', '0', '1'};
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -25,6 +25,7 @@ try
     whicheye=str2num(answer{8,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{9,:}); % do we want to calibrate or do we skip it? only for Vpixx
     EyeTracker = str2num(answer{10,:}); %0=mouse, 1=eyetracker
+            responsebox=str2num(answer{11,:});
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     site=3;  % VPixx
@@ -249,10 +250,59 @@ try
             Pixxstruct(trial).TrialStart = Datapixx('GetTime');
             Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
         end
+        
+                if responsebox==1            
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
+            
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
+        
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
+                                 if datapixxtime==1
+                         eyetime2=Datapixx('GetTime');
+                     end
             fixationscriptW
             
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -288,6 +338,15 @@ try
                         Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
                         Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
                     end
+                                    
+                    if responsebox==1
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        stim_startBox2(trial)= Datapixx('GetMarker');
+                        stim_startBox(trial)=Datapixx('GetTime');
+                    end
                 end
                 PsychPortAudio('FillBuffer', pahandle, bip_sound' ); % loads data into buffer
                 if playsound==0
@@ -299,17 +358,27 @@ try
                 
                 trialTimeout=actualtrialtimeout+(stim_start(end)-pretrial_time(end));
                 checktrialstart(trial)=1;
-                if sum(keyCode)~=0
+               if responsebox==0
+                   if sum(keyCode)~=0
                     thekeys = find(keyCode);
                     thetimes=keyCode(thekeys);
                     [secs  indfirst]=min(thetimes);
                     stim_stop(trial)=secs;
                     eyechecked=10^4;
                 end
+               elseif responsebox==1
+                if (buttonLogStatus.newLogFrames > 0)
+                    respTime(trial)=secs;
+                     eyechecked=10^4;
+                end             
+            end
                 
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop(trial)=eyetime2;
                 trialTimedout(trial)=1;
+                                if responsebox==1
+                   Datapixx('StopDinLog'); 
+                end
                 eyechecked=10^4;
             end
             eyefixation5
@@ -341,10 +410,13 @@ try
                 end
             end
             
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
-            
+            if datapixxtime==1
+            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime3];
+ else
+                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end      
             %% process eyedata in real time (fixation/saccades)
             
             if EyeTracker==1
@@ -365,7 +437,8 @@ try
                     DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
                     Screen('Flip', w);
                     %   KbQueueWait;
-                    if  sum(keyCode)~=0
+                   if responsebox==0
+                     if  sum(keyCode)~=0
                         thekeys = find(keyCode);
                         if  thekeys==escapeKey
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
@@ -390,6 +463,30 @@ try
                             eyechecked=10^4;
                         end
                     end
+                 elseif responsebox==1                 
+                        if  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(5)
+                            DrawFormattedText(w, 'continue', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            % trial=trial-1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(6)
+                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                            %    KbQueueWait;
+                            eyechecked=10^4;
+                        end            
+                 end
                 end
                 
                 

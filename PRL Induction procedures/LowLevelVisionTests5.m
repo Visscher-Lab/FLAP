@@ -234,6 +234,10 @@ try
             interblock_instruction
         end
         
+% if  trial== 5
+%     interblock_instruction
+% end
+%         
         theeccentricity_X=eccentricity_X(mixtr(trial,1));
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
         %  destination rectangle for the fixation dot
@@ -339,51 +343,50 @@ try
         
         
         
-        if responsebox==1
+        if responsebox==1            
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
             
-           Bpress=0;
-timestamp=-1;
-TheButtons=-1;
-inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error 
-                         % saying that inter_buttonpress was not assigned. 
-                         % 26 June 2018
-RespTime=[];
-binaryvals=[];
-bin_buttonpress{1}=[]; % Jerry:use array instead of cell
-inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
-%                          
-% Datapixx('RegWrRd');
-% buttonLogStatus = Datapixx('GetDinStatus');
-
-% if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
-%     Datapixx('SetDinLog'); %added by Jerry
-%     Datapixx('StartDinLog');
-%     Datapixx('RegWrRd');
-%     buttonLogStatus = Datapixx('GetDinStatus');
-%     Datapixx('RegWrRd');
-% end
-% if ~exist('starttime','var') % var added by Jason 
-%     Datapixx('RegWrRd');
-%     starttime=Datapixx('GetTime');
-% elseif  isempty(starttime)  % modified by Jerry from else to elseif
-%     Datapixx('RegWrRd');
-%     starttime=Datapixx('GetTime');
-% end   
-
-   % Configure digital input system for monitoring button box
-Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
-Datapixx('EnableDinDebounce');                          % Debounce button presses
-Datapixx('SetDinLog');                                  % Log button presses to default address
-Datapixx('StartDinLog');                                % Turn on logging
-Datapixx('RegWrRd');
-    % Wait until all buttons are up
-    while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
-        Datapixx('RegWrRd');
-    end
-        % Flush any past button presses
-    Datapixx('SetDinLog');
-    Datapixx('RegWrRd'); 
-end
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
         while eyechecked<1
                      if datapixxtime==1
                          eyetime2=Datapixx('GetTime');
@@ -641,7 +644,8 @@ end
                     DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
                     Screen('Flip', w);
                     %   KbQueueWait;
-                    if  sum(keyCode)~=0
+                 if responsebox==0
+                     if  sum(keyCode)~=0
                         thekeys = find(keyCode);
                         if  thekeys==escapeKey
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
@@ -666,9 +670,31 @@ end
                             eyechecked=10^4;
                         end
                     end
-                end
-                
-                
+                 elseif responsebox==1                 
+                        if  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(5)
+                            DrawFormattedText(w, 'continue', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            % trial=trial-1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(6)
+                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                            %    KbQueueWait;
+                            eyechecked=10^4;
+                        end            
+                 end
+                end               
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -856,7 +882,7 @@ end
         
         
         if caliblock==0
-        if responsebox==1
+        if responsebox==1 && trialTimedout(trial)==0
                 time_stim(kk) = respTime(trial) - stim_startBox2(trial);
                                 time_stim2(kk) = respTime(trial) - stim_startBox(trial);
     else

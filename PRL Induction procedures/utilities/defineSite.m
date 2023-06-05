@@ -234,6 +234,8 @@ RespType=[dinGreen;
     dinYellow;
     dinBlue]';
 escapeKey=dinWhite;
+escapeKey=KbName('ESCAPE');;
+
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
     end
     
