@@ -1,17 +1,25 @@
 %% general visual parameters
 % scotomadeg=14;    % scotoma size in deg
 
-%SPOT 2
-scotomadegx=6.6;    % scotoma size in deg
-scotomadegy=2.7;    % scotoma size in deg
-%SPOT 1
-scotomadegx=14;    % scotoma size in deg
-scotomadegy=14;    % scotoma size in deg
+% %SPOT 2
+% scotomadegx=6.6;    % scotoma size in deg
+% scotomadegy=2.7;    % scotoma size in deg
+% %SPOT 1
+% scotomadegx=14;    % scotoma size in deg
+% scotomadegy=14;    % scotoma size in deg
+% 
+% 
+% %SPOT 3
+% scotomadegx=12.83;    % scotoma size in deg
+% scotomadegy=14.78;    % scotoma size in deg
+% 
 
 
-%SPOT 3
-scotomadegx=12.83;    % scotoma size in deg
-scotomadegy=14.78;    % scotoma size in deg
+
+%SPOT 4
+scotomadegx=10.87;    % scotoma size in deg
+scotomadegy=14.44;    % scotoma size in deg
+
 
 scotomax=scotomadegx*pix_deg;
 scotomay=scotomadegy*pix_deg;
@@ -32,11 +40,17 @@ stimulusSize=3.72;
 % theeccentricity_X_scotoma=1.7*pix_deg;
 % theeccentricity_Y_scotoma=0.3*pix_deg;
 %SPOT 3
-theeccentricity_X_scotoma=-1*pix_deg;
-theeccentricity_Y_scotoma=1.95*pix_deg;
+% theeccentricity_X_scotoma=-1*pix_deg;
+% theeccentricity_Y_scotoma=1.95*pix_deg;
 %SPOT 2
 %theeccentricity_X_scotoma=-0.6*pix_deg;
 %theeccentricity_Y_scotoma=0*pix_deg;
+
+
+%SPOT 4
+theeccentricity_X_scotoma=6*pix_deg;
+theeccentricity_Y_scotoma=0.5*pix_deg;
+
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
@@ -83,7 +97,9 @@ Sadface= Screen('MakeTexture', w, img);
 % from http://pngimg.com/upload/cat_PNG100.png
 %[img, ~, alpha] = imread('Scotoma_01.png');
 %[img, ~, alpha] = imread('Scotoma_02.png');
-[img, ~, alpha] = imread('Scotoma_03.png');
+%[img, ~, alpha] = imread('Scotoma_03.png');
+[img, ~, alpha] = imread('Scotoma_04.png');
+
 size(img);
 % 2557 x 1993 x 3 (rgb)
 % We'll make one texture without the alpha channel, and one with.
