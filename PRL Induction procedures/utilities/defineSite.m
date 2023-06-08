@@ -121,6 +121,37 @@ elseif site==3   %UCR VPixx
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT  
+elseif site==5  %UCR scanner
+
+    
+        %% psychtoobox settings
+    screenNumber=max(Screen('Screens'));
+%     screenNumber=min(Screen('Screens'));
+    if EyeTracker==1
+        initRequired= calibration; %do we want vpixx calibration?
+        if initRequired>0
+            fprintf('\nInitialization required\n\nCalibrating the device...');
+            %TPxTrackpixx3CalibrationTesting;
+            TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+        end
+        
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('RegWrRd');
+    end
+   v_d=35; % viewing distance
+        PsychImaging('PrepareConfiguration');
+        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+        SetResolution(screenNumber, oldResolution);
+        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+        screencm=[40.6 30];
+        %debug window
+        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+        %ScreenParameters=Screen('Resolution', screenNumber); %close all
+        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -222,7 +253,7 @@ Datapixx('EnableDinDebounce');                          % Debounce button presse
 Datapixx('SetDinLog');                                  % Log button presses to default address
 Datapixx('StartDinLog');                                % Turn on logging
 Datapixx('RegWrRd');
-
+if site~=5
 % Bit locations of button inputs, and colored LED drivers
 dinRed      = hex2dec('0000FFFE');
 dinGreen    = hex2dec('0000FFFB');
@@ -234,8 +265,25 @@ RespType=[dinGreen;
     dinYellow;
     dinBlue]';
 escapeKey=dinWhite;
-escapeKey=KbName('ESCAPE');;
+escapeKey=KbName('ESCAPE');
 
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
+elseif site ==5
+    % Bit locations of button inputs, and colored LED drivers
+dinRed      = hex2dec('0000FFFE');
+dinGreen    = hex2dec('0000FFFB');
+dinBlue=hex2dec('0000FFF7');
+dinYellow=hex2dec('0000FFFD');
+dinWhite=hex2dec('0000FFEF');
+RespType=[dinGreen;
+    dinRed;
+    dinYellow;
+    dinBlue]';
+escapeKey=dinWhite;
+escapeKey=KbName('ESCAPE');
+
+        TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down )
+    
+end
     end
     

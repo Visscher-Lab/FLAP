@@ -38,11 +38,11 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Assessment type', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '1' , '2', '0', '1', '0', '1'};
+    defaultanswer={'test','1', '3', '1' , '2', '0', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -52,14 +52,16 @@ try
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
     site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
-    AssessmentType=str2num(answer{4,:}); % Assessment type: 1=contrast, 2=contour integration
-    demo=str2num(answer{5,:}); % practice
-    whicheye=str2num(answer{6,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
-    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(answer{8,:}); % 0 = no scotoma, 1 = scotoma
-    EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-            responsebox=str2num(answer{10,:});
-TRLlocation = 2;
+    %     AssessmentType=str2num(answer{4,:}); % Assessment type: 1=contrast, 2=contour integration
+    demo=str2num(answer{4,:}); % practice
+    whicheye=str2num(answer{5,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
+    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
+    EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
+    responsebox=str2num(answer{9,:});
+    TRLlocation = 2;
+    datapixxtime = 1;
+    scotomavpixx= 0;
     
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -78,7 +80,7 @@ TRLlocation = 2;
     LocX = [-7.5, 7.5];
     LocY = [0, 0];
     
-    %% eyetracker initialization (eyelink)   
+    %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -89,18 +91,7 @@ TRLlocation = 2;
     else
         EyetrackerType=0;
     end
-    
-    % Gabor stimuli
-    if AssessmentType==1
-        createGabors
-    end
-    
-    % CI stimuli
-    if AssessmentType==2
-        CIShapesIII
-    end
-    
-
+    CIShapesIII
     
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
@@ -109,113 +100,72 @@ TRLlocation = 2;
     %% Trial matrix definition
     
     % initialize jitter matrix
-    if AssessmentType==2
-        shapes=2; % how many shapes per day?
-        JitList = 0:1:90;
-        StartJitter=1;
-    end
+    shapes=2; % how many shapes per day?
+    JitList = 0:1:90;
+    StartJitter=1;
+    
     
     %define number of trials per condition
-    if AssessmentType==1
-        conditionOne=1; %only Gabors
-        conditionTwo=2; %location of the target
-        if demo==0
-            trials=5; %total number of trials per staircase
-        else
-            trials=60;  %total number of trials per staircase % trials = 10; debugging
-        end
+    
+    conditionOne=shapes; % shapes (training type 2)
+    conditionTwo=2; %location of the target
+    if demo==0
+        trials=5; %total number of trials per staircase (per shape)
     else
-        conditionOne=shapes; % shapes (training type 2)
-        conditionTwo=2; %location of the target
-        if demo==0
-            trials=5; %total number of trials per staircase (per shape)
-        else
-            trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
-        end
+        trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
     end
     
     %create trial matrix
-    if AssessmentType == 1
-        mixcond{1,1}=[1 1; 1 2]; %full factorial design
-        mixcond{2,1} = [1 2; 1 1];
-        for cond = 1:length(mixcond)
-            dummy = [];
-            for block = 1:2
-                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)];
-            end
-            mixtr{cond,1} = dummy;
+    mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
+    mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
+    mixcond{3,1} = [2 1; 2 2; 1 2; 1 1];
+    mixcond{4,1} = [2 2; 2 1; 1 1; 1 2];
+    for cond = 1:length(mixcond)
+        dummy = [];
+        for block = 1:length(mixcond{cond,1})
+            dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)]; %StartJitter
         end
-        %         mixtr=[mixtr ones(length(mixtr(:,1)),1)];
-    else
-        mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
-        mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
-        mixcond{3,1} = [2 1; 2 2; 1 2; 1 1];
-        mixcond{4,1} = [2 2; 2 1; 1 1; 1 2];
-        for cond = 1:length(mixcond)
-            dummy = [];
-            for block = 1:length(mixcond{cond,1})
-                dummy = [dummy; repmat(mixcond{cond,1}(block,:),trials,1)]; %StartJitter
-            end
-            mixtr{cond,1} = dummy;
-        end
-        %         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
-        %         mixtr =mixtr(randperm(length(mixtr)),:);
+        mixtr{cond,1} = dummy;
     end
     
+    RespType=[dinRed;
+    dinGreen;
+    dinYellow;
+    dinBlue]';
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
-    if AssessmentType==1 || AssessmentType == 2
-        stepsizes=[4 4 4 2 2 2]; % step sizes for staircases
-        % Threshold -> 79%
-        sc.up = 1;                          % # of incorrect answers to go one step up
-        sc.steps= [2 3];                    % # of correct answers to go one step down
-        SFthreshmin=0.01;     % contrast value below which we increase SF
-        SFthreshmax=0.2; % contrast value above which we decrease SF
-        SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
-        if AssessmentType==1
-            StartCont=15;  %starting value for Gabor contrast
-            currentsf=4;
-            Contlist = log_unit_down(max_contrast+.122, 0.05, nsteps); % contrast list for trainig type 1 and 4
-            Contlist(1)=1;
-            thresh(1:conditionOne, 1:conditionTwo)=StartCont; % Column 1 - left location; Column 2 - right location depending on mixtr
-            reversals(1:conditionOne, 1:conditionTwo)=0;
-            isreversals(1:conditionOne, 1:conditionTwo)=0;
-            staircounter(1:conditionOne, 1:conditionTwo)=0;
-            corrcounter(1:conditionOne, 1:conditionTwo)=0;
-        end
-        if AssessmentType==2
-            if demo==0
-                shapeMat(:,1)= [1 9];
-                %                 shapeMat(:,1)= [1 5];
-            end
-            %             shapeMat(:,1)= [1 5];
-            shapeMat(:,1)= [9 1];
-            
-            %1: 9 vs 6 19 elements
-            %2: 9 vs 6 18 elements
-            %3: p vs q
-            %4 d vs b
-            %5 eggs
-            %6: diagonal line
-            %7:horizontal vs vertical line
-            %8: rotated eggs
-            % 9: d and b more elements
-            %10: p and q more elements
-            %11: %% rotated 6 vs 9 with 19 elements
-            
-            shapesoftheDay=shapeMat;
-            AllShapes=size((Targy));
-            trackthresh=ones(AllShapes(2),conditionTwo)*StartJitter; %assign initial jitter to shapes per location
-            thresh(1,:)=trackthresh(1,:); % shape 1 location 1 (left), shape 1 location 2 (right)
-            thresh(2,:)=trackthresh(2,:); % shape 2 location 1 (left), shape 2 location 2 (right)
-            % reversal and counters for each shape and each location
-            % depending on mixtr
-            reversals = zeros(2,2);
-            isreversals = zeros(2,2);
-            staircounter = zeros(2,2);
-            corrcounter = zeros(2,2);
-        end
+    stepsizes=[4 4 4 2 2 2]; % step sizes for staircases
+    % Threshold -> 79%
+    sc.up = 1;                          % # of incorrect answers to go one step up
+    sc.steps= [2 3];                    % # of correct answers to go one step down
+    if demo==0
+        shapeMat(:,1)= [1 9];
     end
+    shapeMat(:,1)= [10 1];
+    
+    %1: 9 vs 6 19 elements
+    %2: 9 vs 6 18 elements
+    %3: p vs q
+    %4 d vs b
+    %5 eggs
+    %6: diagonal line
+    %7:horizontal vs vertical line
+    %8: rotated eggs
+    % 9: d and b more elements
+    %10: p and q more elements
+    %11: %% rotated 6 vs 9 with 19 elements
+    
+    shapesoftheDay=shapeMat;
+    AllShapes=size((Targy));
+    trackthresh=ones(AllShapes(2),conditionTwo)*StartJitter; %assign initial jitter to shapes per location
+    thresh(1,:)=trackthresh(1,:); % shape 1 location 1 (left), shape 1 location 2 (right)
+    thresh(2,:)=trackthresh(2,:); % shape 2 location 1 (left), shape 2 location 2 (right)
+    % reversal and counters for each shape and each location
+    % depending on mixtr
+    reversals = zeros(2,2);
+    isreversals = zeros(2,2);
+    staircounter = zeros(2,2);
+    corrcounter = zeros(2,2);
     
     %% Trial structure
     
@@ -242,10 +192,8 @@ TRLlocation = 2;
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
-    if AssessmentType == 1 || AssessmentType == 2
-        InstructionFLAPAssessment(w,AssessmentType,gray,white)
-        theoris =[-45 45];
-    end
+    InstructionFLAPAssessment(w,gray,white)
+    theoris =[-45 45];
     
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
@@ -275,47 +223,36 @@ TRLlocation = 2;
             end
         end
         %         % practice
-                if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-                    practicePassed=0;
-                end
-        if trial == 1
-            while practicePassed == 0
-                FLAPpracticeAssessmentfb
-            end
-        elseif trial > 1           
-            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-                while practicePassed==0
-                    FLAPpracticeAssessmentfb
-                end
-            end
+        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+            practicePassed=0;
         end
+        %         if trial == 1
+        %             while practicePassed == 0
+        %                 FLAPpracticeAssessmentfb
+        %             end
+        %         elseif trial > 1
+        %             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+        %                 while practicePassed==0
+        %                     FLAPpracticeAssessmentfb
+        %                 end
+        %             end
+        %         end
         %         if practicePassed==2
         %             closescript=1;
         %             break
         %         end
         
-%         practicePassed=1;
+        %         practicePassed=1;
         %% training type-specific staircases
         
-        if AssessmentType==1   %if it's a Gabor trial
-            ssf=sflist(currentsf);
-            fase=randi(4);
-            texture(trial)=TheGabors(currentsf, fase);
-            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-        end
-        if AssessmentType==2
-            Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,2)));
-            Tscat=0;
-        end
+        Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,2)));
+        Tscat=0;
+        
         %% generate answer for this trial (training type 3 has no button response)
         
-        if AssessmentType==1
-            theans(trial)=randi(2);
-            ori=theoris(theans(trial));
-        elseif AssessmentType==2
-            theans(trial)=randi(2);
-            CIstimuliModII % add the offset/polarity repulsion
-        end
+        theans(trial)=randi(2);
+        CIstimuliModII % add the offset/polarity repulsion
+        
         %% target location calculation
         theeccentricity_Y=0;
         theeccentricity_X=LocX(mixtr(trial,2))*pix_deg;
@@ -333,22 +270,12 @@ TRLlocation = 2;
             
         end
         % -------------------------------------------------------------------------
-        if AssessmentType == 1
-            if trial == 1
-                Instruction_Contrast_Assessment
-            elseif trial >1
-                if mixtr(trial,2) ~= mixtr(trial-1,2)
-                    Instruction_Contrast_Assessment
-                end
-            end
-        end
-        if AssessmentType==2
-            if trial==1
+        
+        if trial==1
+            InstructionCIAssessment
+        elseif trial>1
+            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
                 InstructionCIAssessment
-            elseif trial>1
-                if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-                    InstructionCIAssessment
-                end
             end
         end
         
@@ -365,11 +292,9 @@ TRLlocation = 2;
         if trial==1
             startExp=GetSecs; %time at the beginning of the session
         end
-        stimulusduration=2;
+     %   stimulusduration=2;
         
-        
-                if responsebox==1
-            
+        if responsebox==1
             Bpress=0;
             timestamp=-1;
             TheButtons=-1;
@@ -413,75 +338,29 @@ TRLlocation = 2;
             Datapixx('SetDinLog');
             Datapixx('RegWrRd');
         end
+        
         while eyechecked<1
-            
-                                 if datapixxtime==1
-                         eyetime2=Datapixx('GetTime');
-                     end
+            if datapixxtime==1
+                eyetime2=Datapixx('GetTime');
+            end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-            if AssessmentType<3
-                fixationscriptW % visual aids on screen
-            end
+            fixationscriptW % visual aids on screen
             fixating=1500;
+            currentExoEndoCueDuration=ExoEndoCueDuration(1);
             
-            if AssessmentType>2 && trial>1 %if it's training 3 or 4 trial, we evaluate whether it's a cue trial
-                %    if mixtr(trial,2)~=mixtr(trial-1,2) || mixtr(trial,2)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
-                
-                if mixtr(trial,4)~=mixtr(trial-1,4)
-                    if mixtr(trial,2)==1 %if it's endogenous cue
-                        %calculations for arrow pointing to the next location (endo cue)
-                        nexcoordx=(imageRect_offs(1)+imageRect_offs(3))/2;
-                        nexcoordy=(imageRect_offs(2)+imageRect_offs(4))/2;
-                        previouscoordx=(rectimage{kk-1}(1)+rectimage{kk-1}(3))/2;
-                        previouscoordy=(rectimage{kk-1}(2)+rectimage{kk-1}(4))/2;
-                        delta=[previouscoordx-nexcoordx previouscoordy-nexcoordy];
-                        oriArrow(trial)=atan2d(delta(2), delta(1));
-                        oriArrow(trial)=oriArrow(trial)-90;
-                    elseif mixtr(trial,2)==2 %if it's exogenous cue (circle flashing to the next location)
-                    end
-                end
-                currentExoEndoCueDuration=ExoEndoCueDuration(mixtr(trial,2));
-            else
-                currentExoEndoCueDuration=ExoEndoCueDuration(1);
-            end
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % pre-event empty space, allows for some cleaning
-                if AssessmentType==1 || AssessmentType==2 % no flicker type of training trial
-                    counterflicker=-10000;
-                end
-                
+                counterflicker=-10000;
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
                     startrial=1;
                     trialstart(trial)=GetSecs;
                     trialstart_frame(trial)=eyetime2;
                 end
-                % HERE I present the cue for training types 3 and 4 or skip
-                % this interval for training types 1 and 2
-                
-                if AssessmentType>2 && trial>1
-                    %   if mixtr(trial,2)~=mixtr(trial-1,2) || mixtr(trial,3)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
-                    if mixtr(trial,4)~=mixtr(trial-1,4)
-                        if mixtr(trial,2)==1 %endogenous cue
-                            newrectimage{kk}=[rectimage{kk-1}(1)-2*pix_deg rectimage{kk-1}(2)-2*pix_deg rectimage{kk-1}(3)+2*pix_deg rectimage{kk-1}(4)+2*pix_deg ];
-                            Screen('DrawTexture', w, theArrow, [], rectimage{kk-1}, oriArrow(trial),[], 1);
-                            realcuecontrast=cuecontrast*0.1;
-                            isendo=1;
-                            contrastcounter=0;
-                        elseif mixtr(trial,2)==2 %exogenous cue
-                            Screen('FrameOval', w,scotoma_color, imageRect_offs, 22, 22);
-                            isendo=0;
-                        end
-                    else
-                        isendo=0;
-                    end
-                elseif AssessmentType>2 && trial==1
-                    isendo=0;
-                end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi  && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout %&& counterflicker<FlickerTime/ifi
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi  && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ==0 && counterflicker<FlickerTime/ifi
                 % here I need to reset the trial time in order to preserve
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
@@ -490,12 +369,8 @@ TRLlocation = 2;
                     counterannulus=(AnnulusTime/ifi)+1;
                     skipcounterannulus=1000;
                 else %force fixation for training types 1 and 2
-                    if AssessmentType<3
-                        [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
-                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                    elseif AssessmentType>2
-                        [counterannulus framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus)
-                    end
+                    [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
+                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     %                     if AssessmentType~=3 % no more dots!
                     %                %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                     %                     elseif AssessmentType==3 %force fixation for training types 3
@@ -515,10 +390,15 @@ TRLlocation = 2;
                     %                     end
                     if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                         newtrialtime=GetSecs;
+                        if responsebox==1
+                            newtrialtime=Datapixx('GetTime');
+                        elseif responsebox==0
+                            newtrialtime=GetSecs;
+                        end
                         skipcounterannulus=1000;
                     end
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1  && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout %&& counterflicker<FlickerTime/ifi
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1   && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ~=0 && counterflicker<FlickerTime/ifi
                 % HERE I exit the script if I press ESC
                 thekeys = find(keyCode);
                 closescript=1;
@@ -565,58 +445,44 @@ TRLlocation = 2;
                     circlestar=1;
                 end
                 cue_last=GetSecs;
-                
-                if AssessmentType>2 && counterflicker==round(FlickerTime/ifi) || AssessmentType<3 || demo==0
-                    newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
+                if datapixxtime==0
+                newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
+                elseif datapixxtime==1
+                               newtrialtime=Datapixx('GetTime');% when fixation constrains are satisfied, I reset the timer to move to the next series of events
+ end
                     flickerdone=10;
-                    flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
-                end
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
-                % HERE I PRESENT THE TARGET
+                flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
                 
-                if AssessmentType==3
-                    eyechecked=10^4; % if it's training type 3, we exit the trial, good job
-                    if skipmasking==0
-                        if AssessmentType~=3
-                            assignedPRLpatch
-                        end
-                    end
-                elseif AssessmentType==1
-                    Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
-                    if skipmasking==0
-                        assignedPRLpatch
-                    end
-                elseif AssessmentType==2
-                    if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
-                        imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
-                            imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
-                        imageRect_offsCI2=imageRect_offsCI;
-                        %                         imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
-                        imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
-                        imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
-                            imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
-                    end
-                    %here I draw the target contour
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                    imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                    if demo==0
-                        Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
-                    end
-                    % here I draw the circle within which I show the contour target
-%                     if trial>4
-                        Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-                        Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-%                     end
-                    if skipmasking==0
-                        assignedPRLpatch
-                    end
-                    imagearray{trial}=Screen('GetImage', w);
-                    
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
+                % HERE I PRESENT THE TARGET
+                if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
+                    imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
+                        imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
+                    imageRect_offsCI2=imageRect_offsCI;
+                    %                         imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)*1.56 (xs/coeffCI*pix_deg)*1.56]], wRect);
+                    imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
+                    imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
+                        imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
                 end
+                %here I draw the target contour
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                if demo==0
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                end
+                % here I draw the circle within which I show the contour target
+                %                     if trial>4
+                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+                Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+                %                     end
+                if skipmasking==0
+                    assignedPRLpatch
+                end
+                imagearray{trial}=Screen('GetImage', w);
+                
                 if exist('stimstar')==0
                     stim_start = GetSecs;
                     stim_start_frame=eyetime2;
-                    stimstar=1;
                     if responsebox==1
                         Datapixx('SetMarker');
                         Datapixx('RegWrVideoSync');
@@ -625,9 +491,10 @@ TRLlocation = 2;
                         stim_startBox2(trial)= Datapixx('GetMarker');
                         stim_startBox(trial)=Datapixx('GetTime');
                     end
+                    stimstar=1;
                 end
                 
-
+                
                 % start counting timeout for the non-fixed time training
                 % types 3 and 4
                 %                 if AssessmentType>2
@@ -638,7 +505,7 @@ TRLlocation = 2;
                 %                 end
                 
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
-         
+                
                 if responsebox==0
                     if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                         thekeys = find(keyCode);
@@ -650,14 +517,14 @@ TRLlocation = 2;
                         respTime=GetSecs;
                         eyechecked=10^4; % exit loop for this trial
                     end
-                                   elseif responsebox==1
-                if (buttonLogStatus.newLogFrames > 0)
-                    respTime(trial)=secs;
-                     eyechecked=10^4;
-                end  
+                elseif responsebox==1
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
                 end
             elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
-                             if responsebox==0
+                if responsebox==0
                     if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                         thekeys = find(keyCode);
                         if length(thekeys)>1
@@ -668,18 +535,18 @@ TRLlocation = 2;
                         respTime=GetSecs;
                         eyechecked=10^4; % exit loop for this trial
                     end
-               elseif responsebox==1
-                if (buttonLogStatus.newLogFrames > 0)
-                    respTime(trial)=secs;
-                     eyechecked=10^4;
-                end      
-                             end
+                elseif responsebox==1
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
+                end
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
-                                if responsebox==1
-                   Datapixx('StopDinLog'); 
+                if responsebox==1
+                    Datapixx('StopDinLog');
                 end
                 eyechecked=10^4; % exit loop for this trial
             end
@@ -699,11 +566,11 @@ TRLlocation = 2;
                 end
             end
             if datapixxtime==1
-            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime3];
- else
-                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3];
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
             end
             %% process eyedata in real time (fixation/saccades)
             if EyeTracker==1
@@ -716,6 +583,63 @@ TRLlocation = 2;
                 if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs; %start timer if we have eye info
                     stopchecking=10;
+                end
+                if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
+                    trialTimeout=100000;
+                    caliblock=1;
+                    DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
+                    Screen('Flip', w);
+                    %   KbQueueWait;
+                    if responsebox==0
+                        if  sum(keyCode)~=0
+                            thekeys = find(keyCode);
+                            if  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(5)
+                                DrawFormattedText(w, 'continue', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                % trial=trial-1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(6)
+                                DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                                %    KbQueueWait;
+                                eyechecked=10^4;
+                            end
+                        end
+                    elseif responsebox==1
+                        if  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(5)
+                            DrawFormattedText(w, 'continue', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            % trial=trial-1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(6)
+                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                            %    KbQueueWait;
+                            eyechecked=10^4;
+                        end
+                    end
                 end
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -733,48 +657,35 @@ TRLlocation = 2;
                         FixatingNow = 0;
                     end
                 end
-                                          else
+            else
                 if stopchecking<0
                     trial_time = eyetime2; %start timer if we have eye info
                     stopchecking=10;
-                end  
+                end
             end
             
-                        if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+            if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
                 %  [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(0, TargList);
-             Datapixx('RegWrRd');
-             buttonLogStatus = Datapixx('GetDinStatus');
+                Datapixx('RegWrRd');
+                buttonLogStatus = Datapixx('GetDinStatus');
                 if (buttonLogStatus.newLogFrames > 0)
                     [thekeys secs] = Datapixx('ReadDinLog');
-                end              
-       %         [keyIsDown, keyCode] = KbQueueCheck;
+                end
+                %         [keyIsDown, keyCode] = KbQueueCheck;
             else % AYS: UCR and UAB?
                 [keyIsDown, keyCode] = KbQueueCheck;
-            end
-            
-            
-            
-            
+            end    
         end
         %% response processing
-        if trialTimedout(trial)== 0 && AssessmentType~=3
+        if trialTimedout(trial)== 0
             foo=(RespType==thekeys);
-            
             % staircase update
-            if AssessmentType~=3
-                staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
-            end
-            if AssessmentType==1
-                Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2)))=contr;
-            end
-            if AssessmentType==2
-                Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
-            end
+            staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
+            Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
             if foo(theans(trial)) % if correct response
                 resp = 1;
                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
-                %                 if AssessmentType~=3
                 corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
                 if reversals(mixtr(trial,1),mixtr(trial,2))<2
                     sc.down=sc.steps(1);
@@ -784,7 +695,6 @@ TRLlocation = 2;
                 if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
                     isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
                 end
-                
                 if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down %&& reversalsVA(mixtrVA(trial))>= 2
                     % non streaking after 3 reversals
                     if isreversals(mixtr(trial,1),mixtr(trial,2))==1 %&& ThreshlistVA(staircounterVA(mixtrVA(trial-sc.down)))<ThreshlistVA(staircounterVA(mixtrVA(trial)))
@@ -801,16 +711,16 @@ TRLlocation = 2;
                     end
                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                    %      threshVA(mixtrVA(trial))=min(threshVA(mixtrVA(trial)),length(Sizelist));
                 end
                 thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitList));
-   
+                
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 ListenChar(0);
                 break;
             else
                 resp = 0; % if wrong response
+                nswr(trial) = 0;
                 PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
                 resetcounter(mixtr(trial)) = 0;
@@ -823,10 +733,8 @@ TRLlocation = 2;
                 if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
                     isreversals(mixtr(trial,1),mixtr(trial,2))=1;
                 end
-                
                 corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
                 % we don't want the step size to change on a wrong response
-                
                 thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
                 thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
@@ -863,17 +771,9 @@ TRLlocation = 2;
             %                     thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)),1);
             %                 end
             %             end
-        elseif AssessmentType==3 % no response to be recorded here
-            if closescript==1
-                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                PsychPortAudio('Start', pahandle);
-            else
-                PsychPortAudio('FillBuffer', pahandle, corrS'); % loads data into buffer
-                PsychPortAudio('Start', pahandle);
-            end
         else
             resp = 0;
-            respTime=0;
+            respTime(trial)=0;
             PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
             PsychPortAudio('Start', pahandle);
             if reversals(mixtr(trial,1),mixtr(trial,2))<2
@@ -881,6 +781,7 @@ TRLlocation = 2;
             elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
                 sc.down=sc.steps(2);
             end
+            nswr(trial) = 0;
             staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
             Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))=Orijit;
             resetcounter(mixtr(trial))=0;
@@ -903,17 +804,15 @@ TRLlocation = 2;
                 thresh(mixtr(trial,1),mixtr(trial,2))=1;
             end
         end
-        if AssessmentType~=3 % if the trial didn't time out, save some variables
-            if trialTimedout(trial)==0
-                stim_stop=secs;
-                cheis(kk)=thekeys;
-            end
-            time_stim(kk) = stim_stop - stim_start;
-            rispo(kk)=resp;
-            respTimes(trial)=respTime;
-            cueendToResp(kk)=stim_stop-cue_last;
-            cuebeginningToResp(kk)=stim_stop-circle_start;
+        if trialTimedout(trial)==0
+            stim_stop=secs;
+            cheis(kk)=thekeys;
         end
+        time_stim(kk) = stim_stop - stim_start;
+        rispo(kk)=resp;
+        respTimes(trial)=respTime(trial);
+        cueendToResp(kk)=stim_stop-cue_last;
+        cuebeginningToResp(kk)=stim_stop-circle_start;
         %         if AssessmentType > 2 % if it's a
         %             %   training type with flicker
         %             %   fixDuration(trial)=flicker_time_start-trial_time;
@@ -925,10 +824,10 @@ TRLlocation = 2;
         %             end
         %         end
         % -----------------------------------------------------------------------------------
-        if AssessmentType==2
-            trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
-            %             threshperday(expDay,:)=trackthresh;
-        end
+        
+        trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
+        %             threshperday(expDay,:)=trackthresh;
+        
         % -----------------------------------------------------------------------------------
         if (mod(trial,150))==1 && trial>1
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
@@ -962,13 +861,12 @@ TRLlocation = 2;
         flickOne(trial)=timeflickerallowed;
         flickTwo(trial)=flickerpersistallowed;
         
-          if responsebox==1 && trialTimedout(trial)==0
-                time_stim(kk) = respTime(trial) - stim_startBox2(trial);
-                                time_stim2(kk) = respTime(trial) - stim_startBox(trial);
-    else
+        if responsebox==1 && trialTimedout(trial)==0
+            time_stim(kk) = respTime(trial) - stim_startBox2(trial);
+            time_stim2(kk) = respTime(trial) - stim_startBox(trial);
+        else
             time_stim(kk) = respTime(trial) - stim_start(trial);
-          end
-        
+        end
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
@@ -983,12 +881,8 @@ TRLlocation = 2;
         if exist('endExp')
             totalduration=(endExp-startExp)/60;
         end
+        OriCI(kk)=Orijit;
         
-        if AssessmentType ==1
-           contras(kk)= contr;           
-            elseif AssessmentType==2
-           OriCI(kk)=Orijit;
-        end
         %% record eyelink-related variables
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -1020,9 +914,7 @@ TRLlocation = 2;
             if exist('stim_start')
                 EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
             end
-            if AssessmentType~=3
-                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
-            end
+            EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             clear ErrorInfo
         end
         if closescript==1
@@ -1030,20 +922,10 @@ TRLlocation = 2;
         end
         kk=kk+1;
         if trialcounter>11 && mixtr(trial,2) == mixtr(trial-1,2)
-            if AssessmentType == 1
-                if mod(checkcounter,10) == 0 && sum(Threshlist(mixtr(trial,1),mixtr(trial,2),staircounter(mixtr(trial,1),mixtr(trial,2))-10:staircounter(mixtr(trial,1),mixtr(trial,2))))==0
-                    DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
-                    Screen('Flip', w);
-                    KbQueueWait;
-                end
-            else
-                if AssessmentType == 2
-                    if mod(checkcounter,10) == 0 && sum(Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))-10:Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))))==0
-                        DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
-                        Screen('Flip', w);
-                        KbQueueWait;
-                    end
-                end
+            if mod(checkcounter,10) == 0 && sum(Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2)))-10:Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))))==0
+                DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
+                Screen('Flip', w);
+                KbQueueWait;
             end
         end
     end

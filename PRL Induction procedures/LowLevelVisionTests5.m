@@ -14,7 +14,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1',  '1', '1', '2', '2', '0', '1', '0', '1', '0' };
+    defaultanswer={'test','1',  '1', '1', '2', '2', '1', '1', '1', '1', '1' };
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)

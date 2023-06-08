@@ -1,18 +1,10 @@
 %FLAPpractice
-if AssessmentType==1
-    ssf=sflist(currentsf);
-    fase=randi(4);
-    texture(trial)=TheGabors(currentsf, fase);
-    practicecontrastarray=[0.6 0.6 0.6 0.4 0.4 0.4  0.2 0.2 0.2]; %predefined contrast values for practice trials
-    stimulusdurationpracticearray=[0.7 0.7 0.7 0.5 0.5 0.5 0.3 0.3 0.3]; % stimulus duration practice
-    practicetrialnum=length(practicecontrastarray); %number of trials fro the practice block
-elseif AssessmentType==2
-    Jitpracticearray=[0 0 1 1 2 2 3 3 4 4 5 5]; %  stimulus ori practice
-    stimulusdurationpracticearray=[0.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2]; % stimulus duration practice
-    targethighercontrast=[1 0 1 0 1 0 1 0 1 0 0 0]; % target contrast
-    Tscat=0;
-    practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
-end
+
+Jitpracticearray=[0 0 1 1 2 2 3 3 4 4 5 5]; %  stimulus ori practice
+stimulusdurationpracticearray=[0.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2]; % stimulus duration practice
+targethighercontrast=[1 0 1 0 1 0 1 0 1 0 0 0]; % target contrast
+Tscat=0;
+practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
 trialTimeout=20;
 FlickerTime=0;
 trialTimeout=10;
@@ -25,24 +17,17 @@ for practicetrial=1:practicetrialnum
     trialTimedout(practicetrial)=0; % counts how many trials timed out before response
     theanspractice(practicetrial)=randi(2);
     
-    if AssessmentType ==1
-        ori=theoris(theanspractice(practicetrial)); % -45 and 45 degrees for the orientation of the target
-    else
         Orijit=Jitpracticearray(practicetrial);
         stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
         %         CIstimuliModPracticeAssessment % add the offset/polarity repulsion
         CIstimuliModIIIPractice
-    end
     theeccentricity_Y=0;
     theeccentricity_X=LocX(mixtr(trial,2))*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     
-    if practicetrial==1 && AssessmentType ==2
+    if practicetrial==1 
         InstructionCIAssessmentPractice
-    end
-    if practicetrial == 1 && AssessmentType == 1
-        Instruction_Contrast_Assessment
     end
     
     %  destination rectangle for the target stimulus
@@ -80,13 +65,8 @@ for practicetrial=1:practicetrialnum
                 counterannulus=(AnnulusTime/ifi)+1;
                 skipcounterannulus=1000;
             else %force fixation for Assessment types 1 and 2
-                if AssessmentType<3
                     [counterannulus, framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                elseif AssessmentType>2
-                    [counterannulus, framecounter ]=  IsFixatingPRL3(newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,EyetrackerType,theeccentricity_X,theeccentricity_Y,framecounter,counterannulus);
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot); % for the cue
-                end
                 if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
                     newtrialtime=GetSecs;
                     skipcounterannulus=1000;
@@ -102,9 +82,6 @@ for practicetrial=1:practicetrialnum
         %% target loop
         if (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10 && (eyetime2-pretrial_time)<=trialTimeout  && stopchecking>1 %present pre-stimulus and stimulus
             % HERE I PRESENT THE TARGET
-            if AssessmentType==1
-                Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], practicecontrastarray(practicetrial) );
-            else
                 if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
                         imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
@@ -128,8 +105,7 @@ for practicetrial=1:practicetrialnum
                 %                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
                 %                 if skipmasking==0
                 %                     assignedPRLpatch
-                %                 end
-            end            
+                %                 end           
             imagearray{practicetrial}=Screen('GetImage', w);
             if exist('stimstar')==0
                 stim_start = GetSecs;

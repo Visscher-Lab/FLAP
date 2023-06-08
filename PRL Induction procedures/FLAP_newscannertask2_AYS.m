@@ -47,7 +47,7 @@ try
     CommonParametersScanner % define common parameters
     
     % AYS 4/28/23
-    if site==3
+    if site==5
         useDatapixx=1;
     end
 
@@ -69,7 +69,7 @@ try
     CIShapesIII
     % audio params for DATAPixx audio, AYS 4/29/23
     fs=44100;
-    FlipInt=Screen('GetFlipInterval',window); %Gets Flip Interval 
+    FlipInt=Screen('GetFlipInterval',w); %Gets Flip Interval 
 
     %% Keys definition/kb initialization
     
