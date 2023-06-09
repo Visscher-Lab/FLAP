@@ -28,6 +28,7 @@ try
     
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
+    responsebox=0;
     if exist('data')==0
         mkdir('data')
     end
@@ -131,7 +132,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     if Isdemo==0
         FLAP_TMT_practiceOneMonitor
     else
-        FLAP_TMT_practiceOneMonitor
+        %FLAP_TMT_practiceOneMonitor
              save(baseNamePractice) %at the end of each block save the data
 
         for block=1:4
@@ -152,7 +153,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
             HideCursor(); %hides the cursor
             TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
             
-            ShowCursor(); %Show the cursor
+            ShowCursor('Arrow'); %Show the cursor
             buttons=0;
             contcoord=0;
             numrespCorr=0; %mm
@@ -402,7 +403,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     
     
     KbQueueWait;
-    ShowCursor;
+    ShowCursor('Arrow');
     
     if site==1
         Screen('CloseAll');

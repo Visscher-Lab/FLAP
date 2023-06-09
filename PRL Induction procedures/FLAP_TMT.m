@@ -158,7 +158,7 @@ try
             HideCursor(); %hides the cursor
             TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
             
-            ShowCursor(); %Show the cursor
+            ShowCursor('Arrow'); %Show the cursor
             buttons=0;
             contcoord=0;
             numrespCorr=0; %mm
@@ -462,7 +462,7 @@ try
     
     
     KbQueueWait;
-    ShowCursor;
+    ShowCursor('Arrow');
     
     if site==1
         Screen('CloseAll');
