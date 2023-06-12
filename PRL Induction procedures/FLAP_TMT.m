@@ -214,6 +214,7 @@ try
                                     Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
                                 end
                             end
+                            Screen('TextStyle', w, 1);
                         end
                         
                         if  sum(buttons)~=0 && resp(numresp+1)==0;
