@@ -6,7 +6,7 @@ scotomadeg=10; % size of the scotoma in degrees of visual angle
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(TRLlocation) 0 ]; %eccentricity of PRL in deg
-fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
+fixwindow=3; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
 fixdotcolor=[177 177 177]; % color of the fixation dot for training type 1 and 2 (4?)
@@ -17,7 +17,9 @@ colorfixation = [200 200 200]; % if we don't want the scotoma
 maskthickness = pix_deg*7.25;
 %% general temporal parameters (trial events)
 
-preCueISI=0.75; % time between beginning of trial and first event in the trial (fixations, cues or targets)
+ITI=0.75; % time between beginning of trial and first event in the trial (fixations, cues or targets)
+fixationduration=0.5; %duration of forced fixation period
+postfixationblank=0.2;
 ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
 postCueISI=0.1; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
@@ -56,7 +58,7 @@ CircConts=[0.51,1]*255; %low/high contrast circular cue
 radius=12.5;   %radius of the circle in which the target can appear (training type 3 and 4)
 cuecontrast=1; % contrast of the cue (0-1)
 % trial type-specific time parameters
-
+calibrationtolerance=2;
 %% visual stimuli common parameters
 imsize=(stimulusSize*pix_deg)/2; %Gabor mask (effective stimulus size)
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);

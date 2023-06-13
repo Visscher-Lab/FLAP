@@ -124,6 +124,8 @@ try
     end
     
     mixtr= []; % 1: gabor of shapes; 2: target location (left vs right), 3: shape type (6/9 or eggs)
+    %mixtr 1: assessment type gabor (1) vs CI (2)
+    %mixtr 2: stimulus location left (1) vs right (2)
     possiblerest=[trials trials*2
         trials trials*3
         trials*2  trials*3];
@@ -178,7 +180,6 @@ try
     end
     
 %% RESPONSEpixx (Vpixx buttonbox) init 5/3/23
-if site ==5
 TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
 TheTrigger = 11;
 
@@ -203,7 +204,7 @@ TRrem = 1; % remainder TRs if uneven div CONFIRM TR REMAINDER
 TRlist = [repmat(TRpat, floor(length(mixtr)/length(TRpat)), 1); repmat(TRrem, rem(length(mixtr), length(TRpat)), 1)];
 TRwait = TRlist(randperm(length(mixtr))); % TRwait arr tells how long to wait before next trial
 TRcount = 0;
-end
+
     %% HERE starts trial loop
     for trial=1:length(mixtr)
         %% jitter code @ trial loop start, AYS 4/28/23. See also jitter code @ trial loop end
@@ -264,8 +265,8 @@ end
             elseif AssessmentType==2
                 InstructionCIAssessment
             end
-        elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial,1) || mixtr(trial,3)~= mixtr(trial,3) )
-            if trial==1 || mixtr(trial,1)~= mixtr(trial,1)
+        elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,3)~= mixtr(trial-1,3) )
+            if trial==1 || mixtr(trial,1)~= mixtr(trial-1,1)
                 %     InstructionFLAPAssessment(w,AssessmentType,gray,white)
                 if AssessmentType == 1
                     Instruction_Contrast_Assessment
@@ -293,21 +294,72 @@ end
             imageRect(3)-theeccentricity_X, imageRect(4)-theeccentricity_Y];
 
         %% Initialization/reset of several trial-based variables
-        FLAPVariablesReset % reset some variables used in each trial
         if trial==1
             startExp=GetSecs; %time at the beginning of the session
         end
         playsound=0;
+
+
+        if responsebox==1            
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
+            
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
+        FLAPVariablesReset % reset some variables used in each trial
+
+
+%stimulusduration=2.5;
+respgiven=0;
         while eyechecked<1
+            if datapixxtime==1
+                eyetime2=Datapixx('GetTime');
+            end
             if EyetrackerType ==2 %AS 4-28-23, not sure what this is doing....see the code earlier Are you trying to make this gaze contingent? I thought we are just recording eye-movements?
                 Datapixx('RegWrRd');
             end
-                                 if datapixxtime==1
-                         eyetime2=Datapixx('GetTime');
-                     end
-              if restscreen==0
-                  fixationscriptW % visual aids on screen            
-              end
+
+            if restscreen==0
+                fixationscriptW % visual aids on screen
+            end
               %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
                 if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<preCueISI && stopchecking>1
                     % pre-event empty space, allows for some cleaning
@@ -358,11 +410,13 @@ end
                     %AS 4-28-23 I'm not sure what the following does? Where you are
                     %asking for the key response?
                     % I exit the script if I press ESC
-                    if keyCode(escapeKey) ~=0                       
+                 if responsebox==0
+                     if keyCode(escapeKey) ~=0                       
                         thekeys = find(keyCode);
                         closescript=1;
                         break;
-                    end
+                     end
+                 end
                 elseif (eyetime2-trial_time)>=preCueISI+CueDuration+postCueISI  && (eyetime2-trial_time)<preCueISI+CueDuration+postCueISI+stimulusduration && stopchecking>1
                     % present target
                     if AssessmentType==1
@@ -420,52 +474,94 @@ end
                          end
                          stimstar=1;
                    end
-                    if keyCode(escapeKey) ~=0 %AS 4-28-23 Where is the key being bressed @andrew can you help put in the datapixx button presses? 
+                if responsebox==0
+                if keyCode(escapeKey) ~=0 %AS 4-28-23 Where is the key being bressed @andrew can you help put in the datapixx button presses? 
                         % AYS: did we want a datapixx button to close the
                         % script? I believe using the control room keyboard
                         % to close should work
                         thekeys = find(keyCode);
                         closescript=1;
                         break;
-                    end
+                end
+                end
                 elseif (eyetime2-trial_time)>=preCueISI+CueDuration+postCueISI+stimulusduration  && (eyetime2-trial_time)<preCueISI+CueDuration+postCueISI+stimulusduration+poststimulustime && stopchecking>1
-                    if sum(keyCode)~=0
-                        thekeys = find(keyCode); %AS 4-28-23 again no key at UCR
-                        if length(thekeys)>1
-                            thekeys=thekeys(1);
-                        end
-                        thetimes=keyCode(thekeys); %AS 4-28-23 again no key at UCR
-                        [secs  indfirst]=min(thetimes);
-                        foo=(RespType==thekeys);
-                        if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
-                           if foo(theans(trial)) % if correct response
-                                resp = 1;
-                                Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
-                            else
-                                resp = 0; % if wrong response
-                                Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
-                           end
-                           Datapixx('StartAudioSchedule'); 
-                           Datapixx('RegWrRd'); % synchronize Datapixx registers to local register cache
-                        else
-                            if foo(theans(trial)) % if correct response
-                                resp = 1;
-                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
-                            elseif (thekeys==escapeKey) % esc pressed
-                                closescript = 1;
-                                ListenChar(0); %AS 4-28-23 We cannot use ListenChar This is deprcated. We need either KbQueue for UAB and Datapixx button for UCR
-                                break;
-                            else
-                                resp = 0; % if wrong response
-                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                                     
+                    if responsebox==0                        
+                        if sum(keyCode)~=0
+                            thekeys = find(keyCode);
+                            if length(thekeys)>1
+                                thekeys=thekeys(1);
                             end
-                            PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
+                            thetimes=keyCode(thekeys);
+                            [secs  indfirst]=min(thetimes);
+                            respTime(trial)=secs;
+                            foo=(RespType==thekeys);
+                            if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
+                                if foo(theans(trial)) % if correct response
+                                    resp = 1;
+                                    Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+                                    Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
+                                else
+                                    resp = 0; % if wrong response
+                                    Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+                                    Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
+                                end
+                                Datapixx('StartAudioSchedule');
+                                Datapixx('RegWrRd'); % synchronize Datapixx registers to local register cache
+                            else
+                                if foo(theans(trial)) % if correct response
+                                    resp = 1;
+                                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                elseif (thekeys==escapeKey) % esc pressed
+                                    closescript = 1;
+                                    ListenChar(0); %AS 4-28-23 We cannot use ListenChar This is deprcated. We need either KbQueue for UAB and Datapixx button for UCR
+                                    break;
+                                else
+                                    resp = 0; % if wrong response
+                                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                end
+                                PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
+                            end
                         end
-                    end
+                    elseif responsebox==1
+                        if (buttonLogStatus.newLogFrames > 0) && respgiven==0
+                            respTime(trial)=secs;
+                            foo=(RespType==thekeys);
+                            if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
+                                if foo(theans(trial)) % if correct response
+                                    resp = 1;
+                                    Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+                                    Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
+                                else
+                                    resp = 0; % if wrong response
+                                    Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+                                    Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
+                                end
+                                Datapixx('StartAudioSchedule');
+                                Datapixx('RegWrRd'); % synchronize Datapixx registers to local register cache
+                            else
+                                if foo(theans(trial)) % if correct response
+                                    resp = 1;
+                                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                elseif (thekeys==escapeKey) % esc pressed
+                                    closescript = 1;
+                                    ListenChar(0); %AS 4-28-23 We cannot use ListenChar This is deprcated. We need either KbQueue for UAB and Datapixx button for UCR
+                                    break;
+                                else
+                                    resp = 0; % if wrong response
+                                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                end
+                                PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
+                            end
+                            respgiven=1;
+                        end
+                    end              
+
                 elseif (eyetime2-trial_time)>=preCueISI+CueDuration+postCueISI+stimulusduration+poststimulustime
-                    eyechecked=10^4; % exit loop for this trial
+            duda=1;
+didi=eyetime2;
+didu=trial_time;
+        eyechecked=10^4; % exit loop for this trial
                 end
             %% here I draw the scotoma, elements below are called every frame
             %AS 4-28-23 Do we have the scotoma in the scanner? I didn't
@@ -485,21 +581,27 @@ end
                         Screen('FillRect', w, gray);
                     end
                 end
-            end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end 
+            if datapixxtime==1
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3 ];
+                datapixx_Timestamp=[datapixx_Timestamp eyetime2];
+dd(length(datapixx_Timestamp))=trial_time;
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end          
             %% process eyedata in real time (fixation/saccades)
             if EyeTracker==1 %AS 4-28-23 Do we need any of this or just get eye-tracking data at the end of the trial? @Andrew can you help Marcello with that code?
-                if EyetrackerType==1 
-                    GetEyeTrackerData
-                elseif EyetrackerType==2
-                    GetEyeTrackerDatapixx
-                end
+                    GetEyeTrackerDataNew
                 GetFixationDecision
                 if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs; %start timer if we have eye info
-                    stopchecking=10;
+                    if datapixxtime==1
+                        trial_time=Datapixx('GetTime');%
+                    elseif datapixxtime==0
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
+                 stopchecking=10;
                 end
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -523,10 +625,24 @@ end
                     stopchecking=10;
                 end
             end
-            if site == 5 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+%             if site == 5 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+%                 [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(responseduration, TargList, startime);
+%             else % AYS: UCR and UAB?
+%                 [keyIsDown, keyCode] = KbQueueCheck; %AS 4-28-23 @Andrew add  Datapixx button press as an option
+%             end
+            if responsebox==1 && site ~=5 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+                %  [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(0, TargList);
+                Datapixx('RegWrRd');
+                buttonLogStatus = Datapixx('GetDinStatus');
+                if (buttonLogStatus.newLogFrames > 0)
+                    [thekeys secs] = Datapixx('ReadDinLog');
+                end
+                %         [keyIsDown, keyCode] = KbQueueCheck;
+            elseif responsebox==1 && site == 5 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
                 [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(responseduration, TargList, startime);
+                
             else % AYS: UCR and UAB?
-                [keyIsDown, keyCode] = KbQueueCheck; %AS 4-28-23 @Andrew add  Datapixx button press as an option
+                [keyIsDown, keyCode] = KbQueueCheck;
             end
         end
         %% response processing
@@ -542,7 +658,7 @@ end
              resp=nan;   
         end    
         cheis(kk)=thekeys;
-        time_stim(kk) = stim_stop - stim_start;
+        time_stim(kk) = stim_stop - stim_start_frame;
         rispo(kk)=resp;
         % -----------------------------------------------------------------------------------
         if (mod(trial,150))==1 && trial>1

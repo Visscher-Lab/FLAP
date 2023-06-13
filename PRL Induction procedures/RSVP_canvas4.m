@@ -414,7 +414,7 @@ end
                       if sum(keyCode) ~=0
                         respcounter=respcounter+1;
                         thekeys = find(keyCode);
-                                                PsychPortAudio('Start', pahandle);
+                                      %          PsychPortAudio('Start', pahandle);
 
                         if length(thekeys)>1
                             thekeys=thekeys(1);
@@ -448,7 +448,7 @@ end
                     [thekeys secs] = Datapixx('ReadDinLog');
              
                    respcounter=respcounter+1;
-                                                PsychPortAudio('Start', pahandle);     
+                          %                      PsychPortAudio('Start', pahandle);     
                                                                                             if thekeys==RespType(1)
                                                   respKeys(trial, respcounter)=1;  
                                                 elseif thekeys==RespType(2)

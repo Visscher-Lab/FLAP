@@ -3,6 +3,7 @@ yeye=[];   %y coordinates from eyetracker
 pupilmaj=[]; %major axis dimension of the pupil
 pupilmin=[];   %minor axis dimension of the pupil
 VBL_Timestamp=[]; %array to collect frame time stamp
+datapixx_Timestamp=[]; %array to collect frame time stamp
 FixCount=0;
 FixatingNow=0;
 EndIndex=0;
@@ -32,12 +33,12 @@ skipcounterannulus=1;
 flickerdone=0;
 if datapixxtime==1
     pretrial_time=Datapixx('GetTime'); % trial timing
-trial_time=Datapixx('GetTime');% trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
-newtrialtime=Datapixx('GetTime'); % real value to be assigned later, after flicker is done
-else
+    trial_time=Datapixx('GetTime');% trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
+    newtrialtime=Datapixx('GetTime'); % real value to be assigned later, after flicker is done
+elseif datapixxtime==0
     pretrial_time=GetSecs; % trial timing
-trial_time=GetSecs;  % trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
-newtrialtime=GetSecs; % real value to be assigned later, after flicker is done
+    trial_time=GetSecs;  % trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
+    newtrialtime=GetSecs; % real value to be assigned later, after flicker is done
 end
 
 caliblock=0;

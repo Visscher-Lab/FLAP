@@ -128,10 +128,10 @@ try
         mixtr{cond,1} = dummy;
     end
     
-    RespType=[dinRed;
-    dinGreen;
-    dinYellow;
-    dinBlue]';
+%     RespType=[dinRed;
+%         dinGreen;
+%         dinYellow;
+%         dinBlue]';
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     stepsizes=[4 4 4 2 2 2]; % step sizes for staircases
@@ -141,7 +141,7 @@ try
     if demo==0
         shapeMat(:,1)= [1 9];
     end
-    shapeMat(:,1)= [10 1];
+    shapeMat(:,1)= [9 10];
     
     %1: 9 vs 6 19 elements
     %2: 9 vs 6 18 elements
@@ -251,7 +251,8 @@ try
         %% generate answer for this trial (training type 3 has no button response)
         
         theans(trial)=randi(2);
-        CIstimuliModII % add the offset/polarity repulsion
+       %         theans(trial)=1;
+CIstimuliModII % add the offset/polarity repulsion
         
         %% target location calculation
         theeccentricity_Y=0;
@@ -292,7 +293,7 @@ try
         if trial==1
             startExp=GetSecs; %time at the beginning of the session
         end
-     %   stimulusduration=2;
+        %   stimulusduration=2;
         
         if responsebox==1
             Bpress=0;
@@ -347,113 +348,47 @@ try
                 Datapixx('RegWrRd');
             end
             fixationscriptW % visual aids on screen
-            fixating=1500;
+%             fixating=1500;
             currentExoEndoCueDuration=ExoEndoCueDuration(1);
             
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
-            if (eyetime2-trial_time)>=ifi*2 && (eyetime2-trial_time)<ifi*2+preCueISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-                % pre-event empty space, allows for some cleaning
-                counterflicker=-10000;
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            if (eyetime2-pretrial_time)>=ITI  && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
                     startrial=1;
                     trialstart(trial)=GetSecs;
                     trialstart_frame(trial)=eyetime2;
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi  && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ==0 && counterflicker<FlickerTime/ifi
+                [fixating, counter, framecounter] = IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
+                if exist('starfix') == 0
+                    if datapixxtime==1
+                        startfix(trial)=Datapixx('GetTime');
+                    else
+                        startfix(trial)=eyetime2;
+                    end
+                end
+                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+            elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000  && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ==0 && counterflicker<FlickerTime/ifi
                 % here I need to reset the trial time in order to preserve
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
-                if skipforcedfixation==1 % skip the forced fixation
-                    counterannulus=(AnnulusTime/ifi)+1;
-                    skipcounterannulus=1000;
-                else %force fixation for training types 1 and 2
-                    [counterannulus framecounter ]=  IsFixatingSquareNew2(wRect,newsamplex,newsampley,framecounter,counterannulus,fixwindowPix);
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                    %                     if AssessmentType~=3 % no more dots!
-                    %                %         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                    %                     elseif AssessmentType==3 %force fixation for training types 3
-                    %                         if exist('isendo') == 0
-                    %                             isendo=0;
-                    %                         end
-                    %                         if isendo==1 % if is endo trial we slowly increase the visibility of the cue
-                    %                             if mod(round(eyetime2-trial_time),100)
-                    %                                 contrastcounter=contrastcounter+1;
-                    %                                 realcuecontrast=(cuecontrast*0.45)+(contrastcounter/2000);
-                    %                             end
-                    %                             Screen('FillOval', w, realcuecontrast, imageRect_offs_dot);
-                    %                         elseif isendo==0
-                    %                             realcuecontrast=cuecontrast;
-                    %                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], realcuecontrast);
-                    %                         end
-                    %                     end
-                    if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
-                        newtrialtime=GetSecs;
-                        if responsebox==1
-                            newtrialtime=Datapixx('GetTime');
-                        elseif responsebox==0
-                            newtrialtime=GetSecs;
-                        end
-                        skipcounterannulus=1000;
-                    end
+                if datapixxtime==1
+                    trial_time = Datapixx('GetTime');
+                else
+                    trial_time = GetSecs;
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1   && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ~=0 && counterflicker<FlickerTime/ifi
-                % HERE I exit the script if I press ESC
-                thekeys = find(keyCode);
-                closescript=1;
-                break;
+                if EyetrackerType ==2
+                    Datapixx('SetMarker');
+                    Datapixx('RegWrVideoSync');
+                    %collect marker data
+                    Datapixx('RegWrRd');
+                    Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
+                end
+                fixating = 1500;
             end
             %% here is where the second time-based trial loop starts
-            if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10  && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout %&& counterflicker<=FlickerTime/ifi
-                % HERE starts the flicker for training types 3 and 4, if
-                % training type is 1 or 2, this is skipped
-                
-                if exist('flickerstar') == 0 % start flicker timer
-                    flicker_time_start(trial)=eyetime2; % beginning of the overall flickering period
-                    flickerstar=1;
-                    flickswitch=0;
-                    flick=1;
-                end
-                flicker_time=GetSecs-flicker_time_start(trial);     % timer for the flicker decision
-                if flicker_time>flickswitch % time to flicker?
-                    flickswitch= flickswitch+flickeringrate;
-                    flick=3-flick; % flicker/non flicker
-                end
-                %                 if AssessmentType>2 && demo==2  % Force flicker here (training type 3 and 4)
-                %                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
-                %                 end
-                
-                % from ForcedFixationFlicker3, should I show the flicker or not?
-                %                 if turnFlickerOn(end)==1 %flickering cue
-                %                     if flick==2
-                %                         if AssessmentType==3
-                %                             Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                %                         elseif AssessmentType==4
-                %                             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                %                         end
-                %                     end
-                %                 elseif turnFlickerOn(end)==0 %non-flickering cue
-                %                     if AssessmentType==3
-                %                         Screen('DrawTexture', w, theCircles, [], imageRect_offs, [],[], 1);
-                %                     elseif AssessmentType==4
-                %                         Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                %                     end
-                %                 end
-                if exist('circlestar')==0
-                    circle_start = GetSecs;
-                    circlestar=1;
-                end
-                cue_last=GetSecs;
-                if datapixxtime==0
-                newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
-                elseif datapixxtime==1
-                               newtrialtime=Datapixx('GetTime');% when fixation constrains are satisfied, I reset the timer to move to the next series of events
- end
-                    flickerdone=10;
-                flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
-                
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
+            if (eyetime2-trial_time)>=postfixationblank && (eyetime2-trial_time)< postfixationblank+stimulusduration && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
                 % HERE I PRESENT THE TARGET
                 if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
                     imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
@@ -481,7 +416,7 @@ try
                 imagearray{trial}=Screen('GetImage', w);
                 
                 if exist('stimstar')==0
-                    stim_start = GetSecs;
+                    %                     stim_start = GetSecs;
                     stim_start_frame=eyetime2;
                     if responsebox==1
                         Datapixx('SetMarker');
@@ -493,18 +428,7 @@ try
                     end
                     stimstar=1;
                 end
-                
-                
-                % start counting timeout for the non-fixed time training
-                % types 3 and 4
-                %                 if AssessmentType>2
-                %                     if exist('checktrialstart')==0
-                %                         trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
-                %                         checktrialstart=1;
-                %                     end
-                %                 end
-                
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+            elseif (eyetime2-trial_time)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
                 
                 if responsebox==0
                     if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
@@ -523,7 +447,7 @@ try
                         eyechecked=10^4;
                     end
                 end
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+            elseif (eyetime2-trial_time)>=postfixationblank+stimulusduration && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
                 if responsebox==0
                     if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                         thekeys = find(keyCode);
@@ -674,7 +598,7 @@ try
                 %         [keyIsDown, keyCode] = KbQueueCheck;
             else % AYS: UCR and UAB?
                 [keyIsDown, keyCode] = KbQueueCheck;
-            end    
+            end
         end
         %% response processing
         if trialTimedout(trial)== 0
@@ -808,11 +732,15 @@ try
             stim_stop=secs;
             cheis(kk)=thekeys;
         end
-        time_stim(kk) = stim_stop - stim_start;
+        if exist('stimstar')==0
+            stim_start(trial)=0;
+            stimnotshowed(trial)=99;
+        end
+        %         time_stim(kk) = stim_stop - stim_start;
         rispo(kk)=resp;
         respTimes(trial)=respTime(trial);
-        cueendToResp(kk)=stim_stop-cue_last;
-        cuebeginningToResp(kk)=stim_stop-circle_start;
+        %         cueendToResp(kk)=stim_stop-cue_last;
+        %         cuebeginningToResp(kk)=stim_stop-circle_start;
         %         if AssessmentType > 2 % if it's a
         %             %   training type with flicker
         %             %   fixDuration(trial)=flicker_time_start-trial_time;
@@ -870,9 +798,9 @@ try
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
         coordinate(trial).y=theeccentricity_Y/pix_deg;
-        xxeye(trial).ics=[xeye];
-        yyeye(trial).ipsi=[yeye];
-        vbltimestamp(trial).ix=[VBL_Timestamp];
+        xxeye(trial).ics=xeye;
+        yyeye(trial).ipsi=yeye;
+        vbltimestamp(trial).ix=VBL_Timestamp;
         if exist('ssf')
             feat(kk)=ssf;
         end

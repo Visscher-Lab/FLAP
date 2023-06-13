@@ -32,7 +32,7 @@ try
     whichTask=str2num(answer{8,:}); % acuity (1), crowding (2), exo attention (3)
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
     fixationpresent=str2num(answer{10,:});
-        responsebox=str2num(answer{11,:});
+    responsebox=str2num(answer{11,:});
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     site=3;  % VPixx
@@ -165,8 +165,8 @@ try
             mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
         end
     elseif PRLlocations==3
-                 mixtrtemp=repmat(fullfact([3 3]),tr_per_condition,1);
-            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);   
+        mixtrtemp=repmat(fullfact([3 3]),tr_per_condition,1);
+        mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
     end
     if IsPractice==0
         mixtr=mixtr(1:practicetrials,:);
@@ -234,10 +234,10 @@ try
             interblock_instruction
         end
         
-% if  trial== 5
-%     interblock_instruction
-% end
-%         
+        % if  trial== 5
+        %     interblock_instruction
+        % end
+        %
         theeccentricity_X=eccentricity_X(mixtr(trial,1));
         theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
         %  destination rectangle for the fixation dot
@@ -251,7 +251,7 @@ try
             theeccentricity_Y_fix=eccentricity_Y;
             %  destination rectangle for the fixation dot
             imageRect_offs_dot_fix =[imageRectDot(1)+theeccentricity_X_fix, imageRectDot(2)+theeccentricity_Y_fix,...
-                 imageRectDot(3)+theeccentricity_X_fix, imageRectDot(4)+theeccentricity_Y_fix];
+                imageRectDot(3)+theeccentricity_X_fix, imageRectDot(4)+theeccentricity_Y_fix];
         end
         
         if whichTask ~=3
@@ -309,7 +309,7 @@ try
             anglout = radtodeg(crowding_angle+pi/2);
             anglout2=radtodeg(crowding_angle);
         end
-       
+        
         
         if whichTask ==3
             imageRectCue = CenterRect([0, 0, cueSize*pix_deg cueSize*pix_deg], wRect);
@@ -343,7 +343,7 @@ try
         
         
         
-        if responsebox==1            
+        if responsebox==1
             Bpress=0;
             timestamp=-1;
             TheButtons=-1;
@@ -388,10 +388,10 @@ try
             Datapixx('RegWrRd');
         end
         while eyechecked<1
-                     if datapixxtime==1
-                         eyetime2=Datapixx('GetTime');
-                     end
-                         
+            if datapixxtime==1
+                eyetime2=Datapixx('GetTime');
+            end
+            
             if ScotomaPresent == 1
                 fixationscriptW
             end
@@ -416,28 +416,28 @@ try
                     end
                     starfix=98;
                 end
-                if whichTask ==3 
+                if whichTask ==3
                     % Have fixation dot appear at destinations described
                     % earlier
                     if PRLlocations==2
-                                   Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(1:2:7));
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:2:8));
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(1:2:7));
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:2:8));
                     elseif PRLlocations==3
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(1:3:10));
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:3:11));
-                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:3:12));
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(1:3:10));
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:3:11));
+                        Screen('FillOval', w, fixdotcolor, imageRect_offs_dot_fix(2:3:12));
                     end
                 else
-                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-                Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
+                    Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                 end
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
-                                  if datapixxtime==1
-                                trial_time = Datapixx('GetTime');
-                                  else
-                                        trial_time = GetSecs;
-                                  end
+                if datapixxtime==1
+                    trial_time = Datapixx('GetTime');
+                else
+                    trial_time = GetSecs;
+                end
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
                     Datapixx('RegWrVideoSync');
@@ -477,24 +477,24 @@ try
             elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration && (eyetime2-trial_time)<currentpostfixationblank+currentcueduration+currentcueISI+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 % show target
                 if exist('imageRect_offs')==0
-                  if whichTask~=3
-                      imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                  elseif whichTask==3
-                   imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-                        imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-                    imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                  end
+                    if whichTask~=3
+                        imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                    elseif whichTask==3
+                        imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+                            imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
+                        imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                    end
                 end
                 
                 Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
                 if whichTask<3
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1);
                 elseif whichTask==3
-              %      Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
-                                        Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 0.7);
-
+                    %      Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], attContr);
+                    Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 0.7);
+                    
                 elseif whichTask==4
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], contr );
                 end
@@ -520,7 +520,7 @@ try
                     end
                     stimstar=1;
                 end
-             
+                
                 if whichTask == 2 % show flankers for crowding
                     if exist('imageRect_offs_flank1')==0
                         
@@ -538,51 +538,51 @@ try
                     Screen('DrawTexture',w, theCircles, [],imageRect_offs_flank1,anglout,[],1 ); % letter to the left of target
                     Screen('DrawTexture',w, theCircles, [], imageRect_offs_flank2,anglout,[],1); % letter to the right of target
                 end
-            if responsebox==0
-             if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
-                    %after target presentation and a key is pressed
-                    eyechecked=10^4;
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
+                if responsebox==0
+                    if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
+                        %after target presentation and a key is pressed
+                        eyechecked=10^4;
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        respTime(trial)=secs;
                     end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime(trial)=secs;
-             end
-            elseif responsebox==1
-                if (buttonLogStatus.newLogFrames > 0)
-                    respTime(trial)=secs;
-                     eyechecked=10^4;
+                elseif responsebox==1
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
                 end
-            end
             elseif (eyetime2-trial_time)>=currentpostfixationblank+currentcueISI+currentcueduration+stimulusduration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout%present pre-stimulus and stimulus
                 %after target presentation and no key pressed
-                       if responsebox==0
-     
-                if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
-                    %after target presentation and a key is pressed
-                    eyechecked=10^4;
-                    thekeys = find(keyCode);
-                    if length(thekeys)>1
-                        thekeys=thekeys(1);
+                if responsebox==0
+                    
+                    if (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey)) ~=0
+                        %after target presentation and a key is pressed
+                        eyechecked=10^4;
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        respTime(trial)=secs;
                     end
-                    thetimes=keyCode(thekeys);
-                    [secs  indfirst]=min(thetimes);
-                    respTime(trial)=secs;
-                end
                 elseif responsebox==1
-                if (buttonLogStatus.newLogFrames > 0)
-                    respTime(trial)=secs;
-                     eyechecked=10^4;
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
                 end
-                       end    
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
                 if responsebox==1
-                   Datapixx('StopDinLog'); 
+                    Datapixx('StopDinLog');
                 end
             end
             eyefixation5
@@ -599,10 +599,10 @@ try
             if fixationpresent==1
                 colorfixation=0;
                 % a fixation cross and no scotoma
-            %    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-           %     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
-                           Screen('FillOval', w, colorfixation, imageRectDot);
-
+                %    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                %     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                Screen('FillOval', w, colorfixation, imageRectDot);
+                
             end
             if EyetrackerType==2
                 
@@ -622,16 +622,16 @@ try
             end
             
             if datapixxtime==1
-            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime3];
- else
-                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3];
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
             end
             %% process eyedata in real time (fixation/saccades)
             
             if EyeTracker==1
-                    GetEyeTrackerDataNew
+                GetEyeTrackerDataNew
                 GetFixationDecision
                 if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;
@@ -644,9 +644,33 @@ try
                     DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
                     Screen('Flip', w);
                     %   KbQueueWait;
-                 if responsebox==0
-                     if  sum(keyCode)~=0
-                        thekeys = find(keyCode);
+                    if responsebox==0
+                        if  sum(keyCode)~=0
+                            thekeys = find(keyCode);
+                            if  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(5)
+                                DrawFormattedText(w, 'continue', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                % trial=trial-1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(6)
+                                DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                                %    KbQueueWait;
+                                eyechecked=10^4;
+                            end
+                        end
+                    elseif responsebox==1
                         if  thekeys==escapeKey
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
@@ -670,31 +694,7 @@ try
                             eyechecked=10^4;
                         end
                     end
-                 elseif responsebox==1                 
-                        if  thekeys==escapeKey
-                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            closescript = 1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(5)
-                            DrawFormattedText(w, 'continue', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            % trial=trial-1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(6)
-                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
-                            %    KbQueueWait;
-                            eyechecked=10^4;
-                        end            
-                 end
-                end               
+                end
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;
@@ -717,23 +717,23 @@ try
                     stopchecking=10;
                 end
             end
-
+            
             if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
                 %  [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(0, TargList);
-             Datapixx('RegWrRd');
-             buttonLogStatus = Datapixx('GetDinStatus');
+                Datapixx('RegWrRd');
+                buttonLogStatus = Datapixx('GetDinStatus');
                 if (buttonLogStatus.newLogFrames > 0)
                     [thekeys secs] = Datapixx('ReadDinLog');
-                end              
-       %         [keyIsDown, keyCode] = KbQueueCheck;
+                end
+                %         [keyIsDown, keyCode] = KbQueueCheck;
             else % AYS: UCR and UAB?
                 [keyIsDown, keyCode] = KbQueueCheck;
             end
-        
+            
         end
         if trialTimedout(trial)== 0 && caliblock==0
             
-             foo=(RespType==thekeys);
+            foo=(RespType==thekeys);
             if whichTask ~= 3
                 staircounter(mixtr(trial,1),mixtr(trial,2))=staircounter(mixtr(trial,1),mixtr(trial,2))+1;
                 if whichTask==1
@@ -882,13 +882,13 @@ try
         
         
         if caliblock==0
-        if responsebox==1 && trialTimedout(trial)==0
+            if responsebox==1 && trialTimedout(trial)==0
                 time_stim(kk) = respTime(trial) - stim_startBox2(trial);
-                                time_stim2(kk) = respTime(trial) - stim_startBox(trial);
-    else
-            time_stim(kk) = respTime(trial) - stim_start(trial);
-        end
-        totale_trials(kk)=trial;
+                time_stim2(kk) = respTime(trial) - stim_startBox(trial);
+            else
+                time_stim(kk) = respTime(trial) - stim_start(trial);
+            end
+            totale_trials(kk)=trial;
             coordinate(trial).x=theeccentricity_X/pix_deg;
             coordinate(trial).y=theeccentricity_Y/pix_deg;
             xxeye(trial).ics=xeye;
