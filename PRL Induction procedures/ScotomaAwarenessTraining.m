@@ -52,7 +52,6 @@ try
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     %% eyetracker initialization (eyelink)
-    defineSite
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -66,9 +65,6 @@ try
     %% creating stimuli
 CommonParametersAwareness
     createO
-    
-
-
     %% trial matrixc
     
     trials=50;
