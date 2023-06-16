@@ -1,25 +1,49 @@
 %% general visual parameters
 % scotomadeg=14;    % scotoma size in deg
 
-% %SPOT 2
-% scotomadegx=6.6;    % scotoma size in deg
-% scotomadegy=2.7;    % scotoma size in deg
-% %SPOT 1
-% scotomadegx=14;    % scotoma size in deg
-% scotomadegy=14;    % scotoma size in deg
-% 
-% 
-% %SPOT 3
-% scotomadegx=12.83;    % scotoma size in deg
-% scotomadegy=14.78;    % scotoma size in deg
-% 
 
+whichMD=str2num(SUBJECT(5:end));
 
-
-%SPOT 4
+if whichMD==1     %SPOT 1
+scotomadegx=14;    % scotoma size in deg
+scotomadegy=14;    % scotoma size in deg
+theeccentricity_X_scotoma=1.7*pix_deg;
+theeccentricity_Y_scotoma=0.3*pix_deg;
+[img, ~, alpha] = imread('Scotoma_01.png');
+elseif whichMD==2  %SPOT 2
+scotomadegx=6.6;    % scotoma size in deg
+scotomadegy=2.7;    % scotoma size in deg
+theeccentricity_X_scotoma=-0.6*pix_deg;
+theeccentricity_Y_scotoma=0*pix_deg;
+[img, ~, alpha] = imread('Scotoma_02.png');
+elseif whichMD==3  %SPOT 3
+scotomadegx=12.83;    % scotoma size in deg
+scotomadegy=14.78;    % scotoma size in deg
+theeccentricity_X_scotoma=-1*pix_deg;
+theeccentricity_Y_scotoma=1.95*pix_deg;
+[img, ~, alpha] = imread('Scotoma_03.png');
+elseif whichMD==4  %SPOT 4
 scotomadegx=10.87;    % scotoma size in deg
 scotomadegy=14.44;    % scotoma size in deg
+theeccentricity_X_scotoma=6*pix_deg;
+theeccentricity_Y_scotoma=0.5*pix_deg;
+[img, ~, alpha] = imread('Scotoma_04.png');
+elseif whichMD==5
+else
+    'Participant ID not found'
+end
 
+size(img);
+% 2557 x 1993 x 3 (rgb)
+% We'll make one texture without the alpha channel, and one with.
+[y, x, c]=size(img);
+scale_fact=scotomax/x;
+img2=imresize(img,scale_fact);
+alpha2=imresize(alpha,scale_fact);
+
+texture1 = Screen('MakeTexture', w, img2); %  image without the alpha channel.
+img2(:, :, 4) = alpha2;
+texture2 = Screen('MakeTexture', w, img2); %image with the alpha channel.
 
 scotomax=scotomadegx*pix_deg;
 scotomay=scotomadegy*pix_deg;
@@ -36,21 +60,6 @@ dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
 dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
 randdegarray=[-11:0.5:11]; % randomize stimulus location
 stimulusSize=3.72;
-% %SPOT 1
-% theeccentricity_X_scotoma=1.7*pix_deg;
-% theeccentricity_Y_scotoma=0.3*pix_deg;
-%SPOT 3
-% theeccentricity_X_scotoma=-1*pix_deg;
-% theeccentricity_Y_scotoma=1.95*pix_deg;
-%SPOT 2
-%theeccentricity_X_scotoma=-0.6*pix_deg;
-%theeccentricity_Y_scotoma=0*pix_deg;
-
-
-%SPOT 4
-theeccentricity_X_scotoma=6*pix_deg;
-theeccentricity_Y_scotoma=0.5*pix_deg;
-
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
@@ -75,7 +84,6 @@ scotomasize=[scotomadegx*pix_deg scotomadegy*pix_deg];
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 fixwindowPix=fixwindow*pix_deg; % fixation window
 
-% Select specific text font, style and size:
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
 
@@ -83,7 +91,6 @@ Screen('TextSize',w, 42);
 
 imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
 
-%scotomadeg=13.5;
 
 
 [img, sss, alpha] = imread('happyface.png');
@@ -93,24 +100,6 @@ Happyface= Screen('MakeTexture', w, img);
 [img, sss, alpha] = imread('sadface.png');
 img(:, :, 4) = alpha;
 Sadface= Screen('MakeTexture', w, img);
-
-% from http://pngimg.com/upload/cat_PNG100.png
-%[img, ~, alpha] = imread('Scotoma_01.png');
-%[img, ~, alpha] = imread('Scotoma_02.png');
-%[img, ~, alpha] = imread('Scotoma_03.png');
-[img, ~, alpha] = imread('Scotoma_04.png');
-
-size(img);
-% 2557 x 1993 x 3 (rgb)
-% We'll make one texture without the alpha channel, and one with.
-[y, x, c]=size(img);
-scale_fact=scotomax/x;
-img2=imresize(img,scale_fact);
-alpha2=imresize(alpha,scale_fact);
-
-texture1 = Screen('MakeTexture', w, img2); %  image without the alpha channel.
-img2(:, :, 4) = alpha2;
-texture2 = Screen('MakeTexture', w, img2); %image with the alpha channel.
 
 
  
