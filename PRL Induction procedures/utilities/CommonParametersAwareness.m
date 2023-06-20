@@ -28,7 +28,12 @@ scotomadegy=14.44;    % scotoma size in deg
 theeccentricity_X_scotoma=6*pix_deg;
 theeccentricity_Y_scotoma=0.5*pix_deg;
 [img, ~, alpha] = imread('Scotoma_04.png');
-elseif whichMD==5
+elseif whichMD==5    
+    scotomadegx=17.56;    % scotoma size in deg
+scotomadegy=12.58;    % scotoma size in deg
+theeccentricity_X_scotoma=0.63*pix_deg;
+theeccentricity_Y_scotoma=-6*pix_deg;
+[img, ~, alpha] = imread('Scotoma_05.png');
 else
     'Participant ID not found'
 end
