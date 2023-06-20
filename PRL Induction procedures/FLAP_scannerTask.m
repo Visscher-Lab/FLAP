@@ -81,8 +81,8 @@ try
 
     %% draw everything on the instruction page
     HideCursor;
-    %stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
-    %stimulusdirection_leftstim_num=1;stimulusdirection_rightstim_num=2;
+    stimulusdirection_leftstim=1;stimulusdirection_rightstim=2; %what are shown in left and right is set
+    stimulusdirection_leftstim_num=1;stimulusdirection_rightstim_num=2;
     CIstimuliMod_Scanner;
     theeccentricity_Y=0;
     theeccentricity_X=PRLx*pix_deg;
