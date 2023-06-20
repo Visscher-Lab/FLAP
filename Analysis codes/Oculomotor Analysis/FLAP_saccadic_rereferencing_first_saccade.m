@@ -94,7 +94,7 @@ for i=firsttrial:totaltrial
     
     %find the first available eye position after stimulus presentation
 
-    FramesAfterTargetPresentation=find(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.StimulusStart);
+    FramesAfterTargetPresentation=find(EyeSummary.(TrialNum).EyeData(:,5)>=EyeSummary.(TrialNum).TimeStamps.StimulusStart);%StimulusStart
     
     
     if length(FramesAfterTargetPresentation)>0 %at least one valid frame after target presentation

@@ -16,8 +16,9 @@ newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
 
 targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
 % 'other shape' needed for the scanner task
-targetcord2 =newTargy(theans(trial),:)+yTrans  + (newTargx(theothershape(trial),:)+xTrans - 1)*ymax;
-
+if exist('theothershape')==1
+ targetcord2 =newTargy(theans(trial),:)+yTrans  + (newTargx(theothershape(trial),:)+xTrans - 1)*ymax;
+end
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
 
@@ -39,8 +40,9 @@ theori=180*rand(1,length(eccentricity_XCI));
 theori2=180*rand(1,length(eccentricity_XCI));
 
 theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+if exist('theothershape')==1
 theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(theothershape(trial),:) +Orijit;
-
+end
 % if demo==1
 %     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);
 % end

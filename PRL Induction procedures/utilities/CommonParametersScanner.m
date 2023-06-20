@@ -24,7 +24,7 @@ theoris =[-45 45];
 
 preCueISIarray=[0 1.5 3 15]; % time between beginning of trial and first event in the trial (fixations, cues or targets)
 ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
-postCueISI=0; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
+postCueISI=0.5; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 stimulusduration= 0.2; %0.133; % stimulus duration
 CueDuration=0.25;
 poststimulustime=2.55;

@@ -10,7 +10,6 @@ PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 
-maskthickness=pix_deg*1/4;
 maskthickness=pix_deg*1.85;
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]; % color of the scotoma (light gray)
@@ -27,7 +26,7 @@ PRL_y_axis=0;
 NoPRL_x_axis=7.5;
 NoPRL_y_axis=0;
 flankersContrast=.6;
-
+maxreversals=10;
 %% general temporal parameters (trial events)
 
 ITI=0.75; % time interval between trial start and forced fixation period
@@ -55,6 +54,7 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
     kk=1; % trial counter
 
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
+dotsizedeg2=0.75; % size of the fixation dot ithin the Gabor in noise for Training type 2
 
 %% gabor settings 
 if trainingType==0
@@ -77,6 +77,8 @@ end
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
 imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
+imageRectDot2 = CenterRect([0, 0, dotsizedeg2*pix_deg, dotsizedeg2*pix_deg_vert], wRect); % destination rect for fixation dot within the Gabor in noise
+
 [xc, yc] = RectCenter(wRect);
 fixwindowPix=fixwindow*pix_deg;
 midgray=0.5;
@@ -84,6 +86,10 @@ midgray=0.5;
 
     xlocs=[PRL_x_axis NoPRL_x_axis];
     ylocs=[PRL_y_axis NoPRL_y_axis];
-    
+    if TargetLoc==2
     eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
     eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+    elseif TargetLoc==1
+       eccentricity_X=[0];
+    eccentricity_Y=[0];
+    end

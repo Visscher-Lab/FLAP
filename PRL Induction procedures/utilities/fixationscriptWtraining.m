@@ -7,9 +7,9 @@ fixationlength = 40;
 widthWag=10;
 widthfix=7;
 squaresize=10;
-wsquaresize=scotomadeg+fixwindow_values(mixtr(trial,1))/2;
+wsquaresize=scotomadeg+(fixwindowPix/pix_deg)/2;
 distWag=0;
-
+fixwindowPix
 %imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 

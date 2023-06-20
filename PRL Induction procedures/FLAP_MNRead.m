@@ -6,11 +6,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)','Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','control(1) or MD(2)', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)','Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '0','2','0', '0' };
+    defaultanswer={'test','1', '3', '1','1', '0','2','0', '0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -20,7 +20,8 @@ try
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
+    scotomavpixx= 0;
+    controlMD=str2num(answer{5,:});
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
@@ -48,7 +49,11 @@ try
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersMNRead % load parameters for time and space
-        
+    if controlMD==2
+        scotomadeg=0.2;
+        scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
+        scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
+    end
     %% eyetracker initialization (eyelink)   
     if EyeTracker==1
         if site==3
@@ -357,6 +362,7 @@ try
                 Datapixx('RegWrRd');
                 status = Datapixx('GetTPxStatus');
                 toRead = status.newBufferFrames;
+                if toRead>0
                 [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
                 
                 %bufferData is formatted as follows:
@@ -398,7 +404,8 @@ try
                 %interim save
                 % save(baseName, 'Pixxstruct');
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-            end
+                end
+               end
         kk=kk+1;
         clear PKnew2
         if closescript==1

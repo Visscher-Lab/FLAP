@@ -158,7 +158,7 @@ try
             HideCursor(); %hides the cursor
             TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
             
-            ShowCursor(); %Show the cursor
+            ShowCursor('Arrow'); %Show the cursor
             buttons=0;
             contcoord=0;
             numrespCorr=0; %mm
@@ -214,6 +214,7 @@ try
                                     Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
                                 end
                             end
+                            Screen('TextStyle', w, 1);
                         end
                         
                         if  sum(buttons)~=0 && resp(numresp+1)==0;
@@ -462,7 +463,7 @@ try
     
     
     KbQueueWait;
-    ShowCursor;
+    ShowCursor('Arrow');
     
     if site==1
         Screen('CloseAll');

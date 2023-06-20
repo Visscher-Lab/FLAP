@@ -24,7 +24,8 @@ try
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    
+    responsebox=0;
+    datapixxtime=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -158,7 +159,7 @@ try
         trialTimedout(trial)=0;
         
         flickk=0;
-        if mod(trial,10)==0
+        if mod(trial,round(length(mixtr)/3))==0
             interblock_instruction
         end
         
@@ -266,16 +267,16 @@ try
                 break
             elseif (eyetime2-newtrialtime)>= ifi*2+pretargettime && fixating>400 && skipcounterannulus>10 && counterflicker>=FlickerTime/ifi &&   keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-trial_time)<=actualtrialtimeout %present pre-stimulus and stimulus %keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3))+ keyCode(RespType(4)) + keyCode(RespType(5))
                 % trial completed
-                PsychPortAudio('Start', pahandle1); % sound feedback
-                
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
                 eyechecked=10^4;
                 
             elseif (eyetime2-pretrial_time)>=actualtrialtimeout % trial timed out
                 stim_stop(trial)=eyetime2;
                 trialTimedout(trial)=1;
                 flicker_time_stop(trial)=NaN;
-                PsychPortAudio('Start', pahandle2); % sound feedback
-                
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);                
                 eyechecked=10^4;
             end
             

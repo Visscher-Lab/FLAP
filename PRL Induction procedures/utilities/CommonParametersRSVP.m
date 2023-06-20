@@ -102,4 +102,4 @@ calibrationtolerance=5; % accepted time with no eye info before calling for reca
 closescript=0; % to allow ESC use
 kk=1; % trial counter
 
-practicetrials=5;
+practicetrials=10;

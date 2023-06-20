@@ -3,7 +3,7 @@
 CardinalOrdiagonal=1;
 
 inward=1;
-fixationlength = 40;
+fixationlength = 30;
 widthWag=10;
 widthfix=7;
 squaresize=10;

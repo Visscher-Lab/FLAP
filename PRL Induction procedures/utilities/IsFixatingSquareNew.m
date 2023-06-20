@@ -15,7 +15,7 @@ function [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fi
 %     end
 % end
 framecounter=framecounter+1;
-if   framecounter>1 & round(wRect(4)/2+(yeye(end)-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(xeye(end)-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
+if   framecounter>1 && round(wRect(4)/2+(yeye(end)-(wRect(4)/2)))>(wRect(4)/2-fixwindowPix) && round(wRect(3)/2+(xeye(end)-(wRect(3)/2))) >(wRect(3)/2-fixwindowPix) ...
         && round(wRect(4)/2+(yeye(end)-(wRect(4)/2)))<(wRect(4)/2+fixwindowPix) && round(wRect(3)/2+(xeye(end)-(wRect(3)/2)))<= (wRect(3)/2+fixwindowPix)
     
     % if eyes are within fixation window; we count the frame

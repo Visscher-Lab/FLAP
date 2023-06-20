@@ -1,4 +1,4 @@
-% Exogenous/endogenous switch task
+% Scotoma awareness training for SPOT
 % written by Marcello A. Maniglia August 2022
 close all;
 clear all;
@@ -7,11 +7,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1','0', '0','2','0', '0' };
+    defaultanswer={'test','1', '1', '0','2','0', '0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -21,11 +21,11 @@ try
     expDay=str2num(answer{2,:});
     site= 3;  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{4,:});
-    Isdemo=str2num(answer{5,:}); % full session or demo/practice
-    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
-            EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
+    Isdemo=str2num(answer{4,:}); % full session or demo/practice
+    whicheye=str2num(answer{5,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
+            EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
+    scotomavpixx= 0;
 
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
@@ -52,7 +52,6 @@ try
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     %% eyetracker initialization (eyelink)
-    defineSite
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -66,9 +65,6 @@ try
     %% creating stimuli
 CommonParametersAwareness
     createO
-    
-
-
     %% trial matrixc
     
     trials=50;
