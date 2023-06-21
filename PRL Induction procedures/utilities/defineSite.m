@@ -1,5 +1,5 @@
 %function [w, wRect]=defineSite(site)
-%Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
 PC=getComputerName();
 AssertOpenGL;
 
@@ -18,10 +18,10 @@ if site==0  %UCR bits++
     oldResolution=Screen( 'Resolution',screenNumber,1280,960);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
 elseif site==1  % UCR + bits
     crt=0; % if we use a CRT monitor
-    
+
     %% psychtoobox settings
     if crt==1
         v_d=70; %viewing distance
@@ -50,7 +50,7 @@ elseif site==1  % UCR + bits
         %     SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     end
-    
+
 elseif site==2   %UAB
     s1=serial('com3');
     fopen(s1);
@@ -72,7 +72,7 @@ elseif site==2   %UAB
 elseif site==3   %UCR VPixx
     %% psychtoobox settings
     screenNumber=max(Screen('Screens'));
-%     screenNumber=min(Screen('Screens'));
+    %     screenNumber=min(Screen('Screens'));
     if EyeTracker==1
         initRequired= calibration; %do we want vpixx calibration?
         if initRequired>0
@@ -80,29 +80,29 @@ elseif site==3   %UCR VPixx
             %TPxTrackpixx3CalibrationTesting;
             TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
         end
-        
+
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
-   v_d=70; % viewing distance
-    
+    v_d=70; % viewing distance
+
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     %
-   % oldResolution=Screen('Resolution',screenNumber,1920,1080);
+    % oldResolution=Screen('Resolution',screenNumber,1920,1080);
     %SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
     screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
- elseif site==4   %padova eyelink
+elseif site==4   %padova eyelink
     %% psychtoobox settings
 
     v_d=70; % viewing distance
@@ -114,19 +114,19 @@ elseif site==3   %UCR VPixx
     oldResolution=Screen('Resolution',screenNumber,1920,1080);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
     screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT  
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 elseif site==5  %UCR scanner
 
-    
-        %% psychtoobox settings
+
+    %% psychtoobox settings
     screenNumber=max(Screen('Screens'));
-%     screenNumber=min(Screen('Screens'));
+    %     screenNumber=min(Screen('Screens'));
     if EyeTracker==1
         initRequired= calibration; %do we want vpixx calibration?
         if initRequired>0
@@ -134,24 +134,35 @@ elseif site==5  %UCR scanner
             %TPxTrackpixx3CalibrationTesting;
             TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
         end
-        
+
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
-   v_d=35; % viewing distance
-        PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-        screencm=[40.6 30];
-        %debug window
-        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+    v_d=35; % viewing distance
+    datapixxtime=1;
+    PsychImaging('PrepareConfiguration');
+    % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+    oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+    SetResolution(screenNumber, oldResolution);
+    [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+    screencm=[40.6 30];
+    %debug window
+    %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    %ScreenParameters=Screen('Resolution', screenNumber); %close all
+    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+elseif site == 6 % UAB scanner
+    screencm=[40.6 30]%[70.8, 39.8];
+    v_d=35;%123;
+    datapixxtime=0;
+    oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    screenNumber=max(Screen('Screens'));
+    resolution=Screen('Resolution',screenNumber);
+    rand('twister', sum(100*clock));
+    PsychImaging('PrepareConfiguration');
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -193,7 +204,11 @@ InitializePsychSound(1); %'optionally providing
 %     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
-pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+if site == 6
+    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+else
+    pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+end
 % feedback sounds
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -215,75 +230,75 @@ bip_sound_right= [zeros(length(bip_sound)',1) s'];
 
 
 %% keyboard
-    %% Keys definition/kb initialization
-    
-    KbName('UnifyKeyNames');
-    
-    RespType(1) = KbName('LeftArrow');
-    RespType(2) = KbName('RightArrow');
-    RespType(3) = KbName('UpArrow');
-    RespType(4) = KbName('DownArrow');
-    RespType(5) = KbName('c'); % continue with study
-    RespType(6) = KbName('m'); %recalibrate
-    escapeKey = KbName('ESCAPE');	% quit key
-    
-    % get keyboard for the key recording
-    deviceIndex = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            deviceIndex =  k_id(i);
-        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
-            deviceIndex =  k_id(i);
-        end
+%% Keys definition/kb initialization
+
+KbName('UnifyKeyNames');
+
+RespType(1) = KbName('LeftArrow');
+RespType(2) = KbName('RightArrow');
+RespType(3) = KbName('UpArrow');
+RespType(4) = KbName('DownArrow');
+RespType(5) = KbName('c'); % continue with study
+RespType(6) = KbName('m'); %recalibrate
+escapeKey = KbName('ESCAPE');	% quit key
+
+% get keyboard for the key recording
+deviceIndex = -1; % reset to default keyboard
+
+[k_id, k_name] = GetKeyboardIndices();
+for i = 1:numel(k_id)
+    if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
+        deviceIndex =  k_id(i);
+    elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
+        deviceIndex =  k_id(i);
     end
-    
-    KbQueueCreate(deviceIndex);
-    KbQueueStart(deviceIndex);
-    
-    if responsebox==1
- % Open Datapixx, and stop any schedules which might already be running
-Datapixx('Open');
-Datapixx('StopAllSchedules');
-Datapixx('RegWrRd');   
-% Synchronize DATAPixx registers to local register cache
- % Configure digital input system for monitoring button box
-Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
-Datapixx('EnableDinDebounce');                          % Debounce button presses
-Datapixx('SetDinLog');                                  % Log button presses to default address
-Datapixx('StartDinLog');                                % Turn on logging
-Datapixx('RegWrRd');
-if site~=5
-% Bit locations of button inputs, and colored LED drivers
-dinRed      = hex2dec('0000FFFE');
-dinGreen    = hex2dec('0000FFFB');
-dinBlue=hex2dec('0000FFF7');
-dinYellow=hex2dec('0000FFFD');
-dinWhite=hex2dec('0000FFEF');
-RespType=[dinGreen;
-    dinRed;
-    dinYellow;
-    dinBlue]';
-escapeKey=dinWhite;
-escapeKey=KbName('ESCAPE');
+end
+
+KbQueueCreate(deviceIndex);
+KbQueueStart(deviceIndex);
+
+if responsebox==1
+    % Open Datapixx, and stop any schedules which might already be running
+    Datapixx('Open');
+    Datapixx('StopAllSchedules');
+    Datapixx('RegWrRd');
+    % Synchronize DATAPixx registers to local register cache
+    % Configure digital input system for monitoring button box
+    Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+    Datapixx('EnableDinDebounce');                          % Debounce button presses
+    Datapixx('SetDinLog');                                  % Log button presses to default address
+    Datapixx('StartDinLog');                                % Turn on logging
+    Datapixx('RegWrRd');
+    if site~=5
+        % Bit locations of button inputs, and colored LED drivers
+        dinRed      = hex2dec('0000FFFE');
+        dinGreen    = hex2dec('0000FFFB');
+        dinBlue=hex2dec('0000FFF7');
+        dinYellow=hex2dec('0000FFFD');
+        dinWhite=hex2dec('0000FFEF');
+        RespType=[dinGreen;
+            dinRed;
+            dinYellow;
+            dinBlue]';
+        escapeKey=dinWhite;
+        escapeKey=KbName('ESCAPE');
 
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
-elseif site ==5
-    % Bit locations of button inputs, and colored LED drivers
-dinRed      = hex2dec('0000FFFE');
-dinGreen    = hex2dec('0000FFFB');
-dinBlue=hex2dec('0000FFF7');
-dinYellow=hex2dec('0000FFFD');
-dinWhite=hex2dec('0000FFEF');
-RespType=[dinGreen;
-    dinRed;
-    dinYellow;
-    dinBlue]';
-escapeKey=dinWhite;
-escapeKey=KbName('ESCAPE');
+    elseif site ==5
+        % Bit locations of button inputs, and colored LED drivers
+        dinRed      = hex2dec('0000FFFE');
+        dinGreen    = hex2dec('0000FFFB');
+        dinBlue=hex2dec('0000FFF7');
+        dinYellow=hex2dec('0000FFFD');
+        dinWhite=hex2dec('0000FFEF');
+        RespType=[dinGreen;
+            dinRed;
+            dinYellow;
+            dinBlue]';
+        escapeKey=dinWhite;
+        escapeKey=KbName('ESCAPE');
 
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down )
-    
-end
+
     end
-    
+end
