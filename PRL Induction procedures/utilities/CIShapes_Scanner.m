@@ -52,7 +52,7 @@ eccentricity_XCI_example=xlocsCI*pix_deg/ecccoeffCI_example; %for the instructio
 eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
 
 coeffCI=ecccoeffCI/2;%for the actual experiment
-coeffCI_example=ecccoeffCI_example/2;%for the actual experiment
+coeffCI_example=ecccoeffCI_example/2;%for the instruction slide
 
 Tcontr=0.1938;         %target contrast
 %Dcontr=0.38;        %distractor contrast

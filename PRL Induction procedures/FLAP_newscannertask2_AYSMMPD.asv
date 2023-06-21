@@ -13,7 +13,7 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)','Baseline(1) or Post(2) Scan','Run Number'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)','Run Number'};
 
     name= 'Parameters';
     numlines=1;
@@ -33,7 +33,7 @@ try
     ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
     EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
     responsebox= str2num(answer{9,:});
-
+    runnumber= str2num(answer{10,:});%6 possible runs
     %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -41,7 +41,7 @@ try
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
 
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPScannertask' answer{2,:} '_' TimeStart]; %makes unique filename
+    baseName=['./data/' SUBJECT '_FLAPScannertask_Day' answer{2,:} '_Run' answer{3,:} '_' TimeStart]; %makes unique filename
 
     defineSite % initialize Screen function and features depending on OS/Monitor
 
@@ -198,8 +198,8 @@ try
     end
 
     %% Jitter/wait TR init AYS 4/28/23
-    TR = 1.75; % TR dur in s CONFIRM TR DURATION
-    TRpat = [1 1 2 2 3]'; % 40% 1 TR, 40% 2, 20% 3 CONFIRM TR PATTERN
+    TR = 1.5; % TR dur in s CONFIRM TR DURATION
+    TRpat = [0 0 0 0 0 0 0 0 1 1 1 1 1 2 2 2]'; % 40% 1 TR, 40% 2, 20% 3 CONFIRM TR PATTERN
     TRrem = 1; % remainder TRs if uneven div CONFIRM TR REMAINDER
     TRlist = [repmat(TRpat, floor(length(mixtr)/length(TRpat)), 1); repmat(TRrem, rem(length(mixtr), length(TRpat)), 1)];
     TRwait = TRlist(randperm(length(mixtr))); % TRwait arr tells how long to wait before next trial
@@ -260,20 +260,21 @@ try
         end
         if trial==1
             %   InstructionFLAPAssessment(w,AssessmentType,gray,white)
-            if AssessmentType == 1
-                Instruction_Contrast_Assessment
-            elseif AssessmentType==2
-                InstructionCIAssessment
-            end
-        elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,3)~= mixtr(trial-1,3) )
-            if trial==1 || mixtr(trial,1)~= mixtr(trial-1,1)
-                %     InstructionFLAPAssessment(w,AssessmentType,gray,white)
-                if AssessmentType == 1
-                    Instruction_Contrast_Assessment
-                elseif AssessmentType==2
-                    InstructionCIAssessment
-                end
-            end
+        %     if AssessmentType == 1
+        %         Instruction_Contrast_Assessment
+        %     elseif AssessmentType==2
+        %         InstructionCIAssessment
+        %     end
+        % elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,3)~= mixtr(trial-1,3) )
+        %     if trial==1 || mixtr(trial,1)~= mixtr(trial-1,1)
+        %         %     InstructionFLAPAssessment(w,AssessmentType,gray,white)
+        %         if AssessmentType == 1
+        %             Instruction_Contrast_Assessment
+        %         elseif AssessmentType==2
+        %             InstructionCIAssessment
+        %         end
+        %     end
+       InstructionShapeScanner
         end
         %% target location calculation
         theeccentricity_Y=LocY(1)*pix_deg;

@@ -260,20 +260,21 @@ try
         end
         if trial==1
             %   InstructionFLAPAssessment(w,AssessmentType,gray,white)
-            if AssessmentType == 1
-                Instruction_Contrast_Assessment
-            elseif AssessmentType==2
-                InstructionCIAssessment
-            end
-        elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,3)~= mixtr(trial-1,3) )
-            if trial==1 || mixtr(trial,1)~= mixtr(trial-1,1)
-                %     InstructionFLAPAssessment(w,AssessmentType,gray,white)
-                if AssessmentType == 1
-                    Instruction_Contrast_Assessment
-                elseif AssessmentType==2
-                    InstructionCIAssessment
-                end
-            end
+        %     if AssessmentType == 1
+        %         Instruction_Contrast_Assessment
+        %     elseif AssessmentType==2
+        %         InstructionCIAssessment
+        %     end
+        % elseif trial > 1 && (mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,3)~= mixtr(trial-1,3) )
+        %     if trial==1 || mixtr(trial,1)~= mixtr(trial-1,1)
+        %         %     InstructionFLAPAssessment(w,AssessmentType,gray,white)
+        %         if AssessmentType == 1
+        %             Instruction_Contrast_Assessment
+        %         elseif AssessmentType==2
+        %             InstructionCIAssessment
+        %         end
+        %     end
+       InstructionShapeScanner
         end
         %% target location calculation
         theeccentricity_Y=LocY(1)*pix_deg;

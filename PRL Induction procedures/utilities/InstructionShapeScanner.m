@@ -4,7 +4,10 @@ Screen('FillRect', w, gray);
 DrawFormattedText(w, 'Before each trial, a cue will indicate the location of the stimulus to attend (right: > or left: < ) \n \n Please look at the center of the screen during the experiment\n \n Use your left index finger for the left oriented stimulus \n Right index finger for the right oriented stimulus \n \n','center', 600, white');
 DrawFormattedText(w, 'Left',300, 350, white');
 DrawFormattedText(w, 'Right',1280, 350, white');
-
+ecccoeffCI_example=3;
+eccentricity_XCI_example=xlocsCI*pix_deg/ecccoeffCI_example; %for the instruction slide
+eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
+coeffCI_example=ecccoeffCI_example/2;%for the instruction slide
 %eggs--------------------
 % imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
 %     imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
