@@ -242,6 +242,10 @@ RespType(5) = KbName('c'); % continue with study
 RespType(6) = KbName('m'); %recalibrate
 escapeKey = KbName('ESCAPE');	% quit key
 
+if site==6
+    RespType(1) = KbName('r');
+    RespType(2) = KbName('y');
+end
 % get keyboard for the key recording
 deviceIndex = -1; % reset to default keyboard
 
