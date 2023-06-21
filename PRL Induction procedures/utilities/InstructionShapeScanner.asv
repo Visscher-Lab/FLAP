@@ -10,7 +10,7 @@ eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
 coeffCI_example=ecccoeffCI_example/2;%for the instruction slide
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
-
+CIstimuliMod_Scanner
 possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(1) 0 ]; %eccentricity of PRL in deg
 PRLx= PRLecc(1);

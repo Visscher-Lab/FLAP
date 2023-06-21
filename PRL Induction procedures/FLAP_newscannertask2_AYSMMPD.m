@@ -274,7 +274,8 @@ try
         %             InstructionCIAssessment
         %         end
         %     end
-       InstructionShapeScanner
+      CIstimuliMod_Scanner
+        InstructionShapeScanner
         end
         %% target location calculation
         theeccentricity_Y=LocY(1)*pix_deg;

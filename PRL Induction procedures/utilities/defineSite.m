@@ -1,5 +1,5 @@
 %function [w, wRect]=defineSite(site)
-Screen('Preference', 'SkipSyncTests', 1);
+%Screen('Preference', 'SkipSyncTests', 1);
 PC=getComputerName();
 AssertOpenGL;
 
@@ -154,7 +154,7 @@ elseif site==5  %UCR scanner
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 elseif site == 6 % UAB scanner
-    screencm=[40.6 30]%[70.8, 39.8];
+    screencm=[40.6 30];%[70.8, 39.8];
     v_d=35;%123;
     datapixxtime=0;
     oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
