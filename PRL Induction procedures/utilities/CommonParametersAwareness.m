@@ -1,6 +1,6 @@
 %% general visual parameters
-% scotomadeg=14;    % scotoma size in deg
-
+scotomadeg=14;    % scotoma size in deg
+resonsebox = 0;
 
 whichMD=str2num(SUBJECT(5:end));
 
@@ -27,7 +27,7 @@ scotomadegx=10.87;    % scotoma size in deg
 scotomadegy=14.44;    % scotoma size in deg
 theeccentricity_X_scotoma=6*pix_deg;
 theeccentricity_Y_scotoma=0.5*pix_deg;
-[img, ~, alpha] = imread('Scotoma_04.png');
+[img, ~, alpha] = imread('Scotoma_05.png');
 elseif whichMD==5    
     scotomadegx=17.56;    % scotoma size in deg
 scotomadegy=12.58;    % scotoma size in deg
@@ -37,6 +37,8 @@ theeccentricity_Y_scotoma=-6*pix_deg;
 else
     'Participant ID not found'
 end
+scotomax=scotomadegx*pix_deg;
+scotomay=scotomadegy*pix_deg;
 
 size(img);
 % 2557 x 1993 x 3 (rgb)
@@ -50,15 +52,12 @@ texture1 = Screen('MakeTexture', w, img2); %  image without the alpha channel.
 img2(:, :, 4) = alpha2;
 texture2 = Screen('MakeTexture', w, img2); %image with the alpha channel.
 
-scotomax=scotomadegx*pix_deg;
-scotomay=scotomadegy*pix_deg;
-
 PRLsize =10; % diameter PRL in deg
 attContr= 1; % contrast of the target
 
 scotoma_color=[200 200 200];
 red=[255 0 0];
-fixwindow=3;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
+fixwindow=6;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 PRLecc=10;  %eccentricity of target locations in deg
 
 dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
@@ -75,7 +74,7 @@ cueonset=0.2; % time between end of the forced fixation period and the cue (valu
 %crowding, for attention the value is jittered to increase time uncertainty
 Jitter=[0.5:0.5:2]; %jitter array for trial start in seconds
 fixTime=0.5;
-effectivetrialtimeout=5; %max time duration for a trial (otherwise it counts as elapsed)
+effectivetrialtimeout=20; %max time duration for a trial (otherwise it counts as elapsed)
 
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
