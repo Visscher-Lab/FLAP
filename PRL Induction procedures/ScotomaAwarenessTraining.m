@@ -1,10 +1,9 @@
 % Scotoma awareness training for SPOT
 % written by Marcello A. Maniglia August 2022
 close all;
-clear all;
+clear;
 clc;
 commandwindow
-
 addpath([cd '/utilities']);
 try
     prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
@@ -26,7 +25,7 @@ try
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
             EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
     scotomavpixx= 0;
-
+    responsebox = 0
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -49,9 +48,10 @@ try
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
-    defineSite % initialize Screen function and features depending on OS/Monitor
+    %defineSite % initialize Screen function and features depending on OS/Monitor
     
     %% eyetracker initialization (eyelink)
+    defineSite
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -65,6 +65,9 @@ try
     %% creating stimuli
 CommonParametersAwareness
     createO
+    
+
+
     %% trial matrixc
     
     trials=50;
@@ -76,7 +79,6 @@ CommonParametersAwareness
     
     totalmixtr=trials;
     %% response
-    
     KbName('UnifyKeyNames');
     
     RespType(1) = KbName('h');
@@ -376,6 +378,8 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 Datapixx('RegWrRd');
                 status = Datapixx('GetTPxStatus');
                 toRead = status.newBufferFrames;
+                if toRead == 0
+                else 
                 [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
                 
                 %bufferData is formatted as follows:
@@ -417,6 +421,7 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 %interim save
                 % save(baseName, 'Pixxstruct');
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+                end
             end
         if (mod(trial,50))==1
             if trial==1
