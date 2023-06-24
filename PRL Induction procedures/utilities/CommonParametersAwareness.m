@@ -27,7 +27,7 @@ scotomadegx=10.87;    % scotoma size in deg
 scotomadegy=14.44;    % scotoma size in deg
 theeccentricity_X_scotoma=6*pix_deg;
 theeccentricity_Y_scotoma=0.5*pix_deg;
-[img, ~, alpha] = imread('Scotoma_05.png');
+[img, ~, alpha] = imread('Scotoma_04.png');
 elseif whichMD==5    
     scotomadegx=17.56;    % scotoma size in deg
 scotomadegy=12.58;    % scotoma size in deg
@@ -36,6 +36,8 @@ theeccentricity_Y_scotoma=-6*pix_deg;
 [img, ~, alpha] = imread('Scotoma_05.png');
 else
     'Participant ID not found'
+    scotomadegx=0;
+    scotomadegy=0;
 end
 scotomax=scotomadegx*pix_deg;
 scotomay=scotomadegy*pix_deg;
@@ -60,10 +62,12 @@ red=[255 0 0];
 fixwindow=6;  % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 PRLecc=10;  %eccentricity of target locations in deg
 
-dotsize=0.6; %size of the dots constituting the peripheral diamonds in deg
-dotecc=2; %eccentricity of the dot with respect to the center of the TRL in deg
+dotsizedeg=0.21; %size of the dots for no scotoma cases
+fixdotsizedeg=0.5;
 randdegarray=[-11:0.5:11]; % randomize stimulus location
 stimulusSize=3.72;
+
+
 %% general temporal parameters (trial events)
 
 precircletime=0.55;
@@ -85,7 +89,12 @@ bg_index =round(gray*255); %background color
 imsize=stimulusSize*pix_deg; %stimulus size
 
 scotomasize=[scotomadegx*pix_deg scotomadegy*pix_deg];
+dotsize=[dotsizedeg*pix_deg dotsizedeg*pix_deg];
+imageRectDot = CenterRect([0, 0, fixdotsizedeg*pix_deg, fixdotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot
+
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
+dotrect = CenterRect([0, 0, dotsize(1), dotsize(2)], wRect);
+
 fixwindowPix=fixwindow*pix_deg; % fixation window
 
 Screen('TextFont',w, 'Arial');

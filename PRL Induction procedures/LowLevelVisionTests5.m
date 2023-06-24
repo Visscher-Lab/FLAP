@@ -333,7 +333,6 @@ try
         theans(trial)=randi(4);
         ori=theoris(theans(trial));
         
-        FLAPVariablesReset
         if EyetrackerType ==2
             %start logging eye data
             Datapixx('RegWrRd');
@@ -387,9 +386,12 @@ try
             Datapixx('SetDinLog');
             Datapixx('RegWrRd');
         end
+                FLAPVariablesReset
+
         while eyechecked<1
             if datapixxtime==1
-                eyetime2=Datapixx('GetTime');
+                              Datapixx('RegWrRd');
+  eyetime2=Datapixx('GetTime');
             end
             
             if ScotomaPresent == 1
@@ -411,10 +413,10 @@ try
                     
                     if datapixxtime==1
                         startfix(trial)=Datapixx('GetTime');
+                       startfix2(trial)= eyetime2;
                     else
                         startfix(trial)=eyetime2;
                     end
-                    starfix=98;
                 end
                 if whichTask ==3
                     % Have fixation dot appear at destinations described
@@ -435,8 +437,9 @@ try
                 % forced fixation time satisfied
                 if datapixxtime==1
                     trial_time = Datapixx('GetTime');
+                                        trial_time2 = eyetime2;
                 else
-                    trial_time = GetSecs;
+                    trial_time = eyetime2;
                 end
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
@@ -547,8 +550,12 @@ try
                             thekeys=thekeys(1);
                         end
                         thetimes=keyCode(thekeys);
-                        [secs  indfirst]=min(thetimes);
-                        respTime(trial)=secs;
+                        if datapixxtime==0
+                            [secs  indfirst]=min(thetimes);
+                            respTime(trial)=secs;
+                        else
+                            respTime(trial)=eyetime2;
+                        end
                     end
                 elseif responsebox==1
                     if (buttonLogStatus.newLogFrames > 0)
@@ -568,8 +575,12 @@ try
                             thekeys=thekeys(1);
                         end
                         thetimes=keyCode(thekeys);
-                        [secs  indfirst]=min(thetimes);
-                        respTime(trial)=secs;
+                                               if datapixxtime==0
+                            [secs  indfirst]=min(thetimes);
+                            respTime(trial)=secs;
+                        else
+                            respTime(trial)=eyetime2;
+                        end
                     end
                 elseif responsebox==1
                     if (buttonLogStatus.newLogFrames > 0)
@@ -580,6 +591,8 @@ try
             elseif (eyetime2-pretrial_time)>=trialTimeout
                 stim_stop=GetSecs;
                 trialTimedout(trial)=1;
+                eyetyimeval=eyetime2;
+                pretrial_timeval=pretrial_time;
                 eyechecked=10^4;
                 if responsebox==1
                     Datapixx('StopDinLog');
@@ -599,8 +612,8 @@ try
             if fixationpresent==1
                 colorfixation=0;
                 % a fixation cross and no scotoma
-                %    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-                %     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                 Screen('FillOval', w, colorfixation, imageRectDot);
                 
             end
@@ -871,7 +884,7 @@ try
             end
         end
         if trialTimedout(trial)==0 && caliblock==0
-            stim_stop=secs;
+            stim_stop=respTime(trial);
             cheis(kk)=thekeys;
         end
         

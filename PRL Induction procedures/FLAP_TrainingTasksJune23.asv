@@ -73,15 +73,13 @@ temp= readtable(participantAssignmentTable);
 SUBJECT = answer{1,:}; %Gets Subject Name
 %TRLlocation=t.TRL{1};%1=left, 2=right
 TRLlocation=1;%1=left, 2=right
-trainingType= 1; % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+trainingType= t.TrainingTask; % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
 
 %trainingType= t.TrainingTask; % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
 penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
 expDay=str2num(answer{2,:}); % training session
 
-%whicheye=t.WhichEye{1}; % are we tracking left (1) or right (2) eye? Only for Vpixx
-whicheye=2; % are we tracking left (1) or right (2) eye? Only for Vpixx
-
+whicheye=t.WhichEye{1}; % are we tracking left (1) or right (2) eye? Only for Vpixx
 calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
 ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
 EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
@@ -91,8 +89,6 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
   %  demo=str2num(answer{4,:}); % are we testing in debug mode?
    demo=0;
    test=demo;
-   datapixxtime=1;
-   responsebox=1;
     if EyeTracker==0
     calibration=0;
     end

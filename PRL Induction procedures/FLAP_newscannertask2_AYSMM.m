@@ -463,12 +463,11 @@ respgiven=0;
                         imagearray{trial}=Screen('GetImage', w);
                     end
                     if exist('stimstar')==0
-                        Datapixx('RegWrRd');
-                        stim_startD(trial)=Datapixx('GetTime'); % AYS 5/3/23 "D" for DATApixx. Not sure where other changes are needed though.
-                        stim_start = GetSecs; %AS 4-28-23 don't use get-secs @Andrew please replace with datapixx time from when the stim started
+                                      stim_start = GetSecs; %AS 4-28-23 don't use get-secs @Andrew please replace with datapixx time from when the stim started
                      
                          if datapixxtime==1
-                                stim_start_frame = Datapixx('GetTime');
+                                Datapixx('RegWrRd');
+                                stim_start_frame = Datapixx('GetTime');     
                          elseif datapixxtime==0
                         stim_start_frame=eyetime2;
                          end
@@ -775,7 +774,7 @@ dd(length(datapixx_Timestamp))=trial_time;
     
     ListenChar(0);
     Screen('Flip', w);
-    KbQueueWait;
+ %   KbQueueWait;
     
     %% shut down EyeTracker and screen functions 
     if EyetrackerType==1

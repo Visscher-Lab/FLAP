@@ -86,6 +86,11 @@ elseif site==3   %UCR VPixx
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
+    
+    if datapixxtime ==1 && EyeTracker==0
+         Datapixx('Open');
+        Datapixx('RegWrRd');
+    end
    v_d=70; % viewing distance
     
     PsychImaging('PrepareConfiguration');

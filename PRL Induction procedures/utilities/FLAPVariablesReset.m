@@ -32,6 +32,7 @@ stopchecking=-100;
 skipcounterannulus=1;
 flickerdone=0;
 if datapixxtime==1
+    Datapixx('RegWrRd');
     pretrial_time=Datapixx('GetTime'); % trial timing
     trial_time=Datapixx('GetTime');% trial timing that gets updated later on when we have eye info (if no eye info, the trial won't move on)
     newtrialtime=Datapixx('GetTime'); % real value to be assigned later, after flicker is done

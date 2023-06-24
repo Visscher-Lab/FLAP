@@ -10,7 +10,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '0','2','0', '0' };
+    defaultanswer={'spot05','1', '1', '0','2','0', '0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -25,7 +25,8 @@ try
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
             EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
     scotomavpixx= 0;
-    responsebox = 0
+    responsebox = 0;
+    datapixxtime=1;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a data folder if it doesn't exist already
     if exist('data')==0
@@ -149,11 +150,14 @@ CommonParametersAwareness
                 Priority(0);
         KbQueueFlush()
 FLAPVariablesReset
+
+ff=0;
         while eyechecked<1
             
 %             if ScotomaPresent == 1
 %                 fixationscriptW
 %             end
+
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
@@ -164,9 +168,22 @@ FLAPVariablesReset
                 
                 if ScotomaPresent == 1
                     fixationscriptW
+                else
+                    fixationlength=30;
+                    colorfixation=0;
+                    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                    Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                    Screen('FillOval', w, colorfixation, imageRectDot);
                 end
-            elseif (eyetime2-pretrial_time)>ifi && fixating>=fixTime/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
-                trial_time = GetSecs;
+            elseif (eyetime2-pretrial_time)>0 && fixating>=fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+                
+                if datapixxtime==1
+                    trial_time=Datapixx('GetTime');                  
+                else
+                    trial_time=eyetime2;
+                end
+                 trial_timeT(trial)=trial_time;
+                
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
                     Datapixx('RegWrVideoSync');
@@ -184,7 +201,21 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                         imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+                end    
+                if exist('stimstar')==0
+                    if datapixxtime==1
+                                            stim_start3=Datapixx('GetTime'); 
+
+                        Datapixx('RegWrRd');
+                    stim_start=Datapixx('GetTime'); 
+                    ff=ff+1;
+                    stim_start2=eyetime2;
+                    stim_startT2(trial)=stim_start;
+                else
                     stim_start=eyetime2;
+                end
+                 stim_startT(trial)=stim_start;
+                    
                                     if EyetrackerType ==2
                     %set a marker to get the exact time the screen flips
                     Datapixx('SetMarker');
@@ -193,7 +224,8 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                     Datapixx('RegWrRd');
                     Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
                     Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
-                end
+                                    end
+                stimstar=98;
                 end
                 if theans(trial)==1
                     Screen('DrawTexture', w, Happyface, [], imageRect_offs, [],[], attContr);
@@ -207,8 +239,12 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                     thekeys=thekeys(1);
                 end
                 thetimes=keyCode(thekeys);
+                if datapixxtime==0
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
+                else
+                  respTime=eyetime2;  
+                end
                                 eyechecked=10^4;
 
 
@@ -226,7 +262,13 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
 
            %     Screen('FillOval', w, scotoma_color, scotoma);
                                     Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
-            end
+            elseif ScotomaPresent == 2              
+                    imageRect_ScotomaLive =[dotrect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
+                        dotrect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
+
+               Screen('FillOval', w, scotoma_color, imageRect_ScotomaLive);
+              %                      Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
+      end
             if EyetrackerType==2
                 
                 if scotomavpixx==1
@@ -245,16 +287,24 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
+
+
+            if datapixxtime==1
+                               Datapixx('RegWrRd');
+ eyetime2=Datapixx('GetTime');
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3];
+                datapixx_Timestamp=[datapixx_Timestamp eyetime2];
+                dd(length(datapixx_Timestamp))=trial_time;
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end
      %% process eyedata in real time (fixation/saccades)
      if EyeTracker==1
-                if EyetrackerType==1
-                    GetEyeTrackerData
-                elseif EyetrackerType==2
-                    GetEyeTrackerDatapixx
-                end
+                
+                      GetEyeTrackerDataNew
                 GetFixationDecision
                 
                 if EyeData(end,1)<8000 && stopchecking<0
@@ -309,11 +359,11 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             
             resp = 0;
             respTime=0;
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
         end
         if trialTimedout(trial)==0
-            stim_stop=secs;
+            stim_stop=respTime;
             cheis(kk)=thekeys;
         end
         
