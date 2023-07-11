@@ -8,7 +8,7 @@ addpath([cd '/utilities']);
 addpath([cd '/trailtask']);
 try
     prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
-    
+
     name= 'Parameters';
     numlines=1;
     defaultanswer={'test','1', '3', '1','0', '0','2','0' };
@@ -16,7 +16,7 @@ try
     if isempty(answer)
         return;
     end
-    
+
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
@@ -25,14 +25,15 @@ try
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    
+    datapixxtime=1;
+    responsebox=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     responsebox=0;
     if exist('data')==0
         mkdir('data')
     end
-    
+
     if Isdemo==0
         filename='_FLATMTpractice';
     elseif Isdemo==1
@@ -46,18 +47,18 @@ try
         baseName=[cd '\data\' SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+
     EyeTracker = 1; %0=mouse, 1=eyetracker
     datapixxtime = 1;
     responsebox = 0;
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
-        scotomadeg=0.2;
-scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
-scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
+    scotomadeg=0.2;
+    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
+    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     %% eyetracker initialization (eyelink)
-    
+
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
@@ -66,14 +67,14 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
         end
         eyetrackerparameters % set up Eyelink eyetracker
     end
-    
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
     %% Keys definition/kb initialization
-    
+
     % get keyboard for the key recording
     deviceIndex = -1; % reset to default keyboard
     [k_id, k_name] = GetKeyboardIndices();
@@ -84,42 +85,42 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
             deviceIndex =  k_id(i);
         end
     end
-    
+
     KbQueueCreate(deviceIndex);
     KbQueueStart(deviceIndex);
-    
-    
+
+
     %%
     %Calls the script that has the stimulus details for the trails task
     StimDetailsTrails;
-    
+
     %sets times for each phase [A_demo, A, B_demo, B]
     Maxtimes=[2 5 2 5]*60; %specified in minutes converted to seconds
-    
+
     %% Keys definition/kb initialization
-    
+
     KbName('UnifyKeyNames');
-    
+
     RespType(1) = KbName('LeftArrow');
     RespType(2) = KbName('RightArrow');
     RespType(3) = KbName('UpArrow');
     RespType(4) = KbName('DownArrow');
     escapeKey = KbName('ESCAPE');	% quit key
-    
+
     corrkey=RespType(1);
     wrongkey=RespType(2);
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
-    
+
     %% main loop
     HideCursor(0);
     counter = 0;
-    
+
     %%
-            baseNamePractice=[cd '\data\' SUBJECT filename 'Pixx_practice' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    baseNamePractice=[cd '\data\' SUBJECT filename 'Pixx_practice' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
 
     % check EyeTracker status
     if EyetrackerType == 1
@@ -129,14 +130,14 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
-        
+
         location =  zeros(4, 6);
     end
     if Isdemo==0
         FLAP_TMT_practiceOneMonitor
     else
         %FLAP_TMT_practiceOneMonitor
-             save(baseNamePractice) %at the end of each block save the data
+        save(baseNamePractice) %at the end of each block save the data
 
         for block=1:4
             askcalib=0;
@@ -155,7 +156,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
             FLAPVariablesReset
             HideCursor(); %hides the cursor
             TrailsInstructions(block,w,BackColor,LetterColor ) %instruction screen for each block
-            
+
             ShowCursor('Arrow'); %Show the cursor
             buttons=0;
             contcoord=0;
@@ -167,13 +168,13 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                     Datapixx('RegWrRd');
                 end
                 if (eyetime2-trial_time)>0 && (eyetime2-trial_time)<prefixationsquare+ifi && askcalib==0
-                    
+
                     cont=0;
                 elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==0 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
                     numrespCorr=0;%reset number of responses entered
                     numresp=0;
                     resp(length(stimx)) = 0;
-                    
+
                     if MouseCalib
                         x=round(x*wRect(3)/wRect(3))+xoff;
                         y=round(y*wRect(4)/wRect(4));
@@ -181,9 +182,9 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                     if sum(buttons)~=0
                         askcalib=1;
                     end
-                    
+
                 elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==1 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
-                    
+
                     if exist('stimstar')==0
                         stim_start=GetSecs;
                         stimstar=1;
@@ -214,15 +215,15 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                                 end
                             end
                         end
-                        
+
                         if  sum(buttons)~=0 && resp(numresp+1)==0;
                             contcoord=contcoord+1;
                             zxx(contcoord)=x;
                             zyy(contcoord)=y;
-                            
+
                             numresp=numresp+1; %increment the number of response counter
                             StartTime(numresp,block)=GetSecs;
-                            
+
                             x
                             y
                             if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
@@ -242,15 +243,15 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                                 end
                                 numresp=numresp-1;
                             end
-                            
+
                             buttons=zeros(3,1)';
                         end
                     end
                 end
                 eyefixation5
-                
+
                 if EyetrackerType==2
-                    
+
                     if scotomavpixx==1
                         Datapixx('EnableSimulatedScotoma')
                         Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
@@ -259,33 +260,33 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                         mode=Datapixx('GetSimulatedScotomaMode');
                         status= Datapixx('IsSimulatedScotomaEnabled');
                         radius= Datapixx('GetSimulatedScotomaRadius');
-                        
+
                     end
                 end
                 if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-                %    Screen('FillRect', w, white);
+                    %    Screen('FillRect', w, white);
                 else
                     Screen('FillOval', w, scotoma_color, scotoma);
                 end
-                
+
                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                
+
                 VBL_Timestamp=[VBL_Timestamp eyetime2];
-                
+
                 if EyeTracker==1
-                    
+
                     if site<3
                         GetEyeTrackerData
                     elseif site ==3
                         GetEyeTrackerDatapixx
                     end
                     GetFixationDecision
-                    
+
                     if EyeData(end,1)<8000 && stopchecking<0
                         trial_time = GetSecs;
                         stopchecking=10;
                     end
-                    
+
                     if CheckCount > 1
                         if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                             TimerIndex = FixOnsetIndex;
@@ -307,7 +308,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
                 elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
-                    
+
                 elseif sum(buttons)==0
                     [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
@@ -317,10 +318,10 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                     eyechecked=10^4;
                 end
             end
-            
+
             Screen('Flip',w);
             WaitSecs(0.5)
-            
+
             save(baseName)
             time_stim(kk) = stim_stop - stim_start;
             total_trials(kk)=block;
@@ -334,10 +335,10 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
             elseif kk==4
                 rispo4(kk,:)=resp;
             end
-            
+
             vbltimestamp(block).ix=[VBL_Timestamp];
-            
-            
+
+
             if EyeTracker==1
                 EyeSummary.(TrialNum).EyeData = EyeData;
                 clear EyeData
@@ -352,7 +353,7 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
                 clear CheckCount
                 EyeSummary.(TrialNum).TotalFixations = FixCount;
                 clear FixCount
-                
+
                 EyeSummary.(TrialNum).EventData = EvtInfo;
                 clear EvtInfo
                 EyeSummary.(TrialNum).ErrorData = ErrorData;
@@ -399,42 +400,42 @@ scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
     end
     Screen('Flip', w);
     Screen('TextFont', w, 'Arial');
-    
-    
+
+
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
-    
+
+
     KbQueueWait;
     ShowCursor('Arrow');
-    
+
     if site==1
         Screen('CloseAll');
         Screen('Preference', 'SkipSyncTests', 0);
         PsychPortAudio('Close', pahandle);
-        
+
     else
         Screen('Preference', 'SkipSyncTests', 0);
         Screen('LoadNormalizedGammaTable', w , (linspace(0,1,256)'*ones(1,3)));
         Screen('Flip', w);
         Screen('CloseAll');
     end
-    
-    
+
+
     %% data analysis (to be completed once we have the final version)
-    
-    
+
+
     %to get each scale in a matrix (as opposite as Threshlist who gets every
     %trial in a matrix)
     %thresho=permute(Threshlist,[3 1 2]);
-    
+
     %to get the final value for each staircase
     %  final_threshold=thresho(numel(thresho(:,:,1)),1:length(thresho(1,:,1)),1:length(thresho(1,1,:)));
     %total_thresh= [final_threshold(:,:,1) final_threshold(:,:,2)];
     %%
     %save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|ax|ay|xxx|yyyy|circle|azimuths|corrS|errorS|Allimg)$).');
-    
-    
+
+
 catch ME
     psychlasterror()
 end
