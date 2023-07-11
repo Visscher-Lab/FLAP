@@ -9,29 +9,34 @@ try
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
     
     prompt={'Subject Number:'...
-        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)'};
+        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)', 'eyetracker', 'calibration'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3','2'};
+    defaultanswer={'test','1', '3','2', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
     addpath([cd '/utilities']);
-    
-
+   
     SUBJECT = answer{1,:}; %Gets Subject Name
     expday = str2num(answer{2,:});
     expdayeye = answer{2,:};
     site= str2num(answer{3,:});
 whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
+    EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
+calibration=str2num(answer{6,:}); % 
+    scotomavpixx=0;
+        datapixxtime=0;
+        responsebox=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
+    
     
     inductionType = 1; % 1 = assigned, 2 = annulus
     if inductionType ==1
@@ -39,613 +44,40 @@ whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     elseif inductionType == 2
         TYPE = 'Annulus';
     end
-    
-    closescript=0;
-    kk=1;
-    scotomavpixx=0;
-    Screen('Preference', 'SkipSyncTests', 1);
-    PC=getComputerName();
-    
-    stimulussize=3; %size of the stimulus (in degrees visual angle)
-    separationdeg=2; % distance among elements within each stimulus
-    triangleformation= 1; % three stimuli if 1, four stimuli if 0
-    randomfix = 0; %initial fixation in a random location
-    distancedeg=9; % distance among stimuli
-    PRLecc=7.5; %eccentricity of PRLs
-    PRLsize =5; % diameter PRL
-    
-    
-    
-     trialTimeout=15;    % max duration of each trial in seconds. If the participant doesn't respond, it assigns the response as wrong
-    realtrialTimeout=trialTimeout;
-    scotomadeg=10; %diameter
+
     baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
         TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
     theseed=sum(100*clock);
     rand('twister',theseed); %used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions
     
-    trials=350;%500;
-        
-    KbQueueCreate;
-        EyeTracker = 1; %0=mouse, 1=eyetracker
+    trials=3;%500;
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % get keyboard for the key recording
-    device = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            device =  k_id(i);
-        end
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    KbQueueStart(device); % added device parameter
-    
-    %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %     if ispc
-    %         escapeKey = KbName('esc');	% quit key
-    %     elseif ismac
-    %         escapeKey = KbName('ESCAPE');	% quit key
-    %     end
-    %     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %
-    %
-    
-    escapeKey = KbName('Escape'); % quit key
-
-    
-    if site==0
-        %UCR Bits++
-        %% psychtoobox settings
-        screencm=[40.6, 30];%[UAB:69.8x35.5; UCR: 40.6x30 ]
-        load gamma197sec;
-        v_d=110;
-        % radius=9.5;   %radius of the circle in which the target can appear
-        AssertOpenGL;
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1280,960);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        PsychColorCorrection('SetLookupTable', w, lookuptable);
-        %if you want to open a small window for debug
-        %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        % Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        %  PsychColorCorrection('SetLookupTable', window, Nlinear_lut);
-        %Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+defineSite
         
-    elseif site==2 %UAB
-        
-        s1=serial('com3');
-        fopen(s1);
-        fprintf(s1, ['$monoPlusPlus' 13]);
-        fclose(s1);
-        clear s1
-        screencm=[69.8, 35.5];
-        v_d=57;
-        AssertOpenGL;
-        %    radius=17.5;   %radius of the circle in which the target can appear
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-        %   [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        
-                
-    elseif site==1
-        crt=0;
-        %% psychtoobox settings
-      if crt==1  
-          v_d=57;
-        AssertOpenGL;
-        screenNumber=max(Screen('Screens'));
-        PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        
-        oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
-        screencm=[40.6 30];
-        %debug window
-        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-      else
-          
-           screencm=[69.8, 40];
-        v_d=57;
-        AssertOpenGL;
-        oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        %PsychGPUControl('SetDitheringEnabled', 0); Not supported on OSX
-        screenNumber=max(Screen('Screens'));
-        rand('twister', sum(100*clock));
-        PsychImaging('PrepareConfiguration');   % tell PTB what modes we're usingvv
-        PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-        PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-        %     PsychImaging('AddTask', 'FinalFormatting','DisplayColorCorrection','LookupTable');
-        oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-        [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-        %       [w, wRect]=Screen('OpenWindow',whichScreen, 127, [], [], [], [],3);
-        %     [w, wRect] = Screen('OpenWindow', screenNumber, 0.5,[],[],[],[],3);
-          
-      end
-    elseif site==3   %UCR VPixx
-        %% psychtoobox settings
-        
-        initRequired= 0;
-        if initRequired>0
-            fprintf('\nInitialization required\n\nCalibrating the device...');
-            TPxTrackpixx3CalibrationTestingskip;
-        end
-        % elseif EyetrackerType==2
-        
-        %Connect to TRACKPixx3
-        Datapixx('Open');
-        Datapixx('SetTPxAwake');
-        Datapixx('RegWrRd');
-        v_d=80;
-        AssertOpenGL;
-        screenNumber=max(Screen('Screens'));
-        PsychImaging('PrepareConfiguration');
-        % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
-        
-       oldResolution=Screen( 'Resolution',screenNumber,1920,1080);
-        SetResolution(screenNumber, oldResolution);
-                [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-
-        screencm=[69.8, 35.5];
-        %debug window
-        %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-        %ScreenParameters=Screen('Resolution', screenNumber); %close all
-        Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-        Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-        end
-        Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    %struct.res=[1280 960];
-    struct.sz=[screencm(1), screencm(2)];
-    pix_deg=1./((2*atan((screencm(1)/wRect(3))./(2*v_d))).*(180/pi));
-    pix_deg_vert=1./((2*atan((screencm(2)/wRect(4))./(2*v_d))).*(180/pi));
-    white=WhiteIndex(screenNumber);
-    black=BlackIndex(screenNumber);
-    gray=round((white+black)/2);
-    if gray == white
-        gray=white / 2;
-    end;
-    inc=1;
-    theseed=sum(100*clock);
-    rand('twister',theseed );
-    ifi = Screen('GetFlipInterval', w);
-    if ifi==0
-        ifi=1/75;
-    end
-   if EyeTracker==1
+  %% eyetracker initialization (eyelink)
+    if EyeTracker==1
         if site==3
-            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
-            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
-        
-        % eye_used
-        ScreenHeightPix=screencm(2)*pix_deg_vert;
-        ScreenWidthPix=screencm(1)*pix_deg;
-        VelocityThreshs = [250 2000];      	% px/sec
-        VelocityThreshs = [20*pix_deg 60*pix_deg];     % px/sec 	% px/sec
+        eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
+    end
 
-        ViewpointRefresh = 1;               % dummy variable
-        driftoffsetx=0;                     % initial x offset for all eyetracker values
-        driftoffsety=0;                     % initial y offset for all eyetracker values
-        driftcorr=0.1;                      % how much to adjust drift correction each trial.
-        % Parameters to identify fixations
-        FixationDecisionThreshold = 0.3;    % sec; how long they have to fixate on a location for it to "count"
-        FixationTimeThreshold = 0.033;      % sec; how long the eye has to be stationary before we begin to call it a fixation
-        % note, the eye velocity is already low enough to be considered a "fixation"
-        FixationLocThreshold = 1;           % degrees;  how far the eye can drift from a fixation location before we "call it" a new fixation
-        PixelsPerDegree=pix_deg;
-        
-        % old variables
-        [winCenter_x,winCenter_y]=RectCenter(wRect);
-        backgroundEntry = [0.5 0.5 0.5];
-        % height and width of the screen
-        winWidth  = RectWidth(wRect);
-        winHeight = RectHeight(wRect);
-    end
     
-    % SOUND
-    InitializePsychSound;
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    
-    if site<3
-        pahandle1 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 1, 44100, 2);
-    elseif site==3
-        
-        pahandle1 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-        pahandle2 = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-    end
-    
-    
-    % audio stimuli
-    
-    try
-        [errorS freq  ] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    try
-        [errorS freq  ] = wavread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
-        [corrS freq  ] = wavread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
-    end
-    
-    PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
-    PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
-    load('S096_marl-nyu');
-    
-    
-    %% stimulus settings and fixation point
-    
-    imsize=stimulussize*pix_deg;
-    [x,y]=meshgrid(-imsize:imsize,-imsize:imsize);
-    
-    
-    bg_index =round(gray*255); %background color
-    
-    
-    positions = [-3 3]; % distractors position
-    positionmatrix=[positions; positions]';
-    
-    posmatrix=fullfact([length(positions) length(positions)]);
-    
-    
-    [img, sss, alpha] =imread('neutralface.png');
-    img(:, :, 4) = alpha;
-    Distractorface=Screen('MakeTexture', w, img);
-    
-    [img, sss, alpha] =imread('neutral21.png');
-    img(:, :, 4) = alpha;
-    Neutralface=Screen('MakeTexture', w, img);
-    
-    totalelements = 4-triangleformation; % number of stimuli on screen
-    
-    visibleCircle = 1; % 1= visible, 2 = invisible
+
     
     %%
-    
-    separation=round(separationdeg*pix_deg);
-    
-    totalstimulussize=separation+imsize*2;
-    totalstimulussize=[totalstimulussize totalstimulussize]; %seems to not be used. saved in workspace? %it's just to keep track of the stimulus size 
-    [x,y]=meshgrid(-imsize:imsize,-imsize:imsize);
-    xylim = imsize; %radius of circular mask
-    circle = x.^2 + y.^2 <= xylim^2;
-    [nrw, ncl]=size(x);
-    
-    angles= [15 75 105 165 195 255 285 345];
-    
-    %negative= right;
-    %positive= left;
- 
-    
-    constrain = 1;
-    
-    theFolder = [cd '/utilities/'];
-
-    theTargets_left={};
-    theTargets_right={};
-    a=size(theTargets_left);
-    a=a(:,1);
-    b=size(theTargets_right);
-    b=b(:,1);
-    i=1;
-    lefty=0;
-    righty=0;
-    diocane=0;
-    %Marcello -The section in this while loop appears to create the images used in the
-    %trials. Does it do anything else? (creating the trials themselves,etc)
-    %it creates the trials so that the number of responses left and right
-    %are balanced. It does so by computing the overall angle to be biased
-    %left or right
-    while a<=trials || b<=trials
-        
-        a=size(theTargets_left);
-        a=a(:,2);
-        b=size(theTargets_right);
-        b=b(:,2);
-        
-        pos_one(i)=angles(randi(length(angles)));
-        if pos_one(i)>180
-            computepos_one(i)=180-pos_one(i);
-        else
-            computepos_one(i)=pos_one(i);
-            
-        end
-        if constrain == 1
-            newangles=angles;
-            newangles(find(newangles==pos_one(i)))=[];
-            pos_two(i)=newangles(randi(length(newangles)));
-            if pos_two(i)>180
-                computepos_two(i)=180-pos_two(i);
-            else
-                computepos_two(i)=pos_two(i);
-            end
-            newangles(find(newangles==pos_two(i)))=[];
-            pos_three(i)= newangles(randi(length(newangles)));
-            if pos_three(i)>180
-                computepos_three(i)=180-pos_three(i);
-            else
-                computepos_three(i)=pos_three(i);
-            end
-            newangles(find(newangles==pos_three(i)))=[];
-            pos_four(i)= newangles(randi(length(newangles)));
-            if pos_four(i)>180
-                computepos_four(i)=180-pos_four(i);
-            else
-                computepos_four(i)=pos_four(i);
-            end
-            newangles(find(newangles==pos_four(i)))=[];
-            
-            if (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i)) == 0
-                diocane=diocane+1;
-                while (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i)) == 0
-                    newangles=angles;
-                    newangles(find(newangles==pos_one(i)))=[];
-                    pos_two(i)=newangles(randi(length(newangles)));
-                    if pos_two(i)>180
-                        computepos_two(i)=180-pos_two(i);
-                    else
-                        computepos_two(i)=pos_two(i);
-                    end
-                    newangles(find(newangles==pos_two(i)))=[];
-                    pos_three(i)= newangles(randi(length(newangles)));
-                    if pos_three(i)>180
-                        computepos_three(i)=180-pos_three(i);
-                    else
-                        computepos_three(i)=pos_three(i);
-                    end
-                    newangles(find(newangles==pos_three(i)))=[];
-                    pos_four(i)= newangles(randi(length(newangles)));
-                    if pos_four(i)>180
-                        computepos_four(i)=180-pos_four(i);
-                    else
-                        computepos_four(i)=pos_four(i);
-                    end
-                    newangles(find(newangles==pos_four(i)))=[];
-                    
-                end
-            end
-            
-        elseif constrain == 0
-            pos_two(i)=angles(randi(length(angles))) ;
-            pos_three(i)= angles(randi(length(angles)));
-            pos_four(i)= angles(randi(length(angles)));
-            newangles=angles;
-        end
-        set_dist{i}=[pos_one(i) pos_two(i) pos_three(i) pos_four(i)];
-        lesangles=[computepos_one(i) computepos_two(i) computepos_three(i) computepos_four(i)];
-        thesetDist=set_dist{i};
-               
-        theLetter=imread([theFolder 'newletterc22.tiff']);
-        theLetter=theLetter(:,:,1);
-        theLetter=imresize(theLetter,[nrw nrw],'bicubic');
-        theLetter=imrotate(theLetter,90);
-        
-        
-        theLetter = double(circle) .* double(theLetter)+bg_index * ~double(circle);
-        rotLetterone=imrotate(theLetter,thesetDist(1));
-        rotLetterone(rotLetterone==0)=127;
-        [rotrwi, rotcli]=size(rotLetterone);
-        
-        rotLettertwo=imrotate(theLetter,thesetDist(2));
-        rotLettertwo(rotLettertwo==0)=127;
-        [rotrwii, rotclii]=size(rotLettertwo);
-        
-        rotLetterthree=imrotate(theLetter,thesetDist(3));
-        rotLetterthree(rotLetterthree==0)=127;
-        [rotrwiii, rotcliii]=size(rotLetterthree);
-        
-        rotLetterfour=imrotate(theLetter,thesetDist(4));
-        rotLetterfour(rotLetterfour==0)=127;
-        [rotrwiv, rotcliv]=size(rotLetterfour);
-        
-        thesizes= [rotrwi rotrwii rotrwiii rotrwiv];
-        
-        thisize=max(thesizes);
-        
-        blankimage = ones(thisize,thisize)*bg_index;
-        largerBlankimage=ones(thisize+separation,thisize+separation)*bg_index;
-        
-        border_two=round(((thisize+separation)-nrw)/2);
-        border_one=border_two+1;
-        
-        [largrotrw, largrotcl]=size(largerBlankimage);
-        
-        largerrotLetterone=largerBlankimage;
-        
-        border_two_rot =round(largrotrw-rotrwi)/2;
-        border_one_rot=border_two_rot+1;
-        
-        try
-            largerrotLetterone(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterone(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterone(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
-        end
-        
-        largerrotLettertwo=largerBlankimage;
-        
-        border_two_rot =round(largrotrw-rotrwii)/2;
-        border_one_rot=border_two_rot+1;
-        
-        try
-            largerrotLettertwo(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLettertwo(1:end,1:end);
-        end
-        
-        try
-            largerrotLettertwo(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLettertwo(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterone(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterone(1:end,1:end);
-        end
-        
-        
-        largerrotLetterthree=largerBlankimage;
-        
-        border_two_rot =round(largrotrw-rotrwiii)/2;
-        border_one_rot=border_two_rot+1;
-        
-        try
-            largerrotLetterthree(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterthree(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterthree(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterthree(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterthree(1:end,1:end);
-        end
-        
-        largerrotLetterfour=largerBlankimage;
-        
-        border_two_rot =round(largrotrw-rotrwiv)/2;
-        border_one_rot=border_two_rot+1;
-        
-        try
-            largerrotLetterfour(border_one_rot:end-border_two_rot,border_one_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterfour(border_one_rot:end-border_one_rot,border_one_rot:end-border_one_rot)=rotLetterfour(1:end,1:end);
-        end
-        
-        try
-            largerrotLetterfour(border_two_rot:end-border_two_rot,border_two_rot:end-border_two_rot)=rotLetterfour(1:end,1:end);
-        end
-        
-        clear largerimaj
-        
-        largerimaj(:,:,1)=largerrotLetterone;
-        largerimaj(:,:,2)=largerrotLettertwo;
-        largerimaj(:,:,3)=largerrotLetterthree;
-        largerimaj(:,:,4)=largerrotLetterfour;
-        largerout = imtile(largerimaj,'Frames', 1:4, 'GridSize', [2 2]);
-        
-        if (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i))> 0
-            lefty=lefty+1;
-            theTargets_left{lefty}=Screen('MakeTexture', w, largerout);
-            coordleft{lefty}=thesetDist;
-            lesanglesleft{lefty}=lesangles;
-        elseif (computepos_one(i)+computepos_two(i)+computepos_three(i)+computepos_four(i))< 0
-            righty=righty+1;
-            theTargets_right{righty}=Screen('MakeTexture', w, largerout);
-            coordright{righty}=thesetDist;
-            lesanglesrighty{righty}=lesangles;
-        end
-        i=i+1;
-        lowest=min(a,b);
-        
-        thephrase= ['Creating images - Please wait: ' num2str((lowest/(trials+1))*100) '%'];
-        DrawFormattedText(w, thephrase, 'center', 'center', white);
-        Screen('Flip', w);
-        
-    end
+createInductionStimuli
     
     
-      if EyetrackerType==1
-        useEyeTracker = 0; % otherwise will throw error if not UAB run
-        
-        %eyeTrackerBaseName=[SUBJECT '_DAY_' num2str(expday) '_CAT_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-        %eyeTrackerBaseName = 's00';
-        eyeTrackerBaseName =[SUBJECT expdayeye];
-        
-        %  save_dir= 'C:\Users\labadmin\Desktop\marcello AMD assessment\7.Training\test_eyetracker_files';
-        
-        if exist('dataeyet')==0
-            mkdir('dataeyet')
-        end
-        save_dir=[cd './dataeyet/'];
-        
-        % initialize eyelink
-        if EyelinkInit()~= 1
-            error('Eyelink initialization failed!');
-        end
-        % continue with the rest of eyelink initialization
-        elHandle=EyelinkInitDefaults(w);
-        el=elHandle;
-        eyeTrackerFileName = [eyeTrackerBaseName '.edf'];
-        % Modify calibration and validation target locations %%
-        % it's location here is overridded by EyelinkDoTracker which resets it
-        % with display PC coordinates
-        Eyelink('command','screen_pixel_coords = %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
-        Eyelink('message', 'DISPLAY_COORDS %ld %ld %ld %ld', 0, 0, winWidth-1, winHeight-1);
-        % set calibration type.
-        Eyelink('command', 'calibration_type = HV9');
-        % Eyelink('command', 'calibration_type = HV5'); % changed to 5 to correct upper left corner of the screen issue
-        % you must send this command with value NO for custom calibration
-        % you must also reset it to YES for subsequent experiments
-        %    Eyelink('command', 'generate_default_targets = NO');
-        
-        
-        %% Modify target locations
-        % due to issues with calibrating the upper left corner of the screen the following lines have been
-        % commmented out to change the the sampling from 10 to 5 as
-        % listed in line 323
-        Eyelink('command','calibration_samples = 10');
-        Eyelink('command','calibration_sequence = 0,1,2,3,4,5,6,7,8,9');
-        
-        %             modFactor = 0.183;
-        %
-        %             Eyelink('command','calibration_targets = %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor) );
-        
-        %  Eyelink('command','validation_samples = 5');
-        Eyelink('command','validation_samples = 10'); %changed to make
-        % it 5 samples instead of 10 to deal with upper left corner of
-        % the screem issue
-        %             Eyelink('command','validation_sequence = 0,1,2,3,4,5,6,7,8,9');
-        %             Eyelink('command','validation_targets =  %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d %d,%d',...
-        %                 round(winWidth/2), round(winHeight/2),  round(winWidth/2), round(winHeight*modFactor),  ...
-        %                 round(winWidth/2), round(winHeight - winHeight*modFactor),  round(winWidth*modFactor), ...
-        %                 round(winHeight/2),  round(winWidth - winWidth*modFactor), round(winHeight/2), ...
-        %                 round(winWidth*modFactor), round(winHeight*modFactor), round(winWidth - winWidth*modFactor), ...
-        %                 round(winHeight*modFactor), round(winWidth*modFactor), round(winHeight - winHeight*modFactor),...
-        %                 round(winWidth - winWidth*modFactor), round(winHeight - winHeight*modFactor)  );
-        
-        % make sure that we get gaze data from the Eyelink
-        Eyelink('command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA');
-        Eyelink('OpenFile', eyeTrackerFileName); % open file to record data  & calibration
-        EyelinkDoTrackerSetup(elHandle);
-        Eyelink('dodriftcorrect');
-        
-    end
+     %% calibrate eyetracker, if Eyelink
+    if EyetrackerType==1
+        eyelinkCalib
+    end     
     
     %%
     
@@ -655,8 +87,7 @@ whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     counter = 0;
     
     WaitSecs(1);
-    Screen('TextFont',w, 'Arial');
-    Screen('TextSize',w, 42);
+
     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
     colorfixation = white;
@@ -674,7 +105,6 @@ whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     %possible orientations
     
     % check EyeTracker status
-    % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
@@ -682,36 +112,28 @@ whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
-        
         location =  zeros(length(mixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
     
     
     waittime=ifi*50; %ifi is flip interval of the screen
     
-    
-    scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
-    
-    [xc, yc] = RectCenter(wRect); % coordinate del centro schermo
-    scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
-    xeye=[];
-    yeye=[];
-    %   pupils=[];
-    VBL_Timestamp=[];
-    stimonset=[ ];
-    fliptime=[ ];
-    mss=[ ];
+
     scotoma_color=[200 200 200];
     
-    if inductionType ==1
-        PRLxx=[0 PRLecc 0 -PRLecc];
-        PRLyy=[-PRLecc 0 PRLecc 0 ];
-        %    PRLxx=[0 2 0 -2];
-        %    PRLyy=[-2 0 2 0 ];
-    else
-        PRLxx=0;
-        PRLyy=0;
-    end
+
     
     angolo=pi/2;
 
@@ -759,8 +181,11 @@ whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     counterleft=0;
     counterright=0;
     counteremojisize=0;
+    
+    
+
     for trial=1:trials 
-        
+        FLAPVariablesReset
        
         TrialNum = strcat('Trial',num2str(trial));
         

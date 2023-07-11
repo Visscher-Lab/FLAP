@@ -11,7 +11,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '0','2','0','0' };
+    defaultanswer={'test','1', '3', '1','0', '1','2','0','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -47,6 +47,8 @@ try
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
+    datapixxtime = 1;
+    responsebox = 0;
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
     
@@ -137,9 +139,9 @@ try
         Datapixx('RegWrVideoSync');
     end
     if Isdemo==0
- %       FLAP_TMT_practice
+       FLAP_TMT_practice
     else
-     %   FLAP_TMT_practice
+       FLAP_TMT_practice
         for block=1:4
             askcalib=0;
             %figu res out locations
@@ -176,8 +178,8 @@ try
                     resp(length(stimx)) = 0;
                     
                     if MouseCalib
-                        x=round(x*wRect(3)/wRect(3))-xoff;
-                        y=round(y*wRect(4)/wRect(4));
+                        x=round(x*wRect(3)/wRect(3))+xoff; % add +xoff for ucr site
+                        y=round(y*wRect(4)/wRect(4))-yoff; % add -yoff for ucr site
                     end
                     if sum(buttons)~=0
                         askcalib=1;
@@ -312,15 +314,15 @@ try
                 end
             end
                 if sum(buttons)>1 && (eyetime2-StartTime(numresp,block))>2
-                    [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+                    [origx,origy,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
-%                     y=origx-yoff;
+                     y=origy-yoff; % uncomment this line for ucr
                 elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
                     
                 elseif sum(buttons)==0
-                    [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+                    [origx,origy,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
                     x=origx-xoff;
-%                     y=origx-yoff;
+                    y=origy-yoff; % uncomment this line for ucr
                 end
                 if numrespCorr==length(stimx)
                     stim_stop=GetSecs;

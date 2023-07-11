@@ -46,7 +46,8 @@ try
         baseName=[cd '\data\' SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+    datapixxtime = 1;
+    responsebox = 0;
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersMNRead % load parameters for time and space
     if controlMD==2
