@@ -5,38 +5,15 @@ stimulusdurationpracticearray=[0.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2];
 targethighercontrast=[1 0 1 0 1 0 1 0 1 0 0 0]; % target contrast
 Tscat=0;
 practicetrialnum=length(targethighercontrast); %number of trials fro the practice block
-trialTimeout=20;
 FlickerTime=0;
 trialTimeout=10;
 performanceThresh=0.7;
 gapfeedback= 0.5;
 feedbackduration=1;
-% check EyeTracker status
-% if EyetrackerType == 1
-%     status = Eyelink('startrecording');
-%     if status~=0
-%         error(['startrecording error, status: ', status])
-%     end
-%     % mark zero-plot time in data file
-%     Eyelink('message' , 'SYNCTIME');
-%     location =  zeros(length(mixtr), 6);
-% elseif EyetrackerType == 2
-%     %Connect to TRACKPixx3
-%     Datapixx('Open');
-%     Datapixx('SetTPxAwake');
-%     Datapixx('SetupTPxSchedule');
-%     Datapixx('RegWrRd');
-%     % %set up recording to start on the same frame flip that shows the image.
-%     % %We also get the time of the flip using a Marker which saves a time of the
-%     % %frame flip on the DATAPixx clock
-%     Datapixx('StartTPxSchedule');
-%     Datapixx('SetMarker');
-%     Datapixx('RegWrVideoSync');
-% end
+
 for practicetrial=1:practicetrialnum
     presentfeedback=0;
 %         respTimeprac=10^6;
-    trialTimedout(practicetrial)=0; % counts how many trials timed out before response
     theanspractice(practicetrial)=randi(2);
     Orijit=Jitpracticearray(practicetrial);
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
@@ -55,12 +32,12 @@ for practicetrial=1:practicetrialnum
     %  destination rectangle for the fixation dot
     imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
         imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
-    %     if EyetrackerType ==2
-    %         %start logging eye data
-    %         Datapixx('RegWrRd');
-    %         Pixxstruct(trial).TrialStart = Datapixx('GetTime');
-    %         Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
-    %     end
+        if EyetrackerType ==2
+            %start logging eye data
+            Datapixx('RegWrRd');
+            Pixxstruct(trial).TrialStart = Datapixx('GetTime');
+            Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
+        end
     
     if responsebox==1
         Bpress=0;
@@ -108,7 +85,8 @@ for practicetrial=1:practicetrialnum
     end
     %Initialization/reset of several practicetrial-based variables
     FLAPVariablesReset % reset some variables used in each practicetrial
-    
+    trialTimedout(practicetrial)=0; % counts how many trials timed out before response
+
     while eyechecked<1
         if datapixxtime==1
             eyetime2=Datapixx('GetTime');
@@ -118,7 +96,6 @@ for practicetrial=1:practicetrialnum
         end
         fixationscriptW % visual aids on screen
         %             fixating=1500;
-        currentExoEndoCueDuration=ExoEndoCueDuration(1);
         
         %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
         if (eyetime2-pretrial_time)>=ITI  && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -166,18 +143,17 @@ for practicetrial=1:practicetrialnum
                 imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
                 imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
                     imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
-                created(practicetrial) = 99;
             end
-            created2(practicetrial) = 99;
-            
+
             %here I draw the target contour
             Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
             if targethighercontrast(practicetrial)==1
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 1 );
             end
             % here I draw the circle within which I show the contour target
             Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+            Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
             imagearray{practicetrial}=Screen('GetImage', w);
             
             if exist('stimstar')==0
@@ -209,12 +185,8 @@ for practicetrial=1:practicetrialnum
                     respTimeprac(practicetrial)=secs;
                     respt = respTimeprac(practicetrial);
                     presentfeedback = 1;
-                    %                     eyechecked=10^4;
-                end
-                %         [keyIsDown, keyCode] = KbQueueCheck;
-            else % AYS: UCR and UAB?
-                [keyIsDown, keyCode] = KbQueueCheck;
-                
+%                                         eyechecked=10^4;
+                end 
             end
         elseif (eyetime2-trial_time)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
             if responsebox==0
@@ -233,12 +205,8 @@ for practicetrial=1:practicetrialnum
                     respTimeprac(practicetrial)=secs;
                     respt = respTimeprac(practicetrial);
                     presentfeedback = 1;
-                    %                     eyechecked=10^4;
-                end
-                %         [keyIsDown, keyCode] = KbQueueCheck;
-            else % AYS: UCR and UAB?
-                [keyIsDown, keyCode] = KbQueueCheck;
-                
+%                                         eyechecked=10^4;
+                end  
             end
             
         elseif (eyetime2-trial_time)>=postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
@@ -258,12 +226,8 @@ for practicetrial=1:practicetrialnum
                     respTimeprac(practicetrial)=secs;
                     respt = respTimeprac(practicetrial);
                     presentfeedback = 1;
-                    %                     eyechecked=10^4;
+%                                         eyechecked=10^4;
                 end
-                %         [keyIsDown, keyCode] = KbQueueCheck;
-            else % AYS: UCR and UAB?
-                [keyIsDown, keyCode] = KbQueueCheck;
-                
             end
             
         elseif (eyetime2-pretrial_time)>=trialTimeout
@@ -275,20 +239,19 @@ for practicetrial=1:practicetrialnum
             end
             eyechecked=10^4; % exit loop for this trial
         end
+         if presentfeedback == 1 && (eyetime2-respt)>=gapfeedback && (eyetime2-respt)< feedbackduration
+                %here I draw the target contour
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
+                % here I draw the circle within which I show the contour target
+                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+                %                 trialTimedout(practicetrial) = 99;
+            elseif presentfeedback == 1 && (eyetime2-respt)> feedbackduration
+                stim_stop=GetSecs;
+                eyechecked=10^4; % exit loop for this practicetrial
+            end
         
-        if presentfeedback == 1 && (eyetime2-respt)>=gapfeedback && (eyetime2-respt)< feedbackduration
-            %here I draw the target contour
-            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-            imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
-            % here I draw the circle within which I show the contour target
-            Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-            
-        elseif presentfeedback == 1 && (eyetime2-respt)> feedbackduration
-            stim_stop=GetSecs;
-            eyechecked=10^4; % exit loop for this practicetrial
-            %             trialTimedout(practicetrial) = 1;
-        end
         %% here I draw the scotoma, elements below are called every frame
         eyefixation5
         if ScotomaPresent == 1 % do we want the scotoma? (default is yes)
@@ -356,21 +319,21 @@ for practicetrial=1:practicetrialnum
                         end
                     end
                 elseif responsebox==1
-                    if  thekeys==escapeKey
+                    if  thekeys(practicetrial)==escapeKey
                         DrawFormattedText(w, 'Bye', 'center', 'center', white);
                         Screen('Flip', w);
                         WaitSecs(1);
                         %  KbQueueWait;
                         closescript = 1;
                         eyechecked=10^4;
-                    elseif thekeys==RespType(5)
+                    elseif thekeys(practicetrial)==RespType(5)
                         DrawFormattedText(w, 'continue', 'center', 'center', white);
                         Screen('Flip', w);
                         WaitSecs(1);
                         %  KbQueueWait;
                         % trial=trial-1;
                         eyechecked=10^4;
-                    elseif thekeys==RespType(6)
+                    elseif thekeys(practicetrial)==RespType(6)
                         DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                         Screen('Flip', w);
                         WaitSecs(1);
@@ -408,7 +371,7 @@ for practicetrial=1:practicetrialnum
             Datapixx('RegWrRd');
             buttonLogStatus = Datapixx('GetDinStatus');
             if (buttonLogStatus.newLogFrames > 0)
-                [thekeys secs] = Datapixx('ReadDinLog');
+                [thekeys(practicetrial) secs] = Datapixx('ReadDinLog');
             end
             %         [keyIsDown, keyCode] = KbQueueCheck;
         else % AYS: UCR and UAB?
@@ -416,17 +379,12 @@ for practicetrial=1:practicetrialnum
         end
     end
     if trialTimedout(practicetrial)== 0 
-        foo=(RespType==thekeys);
-        if foo(theanspractice(practicetrial)) % if correct response
+        foo=(RespType==thekeys(practicetrial));
+        if foo(theanspractice(practicetrial))==1 % if correct response
             resp = 1;
             PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
             PsychPortAudio('Start', pahandle);
-        elseif (thekeys==escapeKey) % esc pressed
-            practicePassed=2;
-            closescript = 1;
-            ListenChar(0);
-            break;
-        else
+        elseif foo(theanspractice(practicetrial))==0
             resp = 0; % if wrong response
             nswrprac(practicetrial) = 0;
             PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer

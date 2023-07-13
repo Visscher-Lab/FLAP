@@ -690,21 +690,21 @@ try
                             end
                         end
                     elseif responsebox==1
-                        if  thekeys==escapeKey
+                        if  thekeys==RespType(2)
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %  KbQueueWait;
                             closescript = 1;
                             eyechecked=10^4;
-                        elseif thekeys==RespType(5)
+                        elseif thekeys==RespType(3)
                             DrawFormattedText(w, 'continue', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %  KbQueueWait;
                             % trial=trial-1;
                             eyechecked=10^4;
-                        elseif thekeys==RespType(6)
+                        elseif thekeys==RespType(4)
                             DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);

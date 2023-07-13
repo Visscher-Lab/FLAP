@@ -36,7 +36,7 @@ try
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
-    end   
+    end
     
     inductionType = 1; % 1 = assigned, 2 = annulus
     if inductionType ==1
@@ -46,7 +46,16 @@ try
     end
     defineSite
     CommonParametersInduction
-        baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    folder=cd;
+    folder=fullfile(folder, '..\datafolder\');
+    save(fullfile(folder, 'dirtest.mat'))
+   if site==1
+       baseName=[folder './data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+   elseif site ==3
+       baseName=[folder '.\data\' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+   end
+    
+    
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     
@@ -114,7 +123,7 @@ try
         FLAPVariablesReset
         
         TrialNum = strcat('Trial',num2str(trial));
-
+        
         %Every 50 trials, pause to allow subject to rest eyes
         if trial>1 && (mod(trial,50))==1
             %     Screen('TextStyle', w, 1+2);
@@ -209,7 +218,7 @@ try
             end
         end
         
-
+        
         theans(trial)=randi(2); %generates answer for this trial
         if theans(trial)==1 %present
             counterleft=counterleft+1;
@@ -218,7 +227,7 @@ try
             counterright=counterright+1;
             texture(trial)=theTargets_right{counterright};
         end
-
+        
         nn=0;
         circlefix=0;
         trialTimedout(trial)=0;
@@ -229,9 +238,9 @@ try
             end
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 stoptwo(trial)=99;
-%                IsFixating4
-                                [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
-
+                %                IsFixating4
+                [fixating counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,fixating,framecounter,counter,fixwindowPix);
+                
                 fixationscriptrand
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if datapixxtime==0
@@ -245,7 +254,7 @@ try
             
             if (eyetime2-trial_time)>=postfixationISI && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 
-                %here i present the stimuli+acoustic cue  
+                %here i present the stimuli+acoustic cue
                 
                 %Draw Target
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
@@ -256,15 +265,15 @@ try
                     PsychPortAudio('FillBuffer', pahandle, bip_sound' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     % start counting timeout for the non-fixed time training
-                    trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
-                    checktrialstart(trial)=1;
-                    stimpresent=1111;
                     if datapixxtime==0
                         stim_start = GetSecs;
                     else
                         Datapixx('RegWrRd');
                         stim_start = Datapixx('GetTime');
                     end
+                    trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
+                    checktrialstart(trial)=1;
+                    stimpresent=1111;
                 end
                 
                 if responsebox==0
@@ -289,6 +298,16 @@ try
                         eyechecked=10^4;
                     end
                 end
+            elseif  (eyetime2-pretrial_time)>trialTimeout
+                eyechecked=10^4;
+                if datapixxtime==0
+                    secs=GetSecs;
+                elseif datapixxtime==1
+                    Datapixx('RegWrRd');
+                    secs = Datapixx('GetTime');
+                end
+                
+                respTime(trial)=secs;
                 
             end
             eyefixation5
@@ -309,7 +328,7 @@ try
                 Screen('FillRect', w, gray);
             else
                 
-                assignedPRLpatchPRLinduction
+                assignedPRLpatchPRLinduction2TRL
                 Screen('FillOval', w, scotoma_color, scotoma);
                 for iu=1:length(PRLx)
                     imageRect_offscue{iu}=[imageRectcue(1)+(newsamplex-wRect(3)/2)+PRLxpix(iu), imageRectcue(2)+(newsampley-wRect(4)/2)+PRLypix(iu),...
@@ -324,30 +343,29 @@ try
             %    [eyetime, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w, eyetime-(ifi * 0.5));
             
             
-
-                        if datapixxtime==1
+            
+            if datapixxtime==1
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3];
             else
                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime2];
-                        end
-            
+            end
             
             %% process eyedata in real time (fixation/saccades)
             
             if EyeTracker==1
                 GetEyeTrackerDataNew
                 GetFixationDecision
-              if EyeData(end,1)<8000 && stopchecking<0
-                  if datapixxtime==1
-                      Datapixx('RegWrRd');
-                      trial_time = Datapixx('GetTime');
-                  else
-                      trial_time = GetSecs; %start timer if we have eye info
-                  end
-                  stopchecking=10;
-              end
+                if EyeData(end,1)<8000 && stopchecking<0
+                    if datapixxtime==1
+                        Datapixx('RegWrRd');
+                        trial_time = Datapixx('GetTime');
+                    else
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
+                    stopchecking=10;
+                end
                 
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
                     trialTimeout=100000;
@@ -439,7 +457,7 @@ try
                 %         [keyIsDown, keyCode] = KbQueueCheck;
             else % AYS: UCR and UAB?
                 [keyIsDown, keyCode] = KbQueueCheck;
-            end                        
+            end
             %  toc
             %    disp('fine')
             nn=nn+1;
@@ -453,12 +471,12 @@ try
                 
                 if stim_stop - stim_start<5
                     respTime=1;
-                                    
+                    
                 else
                     respTime=0;
                     counteremojisize=0;
                     
-                end    
+                end
                 
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
@@ -553,7 +571,7 @@ try
             %    fliptime(trial)=[VBL_Timestamp];
             %thresharray(trial)=tresh;
         end
-      
+        
         if (mod(trial,100))==1
             if trial==1
             else

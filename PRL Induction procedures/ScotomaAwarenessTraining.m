@@ -6,11 +6,11 @@ clc;
 commandwindow
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'};
+    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'Calibration type: 0=regular, 1=shorter calibration with visual aids (fMD )'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'spot05','1', '1', '0','2','0', '0' };
+    defaultanswer={'spot05','1', '1', '0','2','0', '0', '0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -24,6 +24,7 @@ try
     whicheye=str2num(answer{5,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
             EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
+            specialcalibration=str2num(answer{8,:}); %0=regular, 1=shorter calibration with visual aids (for MD mostly)
     scotomavpixx= 0;
     responsebox = 0;
     datapixxtime=1;
@@ -153,7 +154,10 @@ FLAPVariablesReset
 
 ff=0;
         while eyechecked<1
-            
+            if datapixxtime==1
+                Datapixx('RegWrRd');
+                eyetime2=Datapixx('GetTime');
+            end
 %             if ScotomaPresent == 1
 %                 fixationscriptW
 %             end
@@ -175,7 +179,7 @@ ff=0;
                     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                     Screen('FillOval', w, colorfixation, imageRectDot);
                 end
-            elseif (eyetime2-pretrial_time)>0 && fixating>=fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-pretrial_time)>0 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 
                 if datapixxtime==1
                     trial_time=Datapixx('GetTime');                  
@@ -193,10 +197,13 @@ ff=0;
                 end
                 clear imageRect_offs
                 fixating=1500;
+                dddd=eyetime2;
+                defed=trial_time;
             end
             
 if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout  && (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)) ==0
-                % show target
+            fhg=45;
+            % show target
                 if exist('imageRect_offs')==0
                     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                         imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
@@ -303,38 +310,42 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             end
      %% process eyedata in real time (fixation/saccades)
      if EyeTracker==1
-                
-                      GetEyeTrackerDataNew
-                GetFixationDecision
-                
-                if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs;
-                    stopchecking=10;
-                end
-                
-                if CheckCount > 1
-                    if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
-                        TimerIndex = FixOnsetIndex;
-                        FixCount = FixCount + 1;
-                        FixIndex(FixCount,1) = FixOnsetIndex;
-                        FixatingNow = 1;
-                    end
-                    if (EyeCode(CheckCount) ~= 0) && (FixatingNow == 1)
-                        if FixCount == 0
-                            FixCount = 1;
-                            FixIndex(FixCount,1) = EndIndex+1;
-                        end
-                        FixIndex(FixCount,2) = CheckCount-1;
-                        FixatingNow = 0;
-                    end
-                    
-                end
-                          else
-                if stopchecking<0
-                    trial_time = eyetime2; %start timer if we have eye info
-                    stopchecking=10;
-                end  
-            end
+         GetEyeTrackerDataNew
+         GetFixationDecision
+         
+         if EyeData(end,1)<8000 && stopchecking<0
+             if datapixxtime==1
+                 Datapixx('RegWrRd');
+                 trial_time = Datapixx('GetTime');
+             else
+                 trial_time = GetSecs; %start timer if we have eye info
+             end
+             stopchecking=10;
+         end
+         
+         if CheckCount > 1
+             if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
+                 TimerIndex = FixOnsetIndex;
+                 FixCount = FixCount + 1;
+                 FixIndex(FixCount,1) = FixOnsetIndex;
+                 FixatingNow = 1;
+             end
+             if (EyeCode(CheckCount) ~= 0) && (FixatingNow == 1)
+                 if FixCount == 0
+                     FixCount = 1;
+                     FixIndex(FixCount,1) = EndIndex+1;
+                 end
+                 FixIndex(FixCount,2) = CheckCount-1;
+                 FixatingNow = 0;
+             end
+             
+         end
+     else
+         if stopchecking<0
+             trial_time = eyetime2; %start timer if we have eye info
+             stopchecking=10;
+         end
+     end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         

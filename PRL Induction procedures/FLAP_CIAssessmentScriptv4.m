@@ -220,7 +220,7 @@ try
     
     
     %% HERE starts trial loop
-    randpick = 1;
+    randpick = 2;
     mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
@@ -240,14 +240,12 @@ try
         end
         if trial == 1
             while practicePassed == 0
-                FLAP_CI_Practice %
-                %                                         FLAPpracticeAssessmentfb
+                FLAP_CI_Practice2
             end
         elseif trial > 1
             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
                 while practicePassed==0
-                    FLAP_CI_Practice %
-                    %                                                 FLAPpracticeAssessmentfb
+                    FLAP_CI_Practice2 
                 end
             end
         end
@@ -304,9 +302,9 @@ CIstimuliModII % add the offset/polarity repulsion
         
         %% Initialization/reset of several trial-based variables
         
-%         if trial==1
-%             startExp=GetSecs; %time at the beginning of the session
-%         end
+        if trial==1
+            startExp=GetSecs; %time at the beginning of the session
+        end
         %   stimulusduration=2;
         
         if EyetrackerType ==2

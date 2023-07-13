@@ -21,9 +21,7 @@ maskthickness = pix_deg*6.25;
 theoris =[-45 45];
 
 %% general temporal parameters (trial events)
-
-preCueISIarray=[0 1.5 3 15]; % time between beginning of trial and first event in the trial (fixations, cues or targets)
-ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
+preCueISI=0.2;% time between beginning of trial and first event in the trial 
 postCueISI=0.5; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 stimulusduration= 0.2; %0.133; % stimulus duration
 CueDuration=0.25;
@@ -71,3 +69,22 @@ midgray=0.5;
 % Select specific text font, style and size:
 % Screen('TextFont',w, 'Arial');
 % Screen('TextSize',w, 42);
+
+
+% Trial structure
+
+ activeblocktype=[1 2 4 3 1;1 4 2 1 3;2 1 3 4 1;2 4 3 1 1;3 2 4 1 1;3 4 1 2 1;3 1 2 4 1;1 3 4 2 1];
+ %1 for gabors, 2 for Egg-CI stimulus, 3 for 6/9-CI stimulus, 4 for rest
+
+
+interTrialIntervals{1}=[0 0 1 0 1 2 1 2 0 0 2 1 0 0 1 0;1 1 0 0 2 1 0 2 0 1 2 0 0 1 0 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 1 0 0 2 1 0 1 2 0 1 2 0 1 0 0;1 0 1 0 0 2 0 1 2 0 2 1 0 0 0 1];
+interTrialIntervals{2}=[0 1 0 0 2 1 0 2 1 0 2 0 0 1 0 1;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 0 1 0 1 2 1 2 0 0 2 1 0 0 1 0;0 1 1 0 0 2 0 1 2 1 2 0 0 1 0 0;1 0 1 0 0 1 2 0 2 0 2 1 0 0 1 0];
+interTrialIntervals{3}=[0 1 1 0 0 2 0 1 2 1 2 0 0 1 0 0;0 0 1 0 1 2 1 2 0 0 2 1 0 1 0 0;0 1 0 0 2 1 0 2 1 0 2 0 0 1 0 1;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;1 1 0 0 2 1 0 2 0 1 2 0 0 1 0 0];
+interTrialIntervals{4}=[1 0 1 0 0 1 2 0 2 0 2 1 0 0 1 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;1 0 0 1 0 2 1 0 2 2 0 1 0 1 0 0;1 0 1 2 0 1 0 2 1 0 2 0 1 0 0 0;0 1 0 1 2 0 1 2 1 0 2 0 0 1 0 0];
+interTrialIntervals{5}=[1 1 0 1 0 1 2 0 0 1 2 0 2 0 0 0;0 0 1 0 1 2 1 2 0 0 1 2 0 0 0 1;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;1 0 1 2 0 1 0 2 1 0 2 0 1 0 0 0;1 0 0 1 0 2 1 0 2 2 0 1 0 1 0 0];
+interTrialIntervals{6}=[1 0 1 0 0 2 0 1 2 0 2 1 0 0 0 1;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 1 1 0 0 2 0 1 2 1 2 0 0 1 0 0;1 0 0 1 0 2 1 0 2 0 2 1 0 0 1 0;0 1 0 0 2 1 0 1 2 0 1 2 0 0 0 1];
+interTrialIntervals{7}=[0 1 0 0 2 1 0 1 2 0 1 2 0 1 0 0;0 1 0 1 2 0 1 2 1 0 2 0 0 1 0 0;1 1 0 1 0 1 2 0 0 1 2 0 2 0 0 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;1 0 0 2 1 0 2 0 1 2 0 0 1 0 0 1];
+interTrialIntervals{8}=[1 1 0 0 2 1 0 2 0 1 2 0 0 1 0 0;1 0 1 0 0 1 2 0 2 0 2 1 0 0 1 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 1 0 0 2 1 0 2 1 0 2 0 0 1 0 1;0 0 1 0 1 2 1 2 0 0 2 1 0 0 1 0];
+
+bip_sound_left=bip_sound_left(:,1);
+  bip_sound_right=bip_sound_right(:,2);
