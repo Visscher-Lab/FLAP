@@ -42,7 +42,7 @@ possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 
 JitRat = 4;
 Orijit=0;
 Tscat=0;
-shapeMat(:,1)= [9 1];
+shapeMat(:,1)= [8 1];
     
     %1: 9 vs 6 19 elements
     %2: 9 vs 6 18 elements
@@ -85,6 +85,3 @@ interTrialIntervals{5}=[1 1 0 1 0 1 2 0 0 1 2 0 2 0 0 0;0 0 1 0 1 2 1 2 0 0 1 2 
 interTrialIntervals{6}=[1 0 1 0 0 2 0 1 2 0 2 1 0 0 0 1;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 1 1 0 0 2 0 1 2 1 2 0 0 1 0 0;1 0 0 1 0 2 1 0 2 0 2 1 0 0 1 0;0 1 0 0 2 1 0 1 2 0 1 2 0 0 0 1];
 interTrialIntervals{7}=[0 1 0 0 2 1 0 1 2 0 1 2 0 1 0 0;0 1 0 1 2 0 1 2 1 0 2 0 0 1 0 0;1 1 0 1 0 1 2 0 0 1 2 0 2 0 0 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;1 0 0 2 1 0 2 0 1 2 0 0 1 0 0 1];
 interTrialIntervals{8}=[1 1 0 0 2 1 0 2 0 1 2 0 0 1 0 0;1 0 1 0 0 1 2 0 2 0 2 1 0 0 1 0;0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;0 1 0 0 2 1 0 2 1 0 2 0 0 1 0 1;0 0 1 0 1 2 1 2 0 0 2 1 0 0 1 0];
-
-bip_sound_left=bip_sound_left(:,1);
-  bip_sound_right=bip_sound_right(:,2);

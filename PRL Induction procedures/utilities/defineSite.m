@@ -196,7 +196,6 @@ ifi = Screen('GetFlipInterval', w); %refresh rate
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
 %% Sound
-InitializePsychSound(1); %'optionally providing
 % the 'reallyneedlowlatency' flag set to one to push really hard for low
 % latency'.
 %   pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
@@ -208,9 +207,11 @@ InitializePsychSound(1); %'optionally providing
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
 if site == 6
-    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
-else
-    pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+   InitializePsychSound(1); %'optionally providing
+ pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+elseif site ~=5
+   InitializePsychSound(1); %'optionally providing
+ pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 end
 % feedback sounds
 try
