@@ -33,9 +33,8 @@
             resp(length(stimx)) = 0;
             
             if MouseCalib
-                x=round(x*wRect(3)/wRect(3))-xoff;
-%                 x=round(x*wRect(3)/wRect(3))+xoff;
-                y=round(y*wRect(4)/wRect(4));
+                x=round(x*wRect(3)/wRect(3))+xoff; % +xoff for ucr site
+                y=round(y*wRect(4)/wRect(4))-yoff; % -yoff for ucr site
             end
             if sum(buttons)~=0
                 askcalib=1;
@@ -104,27 +103,24 @@
         end
         eyefixation5
         
-%         if EyetrackerType==2
-%             if ScotomaPresent==1
-%             if scotomavpixx==1
-%                 Datapixx('EnableSimulatedScotoma')
-%                 Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
-%                 scotomaradiuss=round(pix_deg*6);
-%                 Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
-%                 mode=Datapixx('GetSimulatedScotomaMode');
-%                 status= Datapixx('IsSimulatedScotomaEnabled');
-%                 radius= Datapixx('GetSimulatedScotomaRadius');
-%             end
-%             end
-%         end
-        if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-            Screen('FillRect', w, white);
-%         else
-%              if ScotomaPresent==1
-%             Screen('FillOval', w, scotoma_color, scotoma);
-%              end
+        if EyetrackerType==2
+            if ScotomaPresent==1
+            if scotomavpixx==1
+                Datapixx('EnableSimulatedScotoma')
+                Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
+                scotomaradiuss=round(pix_deg*6);
+                Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
+                mode=Datapixx('GetSimulatedScotomaMode');
+                status= Datapixx('IsSimulatedScotomaEnabled');
+                radius= Datapixx('GetSimulatedScotomaRadius');
+            end
+            end
         end
-        
+        if EyeTracker == 1
+            if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+                Screen('FillRect', w, white);
+            end
+        end
         [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
         
         VBL_Timestamp=[VBL_Timestamp eyetime2];
@@ -161,13 +157,15 @@
             end
         end
         if sum(buttons)>1 && (eyetime2-StartTime(numresp,practiceblock))>2
-            [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+            [origx,origy,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
             x=origx-xoff;
+            y = origy-yoff;
         elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,practiceblock))<=2
             
         elseif sum(buttons)==0
-            [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
+            [origx,origy,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed.
             x=origx-xoff;
+            y = origy-yoff;
         end
         if numrespCorr==length(stimx)
             stim_stop=GetSecs;

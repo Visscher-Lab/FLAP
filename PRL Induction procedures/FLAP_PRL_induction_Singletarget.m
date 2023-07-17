@@ -56,7 +56,6 @@ try
     CommonParametersInduction % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
-    defineSite
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
