@@ -17,38 +17,46 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1', '3' , '2', '0', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
     SUBJECT = answer{1,:}; %Gets Subject Name
-    penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
     site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
-    demo=str2num(answer{4,:}); % practice
-    whicheye=str2num(answer{5,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
-    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(answer{7,:}); % 0 = no scotoma, 1 = scotoma
-    EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
-    responsebox=str2num(answer{9,:});
+    whicheye=str2num(answer{4,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
+    calibration=str2num(answer{5,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    ScotomaPresent = str2num(answer{6,:}); % 0 = no scotoma, 1 = scotoma
+    EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
+    responsebox=str2num(answer{8,:});
     TRLlocation = 2;
     datapixxtime = 1;
     scotomavpixx= 0;
-    
+    whichTask = 1;
     %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
+    filename2='';
+    filename = 'Contour';
     
-    TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    baseName=['./data/' SUBJECT '_FLAPCIAssessment_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
+   if site==1
+        baseName=['./data/' SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[cd '\data\' SUBJECT filename filename2 '_' num2str(PRLlocations) '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    elseif site==3
+        baseName=[cd '\data\' SUBJECT filename filename2 'Pixx_' num2str(TRLlocation) '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+   end
+   
+   TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     
@@ -57,7 +65,7 @@ try
     PRLecc = [-7.5,0; 7.5,0];
     LocX = [-7.5, 7.5];
     LocY = [0, 0];
-    
+    penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
@@ -80,19 +88,14 @@ try
     % initialize jitter matrix
     shapes=2; % how many shapes per day?
     JitListprog = [0,0,0,1,1,1,2,2,2,4,4,4,6,6,6,8,8,8,10,10,10,12,12,12];
-    JitListsc = 12:1:90;
-    StartJitter=0;
+    JitListsc = 1:1:90;
+    StartJitter=12;
    
     %define number of trials per condition
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    if demo==0
-        trials=5; %total number of trials per staircase (per shape)
-    else
-        trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
-    end
-    
+    trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
@@ -157,9 +160,6 @@ try
     
     %% Initialize trial loop
     HideCursor;
-    if demo==1
-        ListenChar(2);
-    end
     ListenChar(0);
     
     % general instruction TO BE REWRITTEN
@@ -191,7 +191,7 @@ try
     
     
     %% HERE starts trial loop
-    randpick = 2;
+    randpick = 1;
     mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
@@ -228,10 +228,10 @@ try
         practicePassed=1;
 
         %% training type-specific staircases
-        if trial > 24
+        if staircounter(mixtr(trial,1),mixtr(trial,2)) >= 24 
             Orijit=JitListsc(thresh(mixtr(trial,1),mixtr(trial,2)));
         else
-            Orijit = JitListprog(trial);
+            Orijit = JitListprog(staircounter(mixtr(trial,1),mixtr(trial,2))+1);
         end
         Tscat=0;
 
@@ -250,11 +250,8 @@ try
             endExp=GetSecs; %time at the end of the session
         end
         % -------------------------------------------------------------------------
-        if demo==1
-            if mod(trial,60)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
-                interblock_instruction
-            end
-            
+        if mod(trial,60)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            interblock_instruction
         end
         % -------------------------------------------------------------------------
         
@@ -375,9 +372,7 @@ try
                 %here I draw the target contour
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                if demo==0
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
-                end
+                
                 % here I draw the circle within which I show the contour target
                 Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
@@ -450,11 +445,9 @@ try
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
             end
-            if demo==1
-                if penalizeLookaway>0
-                    if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-                        Screen('FillRect', w, gray);
-                    end
+            if penalizeLookaway>0
+                if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+                    Screen('FillRect', w, gray);
                 end
             end
             if datapixxtime==1
@@ -568,7 +561,7 @@ try
             staircounter(mixtr(trial,1),mixtr(trial,2)) = staircounter(mixtr(trial,1),mixtr(trial,2))+1;
             Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = Orijit;
             % Progressive Track
-            if trial < 24
+            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24  
                 if foo(theans(trial)) % if correct response
                     resp = 1;
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
@@ -643,7 +636,7 @@ try
             end
             end
         else
-            if trial < 24
+            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24 
                 resp = 0;
                 respTime(trial)=0;
                 PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
@@ -701,7 +694,7 @@ try
             time_stim(kk) = respTime(trial) - stim_startBox2(trial);
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
-            time_stim(kk) = respTime(trial) - stim_start(trial);
+            time_stim(kk) = 999;
         end
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;

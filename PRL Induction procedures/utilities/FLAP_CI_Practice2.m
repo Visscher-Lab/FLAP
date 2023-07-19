@@ -276,11 +276,9 @@ for practicetrial=1:practicetrialnum
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
                 Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
             end
-            if demo==1
-                if penalizeLookaway>0
-                    if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
-                        Screen('FillRect', w, gray);
-                    end
+            if penalizeLookaway>0
+                if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
+                    Screen('FillRect', w, gray);
                 end
             end
             if datapixxtime==1
