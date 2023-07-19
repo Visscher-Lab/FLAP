@@ -691,10 +691,10 @@ try
         flickTwo(trial)=flickerpersistallowed;
         
         if responsebox==1 && trialTimedout(trial)==0
-            time_stim(kk) = respTime(trial) - stim_startBox2(trial);
-            time_stim2(kk) = respTime(trial) - stim_startBox(trial);
+            time_stim{mixtr(trial,1),mixtr(trial,2)}(kk) = respTime(trial) - stim_startBox2(trial);
+            time_stim2{mixtr(trial,1),mixtr(trial,2)}(kk) = respTime(trial) - stim_startBox(trial);
         else
-            time_stim(kk) = 999;
+            time_stim{mixtr(trial,1),mixtr(trial,2)}(kk) = 999;
         end
         totale_trials(kk)=trial;
         coordinate(trial).x=theeccentricity_X/pix_deg;
