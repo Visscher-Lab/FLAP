@@ -44,7 +44,7 @@ try
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1','1', '1'};
+    defaultanswer={'test','1','0', '0'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -540,6 +540,53 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
         imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
             imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
         
+        
+        %% initializing response box (if needed)
+        
+                if responsebox==1
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
+            
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
         %% Initialization/reset of several trial-based variables
         FLAPVariablesReset % reset some variables used in each trial
         if trial==1
@@ -547,6 +594,7 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
         end
         while eyechecked<1
             if datapixxtime==1
+                Datapixx('RegWrRd');
                 eyetime2=Datapixx('GetTime');
             end
             if EyetrackerType ==2
@@ -618,11 +666,13 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
                 elseif trainingType>2 && trial==1
                     isendo=0;
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ==0 && (eyetime2-pretrial_time)<=trialTimeout
+            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && flickerdone<1 && counterannulus<=AnnulusTime/ifi && counterflicker<FlickerTime/ifi  && (eyetime2-pretrial_time)<=trialTimeout
                 % here I need to reset the trial time in order to preserve
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
+                
+                %keyCode(escapeKey) ==0
                 if trainingType~=3 % no more dots!
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
                 end
@@ -653,15 +703,22 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
                         end
                     end
                     if counterannulus==round(AnnulusTime/ifi) % when I have enough frame to satisfy the fixation requirements
-                        newtrialtime=GetSecs;
+                        if datapixxtime==1
+                            Datapixx('RegWrRd');
+                            newtrialtime=Datapixx('GetTime');
+                        else
+                            newtrialtime=GetSecs;
+                        end
                         skipcounterannulus=1000;
                     end
                 end
-            elseif (eyetime2-trial_time)>=ifi*2+preCueISI+currentExoEndoCueDuration+postCueISI && fixating>400 && stopchecking>1 && counterannulus<AnnulusTime/ifi && flickerdone<1 && counterflicker<FlickerTime/ifi && keyCode(escapeKey) ~=0 && (eyetime2-pretrial_time)<=trialTimeout
-                % HERE I exit the script if I press ESC
-                thekeys = find(keyCode);
-                closescript=1;
-                break;
+                if responsebox==0
+                    if  keyCode(escapeKey) ~=0   % HERE I exit the script if I press ESC
+                        thekeys = find(keyCode);
+                        closescript=1;
+                        break;
+                    end
+                end
             end
             %% here is where the second time-based trial loop starts
             if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<=FlickerTime/ifi && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -700,17 +757,33 @@ EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
                     end
                 end
                 if exist('circlestar')==0
+                    if datapixxtime==1
+                         Datapixx('RegWrRd');
+                         circle_start=Datapixx('GetTime');
+                    else
                     circle_start = GetSecs;
+                    end
                     circlestar=1;
                 end
-                cue_last=GetSecs;
+                
+                if datapixxtime==1
+                    Datapixx('RegWrRd');
+                    cue_last=Datapixx('GetTime');
+                else
+                    cue_last=GetSecs;
+                end
                 
                 if trainingType>2 && counterflicker>=round(FlickerTime/ifi) || trainingType<3 || demo==1
-                    newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
-                    flickerdone=10;
+                   if datapixxtime==0
+                       newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
+                   else
+                       Datapixx('RegWrRd');
+                    newtrialtime=Datapixx('GetTime');% when fixation constrains are satisfied, I reset the timer to move to the next series of events
+                   end
+                   flickerdone=10;
                     flicker_time_stop(trial)=eyetime2; % end of the overall flickering period
                 end
-            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0 && stopchecking>1 %present pre-stimulus and stimulus
+            elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
                 % HERE I PRESENT THE TARGET
                 
                 if trainingType==3
@@ -754,11 +827,32 @@ end
                     imagearray{trial}=Screen('GetImage', w);
                     
                 end
-                if exist('stimstar')==0
-                    stim_start = GetSecs;
-                    stim_start_frame=eyetime2;
+                
+                if exist('stimstar') == 0
+                    stim_startT(trial)=eyetime2;
+                    stim_start=eyetime2;
+                    stim_startPTB = GetSecs;
+                    if EyetrackerType ==2
+                        %set a marker to get the exact time the screen flips
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
+                        Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                    end
+                    
+                    if responsebox==1
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        stim_startBox2(trial)= Datapixx('GetMarker');
+                        stim_startBox(trial)=Datapixx('GetTime');
+                    end
                     stimstar=1;
                 end
+                  
                 % start counting timeout for the non-fixed time training
                 % types 3 and 4
                 if trainingType>2
@@ -770,35 +864,64 @@ end
                 
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout  && stopchecking>1 %present pre-stimulus and stimulus
                            
-               if responsebox==0
-                   if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0                
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
+                if responsebox==0
+                    if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        
+                        if datapixxtime==0
+                            [secs  indfirst]=min(thetimes);
+                            respTimeT(trial)=secs;
+                            respTime=GetSecs;
+                        else
+                            respTimeT(trial)=eyetime2;
+                            respTime=eyetime2;
+                        end
+                    end
+                    eyechecked=10^4; % exit loop for this trial
+                elseif responsebox==1
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
                 end
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                respTime=GetSecs;
-                   end
-                                   eyechecked=10^4; % exit loop for this trial
-               end
             elseif (eyetime2-newtrialtime)>=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
-               if responsebox==0
-                if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0   
-                   eyechecked=10^4; % exit loop for this trial
-                thekeys = find(keyCode);
-                if length(thekeys)>1
-                    thekeys=thekeys(1);
+                if responsebox==0
+                    if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                        thekeys = find(keyCode);
+                        if length(thekeys)>1
+                            thekeys=thekeys(1);
+                        end
+                        thetimes=keyCode(thekeys);
+                        [secs  indfirst]=min(thetimes);
+                        
+                        if datapixxtime==0
+                            [secs  indfirst]=min(thetimes);
+                            respTimeT(trial)=secs;
+                            respTime=GetSecs;
+                        else
+                            respTimeT(trial)=eyetime2;
+                            respTime=eyetime2;
+                        end
+                    end
+                    eyechecked=10^4; % exit loop for this trial
+                elseif responsebox==1
+                    if (buttonLogStatus.newLogFrames > 0)
+                        respTime(trial)=secs;
+                        eyechecked=10^4;
+                    end
                 end
-                thetimes=keyCode(thekeys);
-                [secs  indfirst]=min(thetimes);
-                respTime=GetSecs;               
-                end
-            end
             elseif (eyetime2-pretrial_time)>=trialTimeout
-                stim_stop=GetSecs;
+                stim_stop=eyetime2;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
+                if responsebox==1
+                    Datapixx('StopDinLog');
+                end
                 eyechecked=10^4; % exit loop for this trial
             end
             %% here I draw the scotoma, elements below are called every frame
@@ -821,7 +944,7 @@ end
             end
 
             
-                        if datapixxtime==1
+            if datapixxtime==1
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3];
             else
@@ -832,11 +955,73 @@ end
             %% process eyedata in real time (fixation/saccades)
           dd=49;
           if EyeTracker==1
-                GetEyeTrackerDataNew
-                GetFixationDecision
-                if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs; %start timer if we have eye info
-                    stopchecking=10;
+              GetEyeTrackerDataNew
+              GetFixationDecision
+              if EyeData(end,1)<8000 && stopchecking<0
+                  if datapixxtime==1
+                      Datapixx('RegWrRd');
+                      trial_time = Datapixx('GetTime');
+                  else
+                      trial_time = GetSecs; %start timer if we have eye info
+                  end
+                  stopchecking=10;
+              end
+                if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
+                    trialTimeout=100000;
+                    caliblock=1;
+                    DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
+                    Screen('Flip', w);
+                    %   KbQueueWait;
+                    if responsebox==0
+                        if  sum(keyCode)~=0
+                            thekeys = find(keyCode);
+                            if  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(5)
+                                DrawFormattedText(w, 'continue', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                % trial=trial-1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(6)
+                                DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                                %    KbQueueWait;
+                                eyechecked=10^4;
+                            end
+                        end
+                    elseif responsebox==1
+                        if  thekeys==escapeKey
+                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            closescript = 1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(5)
+                            DrawFormattedText(w, 'continue', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            %  KbQueueWait;
+                            % trial=trial-1;
+                            eyechecked=10^4;
+                        elseif thekeys==RespType(6)
+                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                            Screen('Flip', w);
+                            WaitSecs(1);
+                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                            %    KbQueueWait;
+                            eyechecked=10^4;
+                        end
+                    end
                 end
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -860,7 +1045,17 @@ end
                     stopchecking=10;
                 end
             end
-            [keyIsDown, keyCode] = KbQueueCheck;
+            if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
+                %  [Bpress, RespTime, TheButtons] = WaitForEvent_Jerry(0, TargList);
+                Datapixx('RegWrRd');
+                buttonLogStatus = Datapixx('GetDinStatus');
+                if (buttonLogStatus.newLogFrames > 0)
+                    [thekeys secs] = Datapixx('ReadDinLog');
+                end
+                %         [keyIsDown, keyCode] = KbQueueCheck;
+            else % AYS: UCR and UAB?
+                [keyIsDown, keyCode] = KbQueueCheck;
+            end
         end
         %% response processing
         if trialTimedout(trial)== 0 && trainingType~=3
@@ -1052,7 +1247,7 @@ end
             end
             time_stim(kk) = stim_stop - stim_start;
             rispo(kk)=resp;
-            respTimes(trial)=respTime;
+         %   respTimes(trial)=respTime;
             cueendToResp(kk)=stim_stop-cue_last;
             cuebeginningToResp(kk)=stim_stop-circle_start;
         end
@@ -1098,6 +1293,13 @@ end
             coeffAdj=sizeArray(sizepointer);
         end
         
+        
+                    if responsebox==1 && trialTimedout(trial)==0
+                time_stim3(kk) = respTime(trial) - stim_startBox2(trial);
+                time_stim2(kk) = respTime(trial) - stim_startBox(trial);
+            else
+                time_stim3(kk) = respTime(trial) - stim_start;
+            end
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;
         flickTwo(trial)=flickerpersistallowed;

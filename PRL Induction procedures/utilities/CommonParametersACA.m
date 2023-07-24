@@ -45,7 +45,11 @@ postfixationblank=[0.2 0.1]; % time between end of the forced fixation period an
 Jitter=[0.5:0.5:2]; %jitter array for cue onset during Attention part
 cueduration=0.05; % cue duration
 cueISI=0.05; % cue to target ISI
-stimulusduration=0.2; % duration of the C
+if whichTask==3
+    stimulusduration=0.05; % duration of the C
+else
+    stimulusduration=0.2; % duration of the C
+end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
 

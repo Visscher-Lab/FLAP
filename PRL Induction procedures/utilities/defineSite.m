@@ -71,14 +71,23 @@ elseif site==2   %UAB
     fixationlengthx=10;
 elseif site==3   %UCR VPixx
     %% psychtoobox settings
+    screencm=[69.8, 40];
+    v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
-%     screenNumber=min(Screen('Screens'));
     if EyeTracker==1
         initRequired= calibration; %do we want vpixx calibration?
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             %TPxTrackpixx3CalibrationTesting;
-            TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+            if sum(filename(2:4)=='sco') > 1
+                if specialcalibration==1
+                    TPxTrackpixx3CalibrationTestingMMAMD(baseName, 0, 33.6)
+                else
+                    TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+                end
+            else
+                TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+            end
         end
         
         %Connect to TRACKPixx3
@@ -86,30 +95,20 @@ elseif site==3   %UCR VPixx
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
-    
-    if datapixxtime ==1 && EyeTracker==0
-         Datapixx('Open');
-        Datapixx('RegWrRd');
-    end
-   v_d=70; % viewing distance
-    
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
-    %
-   % oldResolution=Screen('Resolution',screenNumber,1920,1080);
-    %SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
-    screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-    %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
- elseif site==4   %padova eyelink
+    
+    
+elseif site==4   %padova eyelink
     %% psychtoobox settings
-
+    
     v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
@@ -125,7 +124,48 @@ elseif site==3   %UCR VPixx
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     %ScreenParameters=Screen('Resolution', screenNumber); %close all
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT  
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+elseif site==5  %UCR scanner
+    %% psychtoobox settings
+    screenNumber=max(Screen('Screens'));
+    %     screenNumber=min(Screen('Screens'));
+    if EyeTracker==1
+        initRequired= calibration; %do we want vpixx calibration?
+        if initRequired>0
+            fprintf('\nInitialization required\n\nCalibrating the device...');
+            %TPxTrackpixx3CalibrationTesting;
+            TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+        end
+        
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('RegWrRd');
+    end
+    
+    v_d=31.5; % viewing distance
+    datapixxtime=1;
+    PsychImaging('PrepareConfiguration');
+    % PsychImaging('AddTask', 'General', 'EnablePseudoGrayOutput');
+    oldResolution=Screen( 'Resolution',screenNumber,1280,1024);
+    SetResolution(screenNumber, oldResolution);
+    [w, wRect]=PsychImaging('OpenWindow',screenNumber, 0,[],32,2);
+    screencm=[21 15];
+    %debug window
+    %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+    %ScreenParameters=Screen('Resolution', screenNumber); %close all
+    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+elseif site == 6 % UAB scanner
+    screencm=[40.6 30];%[70.8, 39.8];
+    v_d=35;%123;
+    datapixxtime=0;
+    oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    screenNumber=max(Screen('Screens'));
+    resolution=Screen('Resolution',screenNumber);
+    rand('twister', sum(100*clock));
+    PsychImaging('PrepareConfiguration');
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -156,7 +196,6 @@ ifi = Screen('GetFlipInterval', w); %refresh rate
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
 %% Sound
-InitializePsychSound(1); %'optionally providing
 % the 'reallyneedlowlatency' flag set to one to push really hard for low
 % latency'.
 %   pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
@@ -167,7 +206,13 @@ InitializePsychSound(1); %'optionally providing
 %     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
-pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+if site == 6
+   InitializePsychSound(1); %'optionally providing
+ pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+elseif site ~=5
+   InitializePsychSound(1); %'optionally providing
+ pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+end
 % feedback sounds
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
@@ -183,62 +228,82 @@ s = sin(wv*t);                                   % Create Tone
 bip_sound=[s' s'];
 bip_sound_left= [s' zeros(length(bip_sound)',1)];
 bip_sound_right= [zeros(length(bip_sound)',1) s'];
-% pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+% pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % PsychPortAudio('FillBuffer', pahandle1, corrS' ); % loads data into buffer
 % PsychPortAudio('FillBuffer', pahandle2, errorS'); % loads data into buffer
 
-
 %% keyboard
-    %% Keys definition/kb initialization
-    
-    KbName('UnifyKeyNames');
-    
-    RespType(1) = KbName('LeftArrow');
-    RespType(2) = KbName('RightArrow');
-    RespType(3) = KbName('UpArrow');
-    RespType(4) = KbName('DownArrow');
-    RespType(5) = KbName('c'); % continue with study
-    RespType(6) = KbName('m'); %recalibrate
-    escapeKey = KbName('ESCAPE');	% quit key
-    
-    % get keyboard for the key recording
-    deviceIndex = -1; % reset to default keyboard
-    [k_id, k_name] = GetKeyboardIndices();
-    for i = 1:numel(k_id)
-        if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
-            deviceIndex =  k_id(i);
-        elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
-            deviceIndex =  k_id(i);
-        end
-    end
-    
-    KbQueueCreate(deviceIndex);
-    KbQueueStart(deviceIndex);
-    
-    if responsebox==1
- % Open Datapixx, and stop any schedules which might already be running
-Datapixx('Open');
-Datapixx('StopAllSchedules');
-Datapixx('RegWrRd');   
-% Synchronize DATAPixx registers to local register cache
- % Configure digital input system for monitoring button box
-Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
-Datapixx('EnableDinDebounce');                          % Debounce button presses
-Datapixx('SetDinLog');                                  % Log button presses to default address
-Datapixx('StartDinLog');                                % Turn on logging
-Datapixx('RegWrRd');
+%% Keys definition/kb initialization
 
-% Bit locations of button inputs, and colored LED drivers
-dinRed      = hex2dec('0000FFFE');
-dinGreen    = hex2dec('0000FFFB');
-dinBlue=hex2dec('0000FFF7');
-dinYellow=hex2dec('0000FFFD');
-dinWhite=hex2dec('0000FFEF');
-RespType=[dinGreen;
-    dinRed;
-    dinYellow;
-    dinBlue]';
-escapeKey=dinWhite;
-        TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
+KbName('UnifyKeyNames');
+
+RespType(1) = KbName('LeftArrow');
+RespType(2) = KbName('RightArrow');
+RespType(3) = KbName('UpArrow');
+RespType(4) = KbName('DownArrow');
+RespType(5) = KbName('c'); % continue with study
+RespType(6) = KbName('m'); %recalibrate
+escapeKey = KbName('ESCAPE');	% quit key
+
+if site==6
+    RespType(1) = KbName('r');
+    RespType(2) = KbName('y');
+end
+% get keyboard for the key recording
+deviceIndex = -1; % reset to default keyboard
+
+[k_id, k_name] = GetKeyboardIndices();
+for i = 1:numel(k_id)
+    if strcmp(k_name{i},'Dell Dell USB Keyboard') % unique for your deivce, check the [k_id, k_name]
+        deviceIndex =  k_id(i);
+    elseif  strcmp(k_name{i},'Apple Internal Keyboard / Trackpad')
+        deviceIndex =  k_id(i);
     end
-    
+end
+KbQueueCreate(deviceIndex);
+KbQueueStart(deviceIndex);
+if responsebox==1
+    % Open Datapixx, and stop any schedules which might already be running
+    Datapixx('Open');
+    Datapixx('StopAllSchedules');
+    Datapixx('RegWrRd');
+    % Synchronize DATAPixx registers to local register cache
+    % Configure digital input system for monitoring button box
+    Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+    Datapixx('EnableDinDebounce');                          % Debounce button presses
+    Datapixx('SetDinLog');                                  % Log button presses to default address
+    Datapixx('StartDinLog');                                % Turn on logging
+    Datapixx('RegWrRd');
+    if site~=5
+        % Bit locations of button inputs, and colored LED drivers
+        dinRed      = hex2dec('0000FFFE');
+        dinGreen    = hex2dec('0000FFFB');
+        dinBlue=hex2dec('0000FFF7');
+        dinYellow=hex2dec('0000FFFD');
+        dinWhite=hex2dec('0000FFEF');
+        RespType=[dinGreen;
+            dinRed;
+            dinYellow;
+            dinBlue]';
+        escapeKey=dinWhite;
+        %   escapeKey=KbName('ESCAPE');
+        
+        TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
+    elseif site ==5
+        % Bit locations of button inputs, and colored LED drivers
+        
+        dinRed      = hex2dec('1'); % 1
+        dinYellow   = hex2dec('2'); % 2
+        dinGreen    = hex2dec('4'); % 4
+        dinBlue     = hex2dec('8'); % 8
+        mri_trigger = hex2dec('400'); % 1024
+        dinWhite=hex2dec('0000FFEF');
+        RespType=[dinRed;
+            dinYellow;
+            dinGreen;
+            dinBlue]';
+        escapeKey=dinWhite;
+        %    escapeKey=KbName('ESCAPE');
+        TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down )
+    end
+end

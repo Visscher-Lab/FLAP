@@ -195,19 +195,32 @@ try
     InstructionFLAPAssessment(w,gray,white)
     theoris =[-45 45];
     
-    % check EyeTracker status, if Eyelink
+    % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
             error(['startrecording error, status: ', status])
         end
+        % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(mixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
     
     
     %% HERE starts trial loop
-    randpick = 1;
+    randpick = 2;
     mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;
@@ -222,27 +235,26 @@ try
                 trialcounter = 0;
             end
         end
-        %         % practice
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
             practicePassed=0;
         end
-        %         if trial == 1
-        %             while practicePassed == 0
-        %                 FLAPpracticeAssessmentfb
-        %             end
-        %         elseif trial > 1
-        %             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-        %                 while practicePassed==0
-        %                     FLAPpracticeAssessmentfb
-        %                 end
-        %             end
-        %         end
-        %         if practicePassed==2
-        %             closescript=1;
-        %             break
-        %         end
-        
-        %         practicePassed=1;
+        if trial == 1
+            while practicePassed == 0
+                FLAP_CI_Practice2
+            end
+        elseif trial > 1
+            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+                while practicePassed==0
+                    FLAP_CI_Practice2 
+                end
+            end
+        end
+        if practicePassed==2
+            closescript=1;
+            break
+        end
+        practicePassed=1;
+
         %% training type-specific staircases
         
         Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,2)));
@@ -289,12 +301,18 @@ CIstimuliModII % add the offset/polarity repulsion
             imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
         
         %% Initialization/reset of several trial-based variables
-        FLAPVariablesReset % reset some variables used in each trial
+        
         if trial==1
             startExp=GetSecs; %time at the beginning of the session
         end
         %   stimulusduration=2;
         
+        if EyetrackerType ==2
+            %start logging eye data
+            Datapixx('RegWrRd');
+            Pixxstruct(trial).TrialStart = Datapixx('GetTime');
+            Pixxstruct(trial).TrialStart2 = Datapixx('GetMarker');
+        end
         if responsebox==1
             Bpress=0;
             timestamp=-1;
@@ -339,6 +357,7 @@ CIstimuliModII % add the offset/polarity repulsion
             Datapixx('SetDinLog');
             Datapixx('RegWrRd');
         end
+        FLAPVariablesReset % reset some variables used in each trial
         
         while eyechecked<1
             if datapixxtime==1

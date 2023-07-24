@@ -390,8 +390,8 @@ try
 
         while eyechecked<1
             if datapixxtime==1
-                              Datapixx('RegWrRd');
-  eyetime2=Datapixx('GetTime');
+                Datapixx('RegWrRd');
+                eyetime2=Datapixx('GetTime');
             end
             
             if ScotomaPresent == 1
@@ -436,6 +436,7 @@ try
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 if datapixxtime==1
+                                    Datapixx('RegWrRd');
                     trial_time = Datapixx('GetTime');
                                         trial_time2 = eyetime2;
                 else
@@ -646,10 +647,15 @@ try
             if EyeTracker==1
                 GetEyeTrackerDataNew
                 GetFixationDecision
-                if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs;
-                    stopchecking=10;
-                end
+              if EyeData(end,1)<8000 && stopchecking<0
+                  if datapixxtime==1
+                      Datapixx('RegWrRd');
+                      trial_time = Datapixx('GetTime');
+                  else
+                      trial_time = GetSecs; %start timer if we have eye info
+                  end
+                  stopchecking=10;
+              end
                 
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
                     trialTimeout=100000;
@@ -684,21 +690,21 @@ try
                             end
                         end
                     elseif responsebox==1
-                        if  thekeys==escapeKey
+                        if  thekeys==RespType(2)
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %  KbQueueWait;
                             closescript = 1;
                             eyechecked=10^4;
-                        elseif thekeys==RespType(5)
+                        elseif thekeys==RespType(3)
                             DrawFormattedText(w, 'continue', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
                             %  KbQueueWait;
                             % trial=trial-1;
                             eyechecked=10^4;
-                        elseif thekeys==RespType(6)
+                        elseif thekeys==RespType(4)
                             DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
