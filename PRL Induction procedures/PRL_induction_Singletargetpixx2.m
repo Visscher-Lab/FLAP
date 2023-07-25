@@ -44,19 +44,23 @@ try
     elseif inductionType == 2
         TYPE = 'Annulus';
     end
-    defineSite
-    CommonParametersInduction
+    filename = 'PRL_induction_SingleTarget';
     folder=cd;
     folder=fullfile(folder, '..\datafolder\');
     save(fullfile(folder, 'dirtest.mat'))
-   if site==1
-       baseName=[folder './data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-   elseif site ==3
-       baseName=[folder '.\data\' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-   end
     
+    if site==1
+        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site ==3
+        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    end
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
+    defineSite
+    CommonParametersInduction
+    
+    
     
     
     %% eyetracker initialization (eyelink)
@@ -467,7 +471,8 @@ try
             foo=(RespType==thekeys);
             if foo(theans(trial))
                 resp = 1;
-                PsychPortAudio('Start', pahandle1);
+                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
                 
                 if stim_stop - stim_start<5
                     respTime=1;
@@ -489,17 +494,19 @@ try
             else
                 resp = 0;
                 respTime=0;
-                PsychPortAudio('Start', pahandle2);
+                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
                 
             end
         else
             
             resp = 0;
             respTime=0;
-            PsychPortAudio('Start', pahandle2);
+            PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
         end
         
-        %  stim_stop=secs;
+         stim_stop=secs;
         time_stim(trial) = stim_stop - stim_start;
         totale_trials(trial)=trial;
         %     coordinate(trial).x=ecc_x;

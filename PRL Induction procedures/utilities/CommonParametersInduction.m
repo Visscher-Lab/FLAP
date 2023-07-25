@@ -131,7 +131,7 @@ midgray=0.5;
 % Screen('TextFont',w, 'Arial');
 % Screen('TextSize',w, 42);
 
-trials=3;%500;
+trials=150;%500;
 
 
     counterleft=0;
