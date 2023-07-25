@@ -3,10 +3,8 @@ close all
 clc
 
 %% Loading and reading Participant data
-cd('..\..\..\FLAP\PRL Induction procedures\data') % enter the path to datafolder for future analyses
-% load('DAContourPixx_2_123_7_20_9_51.mat') % Load participant specific .mat file here
-load('ACContourPixx_2_123_7_20_9_29.mat')
-% load('CSContourPixx_2_123_7_20_12_1.mat')
+cd('..\..\..\FLAP\PRL Induction procedures\data')
+load('DAContourPixx_2_123_7_20_9_51.mat') % Load participant specific .mat file here
 cd('..\..\Analysis codes\AnalysisUtilities')
 
 name = baseName(71:79);
@@ -131,4 +129,4 @@ grid on;
 t = 'Prog Staircase Accuracy ';
 titlestr = strcat(t,name);
 title(titlestr, 'Fontsize',17)
-print([name sess 'ProgAcc'],'-dpng','-r300');
+print([name sess 'ProgAcc'],'-dpng')
