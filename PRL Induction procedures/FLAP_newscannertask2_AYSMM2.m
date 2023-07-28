@@ -193,7 +193,7 @@ try
     TRrem = 1; % remainder TRs if uneven div CONFIRM TR REMAINDER
     % TRlist = [repmat(TRpat, floor(length(mixtr)/length(TRpat)), 1); repmat(TRrem, rem(length(mixtr), length(TRpat)), 1)];
     %TRwait = TRlist(randperm(length(mixtr))); % TRwait arr tells how long to wait before next trial
-    TRwait=interTrialIntervals{whichRun};
+    TRwait=(interTrialIntervals{whichRun})';
     TRcount = 0;
     %preCueISIarray=[0 1 2 10]*TR; % time between beginning of trial and first event in the trial (fixations, cues or targets)
     %% HERE starts trial loop
@@ -222,8 +222,8 @@ try
         end
         %%
         
-        %  AssessmentType=mixtr(trial,1);
-        AssessmentType=mixtr(trial,3);
+         AssessmentType=mixtr(trial,1);
+%         AssessmentType=mixtr(trial,3);
         
         %blocks
         
@@ -524,28 +524,28 @@ try
                         if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
                             if foo(theans(trial)) % if correct response
                                 resp = 1;
-                                Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
+%                                 Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+%                                 Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
                             else
                                 resp = 0; % if wrong response
-                                Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
+%                                 Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+%                                 Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
                             end
-                            Datapixx('StartAudioSchedule');
+%                             Datapixx('StartAudioSchedule');
                             Datapixx('RegWrRd'); % synchronize Datapixx registers to local register cache
                         else
                             if foo(theans(trial)) % if correct response
                                 resp = 1;
-                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
                             elseif (thekeys==escapeKey) % esc pressed
                                 closescript = 1;
                                 ListenChar(0); %AS 4-28-23 We cannot use ListenChar This is deprcated. We need either KbQueue for UAB and Datapixx button for UCR
                                 %   break;
                             else
                                 resp = 0; % if wrong response
-                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                                 PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
                             end
-                            PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                             PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
                         end
                     end
                 elseif responsebox==1
@@ -560,28 +560,28 @@ try
                         if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
                             if foo(theans(trial)) % if correct response
                                 resp = 1;
-                                Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
+%                                 Datapixx('WriteAudioBuffer', corrS', 0); % loads data into buffer
+%                                 Datapixx('SetAudioSchedule',0,fs,length(corrS'),3,0,length(corrS'));
                             else
                                 resp = 0; % if wrong response
-                                Datapixx('WriteAudioBuffer', errorS', 0); % loads data into buffer
-                                Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
+%                                 Datapixx('WriteAudioBuffer', errorS', 0); % loads data into buffer
+%                                 Datapixx('SetAudioSchedule',0,fs,length(errorS'),3,0,length(errorS'));
                             end
-                            Datapixx('StartAudioSchedule');
+%                             Datapixx('StartAudioSchedule');
                             Datapixx('RegWrRd'); % synchronize Datapixx registers to local register cache
                         else
                             if foo(theans(trial)) % if correct response
                                 resp = 1;
-                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
                             elseif (thekeys==escapeKey) % esc pressed
                                 closescript = 1;
                                 ListenChar(0); %AS 4-28-23 We cannot use ListenChar This is deprcated. We need either KbQueue for UAB and Datapixx button for UCR
                                 break;
                             else
                                 resp = 0; % if wrong response
-                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                                 PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
                             end
-                            PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
+%                             PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
                         end
                         respgiven=1;
                     end

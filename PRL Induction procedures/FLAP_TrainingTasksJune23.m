@@ -134,9 +134,7 @@ try
         createGabors
     end
     
-    % CI stimuli
     if trainingType==2 || trainingType==4
-        %         CIShapesIItest
         CIShapesIII
     end
     
