@@ -15,9 +15,13 @@ fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 
 %if mouse calibration is needed
 MouseCalib=1;
-xoff=2560; %ucr uses 2560, uab uses 0
-yoff=150; %ucr uses 150, uab uses 0
-
+if sitevpixx==1
+    xoff=2560; %ucr uses 2560, uab uses 0
+    yoff=150; %ucr uses 150, uab uses 0
+elseif sitepixx==2
+    xoff=0; %ucr uses 2560, uab uses 0
+    yoff=0; %ucr uses 150, uab uses 0
+end
 % xoff = 1920;
 % yoff = 1080;
 %xoff=0; %ucr uses 1920, uab uses 0
@@ -38,8 +42,8 @@ RespTol=3*ppd; %specifies radius of the circles in ppd
 
 
 
-    scotomadeg=10; % size of the scotoma in degrees of visual angle
-    stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
+scotomadeg=10; % size of the scotoma in degrees of visual angle
+stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 
@@ -69,10 +73,10 @@ if exist('test', 'var')
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
-    
-    eyetime2=0; % trial-based timer, will later be populated with eyetracker data 
-    closescript=0; % to allow ESC use
-    kk=1; % trial counter
+
+eyetime2=0; % trial-based timer, will later be populated with eyetracker data
+closescript=0; % to allow ESC use
+kk=1; % trial counter
 %% training type-specific parameters
 
 % training type 1
@@ -100,8 +104,8 @@ cuecontrast=1; % contrast of the cue (0-1)
 % trial type-specific time parameters
 if exist('test', 'var')
     if trainingType==3 || trainingType==4
-    framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts
-    blankframeallowed=flickerpersistallowed/ifi; % frames away from flicker in which flicker persists
+        framesbeforeflicker=timeflickerallowed/ifi; % frames before flicker starts
+        blankframeallowed=flickerpersistallowed/ifi; % frames away from flicker in which flicker persists
     end
 end
 %% visual stimuli common parameters
