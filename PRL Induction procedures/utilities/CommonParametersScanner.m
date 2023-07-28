@@ -42,7 +42,7 @@ possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 
 JitRat = 4;
 Orijit=0;
 Tscat=0;
-shapeMat(:,1)= [8 1];
+shapeMat(:,1)= [5 1];
     
     %1: 9 vs 6 19 elements
     %2: 9 vs 6 18 elements
@@ -56,7 +56,7 @@ shapeMat(:,1)= [8 1];
     %10: p and q more elements
     %11: %% rotated 6 vs 9 with 19 elements
 %% visual stimuli common parameters
-imsize=(stimulusSize*pix_deg)/2; %Gabor mask (effective stimulus size)
+imsize=(stimulusSize*pix_deg); %Gabor mask (effective stimulus size)
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
 scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
 imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target

@@ -10,9 +10,13 @@ elseif jitterCI==0
 end
 
 % here I define the shapes
-
-newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
-newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
+if site == 5
+    newTargy=Targy{shapesoftheDay(mixtr(trial,3))}+jitteryci(trial);
+    newTargx=Targx{shapesoftheDay(mixtr(trial,3))}+jitterxci(trial);
+else
+    newTargy=Targy{shapesoftheDay(mixtr(trial,1))}+jitteryci(trial);
+    newTargx=Targx{shapesoftheDay(mixtr(trial,1))}+jitterxci(trial);
+end
 
 targetcord =newTargy(theans(trial),:)+yTrans  + (newTargx(theans(trial),:)+xTrans - 1)*ymax;
 % 'other shape' needed for the scanner task
@@ -34,14 +38,26 @@ yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 
 %xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
 %yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
-xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
-yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+if site == 5
+    xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+    yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+else
+    xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+    yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+end
 theori=180*rand(1,length(eccentricity_XCI));
 theori2=180*rand(1,length(eccentricity_XCI));
-
-theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+if site == 5
+    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,3))}(theans(trial),:) +Orijit;
+else
+    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+end
 if exist('theothershape')==1
-theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(theothershape(trial),:) +Orijit;
+    if site == 5
+        theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,3))}(theothershape(trial),:) +Orijit;
+    else
+        theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(theothershape(trial),:) +Orijit;
+    end
 end
 % if demo==1
 %     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);

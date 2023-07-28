@@ -3,8 +3,10 @@ close all
 clc
 
 %% Loading and reading Participant data
-cd('..\..\..\FLAP\PRL Induction procedures\data')
-load('DAContourPixx_2_123_7_20_9_51.mat') % Load participant specific .mat file here
+cd('..\..\..\FLAP\PRL Induction procedures\data') % enter the path to datafolder for future analyses
+% load('DAContourPixx_2_123_7_20_9_51.mat') % Load participant specific .mat file here
+load('ACContourPixx_2_123_7_20_9_29.mat')
+% load('CSContourPixx_2_123_7_20_12_1.mat')
 cd('..\..\Analysis codes\AnalysisUtilities')
 
 name = baseName(71:79);
@@ -110,3 +112,23 @@ for o = 1:length(RTmean_all)
 end
 sgtitle(name,'FontSize',17)
 print([name sess 'RT'],'-dpng', '-r300'); %<-Save as PNG with 300 DPI
+
+%% Calculating Accuracy during progressive tracks
+for p = 1:length(corrmat)
+    progaccuracy(p,1) = (sum(corrmat{p,1}(1:24))/24)*100;
+end
+figure(3)
+x_id = 1:4;
+names = {'d/b L', 'd/b R', 'q/p L', 'q/p R'};
+bar(x_id,progaccuracy)
+hold on
+set(gca,'xtick',x_id,'xticklabel',names,'fontsize',15)
+xtickangle(45)
+xlim([0 5])
+ylim([0 100])
+ylabel('Acuracy','fontsize',15)
+grid on;
+t = 'Prog Staircase Accuracy ';
+titlestr = strcat(t,name);
+title(titlestr, 'Fontsize',17)
+print([name sess 'ProgAcc'],'-dpng','-r300');
