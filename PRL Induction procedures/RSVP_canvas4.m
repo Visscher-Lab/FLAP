@@ -47,7 +47,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
         filename='RSVP';
     end
     folder=cd;
-    folder=fullfile(folder, '..\datafolder\');
+    folder=fullfile(folder, '..\..\datafolder\');
 
     if site==1
         baseName=[folder SUBJECT filename  '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
