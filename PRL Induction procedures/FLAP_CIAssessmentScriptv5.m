@@ -115,10 +115,10 @@ try
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     stepsizes=2; % step sizes for 3d/1u staircase
     % Threshold -> 79%
-    sc.up = 1;                          % # of incorrect answers to go one step up
-    sc.steps= 3;                    % # of correct answers to go one step down
-    shapeMat(:,1)= [9 10];
-    
+    sc.up = 1; % # of incorrect answers to go one step up
+    sc.steps= 3; % # of correct answers to go one step down
+    shapeMat(:,1)= [5 12]; % change the numbers here w.r.t the CIShapesIII.m script as to which ones you'll need to run
+
     %1: 9 vs 6 19 elements
     %2: 9 vs 6 18 elements
     %3: p vs q
@@ -130,7 +130,8 @@ try
     % 9: d and b more elements
     %10: p and q more elements
     %11: %% rotated 6 vs 9 with 19 elements
-    
+    %12: d vs p (scanner & CI assessment)
+
     shapesoftheDay=shapeMat;
     AllShapes=size((Targy));
     trackthresh=ones(AllShapes(2),conditionTwo)*StartJitter; %assign initial jitter to shapes per location

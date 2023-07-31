@@ -189,20 +189,19 @@ offsety{6}=[Yoff; Yoff];
 
 clear Xoff Yoff xfoo yfoo orifoo
 
-%% diagonal line ----------------------------------------------------------
+%% d and p more elements (scanner & CI assessment) ------------------------
 
-xfoo=[-3  -2    -1     0     1     2  3];
-yfoo= xfoo;
-Xoff=[-0.085  -0.085   -0.085  0  0.085    0.085  0.085];
-Yoff=Xoff;
-orifoo=[45  45    45    45    45    45  45];
-Targx{7}= [xfoo; -xfoo];
-Targy{7}= [yfoo; yfoo];
-Targori{7}=[-orifoo;orifoo];
+Targx{7} = [-4 -4 -4 -3 -3 -2 -2 -1 -1 1 1 1 1 1 1 1 0 0
+    4 4 4 3 3 2 2 1 1 -1 -1 -1 -1 -1 -1 -1 0 0];
+Targy{7} = [-1 0 1 -2 2 -2 2 -2 2 -2 0 1 -1 -3 -4 -5 -2 2
+    -1 0 1 -2 2 -2 2 -2 2 2 0 1 -1 3 4 5 -2 2];
+Targori{7} = [210 180 150 240 120 270 90 90+180 270+180 0 0 30 150+180 0 0 0 300 60
+    150+180 0 30 120+180 60 90+180 90 90+180 90 0+180 0+180 150+180 30+180 0+180 0+180 0+180 60+180 120];
+Xoff = [-0.2 0 -0.2 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 0 0 0 0 0 0 0 -0.1 -0.1];
+Yoff= [0.05 0 -0.05 -0.05 0.05 0.05 -0.05 0.1 -0.1 -0.05 0 0 0 0 0 0 -0.05 0.1];
 
-offsetx{7}= [Xoff; Xoff];
-offsety{7}=[Yoff; Yoff];
-
+offsetx{7}= [-Xoff; Xoff];
+offsety{7}=[-Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
 %% rotated 6 vs 9 with 19 elements ---------------------------------------------------------------------
@@ -258,8 +257,21 @@ offsetx{12}= [-Xoff; -Xoff];
 offsety{12}=[-Yoff; Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
-%%
+%% rotated lines (diagonal lines) -----------------------------------------
 
+xfoo=[-3  -2    -1     0     1     2  3];
+yfoo= xfoo;
+Xoff=[-0.085  -0.085   -0.085  0  0.085    0.085  0.085];
+Yoff=Xoff;
+orifoo=[45  45    45    45    45    45  45];
+Targx{13}= [xfoo; -xfoo];
+Targy{13}= [yfoo; yfoo];
+Targori{13}=[-orifoo;orifoo];
+
+offsetx{13}= [Xoff; Xoff];
+offsety{13}=[Yoff; Yoff];
+
+clear Xoff Yoff xfoo yfoo orifoo
 
 
 %% Shape order
@@ -269,11 +281,12 @@ clear Xoff Yoff xfoo yfoo orifoo
 %4 d vs b
 %5 eggs
 %6: horizontal vs vertical line
-%7: diagonal line
+%7: d vs p (scanner & assessments)
 %8: rotated 6 vs 9 with 19 elements
 % 9: rotated 2 vs 5
 %10: rotated p vs q
 %11: rotated d vs b
 %12: rotated eggs
+%13: rotated lines (diagonal)
 
 
