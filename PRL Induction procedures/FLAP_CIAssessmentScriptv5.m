@@ -119,17 +119,17 @@ try
     sc.steps= 3; % # of correct answers to go one step down
     shapeMat(:,1)= [5 12]; % change the numbers here w.r.t the CIShapesIII.m script as to which ones you'll need to run
 
-    %1: 9 vs 6 19 elements
+    %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
-    %3: p vs q
-    %4 d vs b
-    %5 eggs
+    %3: p vs q (DO NOT USE)
+    %4 d vs b (DO NOT USE)
+    %5 eggs (final version)
     %6: diagonal line
     %7:horizontal vs vertical line
-    %8: rotated eggs
-    % 9: d and b more elements
-    %10: p and q more elements
-    %11: %% rotated 6 vs 9 with 19 elements
+    %8: rotated eggs (DO NOT USE)
+    % 9: d and b more elements (final version)
+    %10: p and q more elements (final version)
+    %11: %% rotated 6 vs 9 with 19 elements (DO NOT USE)
     %12: d vs p (scanner & CI assessment)
 
     shapesoftheDay=shapeMat;
