@@ -108,9 +108,9 @@ if inductionType == 1 % 1 = assigned, 2 = annulus
     radiusPRL=(PRLsize/2)*pix_deg;
     circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
 else
+    radiusPRL=(PRLsize/2); % SJ: radiusPRL was undefined, so I defined it as half of the PRLsize
     smallradius=radiusPRL; %+pix_deg/2 %+1*pix_deg;
     radiusPRL=radiusPRL+3*pix_deg;
-    
     circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
     circlePixels2=sx.^2 + sy.^2 <= smallradius.^2;
     d=(circlePixels2==1);

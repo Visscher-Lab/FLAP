@@ -38,7 +38,7 @@ try
         mkdir('data')
     end
     
-    inductionType = 1; % 1 = assigned, 2 = annulus
+    inductionType = 2; % 1 = assigned, 2 = annulus
     if inductionType ==1
         TYPE = 'Assigned';
     elseif inductionType == 2
@@ -46,8 +46,7 @@ try
     end
     filename = 'PRL_induction_SingleTarget';
     folder=cd;
-    folder=fullfile(folder, '..\datafolder\');
-    save(fullfile(folder, 'dirtest.mat'))
+    folder=fullfile(folder, '..\..\datafolder\');
     
     if site==1
         baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename

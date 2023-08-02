@@ -117,7 +117,7 @@ try
     % Threshold -> 79%
     sc.up = 1; % # of incorrect answers to go one step up
     sc.steps= 3; % # of correct answers to go one step down
-    shapeMat(:,1)= [5 12]; % change the numbers here w.r.t the CIShapesIII.m script as to which ones you'll need to run
+    shapeMat(:,1)= [5 12]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
 
     %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
@@ -131,6 +131,7 @@ try
     %10: p and q more elements (final version)
     %11: %% rotated 6 vs 9 with 19 elements (DO NOT USE)
     %12: d vs p (scanner & CI assessment)
+    %13: 2 vs 5 shape
 
     shapesoftheDay=shapeMat;
     AllShapes=size((Targy));
@@ -210,6 +211,12 @@ try
                 trialcounter = 0;
             end
         end
+        % -------------------------------------------------------------------------
+        if mod(trial,61)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            interblock_instruction
+        end
+        % -------------------------------------------------------------------------
+        
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
             practicePassed=0;
         end
@@ -252,11 +259,6 @@ try
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
-        % -------------------------------------------------------------------------
-        if mod(trial,60)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
-            interblock_instruction
-        end
-        % -------------------------------------------------------------------------
         
         if trial==1
             InstructionCIAssessment
@@ -428,7 +430,11 @@ try
                     end
                 elseif responsebox==1
                     if (buttonLogStatus.newLogFrames > 0)
+                        if length(secs) > 1
+                            respTime(trial) = secs(end);
+                        else
                         respTime(trial)=secs;
+                        end
                         eyechecked=10^4;
                     end
                 end

@@ -89,7 +89,7 @@ try
     
     site = 3; % training site (UAB vs UCR vs Vpixx)
     %  demo=str2num(answer{4,:}); % are we testing in debug mode?
-    demo=0;
+    demo=2;
     test=demo;
     datapixxtime=1;
     responsebox=1;
@@ -103,7 +103,7 @@ try
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     filename='_FLAPtraining_type';
     folder=cd;
-    folder=fullfile(folder, '..\datafolder\');
+    folder=fullfile(folder, '..\..\datafolder\');
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     baseName=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
@@ -436,7 +436,7 @@ try
             %         practicePassed=1;
         end
         
-        if test==0
+        if test==2
             practicePassed=1;
         end
         if trainingType<3
@@ -511,6 +511,9 @@ try
                 ylimit=xlimit;
                 theeccentricity_X=xlimit(randi(length(xlimit)));
                 theeccentricity_Y=ylimit(randi(length(xlimit)));
+            else
+                eccentricity_X(trial) = eccentricity_X(trial-1);
+                eccentricity_Y(trial) = eccentricity_Y(trial-1);
             end
         end
         
@@ -1210,7 +1213,7 @@ try
                 Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=Orijit;
             end
             resp = 0;
-            respTime=0;
+            respTime(trial)=0;
             PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
             PsychPortAudio('Start', pahandle);
             if trainingType~=3
@@ -1296,11 +1299,13 @@ try
         end
         
         
-        if responsebox==1 && trialTimedout(trial)==0
+        if responsebox==1 && trialTimedout(trial)==0 && trainingType ~= 3
             time_stim3(kk) = respTime(trial) - stim_startBox2(trial);
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
-            time_stim3(kk) = respTime(trial) - stim_start;
+            if trainingType ~= 3
+                time_stim3(kk) = respTime(trial) - stim_start;
+            end
         end
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;
