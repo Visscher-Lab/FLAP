@@ -178,7 +178,7 @@ try
         if demo==1
             trials=5;
         else
-            trials=62;  %total number of trials per stimulus (250 trials
+            trials=10; %62 %total number of trials per stimulus (250 trials
             %per cue condition divided by 4 because of the 'hold trial
             %location' later)
         end
@@ -339,18 +339,18 @@ try
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps);
             
-            d = dir(['../datafolder/' 'AR' '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+            d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
             
             [dx,dx] = sort([d.datenum]);
             newest = d(dx(end)).name;
             %  oldthresh=load(['./data/' newest],'thresh');
-            previousFixTime2=load(['../datafolder/' newest],'movieDuration');
+            previousFixTime2=load(['../../datafolder/' newest],'movieDuration');
             %previousresp=load(['./data/' newest],'rispo');
-            previoustrials2=load(['../datafolder/' newest],'trials');
-            coeffAdj2=load(['../datafolder/' newest],'coeffAdj');
-            sizepointer2=load(['../datafolder/' newest],'sizepointer');
-            flickerpointerPre2 = load(['../datafolder/' newest],'flickerpointerPre');
-            flickerpointerPost2 = load(['../datafolder/' newest],'flickerpointerPost');
+            previoustrials2=load(['../../datafolder/' newest],'trials');
+            coeffAdj2=load(['../../datafolder/' newest],'coeffAdj');
+            sizepointer2=load(['../../datafolder/' newest],'sizepointer');
+            flickerpointerPre2 = load(['../../datafolder/' newest],'flickerpointerPre');
+            flickerpointerPost2 = load(['../../datafolder/' newest],'flickerpointerPost');
             coeffAdj = coeffAdj2.coeffAdj;
             previousFixTime = previousFixTime2.movieDuration;
             previoustrials = previoustrials2.trials;
@@ -507,10 +507,10 @@ try
                 eccentricity_Y(trial)=ecc_y;
                 theeccentricity_X=ecc_x;
                 theeccentricity_Y=ecc_y;
-                xlimit=[-8:0.5:8]*pix_deg;
-                ylimit=xlimit;
-                theeccentricity_X=xlimit(randi(length(xlimit)));
-                theeccentricity_Y=ylimit(randi(length(xlimit)));
+             %   xlimit=[-8:0.5:8]*pix_deg;
+              %  ylimit=xlimit;
+             %   theeccentricity_X=xlimit(randi(length(xlimit)));
+              %  theeccentricity_Y=ylimit(randi(length(xlimit)));
             else
                 eccentricity_X(trial) = eccentricity_X(trial-1);
                 eccentricity_Y(trial) = eccentricity_Y(trial-1);
@@ -742,7 +742,12 @@ try
                     flick=3-flick; % flicker/non flicker
                 end
                 if trainingType>2 && demo==2  % Force flicker here (training type 3 and 4)
+                    if EyeTracker==1
                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
+                    else
+                  %  [countgt framecont countblank blankcounter counterflicker turnFlickerOn eyerunner]=  ForcedFixationFlicker3mouse(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, counterflicker,eyetime2,turnFlickerOn);
+                 ForcedFixationFlicker3mouse
+                    end
                 end
                 
                 % from ForcedFixationFlicker3, should I show the flicker or not?
@@ -825,8 +830,10 @@ try
                     % here I draw the circle within which I show the contour target
                     Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
                     %                    Screen('FrameOval', w,[gray*1.5], imageRect_offsCImask, 1, 1);
-                    fixationscriptW
-                    if skipmasking==0
+                 if trainingType==2 
+                  fixationscriptW
+                 end
+                 if skipmasking==0
                         assignedPRLpatch
                     end
                     imagearray{trial}=Screen('GetImage', w);

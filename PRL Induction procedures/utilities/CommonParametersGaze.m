@@ -1,5 +1,5 @@
 %CommonParametersMNRead
-
+fixat=0;
 
 %% general visual parameters
 scotomadeg=10;    % scotoma size in deg
@@ -26,8 +26,8 @@ prefixationsquare=0.5; % time interval between trial start and forced fixation p
 
 
 
-    picture_size_deg=10;
-        imsize = picture_size_deg*pix_deg;
+  %  picture_size_deg=10;
+  %      imsize = picture_size_deg*pix_deg;
 %% visual stimuli common parameters
 bg_index =round(gray*255); %background color
 %imsize=StartSize*pix_deg; %stimulus size
@@ -35,26 +35,30 @@ bg_index =round(gray*255); %background color
 scotomasize=[scotomadeg*pix_deg scotomadeg*pix_deg];
 scotomarect = CenterRect([0, 0, scotomasize(1), scotomasize(2)], wRect);
 fixwindowPix=fixwindow*pix_deg; % fixation window
-
-
-    
-    
-    actors=3;
-    offsets=7;
-    premixtr=fullfact([actors offsets]);
-                    
-    mixtr=premixtr(randperm(length(premixtr)),:);
+   picsize=13*pix_deg; % 13 deg horizontal size, 19 deg vertical size
+   picsizex=19*pix_deg;
+   imageoffset=2;
+   pixOff=imageoffset*pix_deg;
+   imageRectI{1} = CenterRect([0, 0, round(picsize), round(picsizex) ], wRect); % initial destination rectangle for the target
+   imageRectI{2}=[imageRectI{1}(1) imageRectI{1}(2)-pixOff imageRectI{1}(3) imageRectI{1}(4)-pixOff];
+   imageRectI{3}=[imageRectI{1}(1) imageRectI{1}(2)+pixOff imageRectI{1}(3) imageRectI{1}(4)+pixOff];
+%     
+%     actors=3;
+%     offsets=7;
+%     premixtr=fullfact([actors offsets]);
+%                     
+%     mixtr=premixtr(randperm(length(premixtr)),:);
 % Select specific text font, style and size:
 Screen('TextFont',w, 'Arial');
 Screen('TextSize',w, 42);
-
-blocks=10;  %number of blocks in which we want the trials to be divide
-fixat=0;
-trials=sizearray;
-cndt=1;
-ca=1;
-
-
-condlist=fullfact([cndt ca]);
-
-mixtr=(1:trials)';
+% 
+% blocks=10;  %number of blocks in which we want the trials to be divide
+% fixat=0;
+% trials=sizearray;
+% cndt=1;
+% ca=1;
+% 
+% 
+% condlist=fullfact([cndt ca]);
+% 
+% mixtr=(1:trials)';

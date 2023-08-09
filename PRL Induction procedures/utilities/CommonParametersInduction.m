@@ -13,23 +13,18 @@ distancedeg=9; % distance among stimuli
 %PRLecc=PRLpossibleecc(PRLlocations); %eccentricity of PRLs
 PRLecc= 7.5;
 PRLsize =5;  % diameter of the assigned PRL in degrees of visual angle
-  PRLx=[0 PRLecc 0 -PRLecc];
-    PRLy=[-PRLecc 0 PRLecc 0 ];
-    PRLxpix=PRLx*pix_deg;
-    PRLypix=PRLy*pix_deg;
+ 
+%     PRLxpix=PRLx*pix_deg;
+%     PRLypix=PRLy*pix_deg;
 
     if inductionType ==1
-        PRLxx=[0 PRLecc 0 -PRLecc];
-        PRLyy=[-PRLecc 0 PRLecc 0 ];
+      PRLx=[0 PRLecc 0 -PRLecc];
+    PRLy=[-PRLecc 0 PRLecc 0 ];
+  %  PRLxx=[0 PRLecc 0 -PRLecc];
+  %      PRLyy=[-PRLecc 0 PRLecc 0 ];
         %    PRLxx=[0 2 0 -2];
         %    PRLyy=[-2 0 2 0 ];
-    else
-        PRLxx=0;
-        PRLyy=0;
-    end
-angolo=pi/2;
-
-if TRLnumber==1
+        if TRLnumber==1
     PRLx=PRLecc;
     PRLy=0;
 elseif TRLnumber==2
@@ -39,6 +34,15 @@ elseif TRLnumber==4
     PRLx=[0 PRLecc 0 -PRLecc];
     PRLy=[-PRLecc 0 PRLecc 0 ];
 end
+    else
+  %      PRLxx=0;
+  %      PRLyy=0;
+         PRLx=0;
+        PRLy=0;
+    end
+angolo=pi/2;
+
+
 
 PRLxpix=PRLx*pix_deg;
 PRLypix=PRLy*pix_deg;
@@ -97,22 +101,21 @@ imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle
 [xc, yc] = RectCenter(wRect);
 fixwindowPix=fixwindow*pix_deg;
 
-radius = (scotomadeg*pix_deg)/2; %radius of circular mask
+%radius = (scotomadeg*pix_deg)/2; %radius of circular mask
     radius = scotomasize(1)/2; %radius of circular mask
 
 %    smallradius=(scotomasize(1)/2)+1.5*pix_deg;
 % smallradius=radius+pix_deg/2 %+1*pix_deg;
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
+    radiusPRL=(PRLsize/2)*pix_deg;
 
 if inductionType == 1 % 1 = assigned, 2 = annulus
-    radiusPRL=(PRLsize/2)*pix_deg;
     circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
 else
-    radiusPRL=(PRLsize/2); % SJ: radiusPRL was undefined, so I defined it as half of the PRLsize
-    smallradius=radiusPRL; %+pix_deg/2 %+1*pix_deg;
-    radiusPRL=radiusPRL+3*pix_deg;
-    circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2;
-    circlePixels2=sx.^2 + sy.^2 <= smallradius.^2;
+   % smallradius=radius; %+pix_deg/2 %+1*pix_deg;
+    radiusPRL=radius+3*pix_deg;
+    circlePixels=sx.^2 + sy.^2 <= radiusPRL.^2; % outer border of annulus
+    circlePixels2=sx.^2 + sy.^2 <= radius.^2; % half scotoma size (inner border of annulus)
     d=(circlePixels2==1);
     newfig=circlePixels;
     newfig(d==1)=0;
