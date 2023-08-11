@@ -162,7 +162,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase
         else
-            trials=15; %500;  %total number of trials per staircase
+            trials=40; %500;  %total number of trials per staircase
         end
     elseif trainingType==2
         conditionOne=shapes; % shapes (training type 2)
@@ -279,20 +279,20 @@ try
             end
         else
             if trainingType==2 || trainingType==4 % load thresholds from previous days
-                d = dir(['../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 [dx,dx] = sort([d.datenum]);
                 newest = d(dx(end)).name;
-                lasttrackthresh=load(['../datafolder/' newest],'trackthresh');
+                lasttrackthresh=load(['../../datafolder/' newest],'trackthresh');
                 trackthresh=lasttrackthresh.trackthresh;
             elseif trainingType==1
-                d = dir(['../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
+                d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 [dx,dx] = sort([d.datenum]);
                 newest = d(dx(end)).name;
-                lasttrackthresh=load(['../datafolder/' newest],'thresh');
+                lasttrackthresh=load(['../../datafolder/' newest],'thresh');
                 thresh=lasttrackthresh.thresh;
-                Contlist2=load(['../datafolder/' newest],'Contlist');
+                Contlist2=load(['../../datafolder/' newest],'Contlist');
                 Contlist = Contlist2.Contlist;
-                lasttracksf=load(['../datafolder/' newest],'currentsf');
+                lasttracksf=load(['../../datafolder/' newest],'currentsf');
                 currentsf=lasttracksf.currentsf;
                 theoris =[-45 45]; % possible orientation of the Gabor
             end

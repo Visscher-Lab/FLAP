@@ -41,7 +41,7 @@ end
         PRLy=0;
     end
 angolo=pi/2;
-
+calibrationtolerance=2;
 
 
 PRLxpix=PRLx*pix_deg;

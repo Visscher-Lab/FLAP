@@ -31,8 +31,8 @@ try
     inductionType = str2num(answer{7,:}); % 1 = assigned, 2 = annulus
     
     scotomavpixx=0;
-    datapixxtime=0;
-    responsebox=0;
+    datapixxtime=1;
+    responsebox=1;
     TRLnumber=2;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
@@ -129,7 +129,7 @@ try
             %     Screen('TextStyle', w, 1+2);
             Screen('FillRect', w, gray);
             %      DrawFormattedText(w, 'Take a short break and rest your eyes \n\n  \n \n \n \n Press any key to start', 'center', 'center', white);
-            percentagecompleted= round(trial/trials);
+            percentagecompleted= (trial/trials)*100;
             textSw=sprintf( 'Take a short break and rest your eyes  \n \n You completed %d percent of the session \n \n \n \n Press any key to start', percentagecompleted);
             DrawFormattedText(w, textSw, 'center', 'center', white);
             Screen('Flip', w);
@@ -236,6 +236,10 @@ try
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
+            if datapixxtime==1
+                Datapixx('RegWrRd');
+                eyetime2=Datapixx('GetTime');
+            end
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 stoptwo(trial)=99;
                 %                IsFixating4
@@ -328,11 +332,11 @@ try
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             else
-               if inductionType==1
-                assignedPRLpatchPRLinduction2TRL
-            else
-                annulusPRLpatchTRL
-            end
+                if inductionType==1
+                    assignedPRLpatchPRLinduction2TRL
+                else
+                    annulusPRLpatchTRL
+                end
                 Screen('FillOval', w, scotoma_color, scotoma);
                 if inductionType==1
                     for iu=1:length(PRLx)
@@ -468,7 +472,11 @@ try
             %    disp('fine')
             nn=nn+1;
         end
-        
+        if responsebox == 1
+            stim_stop = secs;
+        else
+            stim_stop=secs;
+        end
         if trialTimedout(trial)== 0
             foo=(RespType==thekeys);
             if foo(theans(trial))
@@ -508,7 +516,6 @@ try
             PsychPortAudio('Start', pahandle);
         end
         
-        stim_stop=secs;
         time_stim(trial) = stim_stop - stim_start;
         totale_trials(trial)=trial;
         %     coordinate(trial).x=ecc_x;
