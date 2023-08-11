@@ -170,7 +170,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials= 6;  %total number of trials per staircase (per shape, we have 3 per day)
+            trials= 166;  %total number of trials per staircase (per shape, we have 3 per day)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -536,7 +536,9 @@ try
                 end
             end
         end
-        
+        if trainingType == 4 && trial == 1
+                InstructionTrainingTask4
+        end
         %  destination rectangle for the target stimulus
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];

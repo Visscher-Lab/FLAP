@@ -117,7 +117,7 @@ try
     % Threshold -> 79%
     sc.up = 1; % # of incorrect answers to go one step up
     sc.steps= 3; % # of correct answers to go one step down
-    shapeMat(:,1)= [9 6]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
+    shapeMat(:,1)= [8 6]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
 
     %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
@@ -492,7 +492,7 @@ try
                                 Screen('Flip', w);
                                 WaitSecs(1);
                                 %  KbQueueWait;
-                                closescript = 1;
+%                                 closescript = 1;
                                 eyechecked=10^4;
                             elseif thekeys==RespType(5)
                                 DrawFormattedText(w, 'continue', 'center', 'center', white);
@@ -515,7 +515,7 @@ try
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
-                            closescript = 1;
+%                             closescript = 1;
                             eyechecked=10^4;
                         elseif thekeys==RespType(5)
                             DrawFormattedText(w, 'continue', 'center', 'center', white);
@@ -577,7 +577,7 @@ try
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 1;
                 elseif (thekeys==escapeKey) % esc pressed
-                    closescript = 1;
+%                     closescript = 1;
                     ListenChar(0);
                     break;
                 else
@@ -619,7 +619,7 @@ try
                 thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitListsc));
                 
             elseif (thekeys==escapeKey) % esc pressed
-                closescript = 1;
+%                 closescript = 1;
                 ListenChar(0);
                 break;
             else

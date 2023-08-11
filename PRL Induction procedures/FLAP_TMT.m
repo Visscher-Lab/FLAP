@@ -324,7 +324,11 @@ try
                 elseif sum(buttons)>1 && (eyetime2-StartTime(numresp,block))<=2
 
                 elseif sum(buttons)==0
-                    [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and continuously check if mouse button being pressed. PD: It was  [origx,origy,buttons] = GetMouse(); it doesn't work at UAB so I changed origy to y 7/28/23
+                    if sitevpixx == 2
+                    [origx,y,buttons] = GetMouse(); % In while-loop, rapidly and cscaontinuously check if mouse button being pressed. PD: It was  [origx,origy,buttons] = GetMouse(); it doesn't work at UAB so I changed origy to y 7/28/23
+                    elseif sitevpixx == 1
+                        [origx,origy,buttons] = GetMouse();
+                    end
                     x=origx-xoff;
                     if sitevpixx==1 %PD: I added this if statement that is related to screen size at UCR 7/26/23
                         y=origy-yoff; % uncomment this line for ucr
