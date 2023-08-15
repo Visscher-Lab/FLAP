@@ -22,7 +22,7 @@ fixdotcolor2=[0 0 0]; % color of the fixation dot for training type 4 when dot i
 skipmasking=1; % if we want to allow masking of the target when it is not within the assigned PRL (default is no masking)
 fixationlength=10; % if we don't want the scotoma (pixel size)
 colorfixation = [200 200 200]; % if we don't want the scotoma
-
+calibrationtolerance = 2;
 %% general temporal parameters (trial events)
 
 preCueISI=0.75; % time between beginning of trial and first event in the trial (fixations, cues or targets)

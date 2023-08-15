@@ -20,42 +20,51 @@ try
     end
     
     addpath([cd '/utilities']);
-   
+    
     SUBJECT = answer{1,:}; %Gets Subject Name
-    expday = str2num(answer{2,:});
+    expDay = str2num(answer{2,:});
     expdayeye = answer{2,:};
     site= str2num(answer{3,:});
-whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
+    whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
     EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
-calibration=str2num(answer{6,:}); % 
+    calibration=str2num(answer{6,:}); %
     scotomavpixx=0;
-        datapixxtime=0;
-        responsebox=0;
+    datapixxtime=0;
+    responsebox=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
     
+    folder=cd;
+    folder=fullfile(folder, '..\..\datafolder\');
     
-    inductionType = 1; % 1 = assigned, 2 = annulus
+    inductionType = 2; % 1 = assigned, 2 = annulus
     if inductionType ==1
-        TYPE = 'Assigned';
+        filename = 'Assigned';
     elseif inductionType == 2
-        TYPE = 'Annulus';
+        filename = 'Annulus';
     end
-
-    baseName=['./data/' SUBJECT '_DAY_' num2str(expday) '_PRL_induction_SingleTarget_' TYPE '_' num2str(scotomadeg) ' deg ' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-        TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-
+    
+    if site==1
+        baseName=[folder SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    elseif site==2
+        baseName=[folder SUBJECT filename  '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    elseif site==3
+        baseName=[folder SUBJECT '_PRL_induction_' filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    end
+    
+    TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
     theseed=sum(100*clock);
     rand('twister',theseed); %used to randomize the seed for the random number generator to ensure higher chances of different randomization across sessions
     
-    trials=3;%500;
-
-defineSite
-        
-  %% eyetracker initialization (eyelink)
+    trials=50;%500;
+    
+    defineSite
+    
+    %% eyetracker initialization (eyelink)
     if EyeTracker==1
         if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
@@ -66,18 +75,18 @@ defineSite
     else
         EyetrackerType=0;
     end
-
     
-
+    
+    
     
     %%
-createInductionStimuli
+    CreateInductionStimuli
     
     
-     %% calibrate eyetracker, if Eyelink
+    %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
-    end     
+    end
     
     %%
     
@@ -87,7 +96,7 @@ createInductionStimuli
     counter = 0;
     
     WaitSecs(1);
-
+    
     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
     colorfixation = white;
@@ -130,13 +139,13 @@ createInductionStimuli
     
     waittime=ifi*50; %ifi is flip interval of the screen
     
-
+    
     scotoma_color=[200 200 200];
     
-
+    
     
     angolo=pi/2;
-
+    
     
     PRLx=[0 PRLecc 0 -PRLecc];
     PRLy=[-PRLecc 0 PRLecc 0 ];
@@ -153,7 +162,7 @@ createInductionStimuli
     %    smallradius=(scotomasize(1)/2)+1.5*pix_deg;
     
     % smallradius=radius+pix_deg/2 %+1*pix_deg;
-        
+    
     [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
     
     
@@ -183,13 +192,13 @@ createInductionStimuli
     counteremojisize=0;
     
     
-
-    for trial=1:trials 
+    
+    for trial=1:trials
         FLAPVariablesReset
-       
+        
         TrialNum = strcat('Trial',num2str(trial));
         
-      
+        
         
         distances=round(distancedeg*pix_deg);
         jitterAngle= [-35 35];
@@ -201,7 +210,7 @@ createInductionStimuli
         angle1= randi(360); %anglearray(randi(length(anglearray)))
         angle2= angle1+120+(jitterAngle(2)-jitterAngle(1).*rand(1,1)+jitterAngle(1));
         angle3= angle1-120+(jitterAngle(2)-jitterAngle(1).*rand(1,1)+jitterAngle(1));
-
+        
         
         theta = [angle1  angle2  angle3 ];
         theta= deg2rad(theta);
@@ -210,7 +219,7 @@ createInductionStimuli
         
         [elementcoordx,elementcoordy] = pol2cart(theta,rho);
         
-             
+        
         clear fixind
         clear EyeData
         clear FixIndex
@@ -236,7 +245,7 @@ createInductionStimuli
         mostratarget=0;
         countertarget=0;
         oval_thick=5;
-fixating2=0;
+        fixating2=0;
         imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg)*2]], wRect);
         
         %Every 50 trials, pause to allow subject to rest eyes
@@ -249,13 +258,13 @@ fixating2=0;
                 %     Screen('TextStyle', w, 1+2);
                 Screen('FillRect', w, gray);
                 colorfixation = white;
-          %      DrawFormattedText(w, 'Take a short break and rest your eyes \n\n  \n \n \n \n Press any key to start', 'center', 'center', white);
-               
+                %      DrawFormattedText(w, 'Take a short break and rest your eyes \n\n  \n \n \n \n Press any key to start', 'center', 'center', white);
+                
                 percentagecompleted= round(trial/trials);
-textSw=sprintf( 'Take a short break and rest your eyes  \n \n You completed %d percent of the session \n \n \n \n Press any key to start', percentagecompleted);
-
-DrawFormattedText(w, textSw, 'center', 'center', white);
-
+                textSw=sprintf( 'Take a short break and rest your eyes  \n \n You completed %d percent of the session \n \n \n \n Press any key to start', percentagecompleted);
+                
+                DrawFormattedText(w, textSw, 'center', 'center', white);
+                
                 
                 
                 Screen('Flip', w);
@@ -282,16 +291,16 @@ DrawFormattedText(w, textSw, 'center', 'center', white);
             xcrand=xc;
             ycrand=yc;
         end
-
+        
         if totalelements==4
             tgtpos=randi(length(posmatrix));
-
+            
             
         elseif totalelements==3
             posmatrix=[elementcoordx' elementcoordy'];
             tgtpos=randi(length(posmatrix));
         end
-
+        
         
         newpos=posmatrix;
         newpos(tgtpos,:)=[];
@@ -372,7 +381,7 @@ DrawFormattedText(w, textSw, 'center', 'center', white);
         
         
         %type of target
-     
+        
         theans(trial)=randi(2); %generates answer for this trial
         if theans(trial)==1 %present
             counterleft=counterleft+1;
@@ -392,20 +401,20 @@ DrawFormattedText(w, textSw, 'center', 'center', white);
         
         pretrial_time=GetSecs;
         stimpresent=0;
-                nn=0;
+        nn=0;
         circlefix=0;
-         trialTimedout(trial)=0;
-                    actualtrialtimeout=realtrialTimeout;
-            trialTimeout=400000;
+        trialTimedout(trial)=0;
+        actualtrialtimeout=realtrialTimeout;
+        trialTimeout=400000;
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
             if (eyetime2-pretrial_time)>ifi*35 && (eyetime2-pretrial_time)<ifi*75 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 fixationscriptrand
-stopone(trial)=99;
+                stopone(trial)=99;
             elseif  (eyetime2-pretrial_time)>=ifi*75 && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
-stoptwo(trial)=99;
+                stoptwo(trial)=99;
                 IsFixating4
                 stopthree(trial)=99;
                 fixationscriptrand
@@ -414,54 +423,54 @@ stoptwo(trial)=99;
                 trial_time = GetSecs;
                 stopfive(trial)=99;
                 fixating=1500;
-
+                
             end
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<waittime+ifi*2 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 stopsix(trial)=99;
-
+                
             end
             
             if (eyetime2-trial_time)>=waittime+ifi*2 && (eyetime2-trial_time)<waittime+ifi*4 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 stopseven(trial)=99;
-
+                
                 %here i present the stimuli+acoustic cue
             elseif (eyetime2-trial_time)>waittime+ifi*4 && (eyetime2-trial_time)<waittime+ifi*6 && (eyetime2-pretrial_time)<=trialTimeout&& fixating>400 && stopchecking>1 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
-                                stopeight(trial)=99;
-
+                stopeight(trial)=99;
+                
                 %  cueonset=GetSecs
                 
                 vbl=GetSecs;
                 cueontime=vbl + (ifi * 0.5);
                 PsychPortAudio('Start', pahandle,1,inf); %starts sound at infinity
-                PsychPortAudio('RescheduleStart', pahandle, cueontime, 0) %reschedules startime to              
+                PsychPortAudio('RescheduleStart', pahandle, cueontime, 0) %reschedules startime to
                 
                 %Draw Target
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
-
+                
                 stim_start=GetSecs;
                 stimpresent=1111;
-trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
-                        checktrialstart(trial)=1;
+                trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
+                checktrialstart(trial)=1;
             elseif (eyetime2-trial_time)>=waittime+ifi*6 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present pre-stimulus and stimulus
                 
                 if exist('stim_start')==0
                     
-                                    % start counting timeout for the non-fixed time training
-                % types
-             %       if exist('checktrialstart')==0
-                        trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
-                        checktrialstart(trial)=1;
-               %     end
+                    % start counting timeout for the non-fixed time training
+                    % types
+                    %       if exist('checktrialstart')==0
+                    trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
+                    checktrialstart(trial)=1;
+                    %     end
                     
                     
                     stim_start = GetSecs;
-
+                    
                 end
                 stimpresent=1111;
                 Screen('DrawTexture', w, texture(trial), [], imageRect_offs );
                 
                 
-
+                
             elseif (eyetime2-trial_time)>=waittime+ifi*7 && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout&& keyCode(RespType(1)) + keyCode(RespType(2))  + keyCode(escapeKey)~= 0 && mostratarget>10 % wait for response
                 
                 stim_stop=GetSecs;
@@ -485,7 +494,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
             end
             eyefixation5
             
-                        if EyetrackerType==2
+            if EyetrackerType==2
                 
                 if scotomavpixx==1
                     Datapixx('EnableSimulatedScotoma')
@@ -539,7 +548,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                                 % PRL(s)
                                 
                                 Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-
+                                
                                 
                                 circlefix=0;
                                 
@@ -555,7 +564,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                                             %if we don't have 6 consecutive frames with no eye movement (aka, with
                                             %fixation)
                                             Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-  
+                                            
                                         elseif sum(EyeCode(end-5:end))==0
                                             %If we have at least 5
                                             %consecutive frames with
@@ -573,11 +582,11 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                                         %if we don't have at least 5 frames
                                         %per trial
                                         Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-
+                                        
                                         circlefix=circlefix+1;
                                     elseif length(EyeCode)>5 %&& circlefix<=6
                                         Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-
+                                        
                                         circlefix=circlefix+1;
                                     end
                                 end
@@ -590,7 +599,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                             circlefix=0;
                             % If this texture is active it will make the target visible only if all the PRLs are within the screen. If one of themis outside the target won't be visible
                             %       Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-
+                            
                         end
                     end
                     for gg=1:totalelements-1
@@ -618,7 +627,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                             if stimpresent>0 && round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gg)))+PRLypix(aux))<wRect(4) && round(wRect(4)/2+(newsampley-(wRect(4)/2+neweccentricity_Yd(gg)))+PRLypix(aux))>0 && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gg))+PRLxpix(aux)))<wRect(3) && round(wRect(3)/2+(newsamplex-(wRect(3)/2+neweccentricity_Xd(gg))+PRLxpix(aux)))>0 %|| ...
                                 if   circlePixels(coodey(gg,1), coodex(gg,1))<0.81 && circlePixels(coodey(gg,2), coodex(gg,2))<0.81 && circlePixels(coodey(gg,3), coodex(gg,3))<0.81 ...
                                         && circlePixels(coodey(gg,4), coodex(gg,4))<0.81
-
+                                    
                                     circlefix2(gg)=0;
                                 else
                                     if  exist('EyeCode','var')
@@ -626,17 +635,17 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                                             circlefix2(gg)=circlefix2(gg)+1;
                                             if sum(EyeCode(end-5:end))~=0
                                                 circlefix2(gg)=circlefix2(gg)+1;
-
+                                                
                                             elseif   sum(EyeCode(end-5:end))==0
                                                 %show target
                                                 countertargettt(aux,nn)=1;
                                             end
                                         elseif length(EyeCode)<5 && circlefix2(gg)<=5
-
+                                            
                                             circlefix2(gg)=circlefix2(gg)+1;
                                         elseif length(EyeCode)>5 && circlefix2(gg)<=5
                                             circlefix2(gg)=circlefix2(gg)+1;
-
+                                            
                                         end
                                     end
                                 end
@@ -680,7 +689,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
             %    fliptime=[fliptime FlipTimestamp];
             %      mss=[mss Missed];
             
- if EyeTracker==1                
+            if EyeTracker==1
                 if site<3
                     GetEyeTrackerData
                 elseif site ==3
@@ -688,14 +697,14 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                 end
                 if ~exist('EyeData','var')
                     EyeData = ones(1,5)*9001;
-                end              
+                end
                 GetFixationDecision
                 
-%                 if EyeData(1)<8000 && stopchecking<0
-%                     trial_time = GetSecs;
-%                     stopchecking=10;
-%                 end
-                                if EyeData(end,1)<8000 && stopchecking<0
+                %                 if EyeData(1)<8000 && stopchecking<0
+                %                     trial_time = GetSecs;
+                %                     stopchecking=10;
+                %                 end
+                if EyeData(end,1)<8000 && stopchecking<0
                     trial_time = GetSecs;
                     stopchecking=10;
                 end
@@ -735,7 +744,7 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                 
                 if stim_stop - stim_start<5
                     respTime=1;
-
+                    
                     
                     
                 else
@@ -747,17 +756,17 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                 
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
-                 if EyetrackerType==2
+                if EyetrackerType==2
                     Datapixx('DisableSimulatedScotoma')
                     Datapixx('RegWrRd')
-                 end
-                                ListenChar(0);
+                end
+                ListenChar(0);
                 break;
             else
                 resp = 0;
                 respTime=0;
                 PsychPortAudio('Start', pahandle2);
-              
+                
             end
         else
             
@@ -785,8 +794,8 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
         tutti{trial} =imageRect_offs;
         
         
-            if EyeTracker==1
-
+        if EyeTracker==1
+            
             
             EyeSummary.(TrialNum).EyeData = EyeData;
             clear EyeData
@@ -876,8 +885,8 @@ trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
         comparerisp=[rispoTotal' rispoInTime']; %Marcello - is this for debugging/needed for anything? % it's just a quick summary of the response (correct/incorrect) and the RT per trial
     end
     
-            TimeSop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-
+    TimeSop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     DrawFormattedText(w, 'Task completed - Please inform the experimenter', 'center', 'center', white);
     ListenChar(0);

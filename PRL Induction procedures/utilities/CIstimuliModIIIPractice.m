@@ -64,9 +64,9 @@ if practicePassed==0
 else 
 theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
 end
-if demo==0
-    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);
-end
+% if demo==0
+%     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);
+% end
 
 
 %this is for the instructions
