@@ -5,35 +5,45 @@ resonsebox = 0;
 whichMD=str2num(SUBJECT(5:end));
 
 if whichMD==1     %SPOT 1
-scotomadegx=14;    % scotoma size in deg
-scotomadegy=14;    % scotoma size in deg
-theeccentricity_X_scotoma=1.7*pix_deg;
-theeccentricity_Y_scotoma=0.3*pix_deg;
-[img, ~, alpha] = imread('Scotoma_01.png');
+    scotomadegx=14;    % scotoma size in deg
+    scotomadegy=14;    % scotoma size in deg
+    theeccentricity_X_scotoma=1.7*pix_deg;
+    theeccentricity_Y_scotoma=0.3*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_01.png');
 elseif whichMD==2  %SPOT 2
-scotomadegx=6.6;    % scotoma size in deg
-scotomadegy=2.7;    % scotoma size in deg
-theeccentricity_X_scotoma=-0.6*pix_deg;
-theeccentricity_Y_scotoma=0*pix_deg;
-[img, ~, alpha] = imread('Scotoma_02.png');
+    scotomadegx=6.6;    % scotoma size in deg
+    scotomadegy=2.7;    % scotoma size in deg
+    theeccentricity_X_scotoma=-0.6*pix_deg;
+    theeccentricity_Y_scotoma=0*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_02.png');
 elseif whichMD==3  %SPOT 3
-scotomadegx=12.83;    % scotoma size in deg
-scotomadegy=14.78;    % scotoma size in deg
-theeccentricity_X_scotoma=-1*pix_deg;
-theeccentricity_Y_scotoma=1.95*pix_deg;
-[img, ~, alpha] = imread('Scotoma_03.png');
+    scotomadegx=12.83;    % scotoma size in deg
+    scotomadegy=14.78;    % scotoma size in deg
+    theeccentricity_X_scotoma=-1*pix_deg;
+    theeccentricity_Y_scotoma=1.95*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_03.png');
 elseif whichMD==4  %SPOT 4
-scotomadegx=10.87;    % scotoma size in deg
-scotomadegy=14.44;    % scotoma size in deg
-theeccentricity_X_scotoma=6*pix_deg;
-theeccentricity_Y_scotoma=0.5*pix_deg;
-[img, ~, alpha] = imread('Scotoma_04.png');
-elseif whichMD==5    
+    scotomadegx=10.87;    % scotoma size in deg
+    scotomadegy=14.44;    % scotoma size in deg
+    theeccentricity_X_scotoma=6*pix_deg;
+    theeccentricity_Y_scotoma=0.5*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_04.png');
+elseif whichMD==5
     scotomadegx=17.56;    % scotoma size in deg
-scotomadegy=12.58;    % scotoma size in deg
-theeccentricity_X_scotoma=0.63*pix_deg;
-theeccentricity_Y_scotoma=-6*pix_deg;
-[img, ~, alpha] = imread('Scotoma_05.png');
+    scotomadegy=12.58;    % scotoma size in deg
+    theeccentricity_X_scotoma=0.63*pix_deg;
+    theeccentricity_Y_scotoma=-6*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_05.png');
+elseif whichMD==6
+    'Participant ID not found'
+    scotomadegx=0;
+    scotomadegy=0;
+elseif whichMD==7
+    scotomadegx=23.85;    % scotoma size in deg
+    scotomadegy=15.32;    % scotoma size in deg
+    theeccentricity_X_scotoma=-0.19*pix_deg;
+    theeccentricity_Y_scotoma=-6.3*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_07.png');
 else
     'Participant ID not found'
     scotomadegx=0;
