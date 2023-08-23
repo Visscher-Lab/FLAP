@@ -157,8 +157,8 @@ elseif site==5  %UCR scanner
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 elseif site == 6 % UAB scanner
-    screencm=[69.8 40];%[40.6 30];%[70.8, 39.8];
-    v_d=70;%35;%123;
+    screencm=[70.8, 39.8];;%[40.6 30];%[70.8, 39.8];
+    v_d=123;%35;%123;
     datapixxtime=0;
     % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));
@@ -169,7 +169,19 @@ elseif site == 6 % UAB scanner
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
     % to keep these commented during actual scan 8/17/23
-    
+    elseif site == 7 % scanner task demo
+    screencm=[69.8 40];
+    v_d=70;
+    datapixxtime=0;
+    % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    screenNumber=max(Screen('Screens'));
+    PsychImaging('PrepareConfiguration');
+    %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output'); %PD will remember to take this out before the actual scan 8/17/23
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    % resolution=Screen('Resolution',screenNumber); %PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
+    %rand('twister', sum(100*clock));%PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
     
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

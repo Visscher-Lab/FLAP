@@ -42,11 +42,11 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'Pre (1) vs Post (2)','site? Vpixx(3), UCRScanner (5), UABScanner (6)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)', 'which run?(1-6)' };
+    prompt={'Participant Name', 'Pre (1) vs Post (2)','site? Vpixx(3), UCRScanner (5), UABScanner (6), ScannerTaskDemo (7)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)', 'which run?(1-6)' };
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '6', '1' , '2', '0', '0', '0', '0', '1'};
+    defaultanswer={'test','1', '7', '1' , '2', '0', '0', '0', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -63,9 +63,9 @@ try
     EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
     responsebox= str2num(answer{9,:}); %PD:1=response box, 0=keyboard
     whichRun=str2num(answer{10,:}); %PD:which run you're scanning
-    if site==5 %PD added this if statement 8/15/23
+    if site==5  %PD added this if statement 8/15/23
         datapixxtime=1;
-    elseif site ==6
+    elseif site ==6 || site==7
         datapixxtime=0;
     end
     gazecontingent=ScotomaPresent;
@@ -227,6 +227,9 @@ try
                 TheTrigger=true;
             end
         end
+    elseif site==7
+        KbWait;
+        startTime=GetSecs;
     end
     disp(['Trigger received - ' startTime]); %PD added this info for the MRI user
     %% Jitter/wait TR init AYS 4/28/23
@@ -478,8 +481,10 @@ try
                                 end
                             end
                         end
+                         
                     end
-                    
+                    elseif site==7   
+                        WaitSecs(15)
                 end
                 fixationscriptW; %PD:return to normal colors after the rest period 8/18/23
                 eyechecked=2^3;
