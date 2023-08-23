@@ -38,7 +38,7 @@ commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
 try
     
-    prompt={'Participant Name', 'Session','Training Type? Contrast(1),CI (2), Occulomotor(3), Everything bagel(4)','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
+    prompt={'Participant Name', 'Session','Training Type? Contrast(1),CI (2), Oculomotor(3), Everything bagel(4)','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
     
     %    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
     

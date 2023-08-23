@@ -79,7 +79,8 @@ try
     else
         EyetrackerType=0;
     end
-    CIShapesIII
+%     CIShapesIII
+    CIShapesIV
     
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
@@ -97,7 +98,7 @@ try
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    trials=60;  %total number of trials per staircase (per shape) % trials = 10; debugging
+    trials=2;%60;  %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
@@ -117,7 +118,7 @@ try
     % Threshold -> 79%
     sc.up = 1; % # of incorrect answers to go one step up
     sc.steps= 3; % # of correct answers to go one step down
-    shapeMat(:,1)= [8 6]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
+    shapeMat(:,1)= [11 2]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
 
     %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
@@ -217,24 +218,24 @@ try
         end
         % -------------------------------------------------------------------------
         
-        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-            practicePassed=0;
-        end
-        if trial == 1
-            while practicePassed == 0
-                FLAP_CI_Practice2
-            end
-        elseif trial > 1
-            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-                while practicePassed==0
-                    FLAP_CI_Practice2 
-                end
-            end
-        end
-        if practicePassed==2
-            closescript=1;
-            break
-        end
+%         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+%             practicePassed=0;
+%         end
+%         if trial == 1
+%             while practicePassed == 0
+%                 FLAP_CI_Practice2
+%             end
+%         elseif trial > 1
+%             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+%                 while practicePassed==0
+%                     FLAP_CI_Practice2 
+%                 end
+%             end
+%         end
+%         if practicePassed==2
+%             closescript=1;
+%             break
+%         end
         practicePassed=1;
 
         %% training type-specific staircases
