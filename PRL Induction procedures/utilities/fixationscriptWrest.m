@@ -34,7 +34,7 @@ punto4y=p4y*pix_deg;
 
 %aid up left
 
-color_w=0.3*white; % color of the wedges
+color_w=0.9*white; % color of the wedges
 if CardinalOrdiagonal==1
     diagon=45;
 else
@@ -79,3 +79,4 @@ Screen('DrawLine', w, white, xc+punto3x, yc+punto3y-fixationlength, xc+punto3x, 
 %aid down left
 Screen('DrawLine', w, white, xc+punto4x, yc+punto4y, xc+punto4x+fixationlength, yc+punto4y, widthfix); % fissazione: verticale
 Screen('DrawLine', w, white, xc+punto4x, yc+punto4y-fixationlength, xc+punto4x, yc+punto4y, widthfix); % fissazione: orizzontale
+RestTime=Screen('Flip',w);

@@ -21,14 +21,24 @@ maskthickness = pix_deg*6.25;
 theoris =[-45 45];
 
 %% general temporal parameters (trial events)
-preCueISI=0.2;% time between beginning of trial and first event in the trial 
-postCueISI=0.5; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
-stimulusduration= 0.2; %0.133; % stimulus duration
+FlipInt=Screen('GetFlipInterval',w); %Gets Flip Interval. PD moved it to here from the main scrip 8/15/23
+preCueISI=0;% time between beginning of trial and first event in the trial PD:It was 0.2, PD changed it to 0 8/15/23
+postCueISI=0; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2) PD changed it to 0 8/15/23
+StimulusDuration= round(0.200/FlipInt) *FlipInt; % stimulus duration, PD has changed it from 0.2 to this equation 8/15/23
+%stimulusduration=StimulusDuration;
+
 CueDuration=0.25;
-poststimulustime=2.55;
+PostStimulusDuration=2.55;
+%poststimulustime=PostStimulusDuration;
+RestDuration=15;
 eyetime2=0; % trial-based timer, will later be populated with eyetracker data
 closescript=0; % to allow ESC use
 kk=1; % trial counter
+%% TTL counts
+k=1;% number of TTLs during active block
+    kr=1; %number of TTLs during rest block
+    j=1; % number of TTLs recorded in the whole session
+    jr=1; %number of TTLs recorded during rests
 %% assessment type-specific parameters
 % type 1
 contr=0.5; % gabor contrast

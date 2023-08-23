@@ -157,15 +157,20 @@ elseif site==5  %UCR scanner
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 elseif site == 6 % UAB scanner
-    screencm=[40.6 30];%[70.8, 39.8];
-    v_d=35;%123;
+    screencm=[69.8 40];%[40.6 30];%[70.8, 39.8];
+    v_d=70;%35;%123;
     datapixxtime=0;
-    oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
     screenNumber=max(Screen('Screens'));
-    resolution=Screen('Resolution',screenNumber);
-    rand('twister', sum(100*clock));
     PsychImaging('PrepareConfiguration');
+    %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output'); %PD will remember to take this out before the actual scan 8/17/23
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    % resolution=Screen('Resolution',screenNumber); %PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
+    %rand('twister', sum(100*clock));%PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
+    
+    
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -207,11 +212,11 @@ Screen('TextSize',w, 42);
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
 if site == 6
-   InitializePsychSound(1); %'optionally providing
- pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
+    InitializePsychSound(1); %'optionally providing
+    pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
 elseif site ~=5
-   InitializePsychSound(1); %'optionally providing
- pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
+    InitializePsychSound(1); %'optionally providing
+    pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 end
 % feedback sounds
 try
@@ -285,8 +290,8 @@ if responsebox==1
             dinRed;
             dinYellow;
             dinBlue]';
-%         escapeKey=dinWhite;
-%            escapeKey=KbName('ESCAPE');
+        %escapeKey=dinWhite;
+        %   escapeKey=KbName('ESCAPE');
         
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
     elseif site ==5
@@ -302,7 +307,7 @@ if responsebox==1
             dinYellow;
             dinGreen;
             dinBlue]';
-%         escapeKey=dinWhite;
+        %escapeKey=dinWhite;
         %    escapeKey=KbName('ESCAPE');
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down )
     end

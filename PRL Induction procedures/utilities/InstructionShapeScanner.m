@@ -1,22 +1,22 @@
-
+CIstimuliMod_Scanner
 Screen('FillRect', w, gray);
 
 DrawFormattedText(w, 'Before each trial, an auditory cue will indicate the location of the stimulus to attend (right or left) \n \n Please look at the center of the screen during the experiment\n \n Use your left index finger for the left oriented stimulus \n Right index finger for the right oriented stimulus \n \n','center', 600, white');
-DrawFormattedText(w, 'Left',300, 350, white');
-DrawFormattedText(w, 'Right',1280, 350, white');
-ecccoeffCI_example=3;
+DrawFormattedText(w, 'Left',300, 450, white');
+DrawFormattedText(w, 'Right',1280, 450, white');
+ecccoeffCI_example=2%3;
 eccentricity_XCI_example=xlocsCI*pix_deg/ecccoeffCI_example; %for the instruction slide
 eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
 coeffCI_example=ecccoeffCI_example/2;%for the instruction slide
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
-
+gaborcontrast=0.5;
 possibleTRLlocations=[-7.5 7.5]; % possible TRL location with respect to the center of the screen in degrees of visual angle
 PRLecc=[possibleTRLlocations(1) 0 ]; %eccentricity of PRL in deg
 PRLx= PRLecc(1);
 PRLy=-PRLecc(2);
 theeccentricity_Y=0;
-theeccentricity_X=PRLx*pix_deg;
+theeccentricity_X=-7.5*pix_deg;
 %eggs--------------------
 % imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
 %     imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
@@ -45,14 +45,14 @@ imageRect_offsCI2instrnum=imageRect_offsCIinstrnum;
 imageRect_offsCI2instr2num=imageRect_offsCIinstr2num;
 
 % gabor-----------------------------
-% imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-%     imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-% imageRect_offsright =[imageRect(1)-theeccentricity_X, imageRect(2)+theeccentricity_Y,...
-%     imageRect(3)-theeccentricity_X, imageRect(4)+theeccentricity_Y];
-imageRect_offsleft =[imageRect(1)-220, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
-    imageRect(3)-220, imageRect(4)+theeccentricity_Y+theeccentricity_X];
-imageRect_offsright =[imageRect(1)+780, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
-    imageRect(3)+780, imageRect(4)+theeccentricity_Y+theeccentricity_X];
+% imageRect_offsleft =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
+%   imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y+theeccentricity_X];
+% imageRect_offsright =[imageRect(1)-theeccentricity_X, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
+%   imageRect(3)-theeccentricity_X, imageRect(4)+theeccentricity_Y+theeccentricity_X];
+ imageRect_offsleft =[imageRect(1)-220, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
+     imageRect(3)-220, imageRect(4)+theeccentricity_Y+theeccentricity_X];
+ imageRect_offsright =[imageRect(1)+780, imageRect(2)+theeccentricity_Y+theeccentricity_X,...
+     imageRect(3)+780, imageRect(4)+theeccentricity_Y+theeccentricity_X];
 %eggs-------------------------------
 
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
@@ -85,8 +85,8 @@ imageRect_offsCI2instr2num(setdiff(1:length(imageRect_offsCIinstr2num),exampleta
 
 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2num'+ [examplexJitLocnum2; exampleyJitLocnum2; examplexJitLocnum2; exampleyJitLocnum2], exampletheorinum2,[], 0.88);
 % % gabor------------------------------------
-Screen('DrawTexture', w, TheGabors, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
-Screen('DrawTexture', w, TheGabors, [], imageRect_offsright, theoris(2),[], gaborcontrast);
+Screen('DrawTexture', w, texture, [], imageRect_offsleft, theoris(1),[], gaborcontrast);
+Screen('DrawTexture', w, texture, [], imageRect_offsright, theoris(2),[], gaborcontrast);
 FirstInstructionOnsetTime=Screen('Flip', w);
 % %WaitSecs(0.5);
 

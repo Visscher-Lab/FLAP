@@ -19,7 +19,7 @@ sigma_deg = stimulusSize/2.5; % sigma of the Gabor in degrees of visual angle
 
 % training type 2
 jitterCI=0; % jitter for countour stimuli of training type 2 and 4
-possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
+%possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
 possibleoffset=[0];
 
 %% visual stimuli common parameters
