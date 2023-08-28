@@ -46,7 +46,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '7', '1' , '2', '0', '0', '0', '0', '1'};
+    defaultanswer={'test','1', '5', '1' , '2', '0', '0', '0', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -81,17 +81,17 @@ try
     end
     eyetrack_fname=SUBJECT;
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-   if demo==0
-       baseName=['./data/' SUBJECT '_FLAPScannertaskDEMO ' prevspost '_' TimeStart]; %makes unique filename
-   else
-    baseName=['./data/' SUBJECT '_FLAPScannertask ' prevspost '_' TimeStart]; %makes unique filename
-   end
+    if demo==0
+        baseName=['./data/' SUBJECT '_FLAPScannertaskDEMO ' prevspost '_' TimeStart]; %makes unique filename
+    else
+        baseName=['./data/' SUBJECT '_FLAPScannertask ' prevspost '_' TimeStart]; %makes unique filename
+    end
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersScanner % define common parameters
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
-        if site==3 || site==5 
+        if site==3 || site==5
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
@@ -216,6 +216,7 @@ try
         ExpStartTimeP=Screen('Flip',w); %PTB-3
         Datapixx('RegWrRd');
         ExpStartTimeD=Datapixx('GetMarker');
+        startTime=ExpStartTimeD;
     elseif site==6
         while ~TheTrigger
             %[ keyIsDown, keyTime, keyCode ] = KbCheck;
@@ -243,10 +244,11 @@ try
     TRwait=TRwait3; %updates TR wait. PD added this to match TRwait with mixtr 8/17
     TRcount = 0;
     % Demo
-        if demo==0 %PD added this part 8/15/23
-            mixtr=[1,1,1;1,2,1;1,1,1;1,2,1;1,2,1;1,1,1;2,1,1;2,2,1;2,1,1;2,2,1;2,1,1;2,1,1;9,9,9;2,2,2;2,1,2;2,1,2;2,2,2;2,2,2;2,2,2;1,2,1;1,1,1;1,1,1;1,2,1;1,1,1;1,2,1];
-        end
+    if demo==0 %PD added this part 8/15/23
+        mixtr=[1,1,1;1,2,1;1,1,1;1,2,1;1,2,1;1,1,1;2,1,1;2,2,1;2,1,1;2,2,1;2,1,1;2,1,1;9,9,9;2,2,2;2,1,2;2,1,2;2,2,2;2,2,2;2,2,2;1,2,1;1,1,1;1,1,1;1,2,1;1,1,1;1,2,1];
+    end
     %% HERE starts trial loop
+    Bpress1=0;
     for trial=1:length(mixtr)
         %% jitter code @ trial loop start, AYS 4/28/23. See also jitter code @ trial loop end
         if site == 5
@@ -260,11 +262,14 @@ try
                 TRcount=TRcount+TRwait(trial)-1;
             end
             
-            while TRpass<TRcount % wait until TRpass=TRcount, then
-                WaitForEvent_Jerry(0, TheTrigger); % sync with next TR pulse
+            while TRpass<TRcount %&& Bpress1==0 % wait until TRpass=TRcount, then
+                [Bpress1 timestamp2]= WaitForEvent_Jerry(0, TheTrigger); % sync with next TR pulse
                 Datapixx('RegWrRd');
                 CurrentTimeD=Datapixx('GetTime');
                 TRpass=round((CurrentTimeD-ExpStartTimeD)/TR);
+            end
+            if Bpress1>0
+                Bpress1=0;
             end
             Datapixx('RegWrRd');
             JitterEndTimeD(trial)=Datapixx('GetTime');
@@ -317,7 +322,7 @@ try
             end
             if trial>1 && mixtr(trial-1,1)==9 %PD: if the previous trial was rest
                 if exist('TTL_timeforrest')
-                TrialStartTime(trial,1)=TTL_timeforrest(jr-1)+TR;
+                    TrialStartTime(trial,1)=TTL_timeforrest(jr-1)+TR;
                 end
             elseif kt(trial,1)>1 %PD:if TTL pulses were counted during TRwait
                 TrialStartTime(trial,1)=TTL_time(j-1)+TR;
@@ -452,7 +457,7 @@ try
             if datapixxtime==1
                 eyetime2=Datapixx('GetTime');
             end
-            if EyetrackerType ==2 %AS 4-28-23, not sure what this is doing....see the code earlier Are you trying to make this gaze contingent? I thought we are just recording eye-movements?
+            if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
             if restscreen==0
@@ -481,10 +486,10 @@ try
                                 end
                             end
                         end
-                         
+                        
                     end
-                    elseif site==7   
-                        WaitSecs(15)
+                elseif site==5 || site==7
+                    %                WaitSecs(15)
                 end
                 fixationscriptW; %PD:return to normal colors after the rest period 8/18/23
                 eyechecked=2^3;
@@ -492,7 +497,7 @@ try
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<preCueISI && stopchecking>1
                 % pre-event empty space, allows for some cleaning
-            elseif (eyetime2-trial_time)==preCueISI && (eyetime2-trial_time)<preCueISI+CueDuration && stopchecking>1
+            elseif (eyetime2-trial_time)>=preCueISI && (eyetime2-trial_time)<preCueISI+CueDuration && stopchecking>1
                 %                 if restscreen==1 %PD commented this part out & move it
                 %                 above, we're checking the rest screen before 8/17/23
                 %                     eyechecked=2^3;
@@ -698,7 +703,7 @@ try
                                 break;
                             else
                                 resp = 0; % if wrong response
-                               % PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
+                                % PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer %AS 4-28-23 @Andrew add  Datapixx sound commands
                             end
                             PsychPortAudio('Start', pahandle); %AS 4-28-23 @Andrew add  Datapixx sound commands
                         end
@@ -1056,9 +1061,11 @@ catch ME
         [bufferData, underflow, overflow] = Datapixx('ReadTPxData', toRead);
         save(eyetrack_fname,'bufferData');
     end
-    if Datapixx('IsReady')
-        Datapixx('StopDinLog');
-        Datapixx('Close');
+    if site == 5 || site == 3
+        if Datapixx('IsReady')
+            Datapixx('StopDinLog');
+            Datapixx('Close');
+        end
     end
     psychlasterror()
 end
