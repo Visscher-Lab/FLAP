@@ -1,8 +1,8 @@
 %jittering location of the target within the patch of distractors
 
 if jitterCI==1
-    jitterxci(trial)=possibleoffset(randi(length(possibleoffset))); % -1,0 and 1 are the possible offsets
-    jitteryci(trial)=possibleoffset(randi(length(possibleoffset)));
+    jitterxci(trial)= 0; %possibleoffset(randi(length(possibleoffset))); % -1,0 and 1 are the possible offsets
+    jitteryci(trial)= 0; %possibleoffset(randi(length(possibleoffset)));
     
 elseif jitterCI==0
     jitterxci(trial)=0;

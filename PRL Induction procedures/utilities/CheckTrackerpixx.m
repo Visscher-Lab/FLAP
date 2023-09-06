@@ -55,7 +55,8 @@ switch EyetrackerType
         SummaryData(3) = newpupil_maj; %CurEyelinkEvt.pa(eye_used+1);
         SummaryData(4) = -1; % need to compute velocity outside this function
         if datapixxtime==1
-            SummaryData(5) = Datapixx('GetTime');
+                             Datapixx('RegWrRd');
+SummaryData(5) = Datapixx('GetTime');
         else
             SummaryData(5) = GetSecs;
         end

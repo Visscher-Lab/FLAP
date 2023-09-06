@@ -118,7 +118,7 @@ try
     % Threshold -> 79%
     sc.up = 1; % # of incorrect answers to go one step up
     sc.steps= 3; % # of correct answers to go one step down
-    shapeMat(:,1)= [11 2]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
+    shapeMat(:,1)= [16 16]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
 
     %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
