@@ -509,7 +509,7 @@ try
                 fixationscriptWrest %PD:this changes the color of the fixation aids indicating the rest block 8/15/23
                 CueOnsetTime(trial,1)=0;
                 if site==6
-                    while GetSecs < TrialStartTime(trial) + (RestDuration-0.5); %  rest for 15 sec while GetSecs < RestTime + (RestDuration-0.5);
+                    while GetSecs < TrialStartTime(trial) + (RestDuration-(0.5*TR)); %  rest for 15 sec while GetSecs < RestTime + (RestDuration-0.5);
                         %[keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
                         [keyIsDown, keyCode]=KbQueueCheck;
                         if  keyIsDown
