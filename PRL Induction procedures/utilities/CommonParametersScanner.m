@@ -52,7 +52,7 @@ possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 
 JitRat = 4;
 Orijit=0;
 Tscat=0;
-shapeMat(:,1)= [5 1];
+shapeMat(:,1)= [5 12];
     
     %1: 9 vs 6 19 elements
     %2: 9 vs 6 18 elements

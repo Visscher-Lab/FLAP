@@ -18,10 +18,10 @@ if site==0  %UCR bits++
     oldResolution=Screen( 'Resolution',screenNumber,1280,960);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
 elseif site==1  % UCR + bits
     crt=0; % if we use a CRT monitor
-    
+
     %% psychtoobox settings
     if crt==1
         v_d=70; %viewing distance
@@ -50,7 +50,7 @@ elseif site==1  % UCR + bits
         %     SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     end
-    
+
 elseif site==2   %UAB
     s1=serial('com3');
     fopen(s1);
@@ -89,7 +89,7 @@ elseif site==3   %UCR VPixx
                 TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
             end
         end
-        
+
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
@@ -99,16 +99,16 @@ elseif site==3   %UCR VPixx
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    
-    
+
+
 elseif site==4   %padova eyelink
     %% psychtoobox settings
-    
+
     v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
@@ -118,7 +118,7 @@ elseif site==4   %padova eyelink
     oldResolution=Screen('Resolution',screenNumber,1920,1080);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-    
+
     screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
@@ -136,13 +136,13 @@ elseif site==5  %UCR scanner
             %TPxTrackpixx3CalibrationTesting;
             TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
         end
-        
+
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
-    
+
     v_d=31.5; % viewing distance
     datapixxtime=1;
     PsychImaging('PrepareConfiguration');
@@ -169,7 +169,7 @@ elseif site == 6 % UAB scanner
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
     % to keep these commented during actual scan 8/17/23
-    elseif site == 7 % scanner task demo
+elseif site == 7 % scanner task demo
     screencm=[69.8 40];
     v_d=70;
     datapixxtime=0;
@@ -182,7 +182,7 @@ elseif site == 6 % UAB scanner
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
     % to keep these commented during actual scan 8/17/23
-    
+
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -234,8 +234,19 @@ end
 try
     [errorS freq] = audioread('wrongtriangle.wav'); % load sound file (make sure that it is in the same folder as this script
     [corrS freq] = audioread('ding3up3.wav'); % load sound file (make sure that it is in the same folder as this script
+    [gaborsound freq] = audioread('blob.mp3');
+    [dsound freq] = audioread('D.mp3');
+    [eggsound freq] = audioread('Egg.mp3');
+    [restsound freq] = audioread('Rest.mp3');
 end
-
+eggsound(36865:44100)=zeros;
+dsound(32257:44100)=zeros;
+gaborsound(40321:44100)=zeros;
+restsound(38017:44100)=zeros;
+eggsound(:,2)=eggsound(:,1);
+dsound(:,2)=dsound(:,1);
+gaborsound(:,2)=gaborsound(:,1);
+restsound(:,2)=restsound(:,1);
 %pure tone sound (beef) if needed
 bip_dur=0.15;
 Fs = 44100;                                     % Sampling Frequency
@@ -304,11 +315,11 @@ if responsebox==1
             dinBlue]';
         %escapeKey=dinWhite;
         %   escapeKey=KbName('ESCAPE');
-        
+
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
     elseif site ==5
         % Bit locations of button inputs, and colored LED drivers
-        
+
         dinRed      = hex2dec('1'); % 1
         dinYellow   = hex2dec('2'); % 2
         dinGreen    = hex2dec('4'); % 4

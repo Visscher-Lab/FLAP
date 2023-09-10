@@ -4,7 +4,7 @@ Screen('FillRect', w, gray);
 DrawFormattedText(w, 'Before each trial, an auditory cue will indicate the location of the stimulus to attend (right or left) \n \n Please look at the center of the screen during the experiment\n \n Use your left index finger for the left oriented stimulus \n Right index finger for the right oriented stimulus \n \n','center', 600, white');
 DrawFormattedText(w, 'Left',300, 450, white');
 DrawFormattedText(w, 'Right',1280, 450, white');
-ecccoeffCI_example=2%3;
+ecccoeffCI_example=2.5; %actually it is set to 2
 eccentricity_XCI_example=xlocsCI*pix_deg/ecccoeffCI_example; %for the instruction slide
 eccentricity_YCI_example=ylocsCI*pix_deg/ecccoeffCI_example;
 coeffCI_example=ecccoeffCI_example/2;%for the instruction slide

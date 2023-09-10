@@ -43,15 +43,15 @@ commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
 try
     prompt={'Participant Name', 'Pre (1) vs Post (2)','site? Vpixx(3), UCRScanner (5), UABScanner (6), ScannerTaskDemo (7)', 'Practice (0) or Session(1)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)', 'which run?(1-6)' };
-    
+
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '5', '1' , '2', '0', '0', '0', '1', '1'};
+    defaultanswer={'test','1', '6', '1' , '2', '0', '0', '0', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
-    
+
     SUBJECT = answer{1,:}; %Gets Subject Name
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
@@ -86,7 +86,7 @@ try
     else
         baseName=['./data/' SUBJECT '_FLAPScannertask ' prevspost '_' TimeStart]; %makes unique filename
     end
-    
+
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersScanner % define common parameters
     %% eyetracker initialization (eyelink)
@@ -100,14 +100,14 @@ try
     else
         EyetrackerType=0;
     end
-    
+
     % Gabor stimuli
     createGabors
     % CI stimuli
     CIShapesIII
     % audio params for DATAPixx audio, AYS 4/29/23
     %    fs=44100;
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
@@ -147,13 +147,16 @@ try
     %         demotrial=5;
     %         mixtr = [ ones(demotrial,1)*2 ones(demotrial,1) ones(demotrial,1)];
     %     end
-    
+
     mixtr= []; % 1: gabor of shapes; 2: target location (left vs right), 3: shape type (6/9 or eggs)
     %mixtr 1: assessment type gabor (1) vs CI (2)
     %mixtr 2: stimulus location left (1) vs right (2)
     %mixtr 3: shape type (only for CI), Eggs (1) vs 6/9 (2)
-    
+
     condtr=activeblocktype(whichRun,:);%order of the block types, 1=gabor, 2=egg, 3=6/9, 4=rest
+    [eggordercol]=find(condtr==2);% PD added these to determine order of the active blocks to give sound information about the next block
+    [pdordercol]=find(condtr==3);
+    [gaborordercol]=find(condtr==1);
     possiblecond=[1 1;% PD: I don't know why we don't have 1 2 condition?
         2 1;
         2 2;
@@ -174,12 +177,12 @@ try
     end
     %1: gabor; 2: CI- Eggs, 3: CI-6/9, 4: rest
     mixtr = [mixtr(:,1) sidecolumn mixtr(:,2)];
-    
+
     %mixtr2=[mixtr(:,3) mixtr(:,2) mixtr(:,1)]; %PD:We don't use mixtr2 to anywhere else. sam added it
     fase=randi(4);
     texture=TheGabors(spat_freq, fase);
-    
-    
+
+
     shapesoftheDay=shapeMat;
     AllShapes=size((Targy));
     %% Initialize trial loop
@@ -197,7 +200,7 @@ try
         Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(mixtr), 6);
     end
-    
+
     %% Get Trigger
     if site==5 %PD added if statement 8/15/23
         TargList=[1 3]; % red=1; green=3.
@@ -206,9 +209,9 @@ try
         TheTrigger=false;
     end
     InstructionShapeScanner %PD created instructions page with shapes 8/15/23
-    soundsc(sin(1:.5:1000)); % PD addedd play 'ready' tone
+    %soundsc(sin(1:.5:1000)); % PD addedd play 'ready' tone
     disp('Ready, waiting for trigger...');
-    
+
     if site == 5
         [Bpress timestamp1]=WaitForEvent_Jerry(500, TheTrigger); % waits for trigger
         Datapixx('SetMarker');
@@ -223,6 +226,8 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
             TTL = find(keyCode, 1);
             if keyIsDown==1 && TTL==KbName('t')
+                fixationscriptW
+                ExpStartTimeP=Screen('Flip',w); %PTB-3
                 startTime=GetSecs;
                 clear keyIsDown keyCode
                 TheTrigger=true;
@@ -255,13 +260,13 @@ try
             Datapixx('RegWrRd');
             JitterStartTimeD(trial)=Datapixx('GetTime');
             TRpass=floor((JitterStartTimeD(trial)-ExpStartTimeD)/TR); % TRpass: time since Exp start (in TRs)
-            
+
             if trial==1
                 TRcount=TRcount+TRwait(trial);
             else
                 TRcount=TRcount+TRwait(trial)-1;
             end
-            
+
             while TRpass<TRcount %&& Bpress1==0 % wait until TRpass=TRcount, then
                 [Bpress1 timestamp2]= WaitForEvent_Jerry(0, TheTrigger); % sync with next TR pulse
                 Datapixx('RegWrRd');
@@ -282,16 +287,16 @@ try
                 TrialStartTime(trial,1)=startTime+TR;
                 PreviousCueTime=0;
             elseif mixtr(trial-1,1)==9 %PD: first trial after the rest block 8/18/23
-                TimeToStopListening(trial,1)=RestTime+RestDuration;
-                TrialStartTime(trial,1)=RestTime+RestDuration;
+                TimeToStopListening(trial,1)=TrialStartTime(trial-1,1)+RestDuration; %no time to listen
+                TrialStartTime(trial,1)=TrialStartTime(trial-1,1)+RestDuration;
             elseif trial~=1 && mixtr(trial-1,1)~=9 %PD: when previous trial was not rest 8/18/23
                 itiprevious=TRwait(trial-1,1);
                 PreviousCueTime=CueOnsetTime(trial-1,1);
                 if TRwait(trial-1,1)==0 %PD:if previous TRwait equals to 0 8/18/23
-                    TimeToStopListening(trial,1)=PreviousCueTime+(2*TR);
+                    TimeToStopListening(trial,1)=PreviousCueTime+(2*TR); %no time to listen
                     TrialStartTime(trial,1)=PreviousCueTime+(2*TR);
                 else %when the previous TRwait grater than 0 8/18/23
-                    TimeToStopListening(trial,1)=PreviousCueTime+((itiprevious-0.5)*TR);
+                    TimeToStopListening(trial,1)=PreviousCueTime+(2*TR)+((itiprevious-0.5)*TR);
                     TrialStartTime(trial,1)=PreviousCueTime+(2*TR)+(itiprevious*TR);
                 end
             end
@@ -330,12 +335,49 @@ try
             while GetSecs < TrialStartTime(trial,1)-0.001 %PD:leftover TRwait
             end
         end
+        %% telling participant what type of the block they are going to have
+        whichblock=GetSecs;
+        if (trial==1 && eggordercol==1) || (trial==17 && eggordercol==2) || (trial==18 && eggordercol==3) || (trial==33 && eggordercol==3) || (trial==34 && eggordercol==4) || (trial==50 && eggordercol==5) || (trial==1 && pdordercol==1) || (trial==17 && pdordercol==2) || (trial==18 && pdordercol==3) || (trial==33 && pdordercol==3) || (trial==34 && pdordercol==4) || (trial==50 && pdordercol==5) || (trial==1 && gaborordercol(1)==1) || (trial==17 && gaborordercol(1)==2) || (trial==17 && gaborordercol(2)==2) || (trial==18 && gaborordercol(1)==3) || (trial==18 && gaborordercol(2)==3) || (trial==33 && gaborordercol(1)==3) || (trial==33 && gaborordercol(2)==3) || (trial==34 && gaborordercol(1)==4) || (trial==34 && gaborordercol(2)==4) || (trial==50 && gaborordercol(2)==5) || (trial==17 && restordercol==2) || (trial==33 && restordercol==3) || (trial==49 && restordercol==4)
+            %while GetSecs < whichblock +TR
+            if site == 5
+                Datapixx('StartAudioSchedule');
+                Datapixx('RegWrRd');
+                if (trial==1 && eggordercol==1) || (trial==17 && eggordercol==2) || (trial==18 && eggordercol==3) || (trial==33 && eggordercol==3) || (trial==34 && eggordercol==4) || (trial==50 && eggordercol==5)
+                    Datapixx('WriteAudioBuffer', eggsound', 0); % loads data into buffer
+                    Datapixx('SetAudioSchedule',0,Fs,length(eggsound'),1,0,length(eggsound'));
+                elseif (trial==1 && pdordercol==1) || (trial==17 && pdordercol==2) || (trial==18 && pdordercol==3) || (trial==33 && pdordercol==3) || (trial==34 && pdordercol==4) || (trial==50 && pdordercol==5)
+                    Datapixx('WriteAudioBuffer', dsound', 0); % loads data into buffer
+                    Datapixx('SetAudioSchedule',0,Fs,length(dsound'),1,0,length(dsound'));
+                elseif (trial==1 && gaborordercol(1)==1) || (trial==17 && gaborordercol(1)==2) || (trial==17 && gaborordercol(2)==2) || (trial==18 && gaborordercol(1)==3) || (trial==18 && gaborordercol(2)==3) || (trial==33 && gaborordercol(1)==3) || (trial==33 && gaborordercol(2)==3) || (trial==34 && gaborordercol(1)==4) || (trial==34 && gaborordercol(2)==4) || (trial==50 && gaborordercol(2)==5)
+                    Datapixx('WriteAudioBuffer', gaborsound', 0); % loads data into buffer
+                    Datapixx('SetAudioSchedule',0,Fs,length(gaborsound'),1,0,length(gaborsound'));
+                elseif (trial==17 && restordercol==2) || (trial==33 && restordercol==3) || (trial==49 && restordercol==4)
+                    Datapixx('WriteAudioBuffer', restsound', 0); % loads data into buffer
+                    Datapixx('SetAudioSchedule',0,Fs,length(restsound'),1,0,length(restsound'));
+                end
+                Datapixx('StopAudioSchedule');
+                Datapixx('RegWrRd'); %
+            else
+                if (trial==1 && eggordercol==1) || (trial==17 && eggordercol==2) || (trial==18 && eggordercol==3) || (trial==33 && eggordercol==3) || (trial==34 && eggordercol==4) || (trial==50 && eggordercol==5)
+                    PsychPortAudio('FillBuffer', pahandle, eggsound' ); % loads data into buffer
+                elseif (trial==1 && pdordercol==1) || (trial==17 && pdordercol==2) || (trial==18 && pdordercol==3) || (trial==33 && pdordercol==3) || (trial==34 && pdordercol==4) || (trial==50 && pdordercol==5)
+                    PsychPortAudio('FillBuffer', pahandle, dsound' ); % loads data into buffer
+                elseif (trial==1 && gaborordercol(1)==1) || (trial==17 && gaborordercol(1)==2) || (trial==17 && gaborordercol(2)==2) || (trial==18 && gaborordercol(1)==3) || (trial==18 && gaborordercol(2)==3) || (trial==33 && gaborordercol(1)==3) || (trial==33 && gaborordercol(2)==3) || (trial==34 && gaborordercol(1)==4) || (trial==34 && gaborordercol(2)==4) || (trial==50 && gaborordercol(2)==5)
+                    PsychPortAudio('FillBuffer', pahandle, gaborsound' ); % loads data into buffer
+                elseif (trial==17 && restordercol==2) || (trial==33 && restordercol==3) || (trial==49 && restordercol==4)
+                    PsychPortAudio('FillBuffer', pahandle, restsound' ); % loads data into buffer
+                end
+                PsychPortAudio('Start', pahandle);
+                while GetSecs < whichblock +TR
+                end
+            end
+            %end
+        end
         %%
-        
         AssessmentType=mixtr(trial,1);
         %         AssessmentType=mixtr(trial,3);
-        
-        
+
+
         %% generate answer for this trial (training type 3 has no button response)
         theans(trial)=randi(2);
         theothershape(trial)=randi(2);
@@ -383,7 +425,7 @@ try
             imageRect_offs2 =[imageRect(1)-theeccentricity_X, imageRect(2)-theeccentricity_Y,...
                 imageRect(3)-theeccentricity_X, imageRect(4)-theeccentricity_Y];
         end
-        
+
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
@@ -392,8 +434,8 @@ try
             startExp=GetSecs; %time at the beginning of the session
         end
         playsound=0;
-        
-        
+
+
         if responsebox==1
             Bpress=0;
             timestamp=-1;
@@ -408,7 +450,7 @@ try
             %
             % Datapixx('RegWrRd');
             % buttonLogStatus = Datapixx('GetDinStatus');
-            
+
             % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
             %     Datapixx('SetDinLog'); %added by Jerry
             %     Datapixx('StartDinLog');
@@ -448,11 +490,11 @@ try
             end
         end
         FLAPVariablesReset % reset some variables used in each trial
-        
+
         %% Initialize deafult values
         %stimulusduration=2.5;
         respgiven=0;
-        
+
         while eyechecked<1
             if datapixxtime==1
                 eyetime2=Datapixx('GetTime');
@@ -467,7 +509,7 @@ try
                 fixationscriptWrest %PD:this changes the color of the fixation aids indicating the rest block 8/15/23
                 CueOnsetTime(trial,1)=0;
                 if site==6
-                    while GetSecs < RestTime + (RestDuration-0.5); %  rest for 15 sec
+                    while GetSecs < TrialStartTime(trial) + (RestDuration-0.5); %  rest for 15 sec while GetSecs < RestTime + (RestDuration-0.5);
                         %[keyIsDown, keyTime, keyCode] = KbCheck; %during the rest get TTL pulses
                         [keyIsDown, keyCode]=KbQueueCheck;
                         if  keyIsDown
@@ -486,18 +528,19 @@ try
                                 end
                             end
                         end
-                        
+
                     end
                 elseif site==5 || site==7
-                    %                WaitSecs(15)
+                    WaitSecs(15)
                 end
                 fixationscriptW; %PD:return to normal colors after the rest period 8/18/23
                 eyechecked=2^3;
             end
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
-            if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<preCueISI && stopchecking>1
-                % pre-event empty space, allows for some cleaning
-            elseif (eyetime2-trial_time)>=preCueISI && (eyetime2-trial_time)<preCueISI+CueDuration && stopchecking>1
+            %             if (eyetime2-trial_time)>=0 && (eyetime2-trial_time)<preCueISI && stopchecking>1
+            %                 % pre-event empty space, allows for some cleaning
+            %             else
+            if (eyetime2-trial_time)==preCueISI && (eyetime2-trial_time)<preCueISI+CueDuration && stopchecking>1
                 %                 if restscreen==1 %PD commented this part out & move it
                 %                 above, we're checking the rest screen before 8/17/23
                 %                     eyechecked=2^3;
@@ -511,7 +554,7 @@ try
                         trialstart_frame(trial)=eyetime2;
                     end
                 end
-                
+
                 % HERE I present the acoustic cue left or right
                 if site == 5 % use DATApixx to play audio @ CAN, AYS 4/29/23
                     if mixtr(trial,2)==1
@@ -538,7 +581,7 @@ try
                         PsychPortAudio('FillBuffer', pahandle, bip_sound_left' ); % loads data into buffer
                     elseif mixtr(trial,2)==2
                         PsychPortAudio('FillBuffer', pahandle, bip_sound_right' ); % loads data into buffer
-                        
+
                     end
                     if playsound==0
                         PsychPortAudio('Start', pahandle);
@@ -547,7 +590,7 @@ try
                 end
             elseif (eyetime2-trial_time)>=preCueISI+CueDuration  && (eyetime2-trial_time)<preCueISI+CueDuration+postCueISI && stopchecking>1
                 % cue-to-target interval
-                
+
                 % I exit the script if I press ESC
                 if responsebox==0
                     if keyCode(escapeKey) ~=0
@@ -556,7 +599,7 @@ try
                         break;
                     end
                 end
-                
+
                 % below: some response box flushing, might not be needed
                 if site ==5
                     Datapixx('EnableDinDebounce');                          % Debounce button presses
@@ -581,7 +624,7 @@ try
                         imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
                         imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
                             imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
-                        
+
                         % other shapes
                         imageRect_offsCI3 =[imageRectSmall(1)+eccentricity_XCI'-eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
                             imageRectSmall(3)+eccentricity_XCI'-eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
@@ -615,7 +658,7 @@ try
                 end
                 if exist('stimstar')==0
                     stim_start = GetSecs; %AS 4-28-23 don't use get-secs @Andrew please replace with datapixx time from when the stim started
-                    
+
                     if datapixxtime==1
                         Datapixx('RegWrRd');
                         stim_start_frame(trial) = Datapixx('GetTime');
@@ -815,6 +858,13 @@ try
             %                     end
             %                 end
             %             end
+            %% last wait
+            if trial==length(mixtr) %PD added this last wait after last trial ends 9/7/23
+                if GetSecs-startTime < 280.5; %total duration should be 274.5
+                    while GetSecs + (TRwait(trial)*TR) < 280.5 %waits for the last TRwait long
+                    end
+                end
+            end
             if datapixxtime==1
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3 ];
@@ -880,7 +930,7 @@ try
             %             else % AYS: UCR and UAB?
             %                 [keyIsDown, keyCode] = KbQueueCheck; %AS 4-28-23 @Andrew add  Datapixx button press as an option
             %             end
-            
+
         end
         %% response processing
         if exist('secs')==0 % PD: if we're giving response with response box 8/17/23
@@ -894,8 +944,8 @@ try
         if exist('resp')==0
             resp=nan;
         end
-        
-        
+
+
         if  restscreen==0
             cheis(trial)=thekeys;
             %   time_stim(trial) = stim_stop - stim_start_frame;
@@ -954,7 +1004,7 @@ try
                 toRead = status.newBufferFrames;
                 if toRead>0
                     [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
-                    
+
                     %bufferData is formatted as follows:
                     %1      --- Timetag (in seconds)
                     %2      --- Left Eye X (in pixels)
@@ -976,17 +1026,17 @@ try
                     %18     --- Left Eye Raw Y (in pixels)
                     %19     --- Right Eye Raw X (in pixels)
                     %20     --- Right Eye Raw Y (in pixels)
-                    
+
                     %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
                     %in the console overlay. In tabletop and MEG setups, this view is
                     %inverted. This means "RIGHT" in our labelling convention corresponds
                     %to the participant's left eye. Similarly "LEFT" in our convention
                     %refers to left on the screen, which corresponds to the participant's
                     %right eye.
-                    
+
                     %If you are using an MRI setup with an inverting mirror, "RIGHT" will
                     %correspond to the participant's right eye.
-                    
+
                     %save eye data from trial as a table in the trial structure
                     Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
                         'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
@@ -1007,7 +1057,7 @@ try
                 TRcount=TRcount+TrialinTRsD(trial);
             end
         end
-        
+
         %%
         % -----------------------------------------------------------------------------------
         if (mod(trial,150))==1 && trial>1
@@ -1015,12 +1065,11 @@ try
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    % save('test.mat')
     ListenChar(0);
-    Screen('Flip', w);
+    ScriptEnds=Screen('Flip', w);
+    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     %   KbQueueWait;
-    
+
     %% shut down EyeTracker and screen functions
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1037,11 +1086,12 @@ try
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-    
+
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+
     ShowCursor;
+
     Screen('CloseAll');
     if site ~= 5
         PsychPortAudio('Close', pahandle);     %AS 4-28-23 @Andrew add  Datapixx commands

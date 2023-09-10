@@ -497,8 +497,8 @@ exampletheori(exampletargetcord)=Targori{5}(1,:);
 exampletheori2(exampletargetcord2)=Targori{5}(2,:);
 
 %% instruction page 6/9
-examplenewTargynum=Targy{1};
-examplenewTargxnum=Targx{1};
+examplenewTargynum=Targy{12};
+examplenewTargxnum=Targx{12};
 
 
 exampletargetcordnum =examplenewTargynum(1,:)+yTrans  + (examplenewTargxnum(1,:)+xTrans - 1)*ymax;
@@ -636,13 +636,13 @@ examplexJitLocnum2(examplexJitLocnum2< - pix_deg/ecccoeffCI_example/3)=-pix_deg/
 exampleyJitLocnum2(exampleyJitLocnum2>pix_deg/ecccoeffCI_example/3)=pix_deg/ecccoeffCI_example/3;
 exampleyJitLocnum2(exampleyJitLocnum2< - pix_deg/ecccoeffCI_example/3)=- pix_deg/ecccoeffCI_example/3;
 
-examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetx{1}(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
-exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsety{1}(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
-examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetx{1}(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
-exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsety{1}(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+examplexJitLocnum(exampletargetcordnum)=pix_deg*(offsetx{12}(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+exampleyJitLocnum(exampletargetcordnum)=pix_deg*(offsety{12}(1,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+examplexJitLocnum2(exampletargetcordnum2)=pix_deg*(offsetx{12}(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
+exampleyJitLocnum2(exampletargetcordnum2)=pix_deg*(offsety{12}(2,:))/coeffCI_example;%I changed coeffCI with ecccoeffCI
 
 exampletheorinum=180*rand(1,length(eccentricity_XCI_example));
 exampletheorinum2=exampletheorinum;
 
-exampletheorinum(exampletargetcordnum)=Targori{1}(1,:);
-exampletheorinum2(exampletargetcordnum2)=Targori{1}(2,:);
+exampletheorinum(exampletargetcordnum)=Targori{12}(1,:);
+exampletheorinum2(exampletargetcordnum2)=Targori{12}(2,:);
