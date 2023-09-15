@@ -10,7 +10,7 @@ try
     
     name= 'Subject Name';
     numlines=1;
-    defaultanswer={'test', '1', '3','0' };
+    defaultanswer={'test', '1', '1','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -58,7 +58,7 @@ try
    % else
         
     end
-    alphastim=0.35;
+    alphastim=0.8;
     fixat=1;
     SOA=0.6;
     closescript=0;
@@ -178,7 +178,7 @@ try
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     
         elseif site==3      % VPixx
-        initRequired= 0;
+        initRequired= 1;
         if initRequired>0
             fprintf('\nInitialization required\n\nCalibrating the device...');
             TPxTrackpixx3CalibrationTestingskip;
@@ -191,7 +191,7 @@ try
         Datapixx('RegWrRd');
         screencm=[69.8, 35.5];
         
-        v_d=80;
+        v_d=57;
         AssertOpenGL;
         screenNumber=max(Screen('Screens'));
         PsychImaging('PrepareConfiguration');
@@ -603,20 +603,20 @@ if EyeTracker==1
         
         
         if trial==1 && newtrialmatrix(trial+1,1)==1
-            switch_task_script_endo2
+            switch_task_script_endo
         end
 
         if trial==1 && newtrialmatrix(trial+1,1)==2
-            switch_task_script_exo2
+            switch_task_script_exo
         end
         
         if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==1 && newtrialmatrix(trial+1,1)==2
-            switch_task_script_exo2
+            switch_task_script_exo
         end
         
         
         if trial>1 && newtrialmatrix(trial,1)==3 && newtrialmatrix(trial-1,1)==0 && newtrialmatrix(trial+1,1)==1 && trial<length(newtrialmatrix)
-            switch_task_script_endo2
+            switch_task_script_endo
         end
 
 %         if sum(trial==totaltrialbreak)>0

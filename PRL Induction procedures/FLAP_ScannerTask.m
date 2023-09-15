@@ -337,6 +337,16 @@ try
         end
         %% telling participant what type of the block they are going to have
         whichblock=GetSecs;
+        
+        
+          Datapixx('WriteAudioBuffer', eggsound', 0); % loads data into buffer
+                                 Datapixx('RegWrRd'); %
+   Datapixx('SetAudioSchedule',0,Fs,length(eggsound'),1,0,length(eggsound'));
+                   Datapixx('RegWrRd'); %
+                        Datapixx('StartAudioSchedule');
+                Datapixx('RegWrRd'); %
+
+                        
         if (trial==1 && eggordercol==1) || (trial==17 && eggordercol==2) || (trial==18 && eggordercol==3) || (trial==33 && eggordercol==3) || (trial==34 && eggordercol==4) || (trial==50 && eggordercol==5) || (trial==1 && pdordercol==1) || (trial==17 && pdordercol==2) || (trial==18 && pdordercol==3) || (trial==33 && pdordercol==3) || (trial==34 && pdordercol==4) || (trial==50 && pdordercol==5) || (trial==1 && gaborordercol(1)==1) || (trial==17 && gaborordercol(1)==2) || (trial==17 && gaborordercol(2)==2) || (trial==18 && gaborordercol(1)==3) || (trial==18 && gaborordercol(2)==3) || (trial==33 && gaborordercol(1)==3) || (trial==33 && gaborordercol(2)==3) || (trial==34 && gaborordercol(1)==4) || (trial==34 && gaborordercol(2)==4) || (trial==50 && gaborordercol(2)==5) || (trial==17 && restordercol==2) || (trial==33 && restordercol==3) || (trial==49 && restordercol==4)
             %while GetSecs < whichblock +TR
             if site == 5
