@@ -361,11 +361,11 @@ orifoo=orifoo+90;
 Xoff=[-0.2 -0.03 0.02 0.15 -0.25 -0.2 0.15 -0.05 -0.01 0 0 -0.1 0.09 0.02 0.01 -0.07];
 Yoff= [-0.2 -0.01 -0.2 -0.1 -0.05 -0.01 0.02 0 0.03 0 0 -0.06 0 0.1 0.01 0.15];
 Targx{15}= [xfoo; xfoo];
-Targy{15}= [yfoo; -yfoo];
-Targori{15}=[orifoo;twoorifoo];
+Targy{15}= [-yfoo; yfoo];
+Targori{15}=[twoorifoo;orifoo];
 
 offsetx{15}= [-Xoff; -Xoff];
-offsety{15}=[-Yoff; Yoff];
+offsety{15}=[Yoff; -Yoff];
 clear Xoff Yoff xfoo yfoo orifoo
 
 %% rotated lines (diagonal lines) -----------------------------------------

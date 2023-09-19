@@ -104,7 +104,7 @@ try
     % Gabor stimuli
     createGabors
     % CI stimuli
-    CIShapesIII
+    CIShapesIV
     % audio params for DATAPixx audio, AYS 4/29/23
     %    fs=44100;
 
