@@ -397,7 +397,7 @@ try
             restscreen=0;
             %preCueISI=0;
         elseif AssessmentType==2
-            CIstimuliModII % add the offset/polarity repulsion
+            CIstimuliModII_v2 % add the offset/polarity repulsion
             restscreen=0;
             %preCueISI=0;
         else
