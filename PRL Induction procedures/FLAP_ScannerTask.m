@@ -104,7 +104,7 @@ try
     % Gabor stimuli
     createGabors
     % CI stimuli
-    CIShapesIII
+    CIShapesIV
     % audio params for DATAPixx audio, AYS 4/29/23
     %    fs=44100;
 
@@ -397,7 +397,7 @@ try
             restscreen=0;
             %preCueISI=0;
         elseif AssessmentType==2
-            CIstimuliModII % add the offset/polarity repulsion
+            CIstimuliModII_v2 % add the offset/polarity repulsion
             restscreen=0;
             %preCueISI=0;
         else
