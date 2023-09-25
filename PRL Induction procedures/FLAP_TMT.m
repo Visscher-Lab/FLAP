@@ -232,7 +232,7 @@ try
                             StartTime(numresp,block)=GetSecs;
 
                             if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
-                                RespTime(numresp,block)=GetSecs-StartTime(numresp,block);
+                                RespTime(numresp,block)=startblocktime(block)-StartTime(numresp,block);
                                 CircFill(:,1:numresp)=CircleColorFillResp; %changes circle fill to show response
                                 resp(numresp)=1;
                                 numrespCorr=numrespCorr+1;

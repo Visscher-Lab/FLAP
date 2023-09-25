@@ -250,13 +250,19 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 [secs  indfirst]=min(thetimes);
                 respTime=secs;
                 else
+                     respTimePixx=Datapixx('GetTime'); 
+                        Datapixx('RegWrRd');
                   respTime=eyetime2;  
                 end
                                 eyechecked=10^4;
 
 
             elseif (eyetime2-pretrial_time)>=trialTimeout % trial timed out
+                if datapixxtime==0
                 stim_stop=GetSecs;
+                elseif datapixxtime==1
+                    stim_stop=eyetime2;
+                end
                 trialTimedout(trial)=1;
                 eyechecked=10^4;
             end

@@ -29,12 +29,12 @@ try
     PRLlocations=str2num(answer{6,:});
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-        EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-                responsebox=str2num(answer{10,:});
-
-            scotomavpixx= 0;
-datapixxtime=1;
-c = clock; %Current date and time as date vector. [year month day hour minute seconds]
+    EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
+    responsebox=str2num(answer{10,:});
+    
+    scotomavpixx= 0;
+    datapixxtime=1;
+    c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -48,7 +48,7 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
     end
     folder=cd;
     folder=fullfile(folder, '..\..\datafolder\');
-
+    
     if site==1
         baseName=[folder SUBJECT filename  '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -64,10 +64,10 @@ c = clock; %Current date and time as date vector. [year month day hour minute se
     CommonParametersRSVP % load parameters for time and space
     
     %load  RSVPmxII.mat
- %   load RSVPmxIncong.mat
-load RSVP3mxIII.mat
+    %   load RSVPmxIncong.mat
+    load RSVP3mxIII.mat
     %% eyetracker initialization (eyelink)
-%     defineSite
+    %     defineSite
     
     if EyeTracker==1
         if site==3
@@ -79,7 +79,7 @@ load RSVP3mxIII.mat
     else
         EyetrackerType=0;
     end
-  
+    
     %% creating stimuli
     createO
     
@@ -99,7 +99,7 @@ load RSVP3mxIII.mat
     %mixtr to be created
     %% Keys definition/kb initialization
     
-
+    
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
@@ -145,11 +145,11 @@ load RSVP3mxIII.mat
         Datapixx('RegWrVideoSync');
     end
     
-%     theans=nan(length(mixtr), 39);
-%     contresp=zeros(length(mixtr), 39);
-%     RespMatrix=nan(length(mixtr),39);
-%     resp=nan(length(mixtr),39);
- 
+    %     theans=nan(length(mixtr), 39);
+    %     contresp=zeros(length(mixtr), 39);
+    %     RespMatrix=nan(length(mixtr),39);
+    %     resp=nan(length(mixtr),39);
+    
     for trial=1:length(mixtr)
         trialTimedout(trial)=0;
         TrialNum = strcat('Trial',num2str(trial));
@@ -203,65 +203,65 @@ load RSVP3mxIII.mat
             blocktime=eyetime2+1000;
             fixating=0;
         end
-    %    stopchecking=10;
+        %    stopchecking=10;
         checkout=0;
         counttime(trial)=0;
         countthis=0;
         isfixatingnow=0;
         
         
-                if responsebox==1
+        if responsebox==1
             
-           Bpress=0;
-timestamp=-1;
-TheButtons=-1;
-inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error 
-                         % saying that inter_buttonpress was not assigned. 
-                         % 26 June 2018
-RespTime=[];
-binaryvals=[];
-bin_buttonpress{1}=[]; % Jerry:use array instead of cell
-inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
-%                          
-% Datapixx('RegWrRd');
-% buttonLogStatus = Datapixx('GetDinStatus');
-
-% if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
-%     Datapixx('SetDinLog'); %added by Jerry
-%     Datapixx('StartDinLog');
-%     Datapixx('RegWrRd');
-%     buttonLogStatus = Datapixx('GetDinStatus');
-%     Datapixx('RegWrRd');
-% end
-% if ~exist('starttime','var') % var added by Jason 
-%     Datapixx('RegWrRd');
-%     starttime=Datapixx('GetTime');
-% elseif  isempty(starttime)  % modified by Jerry from else to elseif
-%     Datapixx('RegWrRd');
-%     starttime=Datapixx('GetTime');
-% end   
-
-   % Configure digital input system for monitoring button box
-Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
-Datapixx('EnableDinDebounce');                          % Debounce button presses
-Datapixx('SetDinLog');                                  % Log button presses to default address
-Datapixx('StartDinLog');                                % Turn on logging
-Datapixx('RegWrRd');
-    % Wait until all buttons are up
-    while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
-        Datapixx('RegWrRd');
-    end
-        % Flush any past button presses
-    Datapixx('SetDinLog');
-    Datapixx('RegWrRd'); 
-end
+            Bpress=0;
+            timestamp=-1;
+            TheButtons=-1;
+            inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+            % saying that inter_buttonpress was not assigned.
+            % 26 June 2018
+            RespTime=[];
+            binaryvals=[];
+            bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+            inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+            %
+            % Datapixx('RegWrRd');
+            % buttonLogStatus = Datapixx('GetDinStatus');
+            
+            % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
+            %     Datapixx('SetDinLog'); %added by Jerry
+            %     Datapixx('StartDinLog');
+            %     Datapixx('RegWrRd');
+            %     buttonLogStatus = Datapixx('GetDinStatus');
+            %     Datapixx('RegWrRd');
+            % end
+            % if ~exist('starttime','var') % var added by Jason
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % elseif  isempty(starttime)  % modified by Jerry from else to elseif
+            %     Datapixx('RegWrRd');
+            %     starttime=Datapixx('GetTime');
+            % end
+            
+            % Configure digital input system for monitoring button box
+            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+            Datapixx('EnableDinDebounce');                          % Debounce button presses
+            Datapixx('SetDinLog');                                  % Log button presses to default address
+            Datapixx('StartDinLog');                                % Turn on logging
+            Datapixx('RegWrRd');
+            % Wait until all buttons are up
+            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                Datapixx('RegWrRd');
+            end
+            % Flush any past button presses
+            Datapixx('SetDinLog');
+            Datapixx('RegWrRd');
+        end
         
         
         
         while number_of_events<=length(array_of_events) && checkout<1
-                                 if datapixxtime==1
-                         eyetime2=Datapixx('GetTime');
-                     end
+            if datapixxtime==1
+                eyetime2=Datapixx('GetTime');
+            end
             if number_of_events==0
                 number_of_events=1;
             end
@@ -273,53 +273,53 @@ end
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
-
-            stimtype=array_of_events(number_of_events);       
+            
+            stimtype=array_of_events(number_of_events);
             
             if stopblock==1
                 if  (eyetime2-pretrial_time)>=0 && moveblock<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout && fixating<1000
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tlocblock}, oriblock,[], targetAlphaValue);
-              if responsebox==0
-                  if sum(keyCode) ~=0
-                        thekeys = find(keyCode);
-                        if length(thekeys)>1
-                            thekeys=thekeys(1);
+                    if responsebox==0
+                        if sum(keyCode) ~=0
+                            thekeys = find(keyCode);
+                            if length(thekeys)>1
+                                thekeys=thekeys(1);
+                            end
+                            thetimes=keyCode(thekeys);
+                            foo=(RespType==thekeys);
+                            
+                            if foo(theansblock)
+                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                            else
+                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                            end
+                            PsychPortAudio('Start', pahandle);
+                            moveblock=2^11; %time to move to next event
+                            blocktime=eyetime2;
                         end
-                        thetimes=keyCode(thekeys);
-                        foo=(RespType==thekeys);
-                        
-                        if foo(theansblock)
-                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                        else
-                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                    elseif responsebox==1
+                        Datapixx('RegWrRd');
+                        buttonLogStatus = Datapixx('GetDinStatus');
+                        if (buttonLogStatus.newLogFrames > 0)
+                            [thekeys secs] = Datapixx('ReadDinLog');
+                            foo=(RespType==thekeys);
+                            if foo(theansblock)
+                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                            else
+                                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                            end
+                            PsychPortAudio('Start', pahandle);
+                            moveblock=2^11; %time to move to next event
+                            blocktime=eyetime2;
                         end
-                        PsychPortAudio('Start', pahandle);
-                        moveblock=2^11; %time to move to next event
-                        blocktime=eyetime2;
                     end
-                elseif responsebox==1
-                       Datapixx('RegWrRd');
-             buttonLogStatus = Datapixx('GetDinStatus');
-                if (buttonLogStatus.newLogFrames > 0)
-                    [thekeys secs] = Datapixx('ReadDinLog');
-                foo=(RespType==thekeys);
-                                        if foo(theansblock)
-                            PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                        else
-                            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
-                        end
-                        PsychPortAudio('Start', pahandle);
-                        moveblock=2^11; %time to move to next event
-                        blocktime=eyetime2;
-              end
-              end
                 elseif (eyetime2-pretrial_time)>=0 && (eyetime2-blocktime)<=0.5+ifi*3 && moveblock>1000 && fixating<1000
                     if (eyetime2-blocktime)>=0.5
                         if datapixxtime==1
                             trial_time=Datapixx('GetTime');
                         else
                             trial_time=eyetime2;
-                        end              
+                        end
                         fixating=2^11;
                     end
                 end
@@ -352,7 +352,7 @@ end
                 
                 if stimtype==2 %foil
                     theans(trial,number_of_events)=7;
-
+                    
                     %stim type
                     %1: target stays on screen until response
                     %2: foil
@@ -387,7 +387,7 @@ end
                     elseif mixtr(trial,1) ==3 && mixtr(trial,2)==2
                         ori= 45;
                     end
-                    theans(trial,number_of_events)=8;  
+                    theans(trial,number_of_events)=8;
                 elseif stimtype==5 %blank
                     % assign the correct response from one trial ago to the
                     % blank interval
@@ -395,14 +395,14 @@ end
                 elseif stimtype==6 %post cue blank
                     theans(trial,number_of_events)= 6;
                 end
-%                 if stimtype==2
-% %                     targetAlphaValue1 = 1;
-%                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], 1);
-%                 end
-                if stimtype~=5 && stimtype~=6 
+                %                 if stimtype==2
+                % %                     targetAlphaValue1 = 1;
+                %                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], 1);
+                %                 end
+                if stimtype~=5 && stimtype~=6
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], targetAlphaValue);
                 end
-                if number_of_events == 1 && array_of_events(number_of_events) == 3 && stimtype~=5 && stimtype~=6 
+                if number_of_events == 1 && array_of_events(number_of_events) == 3 && stimtype~=5 && stimtype~=6
                     Screen('DrawTexture', w, whichLetter(stimtype), [], imageRect_offs{tloc}, ori,[], 1);
                 end
                 
@@ -412,65 +412,67 @@ end
                     counttime(trial)=counttime(trial)+1;
                 end
                 if (eyetime2-trial_time)>0
-                  if responsebox==0
-                      if sum(keyCode) ~=0
-                        respcounter=respcounter+1;
-                        thekeys = find(keyCode);
-                                      %          PsychPortAudio('Start', pahandle);
-
-                        if length(thekeys)>1
-                            thekeys=thekeys(1);
+                    if responsebox==0
+                        if sum(keyCode) ~=0
+                            respcounter=respcounter+1;
+                            thekeys = find(keyCode);
+                            %          PsychPortAudio('Start', pahandle);
+                            
+                            if length(thekeys)>1
+                                thekeys=thekeys(1);
+                            end
+                            thetimes=keyCode(thekeys);
+                            [secs  indfirst]=min(thetimes);
+                            respTime(trial, respcounter)=secs;
+                            if thekeys==RespType(1)
+                                respKeys(trial, respcounter)=1;
+                            elseif thekeys==RespType(2)
+                                respKeys(trial, respcounter)=2;
+                            elseif thekeys==RespType(3)
+                                respKeys(trial, respcounter)=3;
+                            elseif thekeys==RespType(4)
+                                respKeys(trial, respcounter)=4;
+                            elseif  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                %   number_of_events=10^4;
+                                checkout=2;
+                                break;
+                            end
                         end
-                        thetimes=keyCode(thekeys);
-                        [secs  indfirst]=min(thetimes);
-                        respTime(trial, respcounter)=secs;
-                                            if thekeys==RespType(1)
-                                                  respKeys(trial, respcounter)=1;  
-                                                elseif thekeys==RespType(2)
-                                                    respKeys(trial, respcounter)=2; 
-                                                elseif thekeys==RespType(3)
-                                                    respKeys(trial, respcounter)=3; 
-                                                elseif thekeys==RespType(4)
-                                                    respKeys(trial, respcounter)=4;                                                
-                                                elseif  thekeys==escapeKey
-                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            closescript = 1;
-                            %   number_of_events=10^4;
-                            checkout=2;
-                            break;
+                    elseif responsebox==1
+                        Datapixx('RegWrRd');
+                        buttonLogStatus = Datapixx('GetDinStatus');
+                        if (buttonLogStatus.newLogFrames > 0)
+                            [thekeys secs] = Datapixx('ReadDinLog');
+                            
+                            respcounter=respcounter+1;
+                            respTime(trial, respcounter)=secs;
+                            
+                            %                      PsychPortAudio('Start', pahandle);
+                            if thekeys==RespType(1)
+                                respKeys(trial, respcounter)=1;
+                            elseif thekeys==RespType(2)
+                                respKeys(trial, respcounter)=2;
+                            elseif thekeys==RespType(3)
+                                respKeys(trial, respcounter)=3;
+                            elseif thekeys==RespType(4)
+                                respKeys(trial, respcounter)=4;
+                            elseif  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                %   number_of_events=10^4;
+                                checkout=2;
+                                break;
+                            end
                         end
-                      end
-                  elseif responsebox==1              
-             Datapixx('RegWrRd');
-             buttonLogStatus = Datapixx('GetDinStatus');
-                if (buttonLogStatus.newLogFrames > 0)
-                    [thekeys secs] = Datapixx('ReadDinLog');
-             
-                   respcounter=respcounter+1;
-                          %                      PsychPortAudio('Start', pahandle);     
-                                                                                            if thekeys==RespType(1)
-                                                  respKeys(trial, respcounter)=1;  
-                                                elseif thekeys==RespType(2)
-                                                    respKeys(trial, respcounter)=2; 
-                                                elseif thekeys==RespType(3)
-                                                    respKeys(trial, respcounter)=3; 
-                                                elseif thekeys==RespType(4)
-                                                    respKeys(trial, respcounter)=4;                                                
-                                                elseif  thekeys==escapeKey
-                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            closescript = 1;
-                            %   number_of_events=10^4;
-                            checkout=2;
-                            break;
-                        end
-                 end
-                  end
+                    end
                 end
                 if EyetrackerType ==2
                     %set a marker to get the exact time the screen flips
@@ -483,9 +485,9 @@ end
                 end
             end
             eyefixation5
-
+            
             if fixating> 1000 && moveblock>1000
-                                [isfixatingnow counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,isfixatingnow,framecounter,counter,fixwindowPix);
+                [isfixatingnow counter framecounter ]=IsFixatingSquareNew(wRect,xeye,yeye,isfixatingnow,framecounter,counter,fixwindowPix);
                 if (eyetime2-trial_time)>=time_of_this_event(number_of_events) && isfixatingnow>0
                     number_of_events=number_of_events+1;
                     clear stimstar
@@ -494,16 +496,16 @@ end
                     isfixatingnow=0;
                     stopchecking=-10;
                     
-                                    if responsebox==1
-             %      Datapixx('StopDinLog'); 
-                end
+                    if responsebox==1
+                        %      Datapixx('StopDinLog');
+                    end
                 end
             end
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs1, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs2, oval_thick, oval_thick);
             Screen('FrameOval', w,ContCirc, imageRect_circleoffs3, oval_thick, oval_thick);
-           teet=111;
-           if ScotomaPresent == 1
+            teet=111;
+            if ScotomaPresent == 1
                 Screen('FillOval', w, scotoma_color, scotoma);
             else
                 Screen('DrawLine', w, white, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
@@ -526,11 +528,11 @@ end
                 Screen('FillRect', w, gray);
             end
             if datapixxtime==1
-            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime3];
- else
-                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-                       VBL_Timestamp=[VBL_Timestamp eyetime2];
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3];
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
             end
             
             
@@ -596,10 +598,10 @@ end
                     end
                 end
             else
-                            if stopchecking<0
+                if stopchecking<0
                     trial_time = eyetime2; %start timer if we have eye info
                     stopchecking=10;
-                            end
+                end
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
