@@ -1,4 +1,4 @@
-    `% FLAP Training
+% FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Training script for FLAP. This script runs 4 types of visual/oculomotor
 % training in conditions of gaze-contingent, simulated central vision loss.
@@ -152,7 +152,7 @@ try
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
         shapes=3; % how many shapes per day?
-        JitList = 0:2:90;
+        JitList = 0:1:90;
         StartJitter=1;
     end
     %define number of trials per condition
@@ -162,7 +162,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase
         else
-            trials=40; %500;  %total number of trials per staircase
+            trials=30; %500;  %total number of trials per staircase
         end
     elseif trainingType==2
         conditionOne=shapes; % shapes (training type 2)
@@ -170,7 +170,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials= 166;  %total number of trials per staircase (per shape, we have 3 per day)
+            trials= 10;%166;  %total number of trials per staircase (per shape, we have 3 per day)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -238,7 +238,7 @@ try
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     if trainingType~=3
-        stepsizes=[4 4 3 2 1]; % step sizes for staircases
+        stepsizes=2; % step sizes for staircases
         % Threshold -> 79%
         sc.up = 1;   % # of incorrect answers to go one step up
         sc.down = 3;  % # of correct answers to go one step down
@@ -427,24 +427,24 @@ try
             end
         end
         % practice
-        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) && trainingType==2
-            practicePassed=0;
-            %         practicePassed=1;
-        end
-        
-        if test==2
-            practicePassed=1;
-        end
-        if trainingType == 2
-            while practicePassed==0
-                %      FLAPpractice
-                FLAP_Training2_Practice 
-            end
-        end
-        if practicePassed==2
-            closescript=1;
-            break
-        end
+%         if trainingType==2 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)  
+%             practicePassed=0;
+%             %         practicePassed=1;
+%         end
+%         
+% %         if test==2
+% %             practicePassed=1;
+% %         end
+%         if trainingType == 2
+%             while practicePassed==0
+%                 %      FLAPpractice
+%                 FLAP_Training2_Practice 
+%             end
+%         end
+%         if practicePassed==2
+%             closescript=1;
+%             break
+%         end
         
         % general instruction TO BE REWRITTEN
         if trainingType~=2 && trial==1
@@ -1086,37 +1086,35 @@ try
                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
                 if trainingType~=3
-                    %                     count1 = count1 + 1; % first stage staircase counter
                     corrcounter(mixtr(trial,1),mixtr(trial,3))=corrcounter(mixtr(trial,1),mixtr(trial,3))+1;
-                    
                     if  corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down
-                        isreversals(mixtr(trial,1),mixtr(trial,3))=1;
+                        isreversals(mixtr(trial,1),mixtr(trial,3))= 1; %isreversals(mixtr(trial,1),mixtr(trial,3)) + 1;
                     end
-                    % if more than 3 reversals have passed, we switch to a 3:1
-                    % staircase
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down  % && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
                         if isreversals(mixtr(trial,1),mixtr(trial,3))==1
                             reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
                             isreversals(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                         thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
                     else
-                        % the staircase begins as a 1 up 1 down until 3 reversals
-                        % have passed
-                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
-                            if isreversals(mixtr(trial,1),mixtr(trial,3))==1
-                                reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
-                                isreversals(mixtr(trial,1),mixtr(trial,3))=0;
-                            end
-                            thestep=min(reversals(mixtr(trial,1),mixtr(trial,3))+1,length(stepsizes));
+                        if trainingType == 2
+                            thresh(mixtr(trial,1),mixtr(trial,3))=min(thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
+                        elseif trainingType == 1
+                            thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
                         end
-                        % if we want to prevent streaking, uncomment below
-                        %                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
+                        % the staircase begins as a 1 up 1 down until 3 reversals
+%                         % have passed
+%                                                 if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
+%                                                     if isreversals(mixtr(trial,1),mixtr(trial,3))==1
+%                                                         reversals(mixtr(trial,1),mixtr(trial,3))=reversals(mixtr(trial,1),mixtr(trial,3))+1;
+%                                                         isreversals(mixtr(trial,1),mixtr(trial,3))=0;
+%                                                     end
+%                                                     thestep=min(reversals(mixtr(trial,1),mixtr(trial,3)),length(stepsizes));
+%                                                 end
                     end
                 end
-                if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
-                    
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3 % if we have enough consecutive correct responses to
+                if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)     
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))==sc.down % if we have enough consecutive correct responses to
                         %update stimulus intensity
                         if contr<SFthreshmin && currentsf<length(sflist)
                             currentsf=min(currentsf+1,length(sflist));
@@ -1130,8 +1128,7 @@ try
                         end
                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     else
-                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
-                            %update stimulus intensity
+                        if corrcounter(mixtr(trial,1),mixtr(trial,3)) < sc.down %maintain stimulus intensity
                             if contr<SFthreshmin && currentsf<length(sflist)
                                 currentsf=min(currentsf+1,length(sflist));
                                 foo=find(Contlist>=SFthreshmin);
@@ -1139,23 +1136,21 @@ try
                                 corrcounter(:,:)=0;
                                 thestep=3;
                             else
-                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3));
                                 thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
                             end
-                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                     end
                 end
                 if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
-                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down && reversals(mixtr(trial,1),mixtr(trial,3)) >= 3
+                    if corrcounter(mixtr(trial,1),mixtr(trial,3))>=sc.down 
                         thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
                         thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
                         corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                     else
-                        if reversals(mixtr(trial,1),mixtr(trial,3)) < 3
-                            thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)) +stepsizes(thestep);
+                        if corrcounter(mixtr(trial,1),mixtr(trial,3)) < sc.down 
+                            thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)); 
                             thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(JitList));
-                            corrcounter(mixtr(trial,1),mixtr(trial,3))=0;
                         end
                     end
                 end
