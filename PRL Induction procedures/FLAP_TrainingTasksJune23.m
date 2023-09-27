@@ -1,4 +1,4 @@
-% FLAP Training
+    `% FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Training script for FLAP. This script runs 4 types of visual/oculomotor
 % training in conditions of gaze-contingent, simulated central vision loss.
@@ -135,7 +135,7 @@ try
     end
     
     if trainingType==2 || trainingType==4
-        CIShapesIII
+        CIShapesIV
     end
     
     % create flickering Os
@@ -247,12 +247,11 @@ try
         SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
         if trainingType==2 || trainingType==4
             load NewShapeMat.mat;         % shape parameters for each session of training
-            shapeMat=[shapeMat(1,:); shapeMat(3,:); shapeMat(5,:) ] ;
-            if demo==1
-                shapeMat(:,1)= [1 5 9];
-            end
-            shapeMat(:,1)= [9 5 1];
+            shapeMat=[shapeMat(1,:); shapeMat(2,:); shapeMat(3,:) ] ;
             shapesoftheDay=shapeMat(:,expDay);
+            if demo==1
+                shapeMat = shapeMat(:,expDay);
+            end
         end
         if expDay==1
             if trainingType==1 || trainingType==4
@@ -318,10 +317,8 @@ try
     
     % training type 3 has its own structure, no behavioral performance
     % recorded except for eye movements, no keys to press
-    if trainingType==3
-        
-        if expDay==1
-            
+    if trainingType==3        
+        if expDay==1            
             sizeArray=log_unit_down(1.99, 0.008, nsteps); % array of TRL size: the larger, the easier the task (keeping the target within the PRL)
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps); % array of flickering persistence: the lower, the easier the task (keeping the target within the PRL for tot time)
             %higher pointer=more difficult
@@ -332,8 +329,7 @@ try
             flickerpointerPre=15;
             flickerpointerPost=15;
             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
-            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
-            
+            flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists        
         end
         if expDay>1 % if we are not on day one, we load thresholds from previous days
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
@@ -439,10 +435,10 @@ try
         if test==2
             practicePassed=1;
         end
-        if trainingType<3
+        if trainingType == 2
             while practicePassed==0
                 %      FLAPpractice
-                FLAPpracticenodistractors
+                FLAP_Training2_Practice 
             end
         end
         if practicePassed==2

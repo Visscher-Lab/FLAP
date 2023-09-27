@@ -74,33 +74,36 @@ exampletargetcord2 =examplenewTargy(2,:)+yTrans  + (examplenewTargx(2,:)+xTrans 
 
 
 
-exampleyJitLoc=yJitLoc;
-examplexJitLoc=xJitLoc;
+
 
 clear newyJitLoc newxJitLoc
 
 
-exampleyJitLoc2=yJitLoc;
-examplexJitLoc2=xJitLoc;
 
+
+exampleyJitLoc=yJitLoc;
+examplexJitLoc=xJitLoc;
 
 examplexJitLoc(examplexJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 examplexJitLoc(examplexJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 exampleyJitLoc(exampleyJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 exampleyJitLoc(exampleyJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 
+exampleyJitLoc2=yJitLoc;
+examplexJitLoc2=xJitLoc;
+
 examplexJitLoc2(examplexJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 examplexJitLoc2(examplexJitLoc2< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 exampleyJitLoc2(exampleyJitLoc2>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 exampleyJitLoc2(exampleyJitLoc2< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 
-examplexJitLoc(exampletargetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(1,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLoc(exampletargetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(1,:))/coeffCI;%+xJitLoc(targetcord);
-examplexJitLoc2(exampletargetcord2)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(2,:))/coeffCI;%+xJitLoc(targetcord);
-exampleyJitLoc2(exampletargetcord2)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(2,:))/coeffCI;%+xJitLoc(targetcord);
+examplexJitLoc(exampletargetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(1,:))/ecccoeffCI;%+xJitLoc(targetcord);
+exampleyJitLoc(exampletargetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(1,:))/ecccoeffCI;%+xJitLoc(targetcord);
+examplexJitLoc2(exampletargetcord2)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(2,:))/ecccoeffCI;%+xJitLoc(targetcord);
+exampleyJitLoc2(exampletargetcord2)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(2,:))/ecccoeffCI;%+xJitLoc(targetcord);
 
 exampletheori=180*rand(1,length(eccentricity_XCI));
-exampletheori2=exampletheori;
+exampletheori2=180*rand(1,length(eccentricity_XCI));
 
 exampletheori(exampletargetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(1,:);
 exampletheori2(exampletargetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(2,:);

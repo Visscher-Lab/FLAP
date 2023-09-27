@@ -1,7 +1,7 @@
 %% FLAP CI practice version 2
 
 Jitpracticearray=[0 0 1 1 2 2 3 3 4 4 5 5]; %  stimulus ori practice
-stimulusdurationpracticearray=[0.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2]; % stimulus duration practice
+stimulusdurationpracticearray=[3.7 0.7 0.6 0.6 0.5 0.5 0.3 0.3 0.2 0.2 0.2 0.2]; % stimulus duration practice
 targethighercontrast=[1 0 1 0 1 0 1 0 1 0 0 0]; % target contrast
 Tscat=0;
 practicetrialnum=length(targethighercontrast); %number of trials fro the practice block

@@ -237,7 +237,7 @@ end
  
  ylim([min(lowt)*.8 max(lowt)*1.6])
 
-      print([name session 'thresh' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
+%       print([name session 'thresh' theadd], '-dpng', '-r300'); %<-Save as PNG with 300 DPI
 
 %Reaction time graph
  figure

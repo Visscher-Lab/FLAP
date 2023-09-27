@@ -1,4 +1,4 @@
-function retinotopy2(subjName)
+function retinotopyUCR(subjName)
 
 %subjName= 'test'
 %   This master function was written by Pinar Demirayak to call retinotopy functions:
