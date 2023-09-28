@@ -1,5 +1,5 @@
 %function [w, wRect]=defineSite(site)
-%Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
 PC=getComputerName();
 AssertOpenGL;
 
@@ -165,6 +165,7 @@ elseif site == 6 % UAB scanner
     PsychImaging('PrepareConfiguration');
     %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output'); %PD will remember to take this out before the actual scan 8/17/23
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    %Screen('Preference','SyncTestSettings',0.003,50,0.1,5);
     % resolution=Screen('Resolution',screenNumber); %PD will test if its ok
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
@@ -178,6 +179,7 @@ elseif site == 7 % scanner task demo
     PsychImaging('PrepareConfiguration');
     %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output'); %PD will remember to take this out before the actual scan 8/17/23
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    %Screen('Preference','SyncTestSettings',0.002,50,0.1,5);
     % resolution=Screen('Resolution',screenNumber); %PD will test if its ok
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
@@ -223,7 +225,7 @@ Screen('TextSize',w, 42);
 %     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
-if site == 6
+if site == 6 || site==7
     InitializePsychSound(1); %'optionally providing
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
 elseif site ~=5
@@ -273,7 +275,7 @@ RespType(5) = KbName('c'); % continue with study
 RespType(6) = KbName('m'); %recalibrate
 escapeKey = KbName('ESCAPE');	% quit key
 
-if site==6
+if site==6 || site==7
     RespType(1) = KbName('r');
     RespType(2) = KbName('y');
 end

@@ -205,7 +205,7 @@ try
     if site==5 %PD added if statement 8/15/23
         TargList=[1 3]; % red=1; green=3.
         TheTrigger = 11;
-    elseif site==6
+    elseif site==6 || site==7
         TheTrigger=false;
     end
     InstructionShapeScanner %PD created instructions page with shapes 8/15/23
@@ -220,7 +220,7 @@ try
         Datapixx('RegWrRd');
         ExpStartTimeD=Datapixx('GetMarker');
         startTime=ExpStartTimeD;
-    elseif site==6
+    elseif site==6 || site==7
         while ~TheTrigger
             %[ keyIsDown, keyTime, keyCode ] = KbCheck;
             [keyIsDown, keyCode] = KbQueueCheck;
@@ -251,6 +251,7 @@ try
     % Demo
     if demo==0 %PD added this part 8/15/23
         mixtr=[1,1,1;1,2,1;1,1,1;1,2,1;1,2,1;1,1,1;2,1,1;2,2,1;2,1,1;2,2,1;2,1,1;2,1,1;9,9,9;2,2,2;2,1,2;2,1,2;2,2,2;2,2,2;2,2,2;1,2,1;1,1,1;1,1,1;1,2,1;1,1,1;1,2,1];
+    TRwait=ones(25,1);
     end
     %% HERE starts trial loop
     Bpress1=0;
@@ -309,6 +310,7 @@ try
                     keypresstime(k,1)=GetSecs;
                     if key==KbName('t');
                         if k==1 && keypresstime(k,1)<startTime+TR
+                        elseif k==1 && keypresstime(k,1)>startTime+TR
                             TTL_time(j)=keypresstime(k,1);
                             k=k+1;
                             j=j+1;
@@ -337,16 +339,55 @@ try
         end
         %% telling participant what type of the block they are going to have
         whichblock=GetSecs;
-        
-        
-          Datapixx('WriteAudioBuffer', eggsound', 0); % loads data into buffer
-                                 Datapixx('RegWrRd'); %
-   Datapixx('SetAudioSchedule',0,Fs,length(eggsound'),1,0,length(eggsound'));
-                   Datapixx('RegWrRd'); %
-                        Datapixx('StartAudioSchedule');
-                Datapixx('RegWrRd'); %
+        if demo==0 %PD added audio information to demo 9/15/23
+        if site ==7
+            if trial==1 ||trial==20
+            PsychPortAudio('FillBuffer',pahandle,gaborsound')
+        elseif trial==7
+            PsychPortAudio('FillBuffer',pahandle,eggsound')
+elseif trial==13
+            PsychPortAudio('FillBuffer',pahandle,restsound')
+        elseif trial==14
+            PsychPortAudio('FillBuffer',pahandle,dsound')
+            end
+             PsychPortAudio('Start',pahandle)
+        end
 
-                        
+        if site ==5
+            if trial==1 ||trial==20
+            Datapixx('WriteAudioBuffer', gaborsound', 0); % loads data into buffer
+            Datapixx('RegWrRd'); %
+            Datapixx('SetAudioSchedule',0,Fs,length(gaborsound'),1,0,length(gaborsound'));
+            Datapixx('RegWrRd'); %
+            Datapixx('StartAudioSchedule');
+            Datapixx('RegWrRd'); %
+        elseif trial==7
+            Datapixx('WriteAudioBuffer', eggsound', 0); % loads data into buffer
+            Datapixx('RegWrRd'); %
+            Datapixx('SetAudioSchedule',0,Fs,length(eggsound'),1,0,length(eggsound'));
+            Datapixx('RegWrRd'); %
+            Datapixx('StartAudioSchedule');
+            Datapixx('RegWrRd'); %
+elseif trial==13
+            Datapixx('WriteAudioBuffer', restsound', 0); % loads data into buffer
+            Datapixx('RegWrRd'); %
+            Datapixx('SetAudioSchedule',0,Fs,length(restsound'),1,0,length(restsound'));
+            Datapixx('RegWrRd'); %
+            Datapixx('StartAudioSchedule');
+            Datapixx('RegWrRd'); %
+        elseif trial==14
+            Datapixx('WriteAudioBuffer', dsound', 0); % loads data into buffer
+            Datapixx('RegWrRd'); %
+            Datapixx('SetAudioSchedule',0,Fs,length(dsound'),1,0,length(dsound'));
+            Datapixx('RegWrRd'); %
+            Datapixx('StartAudioSchedule');
+            Datapixx('RegWrRd'); %  
+            end
+        end
+       
+        while GetSecs < whichblock + TR
+        end
+        else
         if (trial==1 && eggordercol==1) || (trial==17 && eggordercol==2) || (trial==18 && eggordercol==3) || (trial==33 && eggordercol==3) || (trial==34 && eggordercol==4) || (trial==50 && eggordercol==5) || (trial==1 && pdordercol==1) || (trial==17 && pdordercol==2) || (trial==18 && pdordercol==3) || (trial==33 && pdordercol==3) || (trial==34 && pdordercol==4) || (trial==50 && pdordercol==5) || (trial==1 && gaborordercol(1)==1) || (trial==17 && gaborordercol(1)==2) || (trial==17 && gaborordercol(2)==2) || (trial==18 && gaborordercol(1)==3) || (trial==18 && gaborordercol(2)==3) || (trial==33 && gaborordercol(1)==3) || (trial==33 && gaborordercol(2)==3) || (trial==34 && gaborordercol(1)==4) || (trial==34 && gaborordercol(2)==4) || (trial==50 && gaborordercol(2)==5) || (trial==17 && restordercol==2) || (trial==33 && restordercol==3) || (trial==49 && restordercol==4)
             %while GetSecs < whichblock +TR
             if site == 5
@@ -381,7 +422,7 @@ try
                 while GetSecs < whichblock +TR
                 end
             end
-            %end
+            end
         end
         %%
         AssessmentType=mixtr(trial,1);

@@ -10,7 +10,7 @@ elseif jitterCI==0
 end
 
 % here I define the shapes
-if site == 5 || site==6  || site==7 %PD added site 3 and 6 here 8/17/23
+if site == 5 || site==6  || site==7 %PD added site 6 and 7 here 8/17/23
     newTargy=Targy{shapesoftheDay(mixtr(trial,3))}+jitteryci(trial);
     newTargx=Targx{shapesoftheDay(mixtr(trial,3))}+jitterxci(trial);
 else
