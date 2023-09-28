@@ -37,56 +37,64 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    
-    prompt={'Participant Name', 'Session','Training Type? Contrast(1),CI (2), Oculomotor(3), Everything bagel(4)','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
-    
-    %    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
-    
-    name= 'Parameters';
-    numlines=1;
-    defaultanswer={'test','1','1','1','0', '0'};
-    answer=inputdlg(prompt,name,numlines,defaultanswer);
-    if isempty(answer)
-        return;
-    end
-    
-    participantAssignmentTable = 'ParticipantAssignmentsUCR.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    
-    %     participantAssignmentTable=csvread('ParticipantAssignmentsUCR.csv');
-    %         participantAssignmentTable=readtable('ParticipantAssignmentsUCR.csv');
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
     %       columns mean; Third row is a test participant; subsequent rows are
     %       subjects.
-    %       Columns are: participant	TRL  	WhichEye	Afirst	TrainingTask	crowdingCondition	ContourCondition	ContrastCondition	AcuityCondition	ScotomaPresent
-    %       Comments are: %participant name	TRL ("R" or "L", defined prior to first training, starts as NA)	left(1) right(2), for tracking	A first = 1	Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel	Crowding condition (1:4)	contour (1:4)	contrast (1:2)	acuity (1:2)	Is there a scotoma present for this participant (1), or no (0, MD participant)
+    %       Columns are: participant    TRL     WhichEye    Afirst      TrainingTask    Acuitycondition     ContrastCondition   crowdingCondition   ContourCondition    ScotomaPresent
+    %       Comments are: %(participant name),	[TRL ("R" or "L", defined prior to first training, starts as NA) left(1) right(2) for tracking],  [A first = 1 (Assessment A will be run first)],
+    %                        [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
     
     % output from the gui is 'SUBJECT' < a string with the participant
-    % name in it in the format fr1005, for the first participant.
+    % name in it in the format fr1001, for the first participant.
     % f stands for FLAP, r stands for UCR, 1 stands for first cycle of
-    % participants, 005 stands for the fifth participant run at UCR.
-    % this filename must match a participant number in the table
+    % participants, 001 stands for the first participant run at UCR.
+    % SUBJECT must match a participant number in the table
     % ParticipantAssignmentsUCR.csv, which lives in the current directory.
+    
+    prompt={'Participant Name', 'Session','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
+    name= 'Parameters';
+    numlines=1;
+    defaultanswer={'test','1','1','0', '0'};
+    answer=inputdlg(prompt,name,numlines,defaultanswer);
+    if isempty(answer)
+        return;
+    end
     temp= readtable(participantAssignmentTable);
-    %t = temp(find(contains(temp.participant, SUBJECT)),:); % just this subject
     SUBJECT = answer{1,:}; %Gets Subject Name
-    %TRLlocation=t.TRL{1};%1=left, 2=right
-    TRLlocation=str2num(answer{4,:});%1=left, 2=right
-    trainingType= str2num(answer{3,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
-    
-    %trainingType= t.TrainingTask; % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+    t = temp(find(contains(temp.x___participant,SUBJECT)),:);
+    TRLlocation=str2num(answer{3,:});%1=left, 2=right
+    trainingType= str2num(t.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
-    expDay=str2num(answer{2,:}); % training session
+    expDay=str2num(answer{2,:}); % training session 
+    whicheye=str2num(t.WhichEye{1,1}); % are we tracking left (1) or right (2) eye? Only for Vpixx 
+    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    ScotomaPresent = str2num(t.ScotomaPresent{1,1});
+    EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
     
-    %whicheye=t.WhichEye{1}; % are we tracking left (1) or right (2) eye? Only for Vpixx
-    whicheye=2; % are we tracking left (1) or right (2) eye? Only for Vpixx
-    
-    calibration=str2num(answer{5,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = 1; % 0 = no scotoma, 1 = scotoma
-    EyeTracker = str2num(answer{6,:}); %0=mouse, 1=eyetracker
-    
-    
+    % If not using CSV table, uncomment following
+    % --------------------------------------------------------------------------------------------------------------------------------
+%     prompt={'Participant Name', 'Session','Training Type? Contrast(1),CI (2), Oculomotor(3), Everything bagel(4)','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
+%     name= 'Parameters';
+%     numlines=1;
+%     defaultanswer={'test','1','1','1','0', '0'};
+%     answer=inputdlg(prompt,name,numlines,defaultanswer);
+%     if isempty(answer)
+%         return;
+%     end
+%     SUBJECT = answer{1,:}; %Gets Subject Name
+%     TRLlocation=str2num(answer{4,:});%1=left, 2=right
+%     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
+%     expDay=str2num(answer{2,:}); % training session 
+%     calibration=str2num(answer{5,:}); % do we want to calibrate or do we skip it? only for Vpixx
+%     EyeTracker = str2num(answer{6,:}); %0=mouse, 1=eyetracker
+    %     trainingType= str2num(answer{3,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+%     whicheye=2; % are we tracking left (1) or right (2) eye? Only for Vpixx
+% ScotomaPresent = 1; %0 = no scotoma, 1 = scotoma
+% ------------------------------------------------------------------------------------------------------------------------------------
     site = 3; % training site (UAB vs UCR vs Vpixx)
     %  demo=str2num(answer{4,:}); % are we testing in debug mode?
     demo=2;
@@ -162,7 +170,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase
         else
-            trials=500; %500;  %total number of trials per staircase
+            trials=500;  %total number of trials per staircase
         end
     elseif trainingType==2
         conditionOne=shapes; % shapes (training type 2)
@@ -170,7 +178,7 @@ try
         if demo==1
             trials=5; %total number of trials per staircase (per shape)
         else
-            trials= 1;%166;  %total number of trials per staircase (per shape, we have 3 per day)
+            trials= 166;  %total number of trials per staircase (per shape, we have 3 per day)
         end
     elseif trainingType==3
         conditionOne=1; %only landolt C
@@ -178,7 +186,7 @@ try
         if demo==1
             trials=5;
         else
-            trials=10; %62 %total number of trials per stimulus (250 trials
+            trials= 62 %total number of trials per stimulus (250 trials
             %per cue condition divided by 4 because of the 'hold trial
             %location' later)
         end
@@ -220,12 +228,16 @@ try
         % type of stimulus, shapes, type of cue
         mixcond=fullfact([shapes conditionTwo 1]);
         mixcond=[mixcond(:,1:2) mixcond(:,3)+1 ];
+        mixcond = sortrows(mixcond,1);
         mixcond2=fullfact([1 conditionTwo 1]);
         mixtr=[];
         % divide the number of trials by 4 because we have the 'hold
         % location' later that will increase the number of trials
         mixtr_gabor=[repmat(mixcond2,round(trialsContrast/4),1) ];
         mixtr_shapes=[repmat(mixcond,round(trialsShape/4),1) ];
+        mixtr_shapes = sortrows(mixtr_shapes,1);
+        [B,~,gi] = unique(mixtr_shapes(:,1),'rows','stable');
+        B(:,3) = accumarray(gi(:), mixtr_shapes(:,3)); %, [], @max);
         block_n=length(mixtr_shapes)/3;
         %         block_n=length(mixtr_gabor)/3;
         if demo==1
@@ -427,20 +439,19 @@ try
             end
         end
         % practice
-%         if trainingType==2 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)  
-%             practicePassed=0;
-%             %         practicePassed=1;
+        if trainingType==2 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)  
+            practicePassed=0;
+            %         practicePassed=1;
+        end
+        
+%         if test==2
+%             practicePassed=1;
 %         end
-%         
-% %         if test==2
-% %             practicePassed=1;
-% %         end
-%         if trainingType == 2
-%             while practicePassed==0
-%                 %      FLAPpractice
-%                 FLAP_Training2_Practice 
-%             end
-%         end
+        if trainingType == 2
+            while practicePassed==0
+                FLAP_Training2_Practice 
+            end
+        end
 %         if practicePassed==2
 %             closescript=1;
 %             break

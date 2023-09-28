@@ -2,7 +2,7 @@
 
 %if counterflicker>=FlickerTime/ifi
 
-if trainingType<3 || trainingType>2 && (counterannulus>=AnnulusTime/ifi) && annulusOrPRL==1 || annulusOrPRL==2
+if (counterannulus>=AnnulusTime/ifi) && annulusOrPRL==1 || annulusOrPRL==2
     %    for iu=1:length(PRLx)
     
     %                                                         if trainingType==2 || (trainingType==4 && mixtr(trial,1)==2)
@@ -16,5 +16,5 @@ if trainingType<3 || trainingType>2 && (counterannulus>=AnnulusTime/ifi) && annu
     Screen('FrameOval', w,scotoma_color, imageRect_offscuePRL, oval_thick, oval_thick);
     %     end
     %   end
-    
+
 end

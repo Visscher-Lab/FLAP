@@ -29,7 +29,8 @@ preCueISI=0.75; % time between beginning of trial and first event in the trial (
 ExoEndoCueDuration= [0.133 0.05]; % duration of exo/endo cue before target appearance for training type 3 and 4
 postCueISI=0.1; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2)
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
-AnnulusTime = 0.65; %how long do they need to keep fixation near the pre-target element
+postfixationblank = 0.2;
+AnnulusTime = 0.5; %how long do they need to keep fixation near the pre-target element
 if exist('test', 'var')
     if test==1
         stimulusduration=2.133; % stimulus duration during debugging

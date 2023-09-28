@@ -13,6 +13,7 @@ feedbackduration=1;
 for practicetrial=1:practicetrialnum
     presentfeedback=0;
     af = 0;
+    currentExoEndoCueDuration=ExoEndoCueDuration(1);
     %         respTimeprac=10^6;
     LocX = [-7.5, 7.5];
     theanspractice(practicetrial)=randi(2);
@@ -21,7 +22,11 @@ for practicetrial=1:practicetrialnum
     %CIstimuliModPracticeAssessment % add the offset/polarity repulsion
     CIstimuliModIIIPractice
     theeccentricity_Y=0;
-    theeccentricity_X=LocX(mixtr(trial,3))*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
+    if TRLlocation == 1
+        theeccentricity_X=LocX(1)*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
+    else
+        theeccentricity_X=LocX(2)*pix_deg;
+    end
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
     if practicetrial==1
@@ -78,7 +83,7 @@ for practicetrial=1:practicetrialnum
         fixationscriptW % visual aids on screen
         
         %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
-        if (eyetime2-pretrial_time)>=preCueISI   && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
+        if (eyetime2-pretrial_time)>=preCueISI   && fixating<AnnulusTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
             if exist('startrial') == 0
                 startrial=1;
                 trialstart(practicetrial)=GetSecs;
@@ -94,7 +99,7 @@ for practicetrial=1:practicetrialnum
             end
             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
             Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
-        elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000  && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ==0 && counterflicker<FlickerTime/ifi
+        elseif (eyetime2-pretrial_time)>preCueISI && fixating>=AnnulusTime/ifi && stopchecking>1 && fixating<1000  && (eyetime2-pretrial_time)<=trialTimeout %&& keyCode(escapeKey) ==0 && counterflicker<FlickerTime/ifi
             % here I need to reset the trial time in order to preserve
             % timing for the next events (first fixed fixation event)
             % HERE interval between cue disappearance and beginning of
