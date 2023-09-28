@@ -1,5 +1,5 @@
 %function [w, wRect]=defineSite(site)
-Screen('Preference', 'SkipSyncTests', 1);
+%Screen('Preference', 'SkipSyncTests', 1);
 PC=getComputerName();
 AssertOpenGL;
 
