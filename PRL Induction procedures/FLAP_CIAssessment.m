@@ -17,28 +17,38 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+
+    prompt={'Participant Name', 'day', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3' , '2', '0', '1', '1', '1'};
+    defaultanswer={'test','1' , '0', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
+    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
+    t = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
     expDay=str2num(answer{2,:}); % training day (if >1
-    site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
-    whicheye=str2num(answer{4,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
-    calibration=str2num(answer{5,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(answer{6,:}); % 0 = no scotoma, 1 = scotoma
-    EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
-    responsebox=str2num(answer{8,:});
+    site = 3; % training site (UAB vs UCR vs Vpixx)
+    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+        whicheye = 2;
+    else
+        whicheye = 1;
+    end
+    calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    ScotomaPresent = str2num(t.ScotomaPresent{1,1});
+    EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
+    responsebox=str2num(answer{5,:});
     TRLlocation = 2;
     datapixxtime = 1;
     scotomavpixx= 0;
     whichTask = 1;
+    randpick = str2num(t.ContourCondition{1,1});
     %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -196,7 +206,6 @@ try
     
     
     %% HERE starts trial loop
-    randpick = 1;
     mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
     trialcounter = 0;

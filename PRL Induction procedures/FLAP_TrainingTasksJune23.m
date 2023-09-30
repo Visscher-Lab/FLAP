@@ -55,10 +55,10 @@ try
     % SUBJECT must match a participant number in the table
     % ParticipantAssignmentsUCR.csv, which lives in the current directory.
     
-    prompt={'Participant Name', 'Session','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
+    prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1','1','0', '0'};
+    defaultanswer={'test','1','0', '0'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -66,14 +66,22 @@ try
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     t = temp(find(contains(temp.x___participant,SUBJECT)),:);
-    TRLlocation=str2num(answer{3,:});%1=left, 2=right
+    if strcmp(t.TRL{1,1},'R') == 1
+        TRLlocation = 2;
+    else
+        TRLlocation = 1;
+    end
     trainingType= str2num(t.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training session 
-    whicheye=str2num(t.WhichEye{1,1}); % are we tracking left (1) or right (2) eye? Only for Vpixx 
-    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx 
+        whicheye = 2;
+    else 
+        whicheye = 1;
+    end
+    calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(t.ScotomaPresent{1,1});
-    EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
+    EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
     
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------

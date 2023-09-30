@@ -34,7 +34,7 @@ try
         whicheye = 1;
     end
     calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    whichTask=str2num(answer{5,:}); % acuity (1), crowding (2), exo attention (3), contrast (4)
+    whichTask=str2num(answer{5,:}); % acuity (1), crowding (2), exo attention (3),
     EyeTracker = str2num(answer{6,:}); %0=mouse, 1=eyetracker
     fixationpresent=str2num(answer{7,:});
     responsebox=str2num(answer{8,:});
