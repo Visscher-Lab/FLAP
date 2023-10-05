@@ -257,7 +257,7 @@ try
         end
         
         
-        
+        respgiven = 0;
         while number_of_events<=length(array_of_events) && checkout<1
             if datapixxtime==1
                 eyetime2=Datapixx('GetTime');
@@ -446,7 +446,7 @@ try
                     elseif responsebox==1
                         Datapixx('RegWrRd');
                         buttonLogStatus = Datapixx('GetDinStatus');
-                        if (buttonLogStatus.newLogFrames > 0) && responsegiven==0
+                        if (buttonLogStatus.newLogFrames > 0) && respgiven == 0 %responsegiven==0
                             [thekeys secs] = Datapixx('ReadDinLog');
                             
                             respcounter=respcounter+1;
@@ -473,48 +473,48 @@ try
                             end
                             respgiven=1;
                         end
-                         if respgiven==1
-      if  eyetime2-respTime(end)>0.45 % to avoid long presses counting as multiple button presses
-         % WaitSecs(0.5); 
-        Bpress=0;
-        timestamp=-1;
-        TheButtons=-1;
-        inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
-        % saying that inter_buttonpress was not assigned.
-        % 26 June 2018
-        RespTime=[];
-        PTBRespTime=[];
-        binaryvals=[];
-        bin_buttonpress{1}=[]; % Jerry:use array instead of cell
-        inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
-        
-        if site==3 %PD: originally site~=5, changed to site==3. 8/15/23
-            % Configure digital input system for monitoring button box
-            Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
-            Datapixx('EnableDinDebounce');                          % Debounce button presses
-            Datapixx('SetDinLog');                                  % Log button presses to default address
-            Datapixx('StartDinLog');                                % Turn on logging
-            Datapixx('RegWrRd');
-            % Wait until all buttons are up
-            while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
-                Datapixx('RegWrRd');
-            end
-            % Flush any past button presses
-            Datapixx('SetDinLog');
-            Datapixx('RegWrRd');
-        elseif site ==5
-            Datapixx('EnableDinDebounce');                          % Debounce button presses
-            Datapixx('SetDinLog');                                  % Log button presses to default address
-            Datapixx('StartDinLog');                                % Turn on logging
-            Datapixx('RegWrRd');
-            % Flush any past button presses
-            Datapixx('SetDinLog');
-            Datapixx('RegWrRd');
-        end
-        respgiven=0;
-    end
-                         end
-                    end                
+                        if respgiven==1
+                            if  eyetime2-respTime(end)>0.45 % to avoid long presses counting as multiple button presses
+                                % WaitSecs(0.5);
+                                Bpress=0;
+                                timestamp=-1;
+                                TheButtons=-1;
+                                inter_buttonpress{1}=[]; % added by Jason because matlab was throwing and error
+                                % saying that inter_buttonpress was not assigned.
+                                % 26 June 2018
+                                RespTime=[];
+                                PTBRespTime=[];
+                                binaryvals=[];
+                                bin_buttonpress{1}=[]; % Jerry:use array instead of cell
+                                inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
+                                
+                                if site==3 %PD: originally site~=5, changed to site==3. 8/15/23
+                                    % Configure digital input system for monitoring button box
+                                    Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
+                                    Datapixx('EnableDinDebounce');                          % Debounce button presses
+                                    Datapixx('SetDinLog');                                  % Log button presses to default address
+                                    Datapixx('StartDinLog');                                % Turn on logging
+                                    Datapixx('RegWrRd');
+                                    % Wait until all buttons are up
+                                    while (bitand(Datapixx('GetDinValues'), hex2dec('FFFF')) ~= hex2dec('FFFF'))
+                                        Datapixx('RegWrRd');
+                                    end
+                                    % Flush any past button presses
+                                    Datapixx('SetDinLog');
+                                    Datapixx('RegWrRd');
+                                elseif site ==5
+                                    Datapixx('EnableDinDebounce');                          % Debounce button presses
+                                    Datapixx('SetDinLog');                                  % Log button presses to default address
+                                    Datapixx('StartDinLog');                                % Turn on logging
+                                    Datapixx('RegWrRd');
+                                    % Flush any past button presses
+                                    Datapixx('SetDinLog');
+                                    Datapixx('RegWrRd');
+                                end
+                                respgiven=0;
+                            end
+                        end
+                    end
                 end
                 if EyetrackerType ==2
                     %set a marker to get the exact time the screen flips
