@@ -158,6 +158,8 @@ try
                 mixtr=[ones(tr_per_condition,1)*2; ones(tr_per_condition,1)];
             end
             mixtr=[mixtr ones(length(mixtr),1)];
+            preresp=[ones(tr_per_condition/4,1) ; ones(tr_per_condition/4,1)*2; ones(tr_per_condition/4,1)*3; ones(tr_per_condition/4,1)*4];
+            predefinedResp=[preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:)];
         end
         
         if whichTask==2
@@ -167,9 +169,9 @@ try
             %right - radial and tangential dx
             mixtr2=[ones(tr_per_condition*2,1)*2 [ones(tr_per_condition,1); ones(tr_per_condition,1)*2]];
             % left - tangential and radial
-            mixtr3 = [ones(tr_per_condition*2,1) [ones(tr_per_condition,1)*2; ones(tr_per_condition)]];
+            mixtr3 = [ones(tr_per_condition*2,1) [ones(tr_per_condition,1)*2; ones(tr_per_condition,1)]];
             % right - tangential and radial
-            mixtr4 = [ones(tr_per_condition*2),1 [ones(tr_per_condition)*2; ones(tr_per_condition)]];
+            mixtr4 = [ones(tr_per_condition*2,1) [ones(tr_per_condition,1)*2; ones(tr_per_condition,1)]];
 
             if coin==1
                 % LR -- LT -- RT -- RR
@@ -183,14 +185,23 @@ try
             else
                 % RT -- RR -- LR -- LR
                 mixtr = [mixtr4; mixtr1];
-            end
-            
+            end           
+               preresp=[ones(tr_per_condition/4,1) ; ones(tr_per_condition/4,1)*2; ones(tr_per_condition/4,1)*3; ones(tr_per_condition/4,1)*4];
+            predefinedResp=[preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:)];
+   
         end
         
         if whichTask==3
             %attention
             mixtrtemp=repmat(fullfact([2 2]),tr_per_condition,1);
-            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
+            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);           
+                        respmixtrtemp=repmat(fullfact([2 2 4]),tr_per_condition/4,1);
+            respmixtr=respmixtrtemp(randperm(length(respmixtrtemp)),:);
+            mixtr=respmixtr(:,1:2);
+predefinedResp=respmixtr(:,3);
+                       % mixtrtemp=repmat(fullfact([2 2]),tr_per_condition/4,1);
+
+            
         end
     elseif PRLlocations==3
         mixtrtemp=repmat(fullfact([3 3]),tr_per_condition,1);
@@ -358,7 +369,8 @@ try
         
         % compute response for trial
         theoris =[-180 0 -90 90];
-        theans(trial)=randi(4);
+       % theans(trial)=randi(4);
+       theans(trial)=predefinedResp(trial);
         ori=theoris(theans(trial));
         
         if EyetrackerType ==2
