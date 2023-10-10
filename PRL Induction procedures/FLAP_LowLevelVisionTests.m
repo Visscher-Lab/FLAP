@@ -10,13 +10,13 @@ commandwindow
 addpath([cd '/utilities']);
 try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-%     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
-
+    %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    
     prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'fixation present? yes(1), no(0)', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '1', '1', '1', '1'}; 
+    defaultanswer={'test','1', '1', '2', '1', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -26,11 +26,11 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
     t = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
-    ScotomaPresent= str2num(t.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma    
-    IsPractice=str2num(answer{3,:}); % full session or demo/practice 
-    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx 
+    ScotomaPresent= str2num(t.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
+    IsPractice=str2num(answer{3,:}); % full session or demo/practice
+    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
-    else 
+    else
         whicheye = 1;
     end
     calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
@@ -70,7 +70,7 @@ try
     end
     folder=cd;
     folder=fullfile(folder, '..\..\datafolder\');
-
+    
     if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -148,7 +148,7 @@ try
         elseif whichTask == 4
             coin = str2num(t.ContrastCondition{1,1});
         end
-
+        
         if whichTask==1 || whichTask==4
             if coin==1
                 % acuity sx first
@@ -172,7 +172,7 @@ try
             mixtr3 = [ones(tr_per_condition*2,1) [ones(tr_per_condition,1)*2; ones(tr_per_condition,1)]];
             % right - tangential and radial
             mixtr4 = [ones(tr_per_condition*2,1) [ones(tr_per_condition,1)*2; ones(tr_per_condition,1)]];
-
+            
             if coin==1
                 % LR -- LT -- RT -- RR
                 mixtr=[mixtr1;mixtr4];
@@ -185,22 +185,22 @@ try
             else
                 % RT -- RR -- LR -- LR
                 mixtr = [mixtr4; mixtr1];
-            end           
-               preresp=[ones(tr_per_condition/4,1) ; ones(tr_per_condition/4,1)*2; ones(tr_per_condition/4,1)*3; ones(tr_per_condition/4,1)*4];
+            end
+            preresp=[ones(tr_per_condition/4,1) ; ones(tr_per_condition/4,1)*2; ones(tr_per_condition/4,1)*3; ones(tr_per_condition/4,1)*4];
             predefinedResp=[preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:)];
-   
+            
         end
         
         if whichTask==3
             %attention
             mixtrtemp=repmat(fullfact([2 2]),tr_per_condition,1);
-            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);           
-                        respmixtrtemp=repmat(fullfact([2 2 4]),tr_per_condition/4,1);
+            mixtr=mixtrtemp(randperm(length(mixtrtemp)),:);
+            respmixtrtemp=repmat(fullfact([2 2 4]),tr_per_condition/4,1);
             respmixtr=respmixtrtemp(randperm(length(respmixtrtemp)),:);
             mixtr=respmixtr(:,1:2);
-predefinedResp=respmixtr(:,3);
-                       % mixtrtemp=repmat(fullfact([2 2]),tr_per_condition/4,1);
-
+            predefinedResp=respmixtr(:,3);
+            % mixtrtemp=repmat(fullfact([2 2]),tr_per_condition/4,1);
+            
             
         end
     elseif PRLlocations==3
@@ -270,8 +270,8 @@ predefinedResp=respmixtr(:,3);
         end
         
         if mod(trial,tr_per_condition/2+1)==0 && trial~= length(mixtr)
-           save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-           interblock_instruction
+            save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+            interblock_instruction
         end
         
         % if  trial== 5
@@ -370,8 +370,8 @@ predefinedResp=respmixtr(:,3);
         
         % compute response for trial
         theoris =[-180 0 -90 90];
-       % theans(trial)=randi(4);
-       theans(trial)=predefinedResp(trial);
+        % theans(trial)=randi(4);
+        theans(trial)=predefinedResp(trial);
         ori=theoris(theans(trial));
         
         if EyetrackerType ==2
@@ -427,8 +427,8 @@ predefinedResp=respmixtr(:,3);
             Datapixx('SetDinLog');
             Datapixx('RegWrRd');
         end
-                FLAPVariablesReset
-
+        FLAPVariablesReset
+        
         while eyechecked<1
             if datapixxtime==1
                 Datapixx('RegWrRd');
@@ -454,7 +454,7 @@ predefinedResp=respmixtr(:,3);
                     
                     if datapixxtime==1
                         startfix(trial)=Datapixx('GetTime');
-                       startfix2(trial)= eyetime2;
+                        startfix2(trial)= eyetime2;
                     else
                         startfix(trial)=eyetime2;
                     end
@@ -477,9 +477,9 @@ predefinedResp=respmixtr(:,3);
             elseif (eyetime2-pretrial_time)>ITI && fixating>=fixationduration/ifi && stopchecking>1 && fixating<1000 && (eyetime2-pretrial_time)<=trialTimeout
                 % forced fixation time satisfied
                 if datapixxtime==1
-                                    Datapixx('RegWrRd');
+                    Datapixx('RegWrRd');
                     trial_time = Datapixx('GetTime');
-                                        trial_time2 = eyetime2;
+                    trial_time2 = eyetime2;
                 else
                     trial_time = eyetime2;
                 end
@@ -523,8 +523,12 @@ predefinedResp=respmixtr(:,3);
                 % show target
                 if exist('imageRect_offs')==0
                     if whichTask~=3
-                        imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        % below to allow for gaze contingency of target
+                        % presentation
+                        %imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                        %        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y]
+                        imageRect_offs =[imageRect(1)+(wRect(3)/2)+theeccentricity_X, imageRect(2)+(wRect(4)/2)+theeccentricity_Y,...
+                            imageRect(3)+(wRect(3)/2)+theeccentricity_X, imageRect(4)+(wRect(4)/2)+theeccentricity_Y];
                         imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
                     elseif whichTask==3
                         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -568,11 +572,17 @@ predefinedResp=respmixtr(:,3);
                 
                 if whichTask == 2 % show flankers for crowding
                     if exist('imageRect_offs_flank1')==0
+                        % below to allow for gaze contingency of target
+                        % presentation
+                        %                         imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y1,...
+                        %                             imageRect_offsFlankOne(3)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y1];
+                        %                         imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
+                        %                             imageRect_offsFlankOne(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
                         
-                        imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y1,...
-                            imageRect_offsFlankOne(3)+(newsamplex-wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y1];
-                        imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
-                            imageRect_offsFlankOne(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
+                        imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+(wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(2)+(wRect(4)/2)+eccentricity_Y1,...
+                            imageRect_offsFlankOne(3)+(wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(wRect(4)/2)+eccentricity_Y1];
+                        imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(wRect(3)/2), imageRect_offsFlankOne(2)+(wRect(4)/2)+eccentricity_Y2,...
+                            imageRect_offsFlankOne(3)-eccentricity_X2+(wRect(3)/2), imageRect_offsFlankOne(4)+(wRect(4)/2)+eccentricity_Y2];
                         imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.1*pix_deg) imageRect_offs_flank1(2)-(0.1*pix_deg) imageRect_offs_flank1(3)+(0.1*pix_deg) imageRect_offs_flank1(4)+(0.1*pix_deg) ];
                         imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.1*pix_deg) imageRect_offs_flank2(2)-(0.1*pix_deg) imageRect_offs_flank2(3)+(0.1*pix_deg) imageRect_offs_flank2(4)+(0.1*pix_deg) ];
                         
@@ -617,7 +627,7 @@ predefinedResp=respmixtr(:,3);
                             thekeys=thekeys(1);
                         end
                         thetimes=keyCode(thekeys);
-                                               if datapixxtime==0
+                        if datapixxtime==0
                             [secs  indfirst]=min(thetimes);
                             respTime(trial)=secs;
                         else
@@ -654,8 +664,8 @@ predefinedResp=respmixtr(:,3);
             if fixationpresent==1
                 colorfixation=0;
                 % a fixation cross and no scotoma
-                    Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
-                     Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
+                Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
+                Screen('DrawLine', w, colorfixation, wRect(3)/2-fixationlength, wRect(4)/2, wRect(3)/2+fixationlength, wRect(4)/2, 4);
                 Screen('FillOval', w, colorfixation, imageRectDot);
                 
             end
@@ -688,15 +698,15 @@ predefinedResp=respmixtr(:,3);
             if EyeTracker==1
                 GetEyeTrackerDataNew
                 GetFixationDecision
-              if EyeData(end,1)<8000 && stopchecking<0
-                  if datapixxtime==1
-                      Datapixx('RegWrRd');
-                      trial_time = Datapixx('GetTime');
-                  else
-                      trial_time = GetSecs; %start timer if we have eye info
-                  end
-                  stopchecking=10;
-              end
+                if EyeData(end,1)<8000 && stopchecking<0
+                    if datapixxtime==1
+                        Datapixx('RegWrRd');
+                        trial_time = Datapixx('GetTime');
+                    else
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
+                    stopchecking=10;
+                end
                 
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
                     trialTimeout=100000;
@@ -1063,12 +1073,12 @@ predefinedResp=respmixtr(:,3);
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
             end
             
-%             if (mod(trial,50))==1
-%                 if trial==1
-%                 else
-%                     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-%                 end
-%             end
+            %             if (mod(trial,50))==1
+            %                 if trial==1
+            %                 else
+            %                     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+            %                 end
+            %             end
             
             if closescript==1
                 break;

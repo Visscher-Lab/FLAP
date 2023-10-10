@@ -254,6 +254,7 @@ try
             % Flush any past button presses
             Datapixx('SetDinLog');
             Datapixx('RegWrRd');
+                    respgiven=0;
         end
         
         
