@@ -270,7 +270,8 @@ predefinedResp=respmixtr(:,3);
         end
         
         if mod(trial,tr_per_condition/2+1)==0 && trial~= length(mixtr)
-            interblock_instruction
+           save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+           interblock_instruction
         end
         
         % if  trial== 5
@@ -1062,12 +1063,12 @@ predefinedResp=respmixtr(:,3);
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
             end
             
-            if (mod(trial,50))==1
-                if trial==1
-                else
-                    save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-                end
-            end
+%             if (mod(trial,50))==1
+%                 if trial==1
+%                 else
+%                     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+%                 end
+%             end
             
             if closescript==1
                 break;

@@ -206,6 +206,8 @@ try
                         %draw circles
                         Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
                         Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+                        Screen('FrameOval',w,CircleColorOut,TheCircMat, 3, 3 ); %draws circles
+
                         for i=1:length(stimx)  %draws text
                             if block<=2
                                 if i<10

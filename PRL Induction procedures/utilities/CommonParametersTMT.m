@@ -36,6 +36,8 @@ rand('twister',sum(randseedvar));
 textsize=20;
 Screen('TextSize',w,textsize );
 Csize=round(.75*ppd) ; %specifies radius of the circles in ppd
+Csize=round(1.25*ppd) ; %specifies radius of the circles in ppd
+
 RespTol=3*ppd; %specifies radius of the circles in ppd
 
 
