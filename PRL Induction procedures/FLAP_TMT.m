@@ -11,7 +11,7 @@ try
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '1','2','0','1','2' };
+    defaultanswer={'test','1', '3', '1','0', '1','2','0','0','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -51,7 +51,7 @@ try
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
-    datapixxtime = 1;
+    datapixxtime = 0;
     responsebox = 0;
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
@@ -143,9 +143,9 @@ try
         Datapixx('RegWrVideoSync');
     end
     if Isdemo==0
-        FLAP_TMT_practice
+       % FLAP_TMT_practice
     else
-        FLAP_TMT_practice
+    %   FLAP_TMT_practice
         for block=1:4
             askcalib=0;
             %figu res out locations
@@ -169,12 +169,14 @@ try
             contcoord=0;
             numrespCorr=0; %mm
             resp=0; %mm
+          %  prefixationsquare=0.1
             while eyechecked<1
+                
+                diffy=eyetime2-trial_time
                 if EyetrackerType ==2
                     Datapixx('RegWrRd');
                 end
                 if (eyetime2-trial_time)>0 && (eyetime2-trial_time)<prefixationsquare+ifi && askcalib==0
-
                     cont=0;
                 elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==0 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
                     numrespCorr=0;%reset number of responses entered

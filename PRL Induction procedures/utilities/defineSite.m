@@ -95,6 +95,9 @@ elseif site==3   %UCR VPixx
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
+    if EyeTracker==0 && datapixxtime==1
+          Datapixx('Open');
+    end
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
 %     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');

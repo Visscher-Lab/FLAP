@@ -18,7 +18,7 @@ MouseCalib=1;
 if sitevpixx==1
     xoff=2560; %ucr uses 2560, uab uses 0
     yoff=150; %ucr uses 150, uab uses 0
-elseif sitepixx==2
+elseif sitevpixx==2
     xoff=0; %ucr uses 2560, uab uses 0
     yoff=0; %ucr uses 150, uab uses 0
 end

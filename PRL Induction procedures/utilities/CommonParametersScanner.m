@@ -25,7 +25,8 @@ FlipInt=Screen('GetFlipInterval',w); %Gets Flip Interval. PD moved it to here fr
 preCueISI=0;% time between beginning of trial and first event in the trial PD:It was 0.2, PD changed it to 0 8/15/23
 postCueISI=0; % time interval between cue disappearance and next event (forced fixation before target appearance for training type 1 and 2) PD changed it to 0 8/15/23
 StimulusDuration= round(0.200/FlipInt) *FlipInt; % stimulus duration, PD has changed it from 0.2 to this equation 8/15/23
-%stimulusduration=StimulusDuration;
+% stimulusduration=StimulusDuration;
+% StimulusDuration = 5;
 
 CueDuration=0.25;
 PostStimulusDuration=2.55;

@@ -25,10 +25,10 @@ try
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    t = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
-    ScotomaPresent= str2num(t.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
     IsPractice=str2num(answer{3,:}); % full session or demo/practice
-    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
     else
         whicheye = 1;
@@ -142,11 +142,11 @@ try
     if PRLlocations==2
         % acuity
         if whichTask == 1
-            coin=str2num(t.AcuityCondition{1,1});
+            coin=str2num(tt.AcuityCondition{1,1});
         elseif whichTask == 2
-            coin = str2num(t.crowdingCondition{1,1});
+            coin = str2num(tt.crowdingCondition{1,1});
         elseif whichTask == 4
-            coin = str2num(t.ContrastCondition{1,1});
+            coin = str2num(tt.ContrastCondition{1,1});
         end
         
         if whichTask==1 || whichTask==4
@@ -527,8 +527,8 @@ try
                         % presentation
                         %imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                         %        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y]
-                        imageRect_offs =[imageRect(1)+(wRect(3)/2)+theeccentricity_X, imageRect(2)+(wRect(4)/2)+theeccentricity_Y,...
-                            imageRect(3)+(wRect(3)/2)+theeccentricity_X, imageRect(4)+(wRect(4)/2)+theeccentricity_Y];
+                        imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
+                            imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
                         imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
                     elseif whichTask==3
                         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
@@ -579,10 +579,10 @@ try
                         %                         imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(2)+(newsampley-wRect(4)/2)+eccentricity_Y2,...
                         %                             imageRect_offsFlankOne(3)-eccentricity_X2+(newsamplex-wRect(3)/2), imageRect_offsFlankOne(4)+(newsampley-wRect(4)/2)+eccentricity_Y2];
                         
-                        imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+(wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(2)+(wRect(4)/2)+eccentricity_Y1,...
-                            imageRect_offsFlankOne(3)+(wRect(3)/2)+eccentricity_X1, imageRect_offsFlankOne(4)+(wRect(4)/2)+eccentricity_Y1];
-                        imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2+(wRect(3)/2), imageRect_offsFlankOne(2)+(wRect(4)/2)+eccentricity_Y2,...
-                            imageRect_offsFlankOne(3)-eccentricity_X2+(wRect(3)/2), imageRect_offsFlankOne(4)+(wRect(4)/2)+eccentricity_Y2];
+                        imageRect_offs_flank1 =[imageRect_offsFlankOne(1)+eccentricity_X1, imageRect_offsFlankOne(2)+eccentricity_Y1,...
+                            imageRect_offsFlankOne(3)+eccentricity_X1, imageRect_offsFlankOne(4)+eccentricity_Y1];
+                        imageRect_offs_flank2 =[imageRect_offsFlankOne(1)-eccentricity_X2, imageRect_offsFlankOne(2)+eccentricity_Y2,...
+                            imageRect_offsFlankOne(3)-eccentricity_X2, imageRect_offsFlankOne(4)+eccentricity_Y2];
                         imageRect_offscircle1=[imageRect_offs_flank1(1)-(0.1*pix_deg) imageRect_offs_flank1(2)-(0.1*pix_deg) imageRect_offs_flank1(3)+(0.1*pix_deg) imageRect_offs_flank1(4)+(0.1*pix_deg) ];
                         imageRect_offscircle2=[imageRect_offs_flank2(1)-(0.1*pix_deg) imageRect_offs_flank2(2)-(0.1*pix_deg) imageRect_offs_flank2(3)+(0.1*pix_deg) imageRect_offs_flank2(4)+(0.1*pix_deg) ];
                         
