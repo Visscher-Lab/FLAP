@@ -56,7 +56,9 @@
                 end
                 %draw circles
                 Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
-                Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+         %       Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+                                        Screen('FrameOval',w,CircleColorOut,TheCircMat, 5, 5 ); %draws circles
+
                 for i=1:length(stimx)  %draws text
                     if practiceblock==1
                         Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
@@ -69,7 +71,7 @@
                     end
                 end
                 
-                if  sum(buttons)~=0 && resp(numresp+1)==0;
+                if  sum(buttons)~=0 && resp(numresp+1)==0
                     contcoord=contcoord+1;
                     zxx(contcoord)=x;
                     zyy(contcoord)=y;
@@ -176,7 +178,6 @@
     Screen('Flip',w);
     WaitSecs(0.5)
     
-    save(baseName)
     time_stim(kk) = stim_stop - stim_start;
     total_trials(kk)=practiceblock;
     %Since it has only ones, I dont think we need this:
@@ -220,6 +221,8 @@
         clear ErrorInfo
     end
     kk=kk+1;
+        save(baseName)
+
     clear PKnew2
 %     if closescript==1
 %         break
