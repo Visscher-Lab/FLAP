@@ -696,10 +696,10 @@ elseif trial==13
                     Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
                     fixationscriptW %PD added this on the mask 8/17/23
                     %here I draw the other contour
-                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI3' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori2,[], Dcontr );
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI3' + [xJitLocothershape+xModLoc; yJitLocothershape+yModLoc; xJitLocothershape+xModLoc; yJitLocothershape+yModLoc], theori2,[], Dcontr );
                     imageRect_offsCI4(setdiff(1:length(imageRect_offsCI3),targetcord2),:)=0;
                     if demo==0
-                        Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI4' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori2,[], 0.7 );
+                        Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI4' + [xJitLocothershape+xModLoc; yJitLocothershape+yModLoc; xJitLocothershape+xModLoc; yJitLocothershape+yModLoc], theori2,[], 0.7 );
                     end
                     % here I draw the circle within which I show the contour target
                     Screen('FrameOval', w,[gray], imageRect_offsCImask2, maskthickness/2, maskthickness/2);
