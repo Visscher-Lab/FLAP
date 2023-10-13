@@ -95,9 +95,12 @@ elseif site==3   %UCR VPixx
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
+    if EyeTracker==0 && datapixxtime==1
+          Datapixx('Open');
+    end
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-%     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+    PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
 
     %debug window
@@ -157,7 +160,7 @@ elseif site==5  %UCR scanner
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
 elseif site == 6 % UAB scanner
-    screencm=[70.8, 39.8];;%[40.6 30];%[70.8, 39.8];
+    screencm=[70.8, 39.8];%[40.6 30];%[70.8, 39.8];
     v_d=123;%35;%123;
     datapixxtime=0;
     % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);

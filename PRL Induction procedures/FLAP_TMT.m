@@ -7,11 +7,11 @@ commandwindow
 addpath([cd '/utilities']);
 addpath([cd '/trailtask']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?','Site with Vpixx? UCR(1), UAB(2)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','Scotoma? yes (1), no(0)', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?','Site with Vpixx? UCR(1), UAB(2)'};
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '1','2','0','1','2' };
+    defaultanswer={'test','1', '3', '1','1','2','0','0','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -20,14 +20,13 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    sitevpixx = str2num(answer{10,:}); %1=UCR, 2=UAB PD: I added this to take care of screen differences between the sites 7/26/23
-
+    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma    
+    Isdemo=str2num(answer{5,:}); % full session or demo/practice
+    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    EyeTracker = str2num(answer{8,:}); %0=mouse, 1=eyetracker
+    sitevpixx = str2num(answer{9,:}); %1=UCR, 2=UAB PD: I added this to take care of screen differences between the sites 7/26/23
+scotomavpixx=0;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -44,14 +43,17 @@ try
 
     if site==1
         baseName=[folder SUBJECT filename '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+                baseName=[folder SUBJECT filename '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) 'practice']; %makes unique filename
     elseif site==2
         baseName=[folder SUBJECT filename '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+                baseName=[folder SUBJECT filename '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) 'practice.mat'];
     elseif site==3
         baseName=[folder SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+                baseName=[folder SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) 'practice.mat'];
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
-    datapixxtime = 1;
+    datapixxtime = 0;
     responsebox = 0;
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
@@ -143,9 +145,9 @@ try
         Datapixx('RegWrVideoSync');
     end
     if Isdemo==0
-        FLAP_TMT_practice
+       FLAP_TMT_practice
     else
-        FLAP_TMT_practice
+      FLAP_TMT_practice
         for block=1:4
             askcalib=0;
             %figu res out locations
@@ -170,11 +172,11 @@ try
             numrespCorr=0; %mm
             resp=0; %mm
             while eyechecked<1
+                
                 if EyetrackerType ==2
                     Datapixx('RegWrRd');
                 end
                 if (eyetime2-trial_time)>0 && (eyetime2-trial_time)<prefixationsquare+ifi && askcalib==0
-
                     cont=0;
                 elseif (eyetime2-trial_time)>=prefixationsquare+ifi*3 && askcalib==0 %&& keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)== 0 %present stimulus
                     numrespCorr=0;%reset number of responses entered
@@ -205,7 +207,9 @@ try
                         end
                         %draw circles
                         Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
-                        Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+                    %    Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+                        Screen('FrameOval',w,CircleColorOut,TheCircMat, 5, 5 ); %draws circles
+
                         for i=1:length(stimx)  %draws text
                             if block<=2
                                 if i<10
@@ -223,13 +227,13 @@ try
                             %Screen('TextStyle', w, 1);
                         end
 
-                        if  sum(buttons)~=0 && resp(numresp+1)==0;
+                        if  sum(buttons)~=0 && resp(numresp+1)==0
                             contcoord=contcoord+1;
                             zxx(contcoord)=x;
                             zyy(contcoord)=y;
 
                             numresp=numresp+1; %increment the number of response counter
-                            StartTime(numresp,block)=GetSecs;
+                            StartTime(numresp,block)=GetSecs
 
                             if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
                                 RespTime(numresp,block)=startblocktime(block)-StartTime(numresp,block);
@@ -268,7 +272,7 @@ try
 
                     end
                 end
-                if EyeTracker==1
+                if EyeTracker==1 && ScotomaPresent==1
                     if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                         Screen('FillRect', w, white);
                     else

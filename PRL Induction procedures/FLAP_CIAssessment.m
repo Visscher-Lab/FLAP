@@ -32,23 +32,23 @@ try
     
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
-    t = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
     expDay=str2num(answer{2,:}); % training day (if >1
     site = 3; % training site (UAB vs UCR vs Vpixx)
-    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
     else
         whicheye = 1;
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(t.ScotomaPresent{1,1});
+    ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
     EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
     responsebox=str2num(answer{5,:});
     TRLlocation = 2;
     datapixxtime = 1;
     scotomavpixx= 0;
     whichTask = 1;
-    randpick = str2num(t.ContourCondition{1,1});
+    randpick = str2num(tt.ContourCondition{1,1});
     %create a data folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
@@ -108,7 +108,7 @@ try
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    trials=2;%60;  %total number of trials per staircase (per shape) % trials = 10; debugging
+    trials=60;%60;  %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
@@ -121,6 +121,10 @@ try
         end
         mixtr{cond,1} = dummy;
     end
+    
+    
+                preresp=[ones(trials/4,1) ; ones(trials/4,1)*2; ones(trials/4,1)*3; ones(trials/4,1)*4];
+            predefinedResp=[preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:) preresp(randperm(length(preresp)),:) preresp(randperm(length(preresp)),:)];
 
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
@@ -206,8 +210,10 @@ try
     
     
     %% HERE starts trial loop
-    mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
+   % mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
+        mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
+
     trialcounter = 0;
     checkcounter = 0;
     resetcounter(1:2) = 1;
@@ -223,6 +229,7 @@ try
         end
         % -------------------------------------------------------------------------
         if mod(trial,61)==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
+            save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
             interblock_instruction
         end
         % -------------------------------------------------------------------------
@@ -257,7 +264,8 @@ try
 
         %% generate answer for this trial (training type 3 has no button response)
 
-        theans(trial)=randi(2);
+        %theans(trial)=randi(2);
+        theans(trial)=predefinedResp(trial);
         CIstimuliModII % add the offset/polarity repulsion
 
         %% target location calculation
@@ -702,9 +710,9 @@ try
         rispo(kk)=resp;
         respTimes(trial)=respTime(trial);
         trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
-        if (mod(trial,150))==1 && trial>1
-            save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-        end
+%         if (mod(trial,150))==1 && trial>1
+%             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+%         end
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;
         flickTwo(trial)=flickerpersistallowed;

@@ -404,7 +404,7 @@ end
             end
         else
           %      [Bpress, RespTime, TheButtons] = DontWaitForEvent_Jerry3(TargList, Bpress, TheButtons, RespTime,timestamp, binaryvals,inter_buttonpress, bin_buttonpress, inter_timestamp);
-      [Bpress, RespTime, TheButtons, ~, ~,PTBRespTime] = DontWaitForEvent_Jerry3(TargList, Bpress, TheButtons, RespTime,timestamp, binaryvals,inter_buttonpress, bin_buttonpress, inter_timestamp,PTBRespTime);
+      [Bpress, RespTime, TheButtons, ~, ~,PTBRespTime] = DontWaitForEvent_Jerry4(TargList, Bpress, TheButtons, RespTime,timestamp, binaryvals,inter_buttonpress, bin_buttonpress, inter_timestamp,PTBRespTime);
         end
         % Display 12 frames / TR
         if abs((elapsedTime / (TR / 12 )) - curFrame) > 0

@@ -25,7 +25,10 @@ if exist('theothershape')==1
 end
 xJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
 yJitLoc=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
-
+% for the other shape in scanner task -------------------------------------
+xJitLocothershape=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat; %plus or minus .25 deg
+yJitLocothershape=pix_deg*(rand(1,length(eccentricity_XCI))-.5)/JitRat;
+% -------------------------------------------------------------------------
 xModLoc=zeros(1,length(eccentricity_XCI));
 yModLoc=zeros(1,length(eccentricity_XCI));
 
@@ -34,6 +37,13 @@ xJitLoc(xJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 xJitLoc(xJitLoc< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
 yJitLoc(yJitLoc>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
 yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+
+% for the other shape in scanner task -------------------------------------
+xJitLocothershape(xJitLocothershape>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
+xJitLocothershape(xJitLocothershape< - pix_deg/ecccoeffCI/3)=-pix_deg/ecccoeffCI/3;
+yJitLocothershape(yJitLocothershape>pix_deg/ecccoeffCI/3)=pix_deg/ecccoeffCI/3;
+yJitLocothershape(yJitLocothershape< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
+% -------------------------------------------------------------------------
 %sum(replacementcounterx~=99)
 
 %xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
@@ -41,12 +51,14 @@ yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 if site == 5 || site==6 || site==7%PD added site ==6 here 8/18/23
     xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+    xJitLocothershape(targetcord2)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,3))}(theothershape(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
+    yJitLocothershape(targetcord2)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,3))}(theothershape(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);    
 else
     xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
 end
 theori=180*rand(1,length(eccentricity_XCI));
-theori2=180*rand(1,length(eccentricity_XCI));
+theori2= 180*rand(1,length(eccentricity_YCI)); %180*rand(1,length(eccentricity_XCI));
 if site == 5 || site==6 || site==7%PD added site 6 here 8/17/23
     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,3))}(theans(trial),:) +Orijit;
 else
