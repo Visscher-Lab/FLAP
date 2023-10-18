@@ -256,12 +256,13 @@ try
             Datapixx('RegWrRd');
                     respgiven=0;
         end
-        
+        cfc=0;
         
         respgiven = 0;
         while number_of_events<=length(array_of_events) && checkout<1
             if datapixxtime==1
                 eyetime2=Datapixx('GetTime');
+                                Datapixx('RegWrRd');
             end
             if number_of_events==0
                 number_of_events=1;
@@ -303,6 +304,8 @@ try
                         buttonLogStatus = Datapixx('GetDinStatus');
                         if (buttonLogStatus.newLogFrames > 0)
                             [thekeys secs] = Datapixx('ReadDinLog');
+                            [logData{trial}, logTimetags{trial}, underflow{trial}] = Datapixx('ReadDinLog');
+                            
                             foo=(RespType==thekeys);
                             if foo(theansblock)
                                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
@@ -323,6 +326,9 @@ try
                         end
                         fixating=2^11;
                     end
+                    cfc=cfc+1;
+                    tut(cfc)=eyetime2;
+                    tit(cfc)=blocktime;
                 end
             end
             
@@ -449,8 +455,18 @@ try
                         buttonLogStatus = Datapixx('GetDinStatus');
                         if (buttonLogStatus.newLogFrames > 0) && respgiven == 0 %responsegiven==0
                             [thekeys secs] = Datapixx('ReadDinLog');
-                            
+                                                        [logData{trial}, logTimetags{trial}, underflow{trial}] = Datapixx('ReadDinLog');
+
                             respcounter=respcounter+1;
+                            if length(secs)>1
+                                if sum(thekeys(1)==RespType)>0
+                                    thekeys=thekeys(1);
+                                    secs=secs(1);
+                                elseif sum(thekeys(2)==RespType)>0
+                                    thekeys=thekeys(2);
+                                    secs=secs(2);
+                                end
+                            end
                             respTime(trial, respcounter)=secs;
                             
                             %                      PsychPortAudio('Start', pahandle);

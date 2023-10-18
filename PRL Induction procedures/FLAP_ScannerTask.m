@@ -688,6 +688,7 @@ elseif trial==13
                     %here I draw the target contour
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                     imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                     if demo==0
                         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7 );
                     end
@@ -698,6 +699,7 @@ elseif trial==13
                     %here I draw the other contour
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI3' + [xJitLocothershape+xModLoc; yJitLocothershape+yModLoc; xJitLocothershape+xModLoc; yJitLocothershape+yModLoc], theori2,[], Dcontr );
                     imageRect_offsCI4(setdiff(1:length(imageRect_offsCI3),targetcord2),:)=0;
+                    Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI4' + [xJitLocothershape+xModLoc; yJitLocothershape+yModLoc; xJitLocothershape+xModLoc; yJitLocothershape+yModLoc], theori2,[], Dcontr );
                     if demo==0
                         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI4' + [xJitLocothershape+xModLoc; yJitLocothershape+yModLoc; xJitLocothershape+xModLoc; yJitLocothershape+yModLoc], theori2,[], 0.7 );
                     end

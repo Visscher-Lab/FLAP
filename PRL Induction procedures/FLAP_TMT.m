@@ -207,8 +207,8 @@ scotomavpixx=0;
                         end
                         %draw circles
                         Screen('FillOval',w,CircFill,TheCircMat); %fills circles to cover lines in the middle
-                    %    Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
-                        Screen('FrameOval',w,CircleColorOut,TheCircMat, 5, 5 ); %draws circles
+                        Screen('FrameOval',w,CircleColorOut,TheCircMat ); %draws circles
+                 %       Screen('FrameOval',w,CircleColorOut,TheCircMat, 5, 5 ); %draws circles
 
                         for i=1:length(stimx)  %draws text
                             if block<=2
@@ -233,7 +233,7 @@ scotomavpixx=0;
                             zyy(contcoord)=y;
 
                             numresp=numresp+1; %increment the number of response counter
-                            StartTime(numresp,block)=GetSecs
+                            StartTime(numresp,block)=GetSecs;
 
                             if (  (x>(TheCircMat(1,numresp)-RespTol)) && (y>(TheCircMat(2,numresp)-RespTol)) && (x<(TheCircMat(3,numresp)+RespTol)) && (y< (TheCircMat(4,numresp )+RespTol)) )
                                 RespTime(numresp,block)=startblocktime(block)-StartTime(numresp,block);

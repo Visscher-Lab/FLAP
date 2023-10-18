@@ -1,8 +1,8 @@
 %jittering location of the target within the patch of distractors
 
 if jitterCI==1
-    jitterxci(trial)= 0; %possibleoffset(randi(length(possibleoffset))); % -1,0 and 1 are the possible offsets
-    jitteryci(trial)= 0; %possibleoffset(randi(length(possibleoffset)));
+    jitterxci(trial)= possibleoffset(randi(length(possibleoffset))); % -1,0 and 1 are the possible offsets
+    jitteryci(trial)= possibleoffset(randi(length(possibleoffset)));
     
 elseif jitterCI==0
     jitterxci(trial)=0;
@@ -84,14 +84,7 @@ examplenewTargx=Targx{shapesoftheDay(mixtr(trial,1))};
 exampletargetcord =examplenewTargy(1,:)+yTrans  + (examplenewTargx(1,:)+xTrans - 1)*ymax;
 exampletargetcord2 =examplenewTargy(2,:)+yTrans  + (examplenewTargx(2,:)+xTrans - 1)*ymax;
 
-
-
-
-
 clear newyJitLoc newxJitLoc
-
-
-
 
 exampleyJitLoc=yJitLoc;
 examplexJitLoc=xJitLoc;
@@ -115,7 +108,7 @@ examplexJitLoc2(exampletargetcord2)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,
 exampleyJitLoc2(exampletargetcord2)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(2,:))/ecccoeffCI;%+xJitLoc(targetcord);
 
 exampletheori=180*rand(1,length(eccentricity_XCI));
-exampletheori2=180*rand(1,length(eccentricity_XCI));
+exampletheori2=180*rand(1,length(eccentricity_YCI));
 
 exampletheori(exampletargetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(1,:);
 exampletheori2(exampletargetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(2,:);

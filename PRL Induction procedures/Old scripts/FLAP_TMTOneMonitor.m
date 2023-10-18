@@ -25,8 +25,9 @@ try
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
     whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    datapixxtime=1;
+    datapixxtime=0;
     responsebox=0;
+    sitevpixx=1;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     responsebox=0;
@@ -49,8 +50,6 @@ try
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
 
     EyeTracker = 1; %0=mouse, 1=eyetracker
-    datapixxtime = 1;
-    responsebox = 0;
     
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersTMT % load parameters for time and space
@@ -66,6 +65,8 @@ try
             EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
 
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
@@ -134,10 +135,10 @@ try
         location =  zeros(4, 6);
     end
     if Isdemo==0
-        FLAP_TMT_practiceOneMonitor
+      %  FLAP_TMT_practiceOneMonitor
     else
         %FLAP_TMT_practiceOneMonitor
-        save(baseNamePractice) %at the end of each block save the data
+     %   save(baseNamePractice) %at the end of each block save the data
 
         for block=1:4
             askcalib=0;

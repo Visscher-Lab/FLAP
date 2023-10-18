@@ -123,16 +123,16 @@ try
     end
     
     
-                preresp=[ones(trials/4,1) ; ones(trials/4,1)*2; ones(trials/4,1)*3; ones(trials/4,1)*4];
-            predefinedResp=[preresp(randperm(length(preresp)),:); preresp(randperm(length(preresp)),:) preresp(randperm(length(preresp)),:) preresp(randperm(length(preresp)),:)];
-
+    preresp=[ones(trials/2,1) ; ones(trials/2,1)*2];
+    predefinedResp=[preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:)];
+    
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     stepsizes=2; % step sizes for 3d/1u staircase
     % Threshold -> 79%
     sc.up = 1; % # of incorrect answers to go one step up
     sc.steps= 3; % # of correct answers to go one step down
-    shapeMat(:,1)= [1 7]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
+    shapeMat(:,1)= [7 7]; % change the numbers here to run specific shapes. Only two shapes allowed. Refer to the numbers below to use run specific shape pairs
 
     %1: 9 vs 6 19 elements (final version)
     %2: 9 vs 6 18 elements
@@ -395,6 +395,7 @@ try
                 %here I draw the target contour
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 
                 % here I draw the circle within which I show the contour target
                 Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);

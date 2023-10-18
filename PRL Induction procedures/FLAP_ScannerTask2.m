@@ -310,7 +310,7 @@ try
                 if keyIsDown
                     key(k,1) = find(keyCode,1);
                     keypresstime(k,1)=GetSecs;
-                    if key==KbName('t');
+                    if key==KbName('t')
                         if k==1 && keypresstime(k,1)<startTime+TR
                             TTL_time(j)=keypresstime(k,1);
                             k=k+1;
