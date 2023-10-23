@@ -1,4 +1,9 @@
 %% general visual parameters
+% written by Marcello Maniglia
+% Modified by Kristina Visscher on Octobber 19, 2023 to include capability
+% to run SPOT08
+%
+
 scotomadeg=14;    % scotoma size in deg
 resonsebox = 0;
 
@@ -44,6 +49,13 @@ elseif whichMD==7
     theeccentricity_X_scotoma=-0.19*pix_deg;
     theeccentricity_Y_scotoma=-6.3*pix_deg;
     [img, ~, alpha] = imread('Scotoma_07.png');
+elseif whichMD==8
+    scotomadegx=23.85;    % scotoma size in deg
+    scotomadegy=15.32;    % scotoma size in deg
+    theeccentricity_X_scotoma=-0.19*pix_deg;
+    theeccentricity_Y_scotoma=-6.3*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_07.png');
+    % scotoma 7 because this is a control participant.
 else
     'Participant ID not found'
     scotomadegx=0;

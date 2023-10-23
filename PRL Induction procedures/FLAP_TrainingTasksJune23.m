@@ -65,22 +65,22 @@ try
     end
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
-    t = temp(find(contains(temp.x___participant,SUBJECT)),:);
-    if strcmp(t.TRL{1,1},'R') == 1
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:);
+    if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;
     else
         TRLlocation = 1;
     end
-    trainingType= str2num(t.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+    trainingType= str2num(tt.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training session 
-    if strcmp(t.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx 
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx 
         whicheye = 2;
     else 
         whicheye = 1;
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(t.ScotomaPresent{1,1});
+    ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
     EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
     
     % If not using CSV table, uncomment following
@@ -194,7 +194,7 @@ try
         if demo==1
             trials=5;
         else
-            trials= 62 %total number of trials per stimulus (250 trials
+            trials= 62; %total number of trials per stimulus (250 trials
             %per cue condition divided by 4 because of the 'hold trial
             %location' later)
         end

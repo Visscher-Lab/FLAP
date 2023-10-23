@@ -23,8 +23,14 @@ incongsix=ddd(6,:);
 
 targetarray=nan(length(mixtr),10);
 for ui=1:length(respTime)
+   % for ui=6
     
-    mixtr(ui,:)
+%     1: time
+%     2: button pressed (if third column is 0) OR stimulus identity (if
+%     third column is 1)
+%     3: timing identifier (0 = button press; 1 = timing stimulus) 
+%     4: stim type (1-4: stimulus ori, 5 blank, 6 cue)
+    mixtr(ui,:);
     % RT of key press (responses)
     respTimeT=respTime(ui,1:totalresptrial(ui));
     % keys pressed
@@ -80,7 +86,10 @@ The_event_mat{ui}=eventmat;
     clear matt matt2 
  %% switch cost
  % find response to the first target (switch target)
-   respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95,:);
+  % respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95,:);
+   respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95 & trialMax{ui}(:,1)>0,:);
+  % sus=trialMax{ui}
+  % sus(sus(:,3)==0 & sus(:,1) < 0.95,:)
    % find RT response to the first target (switch target)  
   if isempty(respFirstTarget)==0
       respFirstTargetRT(ui)=respFirstTarget(1);
@@ -91,6 +100,8 @@ end
 pointerResp(ui)=find(trialMax{ui}(:,1)==respFirstTargetRT(ui));
 %check if the response is correct
 corrresp(ui)=trialMax{ui}(pointerResp(ui),2)==trialMax{ui}(1,2);
+  else
+           respFirstTargetRT(ui)=NaN; 
   end
 %% sustained attention RT
 
@@ -124,7 +135,7 @@ end
 
 if length(respFirstTargetRT)<length(mixtr)
     diffrnc=length(mixtr)-length(respFirstTargetRT);
-respFirstTargetRT(length(respFirstTargetRT):length(respFirstTargetRT)+diffrnc)=nan;
+respFirstTargetRT(length(respFirstTargetRT)+1:length(respFirstTargetRT)+diffrnc)=nan;
 end
 
 

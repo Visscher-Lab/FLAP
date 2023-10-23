@@ -1,5 +1,8 @@
 % Scotoma awareness training for SPOT
 % written by Marcello A. Maniglia August 2022
+% October 19, 2023; Kristina Visscher changed veriable expday to expDay in
+% line 50 and 52, also TYPE was removed from the filename designations on
+% the same lines.
 close all;
 clear;
 clc;
@@ -45,9 +48,9 @@ try
     folder=fullfile(folder, '..\..\datafolder\');
     
     if site==1
-        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expDay) '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site ==3
-        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+        baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expDay) '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     end
     
 %     
@@ -76,7 +79,7 @@ try
         EyetrackerType=0;
     end
     %% creating stimuli
-CommonParametersAwareness
+    CommonParametersAwareness % this script identifies the size and shape of scotoma for this participant.  If there is an error it is probably because that participant's data has not been put in here yet.
     createO
     
 
