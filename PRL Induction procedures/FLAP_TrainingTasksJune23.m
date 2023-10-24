@@ -971,7 +971,7 @@ try
                     visiblePRLring
                 end
                 if trainingType == 4
-                    visiblePRLringT4
+                    visiblePRLring %T4
                 end
             else % else we get a fixation cross and no scotoma
                 Screen('DrawLine', w, colorfixation, wRect(3)/2, wRect(4)/2-fixationlength, wRect(3)/2, wRect(4)/2+fixationlength, 4);
