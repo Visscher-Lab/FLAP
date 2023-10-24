@@ -88,7 +88,9 @@ The_event_mat{ui}=eventmat;
  % find response to the first target (switch target)
   % respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95,:);
    respFirstTarget= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)<0.95 & trialMax{ui}(:,1)>0,:);
-  % sus=trialMax{ui}
+ cheattrick{ui}= trialMax{ui}(trialMax{ui}(:,3)==0 & trialMax{ui}(:,1)== 0, :);
+
+   % sus=trialMax{ui}
   % sus(sus(:,3)==0 & sus(:,1) < 0.95,:)
    % find RT response to the first target (switch target)  
   if isempty(respFirstTarget)==0

@@ -914,6 +914,16 @@ try
                     eyechecked=10^4; % exit loop for this trial
                 elseif responsebox==1
                     if (buttonLogStatus.newLogFrames > 0)
+                        actualsecs{trial}= secs;
+                        if length(secs)>1
+                            if sum(thekeys(1)==RespType)>0
+                                thekeys=thekeys(1);
+                                secs=secs(1);
+                            elseif sum(thekeys(2)==RespType)>0
+                                thekeys=thekeys(2);
+                                secs=secs(2);
+                            end
+                        end
                         respTime(trial)=secs;
                         eyechecked=10^4;
                     end
