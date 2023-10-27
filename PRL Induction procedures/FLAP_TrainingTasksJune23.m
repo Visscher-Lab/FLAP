@@ -205,8 +205,8 @@ try
             trialsContrast=5;
             trialsShape=4;
         else
-            trialsContrast=2; %125;
-            trialsShape=2; %21;
+            trialsContrast=125;
+            trialsShape=21;
         end
     end
     
