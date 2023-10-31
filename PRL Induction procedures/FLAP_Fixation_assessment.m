@@ -188,16 +188,33 @@ try
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
+            
+                        if datapixxtime==1
+                Datapixx('RegWrRd');
+                eyetime2=Datapixx('GetTime');
+            end
             if  (eyetime2-pretrial_time)>=ifi*2 && fixating<initialfixationduration/ifi && stopchecking>1
                 fixationscriptW_fixationTask
                 isFixatingSquare_fixationTask2
                 
                 if exist('starfix')==0
+                    if datapixxtime==0
                     startfix=GetSecs;
+                    else
+                         Datapixx('RegWrRd');
+                    startfix = Datapixx('GetTime');
+                    end
                     starfix=98;
                 end
             elseif (eyetime2-pretrial_time)>ifi*2 && fixating>=initialfixationduration/ifi && fixating<1000 && stopchecking>1
-                trial_time = GetSecs;
+               
+                if datapixxtime==0
+                    trial_time=GetSecs;
+                else
+                    Datapixx('RegWrRd');
+                    trial_time = Datapixx('GetTime');
+                end
+                
                 clear circlestar
                 clear flickerstar
                 clear theSwitcher
@@ -232,8 +249,13 @@ try
                     flickswitch=0;
                     flick=1;
                 end
-                flicker_time=GetSecs-flicker_time_start(trial);
-                
+                if datapixxtime==0
+                    flicker_time=GetSecs-flicker_time_start(trial);
+                else
+                    Datapixx('RegWrRd');
+                    flicktime=Datapixx('GetTime');
+                    flicker_time=flicktime-flicker_time_start(trial);
+                end
                 if flicker_time>flickswitch
                     flickswitch= flickswitch+flickeringrate;
                     flick=3-flick;
@@ -308,22 +330,26 @@ try
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
-            [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            
-            VBL_Timestamp=[VBL_Timestamp eyetime2];
+              if datapixxtime==1
+                [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime3];
+            else
+                [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
+                VBL_Timestamp=[VBL_Timestamp eyetime2];
+            end
             
             if EyeTracker==1
-                
-                if site<3
-                    GetEyeTrackerData
-                elseif site ==3
-                    GetEyeTrackerDatapixx
-                end
+                GetEyeTrackerDataNew
                 GetFixationDecision
                 
                 if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs;
-                    stopchecking=10;
+                    if datapixxtime==1
+                        Datapixx('RegWrRd');
+                        trial_time = Datapixx('GetTime');
+                    else
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
+                                        stopchecking=10;
                 end
                 
                 if CheckCount > 1
@@ -348,7 +374,13 @@ try
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         if trialTimedout(trial)==0
-            stim_stop(trial)=GetSecs;
+            
+            if datapixxtime==1
+                Datapixx('RegWrRd');
+                trialstim_stop(trial) = Datapixx('GetTime');
+            else
+                stim_stop(trial)=GetSecs;
+            end
         end
         if closescript~=1 && trialTimedout(trial)==0
             movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
