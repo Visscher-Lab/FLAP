@@ -108,7 +108,7 @@ try
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    trials=60;%60;  %total number of trials per staircase (per shape) % trials = 10; debugging
+    trials=60; %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
