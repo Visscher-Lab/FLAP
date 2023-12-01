@@ -6,11 +6,11 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active','scotoma Vpixx active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0', '0','2','0' };
+    defaultanswer={'test','1', '3', '1','0','2','0' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -20,12 +20,13 @@ try
     expDay=str2num(answer{2,:});
     site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    scotomavpixx= str2num(answer{5,:});
-    Isdemo=str2num(answer{6,:}); % full session or demo/practice
-    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    Isdemo=str2num(answer{5,:}); % full session or demo/practice
+    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
+    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
     responsebox=0;
     datapixxtime=1;
+        scotomavpixx= 0;
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
@@ -377,7 +378,7 @@ try
             
             if datapixxtime==1
                 Datapixx('RegWrRd');
-                trialstim_stop(trial) = Datapixx('GetTime');
+                stim_stop(trial) = Datapixx('GetTime');
             else
                 stim_stop(trial)=GetSecs;
             end

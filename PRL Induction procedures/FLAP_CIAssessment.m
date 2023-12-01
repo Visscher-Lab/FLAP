@@ -29,7 +29,6 @@ try
     if isempty(answer)
         return;
     end
-    
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table

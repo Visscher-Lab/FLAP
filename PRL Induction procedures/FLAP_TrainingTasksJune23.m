@@ -55,7 +55,7 @@ try
     % SUBJECT must match a participant number in the table
     % ParticipantAssignmentsUCR.csv, which lives in the current directory.
     
-    prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
+    prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
     name= 'Parameters';
     numlines=1;
     defaultanswer={'test','1','0', '0'};
@@ -65,12 +65,17 @@ try
     end
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
-    tt = temp(find(contains(temp.x___participant,SUBJECT)),:);
+    if sum(participantAssignmentTable(23:25) == 'UAB')==3
+        tt = temp(find(contains(temp.participant,SUBJECT)),:);
+    else
+        tt = temp(find(contains(temp.x___participant,SUBJECT)),:);
+    end
     if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;
     else
         TRLlocation = 1;
     end
+
     trainingType= str2num(tt.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training session 
@@ -199,7 +204,7 @@ try
             %location' later)
         end
     elseif trainingType==4
-        conditionOne=2; %gabors or contours
+      %  conditionOne=2; %gabors or contours
         conditionTwo=2; % high or low visibility cue
         if demo==1
             trialsContrast=5;
@@ -235,6 +240,7 @@ try
         
         % type of stimulus, shapes, type of cue
         mixcond=fullfact([shapes conditionTwo 1]);
+        % restructuring to assign 2 to the last column
         mixcond=[mixcond(:,1:2) mixcond(:,3)+1 ];
         mixcond2=fullfact([1 conditionTwo 1]);
         mixtr=[];
@@ -244,8 +250,8 @@ try
         mixtr_gabor=[repmat(mixcond2,round(trialsContrast),1) ];
         mixtr_shapes=[repmat(mixcond,round(trialsShape/4),1) ];
         mixtr_shapes = sortrows(mixtr_shapes,1);
-        [B,~,gi] = unique(mixtr_shapes(:,1),'rows','stable');
-        B(:,3) = accumarray(gi(:), mixtr_shapes(:,3)); %, [], @max);
+%         [B,~,gi] = unique(mixtr_shapes(:,1),'rows','stable');
+%         B(:,3) = accumarray(gi(:), mixtr_shapes(:,3)); %, [], @max);
         block_n=length(mixtr_shapes)/3;
         %         block_n=length(mixtr_gabor)/3;
         if demo==1
@@ -753,7 +759,13 @@ try
                     flickswitch=0;
                     flick=1;
                 end
-                flicker_time=GetSecs-flicker_time_start(trial);     % timer for the flicker decision
+                if datapixxtime==1
+                    Datapixx('RegWrRd');
+                    tempFlickTime=Datapixx('GetTime');
+                    flicker_time=tempFlickTime-flicker_time_start(trial);     % timer for the flicker decision
+                else
+                    flicker_time=GetSecs-flicker_time_start(trial);     % timer for the flicker decision
+                end
                 if flicker_time>flickswitch % time to flicker?
                     flickswitch= flickswitch+flickeringrate;
                     flick=3-flick; % flicker/non flicker
@@ -762,8 +774,8 @@ try
                     if EyeTracker==1
                     [countgt framecont countblank blankcounter counterflicker turnFlickerOn]=  ForcedFixationFlicker3(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, EyeData, counterflicker,eyetime2,EyeCode,turnFlickerOn);
                     else
-                  %  [countgt framecont countblank blankcounter counterflicker turnFlickerOn eyerunner]=  ForcedFixationFlicker3mouse(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, counterflicker,eyetime2,turnFlickerOn);
-                 ForcedFixationFlicker3mouse
+                 %  [countgt framecont countblank blankcounter counterflicker turnFlickerOn eyerunner]=  ForcedFixationFlicker3mouse(w,countgt,countblank, framecont, newsamplex,newsampley,wRect,PRLxpix,PRLypix,circlePixelsPRL,theeccentricity_X,theeccentricity_Y,blankcounter,framesbeforeflicker,blankframeallowed, counterflicker,eyetime2,turnFlickerOn);
+                        ForcedFixationFlicker3mouse
                     end
                 end
                 
@@ -847,10 +859,10 @@ try
                     % here I draw the circle within which I show the contour target
                     Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
                     %                    Screen('FrameOval', w,[gray*1.5], imageRect_offsCImask, 1, 1);
-                 if trainingType==2 
-                  fixationscriptW
-                 end
-                 if skipmasking==0
+                    if trainingType==2
+                        fixationscriptW
+                    end
+                    if skipmasking==0
                         assignedPRLpatch
                     end
                     imagearray{trial}=Screen('GetImage', w);
@@ -950,7 +962,16 @@ try
                     eyechecked=10^4; % exit loop for this trial
                 elseif responsebox==1
                     if (buttonLogStatus.newLogFrames > 0)
-                        respTime(trial)=secs;
+                        if length(secs)>1
+                            if sum(thekeys(1)==RespType)>0
+                                thekeys=thekeys(1);
+                                secs=secs(1);
+                            elseif sum(thekeys(2)==RespType)>0
+                                thekeys=thekeys(2);
+                                secs=secs(2);
+                            end
+                        end
+                        respTime(trial)=secs;%em added (1) 11/15/2023
                         eyechecked=10^4;
                     end
                 end
@@ -1041,27 +1062,29 @@ try
                             end
                         end
                     elseif responsebox==1
-                        if  thekeys==escapeKey
-                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            closescript = 1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(5)
-                            DrawFormattedText(w, 'continue', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            % trial=trial-1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(6)
-                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
-                            %    KbQueueWait;
-                            eyechecked=10^4;
+                        if (buttonLogStatus.newLogFrames > 0)
+                            if  thekeys==escapeKey
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(5)
+                                DrawFormattedText(w, 'continue', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                % trial=trial-1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(6)
+                                DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                                %    KbQueueWait;
+                                eyechecked=10^4;
+                            end
                         end
                     end
                 end
