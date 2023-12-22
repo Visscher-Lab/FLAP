@@ -1,7 +1,7 @@
 % Pre-FLAP fixation training
 % written by Marcello A. Maniglia May 2023
 close all;
-clear all;
+clear ;
 clc;
 commandwindow
 
@@ -40,7 +40,9 @@ try
         filename='_fixationpre';
     end
     folder=cd;
-    folder=fullfile(folder, '..\..\datafolder\');
+%    folder=fullfile(folder, '..\..\datafolder\');
+     DAY=['\assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
 
     if site==1
         baseName=[folder SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename

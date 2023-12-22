@@ -12,11 +12,11 @@ try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
     %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
-    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'fixation present? yes(1), no(0)', 'response box (1) or keyboard (0)'};
+    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '1', '1', '1', '1'};
+    defaultanswer={'test','1', '1', '2', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -36,8 +36,8 @@ try
     calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
     whichTask=str2num(answer{5,:}); % acuity (1), crowding (2), exo attention (3), contrast (4)
     EyeTracker = str2num(answer{6,:}); %0=mouse, 1=eyetracker
-    fixationpresent=str2num(answer{7,:});
-    responsebox=str2num(answer{8,:});
+    responsebox=str2num(answer{7,:});
+        fixationpresent=1;
     if whichTask == 3
         PRLlocations= 3;
     else
@@ -68,8 +68,10 @@ try
     elseif IsPractice==1
         filename2='';
     end
-    folder=cd;
-    folder=fullfile(folder, '..\..\datafolder\');
+     folder=cd;
+%     folder=fullfile(folder, '..\..\datafolder\');  
+                DAY=['\assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
     
     if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
@@ -82,6 +84,11 @@ try
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
     
+% ..\datafolder\FLAP_XXX\assessment
+% ..\datafolder\FLAP_XXX\assessment\sess1
+% ..\datafolder\FLAP_XXX\assessment\sess2
+% ..\datafolder\FLAP_XXX\assessment\sess3
+
     defineSite % initialize Screen function and features depending on OS/Monitor
     
     CommonParametersACA % load parameters for time and space
@@ -645,7 +652,21 @@ try
                         end
                     end
                 elseif responsebox==1
+%                     if (buttonLogStatus.newLogFrames > 0)
+%                         respTime(trial)=secs;
+%                         eyechecked=10^4;
+%                     end
                     if (buttonLogStatus.newLogFrames > 0)
+                        actualsecs{trial}= secs;
+                        if length(secs)>1
+                            if sum(thekeys(1)==RespType)>0
+                                thekeys=thekeys(1);
+                                secs=secs(1);
+                            elseif sum(thekeys(2)==RespType)>0
+                                thekeys=thekeys(2);
+                                secs=secs(2);
+                            end
+                        end
                         respTime(trial)=secs;
                         eyechecked=10^4;
                     end

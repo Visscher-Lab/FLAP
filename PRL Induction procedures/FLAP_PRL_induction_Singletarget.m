@@ -6,7 +6,7 @@ commandwindow
 try
 
     prompt={'Subject Number:'...
-        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)', 'eyetracker', 'calibration'};
+        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)',  'Eyetracker(1) or mouse(0)?', 'Calibration? yes(1), no(0)'};
 
     name= 'Parameters';
     numlines=1;
@@ -44,7 +44,10 @@ try
     end
     filename = 'PRL_induction_SingleTarget';
     folder=cd;
-    folder=fullfile(folder, '..\..\datafolder\');
+   % folder=fullfile(folder, '..\..\datafolder\');
+    
+     DAY=['\assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
 
     if site==1
         baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
