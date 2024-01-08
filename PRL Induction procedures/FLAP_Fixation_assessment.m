@@ -6,43 +6,50 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)'};
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    
+    prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1','0','2','0' };
+    defaultanswer={'test','1', '1','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
+    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    Isdemo=str2num(answer{5,:}); % full session or demo/practice
-    whicheye=str2num(answer{6,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{7,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    site= 3;  %0; 1=bits++; 2=display++
+    ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
+    Isdemo=str2num(answer{3,:}); % full session or demo/practice
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+        whicheye = 2;
+    else
+        whicheye = 1;
+    end
+    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
     responsebox=0;
     datapixxtime=1;
-        scotomavpixx= 0;
-
+    scotomavpixx= 0;
+    
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    %create a folder if it doesn't exist already
-    if exist('data')==0
-        mkdir('data')
-    end
     
     if Isdemo==0
         filename='_FLAPfixationflickerpractice';
     elseif Isdemo==1
         filename='_FLAPfixationflicker';
     end
-    folder=cd;
-   % folder=fullfile(folder, '..\..\datafolder\');
-     DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
-
+    folderchk=cd;
+    DAY=['\Assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
+    
     if site==1
         baseName=[folder SUBJECT filename '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -118,21 +125,21 @@ try
     mixtr1 = mixtr1(randperm(length(mixtr1)),:);
     mixtr2 = mixtr2(randperm(length(mixtr2)),:);
     mixtr = [mixtr1;mixtr2];
-%       tr=1;
- %  mixtr=[repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
-%    mixtr=[repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
-
-  %       mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+    %       tr=1;
+    %  mixtr=[repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
+    %    mixtr=[repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
     
-%     if Isdemo==0
-%         tr=2;
-%         mixtr=[repmat(1:length(angl),1,tr)'];
-%         mixtr =mixtr(randperm(length(mixtr)),:);
-%     elseif Isdemo==1
-%         tr=10; % trials per target location
-%         mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
-%         mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
-%     end
+    %       mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+    
+    %     if Isdemo==0
+    %         tr=2;
+    %         mixtr=[repmat(1:length(angl),1,tr)'];
+    %         mixtr =mixtr(randperm(length(mixtr)),:);
+    %     elseif Isdemo==1
+    %         tr=10; % trials per target location
+    %         mixtr=[repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
+    %         mixtr =mixtr(randperm(length(mixtr)),:); % randomize trials
+    %     end
     
     
     %% main loop
@@ -176,23 +183,23 @@ try
         theeccentricity_X=eccentricity_X(mixtr(trial,2)); % target location x
         
         if mixtr(trial,1)==1
-        theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg + eccentricity_Y(mixtr(trial,2)); % target location y
+            theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg + eccentricity_Y(mixtr(trial,2)); % target location y
         elseif mixtr(trial,1)==2
-        theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg - eccentricity_Y(mixtr(trial,2)); % target location y
+            theeccentricity_Y=startingfixationpoint(mixtr(trial,1))*pix_deg - eccentricity_Y(mixtr(trial,2)); % target location y
         end
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
         
         FLAPVariablesReset
-%         newRect = wRect;
-%         newRect(4) = newRect(4) + startingfixationpoint(mixtr(trial,1)) * pix_deg;
+        %         newRect = wRect;
+        %         newRect(4) = newRect(4) + startingfixationpoint(mixtr(trial,1)) * pix_deg;
         
         while eyechecked<1
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
             
-                        if datapixxtime==1
+            if datapixxtime==1
                 Datapixx('RegWrRd');
                 eyetime2=Datapixx('GetTime');
             end
@@ -202,15 +209,15 @@ try
                 
                 if exist('starfix')==0
                     if datapixxtime==0
-                    startfix=GetSecs;
+                        startfix=GetSecs;
                     else
-                         Datapixx('RegWrRd');
-                    startfix = Datapixx('GetTime');
+                        Datapixx('RegWrRd');
+                        startfix = Datapixx('GetTime');
                     end
                     starfix=98;
                 end
             elseif (eyetime2-pretrial_time)>ifi*2 && fixating>=initialfixationduration/ifi && fixating<1000 && stopchecking>1
-               
+                
                 if datapixxtime==0
                     trial_time=GetSecs;
                 else
@@ -295,16 +302,16 @@ try
                 break
             elseif (eyetime2-newtrialtime)>= ifi*2+pretargettime && fixating>400 && skipcounterannulus>10 && counterflicker>=FlickerTime/ifi &&   keyCode(escapeKey) ==0 && stopchecking>1 && (eyetime2-trial_time)<=actualtrialtimeout %present pre-stimulus and stimulus %keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3))+ keyCode(RespType(4)) + keyCode(RespType(5))
                 % trial completed
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
                 eyechecked=10^4;
                 
             elseif (eyetime2-pretrial_time)>=actualtrialtimeout % trial timed out
                 stim_stop(trial)=eyetime2;
                 trialTimedout(trial)=1;
                 flicker_time_stop(trial)=NaN;
-                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);                
+                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
                 eyechecked=10^4;
             end
             
@@ -333,7 +340,7 @@ try
             if newsamplex>wRect(3) || newsampley>wRect(3) || newsamplex<0 || newsampley<0
                 Screen('FillRect', w, gray);
             end
-              if datapixxtime==1
+            if datapixxtime==1
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3];
             else
@@ -352,7 +359,7 @@ try
                     else
                         trial_time = GetSecs; %start timer if we have eye info
                     end
-                                        stopchecking=10;
+                    stopchecking=10;
                 end
                 
                 if CheckCount > 1

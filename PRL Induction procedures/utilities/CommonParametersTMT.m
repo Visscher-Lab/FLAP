@@ -53,7 +53,7 @@ oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 maskthickness=pix_deg*6;
 fixwindow=2; % size of fixation window in degrees (for the beginning of trial, in the IsFixating scripts)
 scotoma_color=[200 200 200]/255; % color of the scotoma (light gray)
-scotoma_color=[200 200 200]; % color of the scotoma (light gray)
+% scotoma_color=[200 200 200]; % color of the scotoma (light gray)
 
 skipforcedfixation=0; %if we want to skip forced fixation for training type 1 and 2
 fixdotcolor=[177 177 177]; % color of the fixation dot for training type 1 and 2 (4?)

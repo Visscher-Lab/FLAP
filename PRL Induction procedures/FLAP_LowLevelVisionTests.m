@@ -12,11 +12,11 @@ try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
     %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
-    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)',  'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1', '2', '1', '1', '1'};
+    defaultanswer={'test','1', '1', '1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -35,8 +35,8 @@ try
     end
     calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
     whichTask=str2num(answer{5,:}); % acuity (1), crowding (2), exo attention (3), contrast (4)
-    EyeTracker = str2num(answer{6,:}); %0=mouse, 1=eyetracker
-    responsebox=str2num(answer{7,:});
+    EyeTracker = 1; %0=mouse, 1=eyetracker
+    responsebox=1; % 1 = response box, 0 = keyboard
         fixationpresent=1;
     if whichTask == 3
         PRLlocations= 3;
@@ -48,10 +48,6 @@ try
     site=3;  % VPixx
     scotomavpixx= 0;
     datapixxtime=1;
-    
-    if exist('data')==0
-        mkdir('data')
-    end
     
     if whichTask==1
         filename='Acuity';
@@ -68,10 +64,12 @@ try
     elseif IsPractice==1
         filename2='';
     end
-     folder=cd;
-%     folder=fullfile(folder, '..\..\datafolder\');  
-                DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
+    folderchk=cd;
+    DAY=['\Assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
     
     if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename

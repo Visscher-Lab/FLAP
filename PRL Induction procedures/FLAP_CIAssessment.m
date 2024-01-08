@@ -20,11 +20,11 @@ try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
 %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
 
-    prompt={'Participant Name', 'day', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    prompt={'Participant Name', 'day', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1' , '0', '1', '1'};
+    defaultanswer={'test','1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -41,25 +41,24 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
-    responsebox=str2num(answer{5,:});
+    EyeTracker = 0; %0=mouse, 1=eyetracker
+    responsebox= 1;
     TRLlocation = 2;
     datapixxtime = 1;
     scotomavpixx= 0;
     whichTask = 1;
     randpick = str2num(tt.ContourCondition{1,1});
-    %create a data folder if it doesn't exist already
-    if exist('data')==0
-        mkdir('data')
-    end
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     filename2='';
     filename = 'Contour';
-    folder=cd;
+    folderchk=cd;
 %    folder=fullfile(folder, '..\..\datafolder\');
-     DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
-
+     DAY=['\Assessment\Day' answer{2,:} '\'];
+     folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+     if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+         mkdir(folder);
+     end
    if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -109,7 +108,7 @@ try
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    trials=60; %total number of trials per staircase (per shape) % trials = 10; debugging
+    trials=6; %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
@@ -235,24 +234,24 @@ try
         end
         % -------------------------------------------------------------------------
         
-        if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-            practicePassed=0;
-        end
-        if trial == 1
-            while practicePassed == 0
-                FLAP_CI_Practice2
-            end
-        elseif trial > 1
-            if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
-                while practicePassed==0
-                    FLAP_CI_Practice2 
-                end
-            end
-        end
-        if practicePassed==2
-            closescript=1;
-            break
-        end
+%         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+%             practicePassed=0;
+%         end
+%         if trial == 1
+%             while practicePassed == 0
+%                 FLAP_CI_Practice2
+%             end
+%         elseif trial > 1
+%             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
+%                 while practicePassed==0
+%                     FLAP_CI_Practice2 
+%                 end
+%             end
+%         end
+%         if practicePassed==2
+%             closescript=1;
+%             break
+%         end
         practicePassed=1;
 
         %% training type-specific staircases

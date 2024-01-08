@@ -4,27 +4,34 @@
 close all; clear; clc;
 commandwindow
 try
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
 
-    prompt={'Subject Number:'...
-        'Day:', 'site (UCR = 1; UAB = 2; Vpixx = 3)', 'eye? left(1) or right(2)',  'Eyetracker(1) or mouse(0)?', 'Calibration? yes(1), no(0)'};
+    prompt={'Participant Name','Day', 'Calibration? yes(1), no(0)'};
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3','2', '0', '0'};
+    defaultanswer={'test','1', '0'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
 
     addpath([cd '/utilities']);
-
+    
+    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expday = str2num(answer{2,:});
     expdayeye = answer{2,:};
-    site= str2num(answer{3,:});
-    whicheye=str2num(answer{4,:}); % which eye to track (vpixx only)
-    EyeTracker = str2num(answer{5,:}); %0=mouse, 1=eyetracker
-    calibration=str2num(answer{6,:}); %
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    site= 3;
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+        whicheye = 2;
+    else
+        whicheye = 1;
+    end
+    EyeTracker = 1; %0=mouse, 1=eyetracker
+    calibration=str2num(answer{3,:}); %
     inductionType = 2; % 1 = assigned, 2 = annulus
 
     scotomavpixx=0;
@@ -32,10 +39,6 @@ try
     responsebox=1;
     TRLnumber=2;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    %create a folder if it doesn't exist already
-    if exist('data')==0
-        mkdir('data')
-    end
 
     if inductionType ==1
         TYPE = 'Assigned';
@@ -43,11 +46,12 @@ try
         TYPE = 'Annulus';
     end
     filename = 'PRL_induction_SingleTarget';
-    folder=cd;
-   % folder=fullfile(folder, '..\..\datafolder\');
-    
-     DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
+    folderchk=cd;
+    DAY=['\Assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
 
     if site==1
         baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expday) '_' TYPE '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename

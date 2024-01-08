@@ -10,46 +10,52 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','site? UCR(1), UAB(2), Vpixx(3)','scotoma (1) or not (0)', 'demo (0) or session (1)', 'Locations: (2) or (4)',  'eye? left(1) or right(2)','Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'response box (1) or keyboard (0)'};
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    
+    prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration? yes (1), no(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '1', '1', '2', '2', '0', '0', '1', '1'};
+    defaultanswer={'test','1', '1', '1'};
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
     
+    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    site= str2num(answer{3,:});  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(answer{4,:}); % 0 = no scotoma, 1 = scotoma
-    Isdemo=str2num(answer{5,:}); % full session or demo/practice
-    PRLlocations=str2num(answer{6,:});
-    whicheye=str2num(answer{7,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
-    responsebox=str2num(answer{10,:});
-    
+    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    site= 3;  %0; 1=bits++; 2=display++
+    ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
+    Isdemo=str2num(answer{3,:}); % full session or demo/practice
+    PRLlocations=2;
+    if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
+        whicheye = 2;
+    else
+        whicheye = 1;
+    end
+    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    EyeTracker = 1; %0=mouse, 1=eyetracker
+    responsebox=1;   
     scotomavpixx= 0;
     datapixxtime=1;
-    c = clock; %Current date and time as date vector. [year month day hour minute seconds]
-    %create a folder if it doesn't exist already
-    if exist('data')==0
-        mkdir('data')
-    end
-    
+    c = clock; %Current date and time as date vector. [year month day hour minute seconds]    
     
     if Isdemo==0
         filename=' RSVP_practice';
     elseif Isdemo==1
         filename='RSVP';
     end
-    folder=cd;
-  %  folder=fullfile(folder, '..\..\datafolder\');
-     DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
+    folderchk=cd;
+    DAY=['\Assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
+    
     if site==1
         baseName=[folder SUBJECT filename  '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2

@@ -37,8 +37,8 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    % participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -55,10 +55,10 @@ try
     % SUBJECT must match a participant number in the table
     % ParticipantAssignmentsUCR.csv, which lives in the current directory.
     
-    prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
+    prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!    
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1','0', '0'};
+    defaultanswer={'test','1','1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = str2num(answer{4,:}); %0=mouse, 1=eyetracker
+    EyeTracker = 0; %0=mouse, 1=eyetracker
     
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -116,15 +116,15 @@ try
     if EyeTracker==0
         calibration=0;
     end
-    %create a data folder if it doesn't exist already
-    if exist('data')==0
-        mkdir('data')
-    end
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     filename='_FLAPtraining_type';
-                DAY=['\training\Day' answer{2,:} '\'];
-    folder=cd;
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
+    DAY = ['\Training\Day' answer{2,:} '\'];
+    folderchk=cd;
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     baseName=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
