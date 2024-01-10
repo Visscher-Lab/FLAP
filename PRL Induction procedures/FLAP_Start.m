@@ -10,11 +10,12 @@ try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
     %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
-    prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration? yes (1), no(0)'};
+    %   prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant name', 'day', 'demo (0) or session (1)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1','0', '1' };
+    defaultanswer={'test','1', '1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -32,7 +33,8 @@ try
     else
         whicheye = 1;
     end
-    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    %    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    calibration=1;
     EyeTracker = 1; %0=mouse, 1=eyetracker
     scotomavpixx= 0;
     responsebox=0;
@@ -44,11 +46,11 @@ try
     elseif Isdemo==1
         filename='_fixationpre';
     end
-    folder=cd;
-%    folder=fullfile(folder, '..\..\datafolder\');
-     DAY=['\assessment\Day' answer{2,:} '\'];
-    folder=fullfile(folder, ['..\..\datafolder\' SUBJECT DAY]);
-
+    folderchk=cd;
+    %    folder=fullfile(folder, '..\..\datafolder\');
+    DAY=['\assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    
     if site==1
         baseName=[folder SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -72,14 +74,14 @@ try
     end
     %% creating stimuli
     CommonParametersFixationtraining
-    createO    
-    %% trial matrixc
+    createO
+    %% trial matrix
     
     trials=5;
     % fullfact([length(fixTime_values) length(fixwindow_values)])
     %  mixtr=[ones(trials,1) ones(trials,1);];
     mixtr= fullfact([length(fixTime_values) length(fixwindow_values)]);
-      
+    
     newmixtr=[];
     for ui=1:length(mixtr)
         tempm=repmat(mixtr(ui,:),trials,1);
@@ -89,9 +91,9 @@ try
     mixtr=newmixtr;
     if Isdemo==0
         mixtr=mixtr(1:5,:); % if it's practice time, just assign random mixtr combination
-       mixtr=mixtr(end-4:end,:);
- end   
-    totalmixtr=length(mixtr);    
+        mixtr=mixtr(end-4:end,:);
+    end
+    totalmixtr=length(mixtr);
     if EyetrackerType==1
         eyelinkCalib % calibrate eyetracker, if Eyelink
     end
@@ -108,7 +110,7 @@ try
     KbQueueWait;
     WaitSecs(0.5);
     
-    % check EyeTracker status
+   % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
@@ -116,60 +118,65 @@ try
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
-        location =  zeros(length(totalmixtr), 6);
+        location =  zeros(length(mixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
-    
-    
     
     for trial=1:totalmixtr
         trialTimedout(trial)=0; % count trials that trialed-out
         TrialNum = strcat('Trial',num2str(trial));
-     %   trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
-   %     trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
+        %   trialonsettime=Jitter(randi(length(Jitter))); % pick a jittered start time for trial
+        %     trialTimeout=effectivetrialtimeout+trialonsettime; % update the max trial duration accounting for the jittered start
         trialonsettime=0; % if we want the stimulus to appear right after fixation has been acquired
-       % compute target location
+        % compute target location
         theeccentricity_X=randdegarray(randi(length(randdegarray)))*pix_deg;
         theeccentricity_Y=randdegarray(randi(length(randdegarray)))*pix_deg;
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
         %mask background for the stimulus (when we want to present a
         %stimulus)
-        imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
+        imageRect_offscircle=[imageRect_offs(1)-((2/3)*pix_deg) imageRect_offs(2)-((2/3)*pix_deg) imageRect_offs(3)+((2/3)*pix_deg) imageRect_offs(4)+((2/3)*pix_deg) ];
         
         % compute response for trial
-                % compute response for trial
         theoris =[-180 0 -90 90];
         theans(trial)=randi(4);
-        ori=theoris(theans(trial));      
- 
-        fixwindowPix=fixwindow_values(mixtr(trial,2))*pix_deg;        
+        ori=theoris(theans(trial));
+        
+        fixwindowPix=fixwindow_values(mixtr(trial,2))*pix_deg;
         fixTime=fixTime_values(mixtr(trial,1));
-               trialTimeout=fixTime*5;
-               if fixwindowPix/pix_deg<1.5
-                                  trialTimeout=fixTime*6;
-               end
-        Priority(0);
-        KbQueueFlush()
+        trialTimeout=fixTime*5;
+        if fixwindowPix/pix_deg<1.5
+            trialTimeout=fixTime*6;
+        end
+
         FLAPVariablesReset
         onsett=0;
         
-                if mod(trial,round(length(mixtr)/3))==0
+        if mod(trial,round(length(mixtr)/3))==0
             interblock_instruction
-                end
-                if trial>1
-                    if mixtr(trial,1) ~= mixtr(trial-1,1)
-                        pretraining_instruction
-                    end
-                else
-                    pretraining_instruction
-                end
+        end
+        if trial>1
+            if mixtr(trial,1) ~= mixtr(trial-1,1)
+                pretraining_instruction
+            end
+        else
+            pretraining_instruction
+        end
         while eyechecked<1
             if datapixxtime==1
                 Datapixx('RegWrRd');
                 eyetime2=Datapixx('GetTime');
-            end
-            if EyetrackerType ==2
-                Datapixx('RegWrRd');
             end
             
             if  (eyetime2-pretrial_time)>=ITI && fixating<fixTime/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
@@ -196,8 +203,8 @@ try
                     eyechecked=10^4;
                 end
                 
-                if  (eyetime2-pretrial_time)>=2 && trial>10 
-                    Screen('FillOval',w, gray,imageRect_offscircle); % lettera a sx del target
+                if  (eyetime2-pretrial_time)>=2 && trial>10
+                    Screen('FillOval',w, gray,imageRect_offscircle); 
                     Screen('DrawTexture', w, theLetter, [], imageRect_offs, ori,[], 1 );
                 end
             elseif (eyetime2-pretrial_time)>ifi && fixating>=fixTime/ifi && stopchecking>1 && fixating<10000 && (eyetime2-pretrial_time)<=trialTimeout
@@ -228,7 +235,7 @@ try
                     Pixxstruct(trial).Trialend2 = Datapixx('GetTime');
                 end
                 clear imageRect_offs
-                                completedtrial(trial)=0;
+                completedtrial(trial)=0;
                 fixating=15000;
                 PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
                 PsychPortAudio('Start', pahandle);
@@ -254,8 +261,7 @@ try
                     Datapixx('SetSimulatedScotomaMode',2) %[~,mode = 0]);
                     %Datapixx('SetSimulatedScotomaMode'[,mode = 0]);
                     scotomaradiuss=round(pix_deg*6);
-                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);
-                    
+                    Datapixx('SetSimulatedScotomaRadius',scotomaradiuss) %[~,mode = 0]);                  
                     mode=Datapixx('GetSimulatedScotomaMode');
                     status= Datapixx('IsSimulatedScotomaEnabled');
                     radius= Datapixx('GetSimulatedScotomaRadius');
@@ -270,15 +276,16 @@ try
             VBL_Timestamp=[VBL_Timestamp eyetime2];
             %% process eyedata in real time (fixation/saccades)
             if EyeTracker==1
-                if EyetrackerType==1
-                    GetEyeTrackerData
-                elseif EyetrackerType==2
-                    GetEyeTrackerDatapixx
-                end
+GetEyeTrackerDataNew
                 GetFixationDecision
                 
-                if EyeData(end,1)<8000 && stopchecking<0
-                    trial_time = GetSecs;
+               if EyeData(end,1)<8000 && stopchecking<0
+                    if datapixxtime==1
+                        Datapixx('RegWrRd');
+                        trial_time = Datapixx('GetTime');
+                    else
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
                     stopchecking=10;
                 end
                 
@@ -356,49 +363,49 @@ try
             Datapixx('RegWrRd');
             status = Datapixx('GetTPxStatus');
             toRead = status.newBufferFrames;
-          if toRead>0
-              [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
-            
-            %bufferData is formatted as follows:
-            %1      --- Timetag (in seconds)
-            %2      --- Left Eye X (in pixels)
-            %3      --- Left Eye Y (in pixels)
-            %4      --- Left Pupil Diameter (in pixels)
-            %5      --- Right Eye X (in pixels)
-            %6      --- Right Eye Y (in pixels)
-            %7      --- Right Pupil Diameter (in pixels)
-            %8      --- Digital Input Values (24 bits)
-            %9      --- Left Blink Detection (0=no, 1=yes)
-            %10     --- Right Blink Detection (0=no, 1=yes)
-            %11     --- Digital Output Values (24 bits)
-            %12     --- Left Eye Fixation Flag (0=no, 1=yes)
-            %13     --- Right Eye Fixation Flag (0=no, 1=yes)
-            %14     --- Left Eye Saccade Flag (0=no, 1=yes)
-            %15     --- Right Eye Saccade Flag (0=no, 1=yes)
-            %16     --- Message code (integer)
-            %17     --- Left Eye Raw X (in pixels)
-            %18     --- Left Eye Raw Y (in pixels)
-            %19     --- Right Eye Raw X (in pixels)
-            %20     --- Right Eye Raw Y (in pixels)
-            
-            %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
-            %in the console overlay. In tabletop and MEG setups, this view is
-            %inverted. This means "RIGHT" in our labelling convention corresponds
-            %to the participant's left eye. Similarly "LEFT" in our convention
-            %refers to left on the screen, which corresponds to the participant's
-            %right eye.
-            
-            %If you are using an MRI setup with an inverting mirror, "RIGHT" will
-            %correspond to the participant's right eye.
-            
-            %save eye data from trial as a table in the trial structure
-            Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
-                'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
-                'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
-            %interim save
-            % save(baseName, 'Pixxstruct');
-            % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-          end
+            if toRead>0
+                [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+                
+                %bufferData is formatted as follows:
+                %1      --- Timetag (in seconds)
+                %2      --- Left Eye X (in pixels)
+                %3      --- Left Eye Y (in pixels)
+                %4      --- Left Pupil Diameter (in pixels)
+                %5      --- Right Eye X (in pixels)
+                %6      --- Right Eye Y (in pixels)
+                %7      --- Right Pupil Diameter (in pixels)
+                %8      --- Digital Input Values (24 bits)
+                %9      --- Left Blink Detection (0=no, 1=yes)
+                %10     --- Right Blink Detection (0=no, 1=yes)
+                %11     --- Digital Output Values (24 bits)
+                %12     --- Left Eye Fixation Flag (0=no, 1=yes)
+                %13     --- Right Eye Fixation Flag (0=no, 1=yes)
+                %14     --- Left Eye Saccade Flag (0=no, 1=yes)
+                %15     --- Right Eye Saccade Flag (0=no, 1=yes)
+                %16     --- Message code (integer)
+                %17     --- Left Eye Raw X (in pixels)
+                %18     --- Left Eye Raw Y (in pixels)
+                %19     --- Right Eye Raw X (in pixels)
+                %20     --- Right Eye Raw Y (in pixels)
+                
+                %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
+                %in the console overlay. In tabletop and MEG setups, this view is
+                %inverted. This means "RIGHT" in our labelling convention corresponds
+                %to the participant's left eye. Similarly "LEFT" in our convention
+                %refers to left on the screen, which corresponds to the participant's
+                %right eye.
+                
+                %If you are using an MRI setup with an inverting mirror, "RIGHT" will
+                %correspond to the participant's right eye.
+                
+                %save eye data from trial as a table in the trial structure
+                Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
+                    'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
+                    'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
+                %interim save
+                % save(baseName, 'Pixxstruct');
+                % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+            end
         end
         if (mod(trial,50))==1
             if trial==1
@@ -413,7 +420,7 @@ try
         end
         
         kk=kk+1;
-        %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');     
+        %  save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
