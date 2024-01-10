@@ -9,7 +9,7 @@ widthfix=7;
 squaresize=10;
 wsquaresize=scotomadeg+(fixwindowPix/pix_deg)/2;
 distWag=0;
-fixwindowPix
+%fixwindowPix
 %imageRectW = CenterRect([0, 0, round(squaresize*pix_deg) round(squaresize*pix_deg)], wRect);
 imageRectWW=CenterRect([0, 0, round(wsquaresize*pix_deg) round(wsquaresize*pix_deg)], wRect);
 

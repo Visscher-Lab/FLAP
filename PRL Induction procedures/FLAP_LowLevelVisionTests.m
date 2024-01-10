@@ -740,7 +740,11 @@ try
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
                     trialTimeout=100000;
                     caliblock=1;
-                    DrawFormattedText(w, 'Need calibration', 'center', 'center', white);
+                    if responsebox==0
+                    DrawFormattedText(w, 'Need calibration: press "c" to continue the study, press "m" to recalibrate, press "esc" to exit ', 'center', 'center', white);
+                    else
+                    DrawFormattedText(w, 'Need calibration: press "red" to continue the study, press "yellow" to recalibrate, press "green" to exit ', 'center', 'center', white);                    
+                    end
                     Screen('Flip', w);
                     %   KbQueueWait;
                     if responsebox==0
@@ -770,30 +774,33 @@ try
                             end
                         end
                     elseif responsebox==1
-                        if  thekeys==RespType(2)
-                            DrawFormattedText(w, 'Bye', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            closescript = 1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(3)
-                            DrawFormattedText(w, 'continue', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            %  KbQueueWait;
-                            % trial=trial-1;
-                            eyechecked=10^4;
-                        elseif thekeys==RespType(4)
-                            DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
-                            Screen('Flip', w);
-                            WaitSecs(1);
-                            TPxReCalibrationTestingMM(1,screenNumber, baseName)
-                            %    KbQueueWait;
-                            eyechecked=10^4;
+                        if (buttonLogStatus.newLogFrames > 0)
+                            if  thekeys==RespType(3)
+                                DrawFormattedText(w, 'Bye', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                closescript = 1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(1)
+                                DrawFormattedText(w, 'continue', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                %  KbQueueWait;
+                                % trial=trial-1;
+                                eyechecked=10^4;
+                            elseif thekeys==RespType(2)
+                                DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
+                                Screen('Flip', w);
+                                WaitSecs(1);
+                                TPxReCalibrationTestingMM(1,screenNumber, baseName)
+                                %    KbQueueWait;
+                                eyechecked=10^4;
+                            end
                         end
                     end
                 end
+                
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
                         TimerIndex = FixOnsetIndex;

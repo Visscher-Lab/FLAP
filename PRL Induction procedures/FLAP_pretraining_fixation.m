@@ -33,7 +33,7 @@ try
         whicheye = 1;
     end
     calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    EyeTracker = 0; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
     scotomavpixx= 0;
     responsebox=0;
     datapixxtime=1;
@@ -155,7 +155,14 @@ try
         
                 if mod(trial,round(length(mixtr)/3))==0
             interblock_instruction
-        end
+                end
+                if trial>1
+                    if mixtr(trial,1) ~= mixtr(trial-1,1)
+                        pretraining_instruction
+                    end
+                else
+                    pretraining_instruction
+                end
         while eyechecked<1
             if datapixxtime==1
                 Datapixx('RegWrRd');
