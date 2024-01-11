@@ -11,6 +11,7 @@ gapfeedback= 0.3;
 feedbackduration=1;
 
 for practicetrial=1:practicetrialnum
+    practicetrial
     presentfeedback=0;
     af = 0;
     %         respTimeprac=10^6;
@@ -108,12 +109,15 @@ for practicetrial=1:practicetrialnum
                 Datapixx('RegWrVideoSync');
                 %collect marker data
                 Datapixx('RegWrRd');
-                Pixxstruct(trial).TrialOnset = Datapixx('GetMarker');
+                Pixxstruct(practicetrial).TrialOnset = Datapixx('GetMarker');
             end
             fixating = 1500;
         end
+        targpresent = 0;
+         flushflag = 0;
+         
         %% here is where the second time-based trial loop starts
-        if (eyetime2-trial_time)>=postfixationblank && (eyetime2-trial_time)< postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
+        if (eyetime2-trial_time)>=postfixationblank && (eyetime2-trial_time)< postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && af == 0%present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
             % HERE I PRESENT THE TARGET
             if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
                 imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
@@ -127,8 +131,10 @@ for practicetrial=1:practicetrialnum
             if targethighercontrast(practicetrial) == 1
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.9 );
+                targpresent = 1
             else
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+                targpresent = 1
             end
             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
             
@@ -138,7 +144,7 @@ for practicetrial=1:practicetrialnum
             if skipmasking==0
                 assignedPRLpatch
             end
-            imagearray{trial}=Screen('GetImage', w);
+            imagearray{practicetrial}=Screen('GetImage', w);
             
             if exist('stimstar')==0
                 %                     stim_start = GetSecs;
@@ -153,8 +159,67 @@ for practicetrial=1:practicetrialnum
                 end
                 stimstar=1;
             end
-        elseif (eyetime2-trial_time)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
-            
+            if targpresent == 0
+                ResponseBoxFlush
+            end
+            if targpresent == 1 && (eyetime2 - trial_time) <= postfixationblank + stimulusdurationpractice && af == 0
+                bla1 = 1000                    
+                    if responsebox==0
+                        if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
+                            thekeys = find(keyCode);
+                            if length(thekeys)>1
+                                thekeys=thekeys(1);
+                            end
+                            thetimes=keyCode(thekeys);
+                            [secs  indfirst]=min(thetimes);
+                            respTime=GetSecs;
+                            eyechecked=10^4; % exit loop for this trial
+                        end
+                    elseif responsebox==1
+                        Datapixx('RegWrRd');
+                        buttonLogStatus = Datapixx('GetDinStatus');
+                        if (buttonLogStatus.newLogFrames > 0)
+                            
+                            [thekeys secs] = Datapixx('ReadDinLog')
+                        end
+                        if (buttonLogStatus.newLogFrames > 0)
+                            actualsecs{practicetrial} = secs;
+                            if length(thekeys) > 1
+                                if sum(thekeys(1)==RespType)>0
+                                    thekeys=thekeys(1);
+                                    secs=secs(1);
+                                elseif sum(thekeys(2)==RespType)>0
+                                    thekeys=thekeys(2);
+                                    secs=secs(2);
+                                end
+                            end
+                            respTime(practicetrial)=secs;
+                            respt = eyetime2;
+                            presentfeedback =1;
+                            af = 1;
+                            foo=(RespType==thekeys);
+                        end
+                        if af == 1
+                            if foo(theanspractice(practicetrial)) == 1 % if correct response
+                                resp = 1
+                                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                                PsychPortAudio('Start', pahandle);
+                            elseif (thekeys==escapeKey) % esc pressed
+                                closescript = 1;
+                                ListenChar(0);
+                                break;
+                            else
+                                resp = 0 % if wrong response
+                                nswr(practicetrial) = 0;
+                                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                                PsychPortAudio('Start', pahandle);
+                            end
+                            af = 99;
+                        end
+                    end
+            end
+        elseif (eyetime2-trial_time)>=forcedfixationISI && (eyetime2-trial_time)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && presentfeedback == 0%present pre-stimulus and stimulus
+            bla2 = 1000
             if responsebox==0
                 if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     thekeys = find(keyCode);
@@ -166,8 +231,18 @@ for practicetrial=1:practicetrialnum
                     respTime=GetSecs;
                     eyechecked=10^4; % exit loop for this trial
                 end
-            elseif responsebox==1
+            elseif responsebox==1 && af == 0
                 if (buttonLogStatus.newLogFrames > 0)
+                    actualsecs{practicetrial} = secs;
+                    if length(thekeys) > 1
+                        if sum(thekeys(1)==RespType)>0
+                            thekeys=thekeys(1);
+                            secs=secs(1);
+                        elseif sum(thekeys(2)==RespType)>0
+                            thekeys=thekeys(2);
+                            secs=secs(2);
+                        end
+                    end
                     respTime(practicetrial)=secs;
                     respt = eyetime2;
                     presentfeedback =1;
@@ -192,7 +267,8 @@ for practicetrial=1:practicetrialnum
                     af = 99;
                 end
             end
-        elseif (eyetime2-trial_time)>=postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
+        elseif (eyetime2-trial_time)>=postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && presentfeedback == 0%present pre-stimulus and stimulus
+            bla3 = 1000
             if responsebox==0
                 if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     thekeys = find(keyCode);
@@ -206,6 +282,16 @@ for practicetrial=1:practicetrialnum
                 end
             elseif responsebox==1 && af == 0
                 if (buttonLogStatus.newLogFrames > 0)
+                    actualsecs{practicetrial} = secs;
+                    if length(thekeys) > 1
+                        if sum(thekeys(1)==RespType)>0
+                            thekeys=thekeys(1);
+                            secs=secs(1);
+                        elseif sum(thekeys(2)==RespType)>0
+                            thekeys=thekeys(2);
+                            secs=secs(2);
+                        end
+                    end
                     respTime(practicetrial)=secs;
                     respt = eyetime2;
                     presentfeedback =1;
@@ -435,5 +521,7 @@ if practicePassed~=2
     performance=sum(practiceresp)/practicetrial;
     if performance>=performanceThresh
         practicePassed=1;
+    else
+        clear stim_startBox
     end
 end
