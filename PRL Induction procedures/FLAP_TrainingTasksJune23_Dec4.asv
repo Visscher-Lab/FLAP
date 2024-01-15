@@ -410,11 +410,11 @@ try
             %  oldthresh=load(['./data/' newest],'thresh');
             previousFixTime2=load([foldern newest],'movieDuration');
             %previousresp=load(['./data/' newest],'rispo');
-            previoustrials2=load([foldern newest],'trials');
-            coeffAdj2=load([foldern newest],'coeffAdj');
-            sizepointer2=load([foldern newest],'sizepointer');
-            flickerpointerPre2 = load([foldern newest],'flickerpointerPre');
-            flickerpointerPost2 = load([foldern newest],'flickerpointerPost');
+            previoustrials2=load(['../../datafolder/' SUBJECT dayn newest],'trials');
+            coeffAdj2=load(['../../datafolder/' SUBJECT dayn newest],'coeffAdj');
+            sizepointer2=load(['../../datafolder/' SUBJECT dayn newest],'sizepointer');
+            flickerpointerPre2 = load(['../../datafolder/' SUBJECT dayn newest],'flickerpointerPre');
+            flickerpointerPost2 = load(['../../datafolder/' SUBJECT dayn newest],'flickerpointerPost');
             coeffAdj = coeffAdj2.coeffAdj;
             previousFixTime = previousFixTime2.movieDuration;
             previoustrials = previoustrials2.trials;
