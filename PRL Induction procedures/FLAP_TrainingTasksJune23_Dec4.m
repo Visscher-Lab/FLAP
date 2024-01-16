@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %0=mouse, 1=eyetracker
+    EyeTracker = 0; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -207,7 +207,7 @@ try
         if demo==1
             trials=5;
         else
-            trials= 62; %total number of trials per stimulus (250 trials
+            trials= 5; %62; %total number of trials per stimulus (250 trials
             %per cue condition divided by 4 because of the 'hold trial
             %location' later)
         end
@@ -322,7 +322,7 @@ try
 
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
 
-                d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
+%                 d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
 
 
                 %[dx,dx] = sort([d.datenum]); %EC changed to .bytes instead of datenum for %running fb1005 day 2 training %PD commented out 11/8/2023
@@ -399,7 +399,10 @@ try
             timeflickerallowed=persistentflickerArray(flickerpointerPre); % time before flicker starts
             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
         end
+        
         if expDay>1 % if we are not on day one, we load thresholds from previous days
+            DAYN = ['\Training\Day' (answer{2,:}-1) '\'];
+            foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps);
 
