@@ -53,7 +53,7 @@ dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 % training type 2
 jitterCI=1; % jitter for countour stimuli of training type 2 and 4 (used to be 1)
 possibleoffset=[-1:1]; %location offset for countour stimuli of training type 2 and 4
-possibleoffset=[0]; %location offset for countour stimuli of training type 2 and 4
+%possibleoffset=[0]; %location offset for countour stimuli of training type 2 and 4
 JitRat=2; % amount of jit ratio (the larger the value the less jitter)
 
 % training type 3/4

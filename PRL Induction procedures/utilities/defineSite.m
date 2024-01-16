@@ -76,7 +76,7 @@ elseif site==3   %UCR VPixx
     screenNumber=max(Screen('Screens'));
     if EyeTracker==1
         initRequired= calibration; %do we want vpixx calibration?
-        if initRequired>0
+        if initRequired==1
             fprintf('\nInitialization required\n\nCalibrating the device...');
             %TPxTrackpixx3CalibrationTesting;
             if sum(filename(2:4)=='sco') > 1
@@ -89,6 +89,11 @@ elseif site==3   %UCR VPixx
                 TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
             end
         end
+        % validation only
+        if initRequired==2
+            
+        end
+        
 
         %Connect to TRACKPixx3
         Datapixx('Open');

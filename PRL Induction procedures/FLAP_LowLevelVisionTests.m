@@ -12,7 +12,7 @@ try
     participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
     %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
     
-    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration? yes(1), no(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
+    prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration(1), Validation (2), or nothing(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
     
     name= 'Parameters';
     numlines=1;
