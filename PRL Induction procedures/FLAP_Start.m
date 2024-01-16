@@ -47,9 +47,11 @@ try
         filename='_fixationpre';
     end
     folderchk=cd;
-    %    folder=fullfile(folder, '..\..\datafolder\');
-    DAY=['\assessment\Day' answer{2,:} '\'];
+    DAY=['\Assessment\Day' answer{2,:} '\'];
     folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
     
     if site==1
         baseName=[folder SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
