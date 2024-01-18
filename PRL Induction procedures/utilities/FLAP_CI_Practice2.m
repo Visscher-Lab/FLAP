@@ -11,7 +11,6 @@ gapfeedback= 0.3;
 feedbackduration=1;
 
 for practicetrial=1:practicetrialnum
-    practicetrial
     presentfeedback=0;
     af = 0;
     %         respTimeprac=10^6;
@@ -131,10 +130,10 @@ for practicetrial=1:practicetrialnum
             if targethighercontrast(practicetrial) == 1
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.9 );
-                targpresent = 1
+                targpresent = 1;
             else
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                targpresent = 1
+                targpresent = 1;
             end
             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
             
@@ -159,11 +158,11 @@ for practicetrial=1:practicetrialnum
                 end
                 stimstar=1;
             end
-            if targpresent == 0
-                ResponseBoxFlush
-            end
+%             if targpresent == 0
+%                 ResponseBoxFlush
+%             end
             if targpresent == 1 && (eyetime2 - trial_time) <= postfixationblank + stimulusdurationpractice && af == 0
-                bla1 = 1000                    
+                bla1 = 1000;                   
                     if responsebox==0
                         if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                             thekeys = find(keyCode);
@@ -180,7 +179,7 @@ for practicetrial=1:practicetrialnum
                         buttonLogStatus = Datapixx('GetDinStatus');
                         if (buttonLogStatus.newLogFrames > 0)
                             
-                            [thekeys secs] = Datapixx('ReadDinLog')
+                            [thekeys secs] = Datapixx('ReadDinLog');
                         end
                         if (buttonLogStatus.newLogFrames > 0)
                             actualsecs{practicetrial} = secs;
@@ -201,7 +200,7 @@ for practicetrial=1:practicetrialnum
                         end
                         if af == 1
                             if foo(theanspractice(practicetrial)) == 1 % if correct response
-                                resp = 1
+                                resp = 1;
                                 PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                                 PsychPortAudio('Start', pahandle);
                             elseif (thekeys==escapeKey) % esc pressed
@@ -209,7 +208,7 @@ for practicetrial=1:practicetrialnum
                                 ListenChar(0);
                                 break;
                             else
-                                resp = 0 % if wrong response
+                                resp = 0; % if wrong response
                                 nswr(practicetrial) = 0;
                                 PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                                 PsychPortAudio('Start', pahandle);
@@ -219,7 +218,7 @@ for practicetrial=1:practicetrialnum
                     end
             end
         elseif (eyetime2-trial_time)>=forcedfixationISI && (eyetime2-trial_time)<=forcedfixationISI+stimulusdurationpractice && fixating>400 && skipcounterannulus>10  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && presentfeedback == 0%present pre-stimulus and stimulus
-            bla2 = 1000
+            bla2 = 1000;
             if responsebox==0
                 if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     thekeys = find(keyCode);
@@ -268,7 +267,7 @@ for practicetrial=1:practicetrialnum
                 end
             end
         elseif (eyetime2-trial_time)>=postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && presentfeedback == 0%present pre-stimulus and stimulus
-            bla3 = 1000
+            bla3 = 1000;
             if responsebox==0
                 if    keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                     thekeys = find(keyCode);
@@ -357,7 +356,7 @@ for practicetrial=1:practicetrialnum
             Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
             % here I draw the circle within which I show the contour target
             Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-            %                 trialTimedout(practicetrial) = 99;
+
         elseif presentfeedback == 1 && (eyetime2-respt)> feedbackduration
             stim_stop=GetSecs;
             eyechecked=10^4; % exit loop for this practicetrial
@@ -377,7 +376,11 @@ for practicetrial=1:practicetrialnum
         end
         if datapixxtime==1
             [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            VBL_Timestamp=[VBL_Timestamp eyetime3];
+            while targpresent == 1
+                ResponseBoxFlush
+                targpresent = 0;
+            end
+            VBL_Timestamp=[VBL_Timestamp eyetime3];           
         else
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             VBL_Timestamp=[VBL_Timestamp eyetime2];
@@ -516,12 +519,17 @@ for practicetrial=1:practicetrialnum
     end
     practiceresp(practicetrial)=resp;
 end
+
 % do we exit the practice loop?
-if practicePassed~=2
+if practicePassed~=2 
     performance=sum(practiceresp)/practicetrial;
     if performance>=performanceThresh
         practicePassed=1;
     else
+        numpractice = numpractice + 1;
         clear stim_startBox
+    end
+    if numpractice >= 3
+        numpractice = 1000;
     end
 end

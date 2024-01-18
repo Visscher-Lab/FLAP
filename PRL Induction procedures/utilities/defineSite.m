@@ -91,10 +91,34 @@ elseif site==3   %UCR VPixx
         end
         % validation only
         if initRequired==2
-            
-        end
-        
+                cx = 1920/2; % Point center in x
+    cy = 1080/2; % Point center in y
+    dx = 600; % How big of a range to cover in X
+    dy = 350; % How big of a range to cover in Y
+    
+    xy = [  cx cy;...
+        cx cy+dy;...
+        cx+dx cy;...
+        cx cy-dy;...
+        cx-dx cy;...
+        cx+dx cy+dy;...
+        cx-dx cy+dy;...
+        cx+dx cy-dy;...
+        cx-dx cy-dy;...
+        cx+dx/2 cy+dy/2;...
+        cx-dx/2 cy+dy/2;...
+        cx-dx/2 cy-dy/2;...
+        cx+dx/2 cy-dy/2;];
+     xy = xy';
+    [windowPtr, windowRect]=PsychImaging('OpenWindow', screenNumber, 1);
+    TPxValidateCalibrationMM(xy, 1, windowPtr, baseName, 0);
+    
+    
+        Screen('CloseAll');
+            Datapixx('Close');
 
+    Datapixx('CloseTPxMini');
+        end    
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
@@ -281,6 +305,7 @@ RespType(3) = KbName('UpArrow');
 RespType(4) = KbName('DownArrow');
 RespType(5) = KbName('c'); % continue with study
 RespType(6) = KbName('m'); %recalibrate
+RespType(7) = KbName('r'); % redo practice for CI assessment
 escapeKey = KbName('ESCAPE');	% quit key
 
 if site==6 || site==7
@@ -325,8 +350,10 @@ if responsebox==1
             dinBlue]';
         %escapeKey=dinWhite;
         %   escapeKey=KbName('ESCAPE');
-
+        
         TargList = [1 2 3 4]; % 1=red (right), 2=yellow (up), 3=green (left), 4=blue (down)
+        Taskout(1) = KbName('c'); % continue with study
+        Taskout(2) = KbName('r'); % redo practice for CI assessment
     elseif site ==5
         % Bit locations of button inputs, and colored LED drivers
 

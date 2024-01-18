@@ -16,9 +16,10 @@ close all; clear; clc;
 commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
+
 try
-    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-%     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
 
     prompt={'Participant Name', 'day', 'Calibration? yes (1), no(0)'};
     
@@ -108,7 +109,7 @@ try
     
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
-    trials=60; %total number of trials per staircase (per shape) % trials = 10; debugging
+    trials= 60; %total number of trials per staircase (per shape) % trials = 10; debugging
     %create trial matrix
     mixcond{1,1} = [1 1; 1 2; 2 2; 2 1];
     mixcond{2,1} = [1 2; 1 1; 2 1; 2 2];
@@ -236,15 +237,38 @@ try
         
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
             practicePassed=0;
+            numpractice = 0;
         end
         if trial == 1
             while practicePassed == 0
-                FLAP_CI_Practice2
+                if numpractice < 4
+                    FLAP_CI_Practice2
+                else
+                    Experimenter_instruction_CI_Practice
+                    thekeys = find(keyCode);
+                    if thekeys == Taskout(1)
+                        practicePassed = 1;
+                    elseif thekeys == Taskout(2)
+                        numpractice = 0;
+                        FLAP_CI_Practice2
+                    end
+                end
             end
         elseif trial > 1
             if mixtr(trial,1)~=mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
                 while practicePassed==0
-                    FLAP_CI_Practice2 
+                    if numpractice < 4
+                        FLAP_CI_Practice2
+                    else
+                        Experimenter_instruction_CI_Practice
+                        thekeys = find(keyCode);
+                        if thekeys == Taskout(1)
+                            practicePassed = 1;
+                        elseif thekeys == Taskout(2)
+                            numpractice = 0;
+                            FLAP_CI_Practice2
+                        end
+                    end
                 end
             end
         end

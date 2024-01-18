@@ -9,8 +9,8 @@ commandwindow
 
 addpath([cd '/utilities']);
 try
-    participantAssignmentTable = 'ParticipantAssignmentsUCR_corr.csv'; % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    %     participantAssignmentTable = 'ParticipantAssignmentsUAB_corr.csv'; % uncomment this if running task at UAB
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration(1), Validation (2), or nothing(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
     
