@@ -42,7 +42,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 0; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
     responsebox= 1;
     TRLlocation = 2;
     datapixxtime = 1;

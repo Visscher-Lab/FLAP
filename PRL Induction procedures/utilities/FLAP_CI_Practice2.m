@@ -113,7 +113,7 @@ for practicetrial=1:practicetrialnum
             fixating = 1500;
         end
         targpresent = 0;
-         flushflag = 0;
+         respflushflag = 0;
          
         %% here is where the second time-based trial loop starts
         if (eyetime2-trial_time)>=postfixationblank && (eyetime2-trial_time)< postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 && af == 0%present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
@@ -131,9 +131,11 @@ for practicetrial=1:practicetrialnum
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.9 );
                 targpresent = 1;
+                respflushflag = 1;
             else
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 targpresent = 1;
+                respflushflag = 1;
             end
             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
             
@@ -376,9 +378,9 @@ for practicetrial=1:practicetrialnum
         end
         if datapixxtime==1
             [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            while targpresent == 1
+            while respflushflag == 1
                 ResponseBoxFlush
-                targpresent = 0;
+                respflushflag = 0;
             end
             VBL_Timestamp=[VBL_Timestamp eyetime3];           
         else
