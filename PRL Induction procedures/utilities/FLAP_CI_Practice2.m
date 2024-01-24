@@ -377,11 +377,11 @@ for practicetrial=1:practicetrialnum
             end
         end
         if datapixxtime==1
-            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
-            while respflushflag == 1
+            while respflushflag == 1 
                 ResponseBoxFlush
                 respflushflag = 0;
             end
+            [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
             VBL_Timestamp=[VBL_Timestamp eyetime3];           
         else
             [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
