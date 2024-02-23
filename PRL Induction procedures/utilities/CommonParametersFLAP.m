@@ -69,7 +69,7 @@ CircConts=[0.51,1]*255; %low/high contrast circular cue
 radius=12.5;   %radius of the circle in which the target can appear (training type 3 and 4)
 cuecontrast=1; % contrast of the cue (0-1)
 if trainingType == 4
-    blockdurationtolerance=3*60; % maximum duration of each block for training type 4
+    blockdurationtolerance= 20; %3*60; % maximum duration of each block for training type 4
 end
 %blockdurationtolerance=12;
 countertrialskipped=0;

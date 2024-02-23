@@ -75,7 +75,7 @@ elseif site==3   %UCR VPixx
     v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
     if EyeTracker==1
-        initRequired= calibration; %do we want vpixx calibration?
+        initRequired = calibration; %do we want vpixx calibration?
         if initRequired==1
             fprintf('\nInitialization required\n\nCalibrating the device...');
             %TPxTrackpixx3CalibrationTesting;

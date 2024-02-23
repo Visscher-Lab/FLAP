@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %0=mouse, 1=eyetracker
+    EyeTracker = 0; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -1226,16 +1226,6 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 [keyIsDown, keyCode] = KbQueueCheck;
             end
             
-            if trainingType==4
-                if eyetime2-blocktime>blockdurationtolerance
-                    moveon=mixtr(trial,end);
-                    nextrials=find(mixtr(:,end) == moveon+1);
-                    skiptrial=nextrials(1);
-                    countertrialskipped=countertrialskipped+1;
-                    oldtrial(countertrialskipped)=trial;
-                    trial=skiptrial;
-                end
-            end
         end
         %% response processing
         if trialTimedout(trial)== 0 && trainingType~=3
@@ -1543,6 +1533,17 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 DrawFormattedText(w, 'Wake up and call the experimenter', 'center', 'center', white);
                 Screen('Flip', w);
                 KbQueueWait;
+            end
+        end
+        if trainingType==4
+            if eyetime2-blocktime>blockdurationtolerance
+                moveon=mixtr(trial,end);
+                nextrials=find(mixtr(:,end) == moveon+1);
+                skiptrial=nextrials(1);
+                countertrialskipped=countertrialskipped+1;
+                oldtrial(countertrialskipped)=trial;
+                trial=skiptrial;
+                skipflag = 1;
             end
         end
     end
