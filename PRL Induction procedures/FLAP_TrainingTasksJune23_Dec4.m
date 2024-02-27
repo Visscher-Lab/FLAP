@@ -312,7 +312,7 @@ try
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
         else
-            DAYN = ['\Training\Day' num2str(str2num(answer{2,:})-1) '\'];
+            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
@@ -401,7 +401,7 @@ try
         end
         
         if expDay>1 % if we are not on day one, we load thresholds from previous days
-            DAYN = ['\Training\Day' num2str(str2num(answer{2,:})-1) '\'];
+            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps);
