@@ -976,8 +976,11 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 elseif trainingType==2 || (trainingType==4 && mixtr(trial,3)==2)
                     if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
 %                         if trainingType == 2
-                            imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
-                                imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
+                   %         imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(trial),...
+                   %             imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(trial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(trial)];
+                            
+                            imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_Y,...
+                                imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_Y];  
 %                         elseif trainingType == 4
 %                             imageRect_offsCI =[imageRect_offs(1)+eccentricity_XCI'+eccentricity_X(trial), imageRect_offs(2)+eccentricity_YCI'+eccentricity_Y(trial),...
 %                                 imageRect_offs(3)+eccentricity_XCI'+eccentricity_X(trial), imageRect_offs(4)+eccentricity_YCI'+eccentricity_Y(trial)];
@@ -988,8 +991,12 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                         %          imageRectMask = CenterRect([0, 0, [ (xs/coeffCI*pix_deg)+pix_deg*2 (xs/coeffCI*pix_deg_vert)]+pix_deg_vert*2 ], wRect);
                         imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness ], wRect);
                         %    imageRectMask = CenterRect([0, 0, [ (stimulusSize*2*pix_deg) (stimulusSize*2*pix_deg_vert)] ], wRect);
-                        imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
-                            imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
+                   %     imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(trial), imageRectMask(2)+eccentricity_Y(trial),...
+                  %          imageRectMask(3)+eccentricity_X(trial), imageRectMask(4)+eccentricity_Y(trial)];
+                        
+                         imageRect_offsCImask=[imageRectMask(1)+theeccentricity_X, imageRectMask(2)+theeccentricity_Y,...
+                            imageRectMask(3)+theeccentricity_X, imageRectMask(4)+theeccentricity_Y];
+                        
                     end
                     %here I draw the target contour
                     Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
@@ -1457,11 +1464,15 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                     cheis(kk)=thekeys;  % this is giving an error Dec 4- kmv
                 end
             end
-            time_stim(kk) = stim_stop - stim_start;
-            rispo(kk)=resp;
+           if  exist('stim_start')
+               time_stim(kk) = stim_stop - stim_start;
+           end
+           rispo(kk)=resp;
             %   respTimes(trial)=respTime;
+             if  exist('stim_start')
             cueendToResp(kk)=stim_stop-cue_last;
             cuebeginningToResp(kk)=stim_stop-circle_start;
+             end
         end
         if trainingType > 2 % if it's a
             %   training type with flicker
@@ -1510,7 +1521,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             time_stim3(kk) = respTime(trial) - stim_startBox2(trial);
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
-            if trainingType ~= 3
+            if trainingType ~= 3 && exist('stim_start')
                 time_stim3(kk) = respTime(trial) - stim_start;
             end
         end

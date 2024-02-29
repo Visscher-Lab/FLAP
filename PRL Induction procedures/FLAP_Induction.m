@@ -8,7 +8,7 @@ try
 %     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     %    prompt={'Participant Name','Day', 'demo (0) or session (1)', 'Calibration? yes(1), no(0)'};
-    prompt={'Participant Name','Day', 'demo (0) or session (1)'};
+    prompt={'Participant Name','Day', 'demo (0) or session (1)', 'Calibration(1), Validation (2), or nothing(0)'};
     
     name= 'Parameters';
     numlines=1;
@@ -34,7 +34,7 @@ try
     EyeTracker = 1; %0=mouse, 1=eyetracker
     Isdemo=str2num(answer{3,:}); % full session or demo/practice
     %  calibration=str2num(answer{4,:}); %
-    calibration=1;
+    calibration=str2num(answer{4,:});
     
     inductionType = 2; % 1 = assigned, 2 = annulus
     

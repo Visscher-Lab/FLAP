@@ -11,11 +11,11 @@ try
 %     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     %   prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration? yes (1), no(0)'};
-    prompt={'Participant name', 'day', 'demo (0) or session (1)'};
+    prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration(1), Validation (2), or nothing(0)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1' };
+    defaultanswer={'test','1', '1', '1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -28,6 +28,8 @@ try
     site= 3;  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
     Isdemo=str2num(answer{3,:}); % full session or demo/practice
+        calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
+
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
     else

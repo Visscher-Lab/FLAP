@@ -23,7 +23,7 @@ shapesoftheDay
 sz=size(thresho);
 
 for ui=1:sz(2)
-subplot(2,3,ui)
+subplot(2,3,ui) 
 scatter(1:sz(1),thresho(:,ui), 'filled')
 thresharray=thresho(end-10:end, ui);
 if sum(thresharray==0)>0

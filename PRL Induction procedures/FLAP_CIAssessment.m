@@ -21,7 +21,7 @@ try
     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
 %     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
 
-    prompt={'Participant Name', 'day', 'Calibration? yes (1), no(0)'};
+    prompt={'Participant Name', 'day', 'Calibration(1), Validation (2), or nothing(0)'};
     
     name= 'Parameters';
     numlines=1;
