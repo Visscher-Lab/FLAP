@@ -658,8 +658,8 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 %   theeccentricity_X=xlimit(randi(length(xlimit)));
                 %  theeccentricity_Y=ylimit(randi(length(xlimit)));
             elseif randomlocationflag == 0
-                eccentricity_X(trial) = eccentricity_X(tracktrialnumber(end - 1));
-                eccentricity_Y(trial) = eccentricity_Y(tracktrialnumber(end - 1));
+                eccentricity_X(trial) = eccentricity_X(trial - 1);
+                eccentricity_Y(trial) = eccentricity_Y(trial - 1);
             end
         end
 
@@ -751,7 +751,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         end
         
         if trial>1
-            if mixtr(trial, end) ~= mixtr(trial-1, end) %|| mixtr(trial, end) ~= mixtr(end,end)+1 %mixtr(trial, end) == mixtr(end, end)-1
+            if mixtr(trial, end) ~= mixtr(trial-1, end) || mixtr(trial, end) == mixtr(end, end)-1
                 Datapixx('RegWrRd');
                 blocktime=Datapixx('GetTime');
             end
@@ -1579,17 +1579,16 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         if trainingType==4
-            if eyetime2-blocktime>blockdurationtolerance 
+            if eyetime2-blocktime>blockdurationtolerance && trial < 386
                 moveon=mixtr(trial,end);
                 nextrials=find(mixtr(:,end) == moveon+1);
-                if isempty(nextrials)
-                    break
-                else
                 skiptrial=nextrials(1);
                 countertrialskipped=countertrialskipped+1;
                 oldtrial(countertrialskipped)=trial;
+%                 trial=skiptrial;
                 skipflag = 1;
-                end
+            elseif trial > 385 && eyetime2 - blocktime > blockdurationtolerance
+                
             end
         end
     end
