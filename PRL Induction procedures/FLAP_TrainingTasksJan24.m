@@ -331,7 +331,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
         else
-            DAYN = ['\Training\Day' (answer{2,:}-1) '\'];
+            DAYN = ['\Training\Day' (answer{2}-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
@@ -359,6 +359,13 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 newest=d(dt).name;%PD addedd  this to pick up the correct file 11/8/2023
                 lasttrackthresh=load([foldern newest],'trackthresh');
                 trackthresh=lasttrackthresh.trackthresh;
+                lastContrthresh=load([foldern newest],'Contrthresh'); %em added lines 361 and 362 for testing 3/12/2024
+                Contrthresh=lastContrthresh.Contrthresh;
+                Contlist2=load([foldern newest],'Contlist');  %% em, please check if we need this
+                Contlist = Contlist2.Contlist;
+                lasttracksf=load([foldern newest],'currentsf');
+                currentsf=lasttracksf.currentsf;
+                theoris =[-45 45]; % possible orientation of the Gabor
             elseif trainingType==1
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %                 [dx,dx] = sort([d.datenum]);%PD commented out 11/8/2023
