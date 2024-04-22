@@ -8,7 +8,8 @@
 
 
 
-addpath([cd 'Oculomotor Analysis/Functions']);
+addpath([cd '/Oculomotor Analysis/Functions']);
+
 
 %subNum=[baseName(70:75) ' Sess ' num2str(xi)];
 %name=['Crossland distribution' subNum ];
