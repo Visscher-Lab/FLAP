@@ -64,14 +64,15 @@ try
     CommonParametersFixation % load parameters for time and space
     
     %% eyetracker initialization (eyelink)
-    
     if EyeTracker==1
         if site==3
-            EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
-            EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx
+            EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
         end
         eyetrackerparameters % set up Eyelink eyetracker
+    else
+        EyetrackerType=0;
     end
     
     %% creating stimuli
@@ -379,7 +380,12 @@ try
                     end
                     
                 end
-                
+                           else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
+                end
+            end 
             end
             [keyIsDown, keyCode] = KbQueueCheck;
         end

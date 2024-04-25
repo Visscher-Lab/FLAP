@@ -219,15 +219,21 @@ Csize=round(CC_size*ppd);
                         for i=1:length(stimx)  %draws text
                             if block<=2
                                 if i<10
-                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    %      Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor, [], [], [], [], [], [1])
                                 else
-                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor);
+                                    %      Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor);
+                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
                                 end
                             else
                                 if mod(i,2)
-                                    Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    %          Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                                    
                                 else
-                                    Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    %        Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                                    Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                                    
                                 end
                             end
                             %Screen('TextStyle', w, 1);
