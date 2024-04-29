@@ -119,13 +119,23 @@ try
         eccentricity_X(ui)=ecc_x;
         eccentricity_Y(ui)=ecc_y;
     end
-    tr=5; % trials per target location
-    loc = [1;2]; % number of fixation locations
-    mixtr1 = [repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
-    mixtr2 = [repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
-    mixtr1 = mixtr1(randperm(length(mixtr1)),:);
-    mixtr2 = mixtr2(randperm(length(mixtr2)),:);
-    mixtr = [mixtr1;mixtr2];
+    if Isdemo == 1
+        tr=5; % trials per target location
+        loc = [1;2]; % number of fixation locations
+        mixtr1 = [repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
+        mixtr2 = [repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
+        mixtr1 = mixtr1(randperm(length(mixtr1)),:);
+        mixtr2 = mixtr2(randperm(length(mixtr2)),:);
+        mixtr = [mixtr1;mixtr2];
+    else
+        tr=1; % trials per target location
+        loc = [1;2]; % number of fixation locations
+        mixtr1 = [repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
+        mixtr2 = [repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'];
+        mixtr1 = mixtr1(randperm(length(mixtr1)),:);
+        mixtr2 = mixtr2(randperm(length(mixtr2)),:);
+        mixtr = [mixtr1;mixtr2];
+    end
     %       tr=1;
     %  mixtr=[repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr
     %    mixtr=[repmat(loc(2),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)'; repmat(loc(1),1,(length(angl)*tr))', repmat(1:length(angl),1,tr)']; % create unrandomized mixtr

@@ -18,10 +18,10 @@ if site==0  %UCR bits++
     oldResolution=Screen( 'Resolution',screenNumber,1280,960);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-
+    
 elseif site==1  % UCR + bits
     crt=0; % if we use a CRT monitor
-
+    
     %% psychtoobox settings
     if crt==1
         v_d=70; %viewing distance
@@ -50,7 +50,7 @@ elseif site==1  % UCR + bits
         %     SetResolution(screenNumber, oldResolution);
         [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
     end
-
+    
 elseif site==2   %UAB
     s1=serial('com3');
     fopen(s1);
@@ -91,56 +91,56 @@ elseif site==3   %UCR VPixx
         end
         % validation only
         if initRequired==2
-                cx = 1920/2; % Point center in x
-    cy = 1080/2; % Point center in y
-    dx = 600; % How big of a range to cover in X
-    dy = 350; % How big of a range to cover in Y
-    
-    xy = [  cx cy;...
-        cx cy+dy;...
-        cx+dx cy;...
-        cx cy-dy;...
-        cx-dx cy;...
-        cx+dx cy+dy;...
-        cx-dx cy+dy;...
-        cx+dx cy-dy;...
-        cx-dx cy-dy;...
-        cx+dx/2 cy+dy/2;...
-        cx-dx/2 cy+dy/2;...
-        cx-dx/2 cy-dy/2;...
-        cx+dx/2 cy-dy/2;];
-     xy = xy';
-    [windowPtr, windowRect]=PsychImaging('OpenWindow', screenNumber, 1);
-    TPxValidateCalibrationMM(xy, 1, windowPtr, baseName, 0);
-    
-    
-        Screen('CloseAll');
+            cx = 1920/2; % Point center in x
+            cy = 1080/2; % Point center in y
+            dx = 600; % How big of a range to cover in X
+            dy = 350; % How big of a range to cover in Y
+            
+            xy = [  cx cy;...
+                cx cy+dy;...
+                cx+dx cy;...
+                cx cy-dy;...
+                cx-dx cy;...
+                cx+dx cy+dy;...
+                cx-dx cy+dy;...
+                cx+dx cy-dy;...
+                cx-dx cy-dy;...
+                cx+dx/2 cy+dy/2;...
+                cx-dx/2 cy+dy/2;...
+                cx-dx/2 cy-dy/2;...
+                cx+dx/2 cy-dy/2;];
+            xy = xy';
+            [windowPtr, windowRect]=PsychImaging('OpenWindow', screenNumber, 1);
+            TPxValidateCalibrationMM(xy, 1, windowPtr, baseName, 0);
+            
+            
+            Screen('CloseAll');
             Datapixx('Close');
-
-    Datapixx('CloseTPxMini');
-        end    
+            
+            Datapixx('CloseTPxMini');
+        end
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
     if EyeTracker==0 && datapixxtime==1
-          Datapixx('Open');
+        Datapixx('Open');
     end
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
     PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-
+    
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-
-
+    
+    
 elseif site==4   %padova eyelink
     %% psychtoobox settings
-
+    
     v_d=70; % viewing distance
     screenNumber=max(Screen('Screens'));
     PsychImaging('PrepareConfiguration');
@@ -150,7 +150,7 @@ elseif site==4   %padova eyelink
     oldResolution=Screen('Resolution',screenNumber,1920,1080);
     SetResolution(screenNumber, oldResolution);
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
-
+    
     screencm=[69.8, 40];
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
@@ -168,13 +168,13 @@ elseif site==5  %UCR scanner
             %TPxTrackpixx3CalibrationTesting;
             TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
         end
-
+        
         %Connect to TRACKPixx3
         Datapixx('Open');
         Datapixx('SetTPxAwake');
         Datapixx('RegWrRd');
     end
-
+    
     v_d=31.5; % viewing distance
     datapixxtime=1;
     PsychImaging('PrepareConfiguration');
@@ -216,7 +216,7 @@ elseif site == 7 % scanner task demo
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
     % to keep these commented during actual scan 8/17/23
-
+    
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 struct.sz=[screencm(1), screencm(2)];
@@ -356,7 +356,7 @@ if responsebox==1
         Taskout(2) = KbName('r'); % redo practice for CI assessment
     elseif site ==5
         % Bit locations of button inputs, and colored LED drivers
-
+        
         dinRed      = hex2dec('1'); % 1
         dinYellow   = hex2dec('2'); % 2
         dinGreen    = hex2dec('4'); % 4

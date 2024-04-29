@@ -5,14 +5,15 @@ commandwindow
 
 addpath([cd '/CrowdingDependencies']);
 addpath([cd '/utilities']); %add folder with utilities files
+addpath([cd '/../utilities']); %add folder with utilities files
 
 %RTBox('clear');a
 try
-    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Training type', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
+    prompt={'Participant Name', 'day','site? UCR(1), UAB(2), Vpixx(3)', 'Task type (1: Lat int, 2: noise, 3: ori)', 'Demo? (1:yes, 2:no)', 'Eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Scotoma? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'left (1) or right (2) TRL?' };
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '4', '2', '2' , '2', '0', '1', '0', '1'};
+    defaultanswer={'test','1', '3', '1', '1' , '2', '0', '1', '0', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -22,7 +23,7 @@ try
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training day (if >1
     site = str2num(answer{3,:}); % training site (UAB vs UCR vs Vpixx)
-    trainingType=str2num(answer{4,:}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+    taskType=str2num(answer{4,:}); % training type: 1: Lat int, 2: noise, 3: ori
     demo=str2num(answer{5,:}); % are we testing in debug mode?
     test=demo;
     whicheye=str2num(answer{6,:}); % are we tracking left (1) or right (2) eye? Only for Vpixx
@@ -31,15 +32,17 @@ try
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
     TRLlocation= str2num(answer{10,:}); %1=left, 2=right
     expDay=str2num(answer{2,:});
+    responsebox=0;
     %load (['../PRLocations/' name]);
     cc = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     if exist('data')==0
         mkdir('data')
     end
-    noiseOn=1;
+    datapixxtime=0;
+  %  taskType=1;
     baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
-    
+
     %% eyetracker initialization (eyelink)
     defineSite
     
@@ -70,11 +73,13 @@ try
     sc.up = 1;                          % # of incorrect answers to go one step up
     sc.down = 2;                        % # of correct answers to go one step down
     max_contrast=.7;
+    max_ori=45;
     max_noise=1;
     Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
     Contlist(1)=1;
     Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
     Noiselist=fliplr(Noiselist);
+    Orilist=log_unit_down(max_ori+.122, 0.05, 76); %Updated contrast possible values
     stepsizes=[4 4 3 2 1];
     
     
@@ -86,7 +91,7 @@ try
     n_blocks=1;
     
     trials=10; %100;
-    blocks=;1 %10;
+    blocks=1; %10;
     n_blocks=round(trials/blocks);   %number of trials per miniblock
     mixtr=[];
     for j=1:blocks
@@ -172,13 +177,15 @@ try
         
         FLAPVariablesReset
         TrialNum = strcat('Trial',num2str(trial));
-                    contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+                  %  contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
 
-        if noiseOn==1
-       noise_level= Noiselist(thresh(mixtr(trial,1),mixtr(trial,2)));
-        else 
-            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-    end
+                  if taskType==2
+                      noise_level= Noiselist(thresh(mixtr(trial,1),mixtr(trial,2)));
+                  elseif taskType==1
+                      contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+                  elseif taskType==3
+                      ori = Orilist(thresh(mixtr(trial,1),mixtr(trial,2)));
+                  end
         isorto=mixtr(trial,2);
         if isorto==1
             FlankersOri=0;
@@ -231,16 +238,17 @@ try
                     PsychPortAudio('Start', pahandle);
                     playsound=0;
                 end
-                
+                if taskType ==1 % destination rect for flankers only for collinear task
                 imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
                 
                 imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
                     imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
-                
+                end
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                if noiseOn ==1
+            
+                if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==1
@@ -256,7 +264,7 @@ try
                     Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
                 end
-                if noiseOn ==0
+                if taskType ==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
                 
@@ -264,7 +272,13 @@ try
                     Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
                 else
                 end
-                %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
+                end
+                if taskType ==3
+                    if interval==1
+                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
+                    else
+                    end
+                    %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
                 end
                 
                 %     Screen('DrawTexture', w, texture(trial), [], imageRect_offs{tloc}, ori,[], contr );
@@ -287,7 +301,7 @@ try
                 %                     noisestop=1;
                 %                 end
                 
-                if noiseOn ==1
+                if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
@@ -306,14 +320,15 @@ try
                     playsound=0;
                     noisestop=0;
                 end
-                
+                  if taskType ==1
                 imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
                 imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
                     imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
-                imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                  end
+                  imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                if noiseOn ==1
+                if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==2
@@ -328,7 +343,7 @@ try
                 end
                 
               
-                if noiseOn==0
+                if taskType==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
                 

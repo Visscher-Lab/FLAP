@@ -16,6 +16,7 @@ try
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
+        
     end
     
     addpath([cd '/utilities']);
@@ -24,7 +25,7 @@ try
     SUBJECT = answer{1,:}; %Gets Subject Name
     expday = str2num(answer{2,:});
     expdayeye = answer{2,:};
-    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
     site= 3;
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;

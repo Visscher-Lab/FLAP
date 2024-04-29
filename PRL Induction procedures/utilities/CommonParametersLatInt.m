@@ -37,7 +37,7 @@ if exist('test', 'var')
         presentationtime=2.133; % stimulus duration during debugging
    ISIinterval=0.5;
  else
-        if  trainingType==0
+        if  taskType==0
             presentationtime=0.2; % stimulus duration during actual sessions
             ISIinterval=0.5; % time interval between two stimulus intervals
         else
@@ -57,7 +57,7 @@ dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 dotsizedeg2=0.75; % size of the fixation dot ithin the Gabor in noise for Training type 2
 
 %% gabor settings 
-if trainingType==0
+if taskType==1 % demo
     sf=6; %spatial frequency of the gabor
     lambdaSeparation=3; %flankers distance in lamba (wavelength)
     lambda=1/sf; %lamba (wavelength)
@@ -66,12 +66,14 @@ if trainingType==0
     ori=0; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
 imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
-else
+elseif  taskType==2 %noise
     sf=1; %spatial frequency of the gabor
     sigma_deg=2.5; % from Shibata et al. (2017)
     ori=30; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
+  contr  = 0.5;
 imsize=sigma_pix; %Gabor mask (effective stimulus size)
+elseif  taskType==3 % ori
 end
 
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
@@ -84,12 +86,28 @@ fixwindowPix=fixwindow*pix_deg;
 midgray=0.5;
 
 
+
     xlocs=[PRL_x_axis NoPRL_x_axis];
     ylocs=[PRL_y_axis NoPRL_y_axis];
-    if TargetLoc==2
-    eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
-    eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
-    elseif TargetLoc==1
-       eccentricity_X=[0];
-    eccentricity_Y=[0];
-    end
+    
+    
+    if TRLlocation ==1 % left only
+           eccentricity_X=[xlocs(1)*pix_deg xlocs(1)*pix_deg];
+        eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+    elseif TRLlocation ==2 %right only
+        eccentricity_X=[xlocs(2)*pix_deg xlocs(2)*pix_deg];
+        eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+     end
+%     if TargetLoc==2 % two sides
+%         eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
+%         eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+%     elseif TargetLoc==4 % right only
+%         eccentricity_X=[xlocs(2)*pix_deg xlocs(2)*pix_deg];
+%         eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+%     elseif TargetLoc==3 % left only
+%         eccentricity_X=[xlocs(1)*pix_deg xlocs(1)*pix_deg];
+%         eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+%     elseif TargetLoc==1 % center
+%         eccentricity_X=[0];
+%         eccentricity_Y=[0];
+%     end

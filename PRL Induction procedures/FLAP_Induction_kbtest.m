@@ -12,7 +12,7 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1'};
+    defaultanswer={'test','1', '1','1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -450,18 +450,24 @@ try
                         trial_time = GetSecs; %start timer if we have eye info
                     end
                     stopchecking=10;
+                    tt2=0;
                 end
                 
                 if EyeData(end,1)>8000 && stopchecking<0 && (eyetime2-pretrial_time)>calibrationtolerance
-                    trialTimeout=100000;
+                 %   trialTimeout=100000;
                     caliblock=1;
+                    
                %     if responsebox==0
                         DrawFormattedText(w, 'Need calibration: press "c" to continue the study, press "m" to recalibrate, press "esc" to exit ', 'center', 'center', white);
 %                     else
 %                         DrawFormattedText(w, 'Need calibration: press "red" to continue the study, press "yellow" to recalibrate, press "green" to exit ', 'center', 'center', white);
 %                     end
                     Screen('Flip', w);
-                    %   KbQueueWait;
+                       KbQueueWait;
+%KbQueueFlush(); % flushes all the keyboard responses (resets)
+
+                                                       [keyIsDown, keyCode] = KbQueueCheck;
+
                %     if responsebox==0
                         if  sum(keyCode)~=0
                             thekeys = find(keyCode);
@@ -483,6 +489,7 @@ try
                                 DrawFormattedText(w, 'Calibration!', 'center', 'center', white);
                                 Screen('Flip', w);
                                 WaitSecs(1);
+                                t2=1;
                                 TPxReCalibrationTestingMM(1,screenNumber, baseName)
                                 %    KbQueueWait;
                                 eyechecked=10^4;
@@ -514,6 +521,11 @@ try
 %                             end
 %                         end
 %                     end
+
+      if caliblock>0
+                [keyIsDown, keyCode] = KbQueueCheck;
+                tt2=tt2+1
+            end
                 end
                 if CheckCount > 1
                     if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
@@ -544,11 +556,14 @@ try
                 buttonLogStatus = Datapixx('GetDinStatus');
                 if (buttonLogStatus.newLogFrames > 0)
                     [thekeys secs] = Datapixx('ReadDinLog');
+%                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+%                     PsychPortAudio('Start', pahandle);
                 end
                 %         [keyIsDown, keyCode] = KbQueueCheck;
             else % AYS: UCR and UAB?
                 [keyIsDown, keyCode] = KbQueueCheck;
             end
+      
             %  toc
             %    disp('fine')
             nn=nn+1;

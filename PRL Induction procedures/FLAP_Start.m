@@ -24,7 +24,7 @@ try
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
     site= 3;  %0; 1=bits++; 2=display++
     ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
     Isdemo=str2num(answer{3,:}); % full session or demo/practice
@@ -35,8 +35,9 @@ try
     else
         whicheye = 1;
     end
+     
     %    calibration=str2num(answer{4,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    calibration=1;
+%     calibration=1;
     EyeTracker = 1; %0=mouse, 1=eyetracker
     scotomavpixx= 0;
     responsebox=0;

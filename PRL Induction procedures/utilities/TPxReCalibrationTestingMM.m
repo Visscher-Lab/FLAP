@@ -3,17 +3,18 @@ function TPxReCalibrationTestingMM(isTPX,screenNumber, baseName)
 %
 
 
-    prompt={'Attempt'};
+%     prompt={'Attempt'};
+%     
+%     name= 'Calibration Name';
+%     numlines=1;
+%     defaultanswer={'1' };
+%     answer=inputdlg(prompt,name,numlines,defaultanswer);
+%     if isempty(answer)
+%         return;
+%     end
     
-    name= 'Calibration Name';
-    numlines=1;
-    defaultanswer={'1' };
-    answer=inputdlg(prompt,name,numlines,defaultanswer);
-    if isempty(answer)
-        return;
-    end
-    
-    attempt = answer{1,:}; %Gets Subject Name
+    attempt = [baseName 'recal']; %Gets Subject Name
+   % attempt= []
 % This demo calibrates the current session for the TRACKPixx(TPx) or 
 % TRACKPixx /mini (TPx/m) trackers and displays the calibration results. 
 % Once the calibration is finished, a gaze follower is started

@@ -68,7 +68,7 @@ try
     if sum(participantAssignmentTable(23:25) == 'UAB')==3
         tt = temp(find(contains(temp.participant,SUBJECT)),:);
     else
-        tt = temp(find(contains(temp.x___participant,SUBJECT)),:);
+        tt = temp(find(contains(temp.participant,SUBJECT)),:);
     end
     if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;
@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %1; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -597,7 +597,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         end
 
         if trainingType==2 || trainingType==4 && mixtr(trial,3)==2 %if it's a CI trial (training type 2 or 4)
-            Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
+            Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)))
             Tscat=0;
         end
         if trainingType==4 %if it's a training type 4 trial, which cue type? high or low visibility cue
@@ -690,7 +690,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         
-        if trainingType == 4 && trial == 1 || randomlocationflag == 1
+        if trainingType == 4 && (trial == 1 || randomlocationflag == 1)
             InstructionTrainingTask4
             randomlocationflag = 0;
         end
