@@ -46,10 +46,10 @@ try
     %       subjects.
     %       Columns are: participant    TRL     WhichEye    Afirst      TrainingTask    Acuitycondition     ContrastCondition   crowdingCondition   ContourCondition    ScotomaPresent
     %       Comments are: %(participant name),	[TRL ("R" or "L", defined prior to first training, starts as NA) left(1) right(2) for tracking],  [A first = 1 (Assessment A will be run first)],
-    %                        [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
+    %                         [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
 
     % output from the gui is 'SUBJECT' < a string with the participant
-    % name in it in the format fr1001, for the first participant.
+    % name in it in the format fr1001, for the first participant. 
     % f stands for FLAP, r stands for UCR, 1 stands for first cycle of
     % participants, 001 stands for the first participant run at UCR.
     % SUBJECT must match a participant number in the table
@@ -360,11 +360,13 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 lasttrackthresh=load([foldern newest],'trackthresh');
                 trackthresh=lasttrackthresh.trackthresh;
                 lastContrthresh=load([foldern newest],'Contrthresh'); %em added lines 361 and 362 for testing 3/12/2024
+            if trainingType==4
                 Contrthresh=lastContrthresh.Contrthresh;
                 Contlist2=load([foldern newest],'Contlist');  %% em, please check if we need this
                 Contlist = Contlist2.Contlist;
                 lasttracksf=load([foldern newest],'currentsf');
                 currentsf=lasttracksf.currentsf;
+            end
                 theoris =[-45 45]; % possible orientation of the Gabor
             elseif trainingType==1
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);

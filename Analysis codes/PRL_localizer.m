@@ -1,3 +1,5 @@
+clear allsca
+
 %
 %% PRL quantification for FLAP
 % Marcello A. Maniglia, 2017-2019/10/28, Hallowe'en 2023

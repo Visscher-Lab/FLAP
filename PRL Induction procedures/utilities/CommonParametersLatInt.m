@@ -37,10 +37,10 @@ if exist('test', 'var')
         presentationtime=2.133; % stimulus duration during debugging
    ISIinterval=0.5;
  else
-        if  taskType==0
+        if  taskType==1
             presentationtime=0.2; % stimulus duration during actual sessions
             ISIinterval=0.5; % time interval between two stimulus intervals
-        else
+        elseif  taskType==2
             presentationtime=0.05; % stimulus duration during actual sessions
             ISIinterval=0.3; % time interval between two stimulus intervals
         end
@@ -55,6 +55,7 @@ realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to 
 
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 dotsizedeg2=0.75; % size of the fixation dot ithin the Gabor in noise for Training type 2
+    fixwindowPix=fixwindow*pix_deg;
 
 %% gabor settings 
 if taskType==1 % demo
@@ -65,15 +66,32 @@ if taskType==1 % demo
     lambdadeg=lambdaSeparation*lambda*pix_deg;
     ori=0; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
-imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
+    imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
 elseif  taskType==2 %noise
     sf=1; %spatial frequency of the gabor
     sigma_deg=2.5; % from Shibata et al. (2017)
     ori=30; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
-  contr  = 0.5;
-imsize=sigma_pix; %Gabor mask (effective stimulus size)
+    contr  = 0.5;
+    imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==3 % ori
+    refOri=deg2rad(45);
+      sigma_pix = sigma_deg*pix_deg;
+    contr  = 0.5;
+    imsize=sigma_pix; %Gabor mask (effective stimulus size)
+elseif  taskType==4 % symmetrical dots
+    refOri=deg2rad(135);
+end
+% 
+if test==1
+ sf=1; %spatial frequency of the gabor
+    lambdaSeparation=3; %flankers distance in lamba (wavelength)
+    lambda=1/sf; %lamba (wavelength)
+    sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
+    lambdadeg=lambdaSeparation*lambda*pix_deg;
+    ori=0; % Gaboer target orientation
+    sigma_pix = sigma_deg*pix_deg;
+    imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
 end
 
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
@@ -97,6 +115,9 @@ midgray=0.5;
     elseif TRLlocation ==2 %right only
         eccentricity_X=[xlocs(2)*pix_deg xlocs(2)*pix_deg];
         eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+        elseif TRLlocation ==3 % both sides
+    eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
+    eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
      end
 %     if TargetLoc==2 % two sides
 %         eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
@@ -111,3 +132,10 @@ midgray=0.5;
 %         eccentricity_X=[0];
 %         eccentricity_Y=[0];
 %     end
+
+
+% response settings
+
+         theintervals=[1 2]; % first or second interval? only for task 1 and 2, cause 3 and 4 we always compare the reference in thje first interval with the tagret in the second
+                  plusminus= [1 -1]; % wheter we want the orientation offset in task 3 and 4 to be clockwise or counterclockwsie with respect to the reference
+    

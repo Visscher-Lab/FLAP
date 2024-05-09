@@ -68,7 +68,7 @@ try
     if sum(participantAssignmentTable(23:25) == 'UAB')==3
         tt = temp(find(contains(temp.participant,SUBJECT)),:);
     else
-        tt = temp(find(contains(temp.x___participant,SUBJECT)),:);
+        tt = temp(find(contains(temp.participant,SUBJECT)),:);
     end
     if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;

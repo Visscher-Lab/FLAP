@@ -32,7 +32,7 @@ try
     end
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
-    tt = temp(find(contains(temp.x___participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
     expDay=str2num(answer{2,:}); % training day (if >1
     site = 3; % training site (UAB vs UCR vs Vpixx)
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
@@ -724,7 +724,8 @@ try
                 if reversals(mixtr(trial,1),mixtr(trial,2))<2
                     sc.down=sc.steps(1);
                 elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
-                    sc.down=sc.steps(2);
+                  %  sc.down=sc.steps(2);
+                     sc.down=sc.steps(1);
                 end
                 %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
                 if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
