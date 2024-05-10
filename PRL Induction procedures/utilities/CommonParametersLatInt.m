@@ -137,5 +137,5 @@ midgray=0.5;
 % response settings
 
          theintervals=[1 2]; % first or second interval? only for task 1 and 2, cause 3 and 4 we always compare the reference in thje first interval with the tagret in the second
-                  plusminus= [1 -1]; % wheter we want the orientation offset in task 3 and 4 to be clockwise or counterclockwsie with respect to the reference
+                  plusminus= [-1 1]; % wheter we want the orientation offset in task 3 and 4 to be clockwise or counterclockwsie with respect to the reference
     
