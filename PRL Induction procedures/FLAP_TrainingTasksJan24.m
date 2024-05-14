@@ -277,7 +277,6 @@ try
         else
             mixtr=[mixtr_gabor(1:2,:);mixtr_shapes(1:2,:); mixtr_gabor(3:4,:); mixtr_shapes(3:4,:);mixtr_gabor(5:6,:);mixtr_shapes(5:6,:)];
         end
-        
         %mixtr(:,1) = shape type (for gabor always 1, for shapes 1-3)
         %mixtr(:,2) = cue type (1: endo, 2: exo)
         %mixtr(:,3) = task type (1: Gabor, 2: CI)
@@ -331,14 +330,14 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
             end
         else
-            DAYN = ['\Training\Day' (answer{2}-1) '\'];
+            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
                 %d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %      NEW DIRECTORY
 
-
+                
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
 
 %                 d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
