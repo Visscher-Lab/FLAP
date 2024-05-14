@@ -39,9 +39,9 @@ try
         mkdir('data')
     end
     datapixxtime=0;
-  %  taskType=1;
+    %  taskType=1;
     baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
-
+    
     %% eyetracker initialization (eyelink)
     defineSite
     
@@ -55,12 +55,12 @@ try
         eyetrackerparameters % set up Eyelink eyetracker
     else
         EyetrackerType=0;
-    end   
+    end
     %% STAIRCASE
-staircaseLatInt
+    staircaseLatInt
     %% create stimuli
     createGabors
-    %% response 
+    %% response
     RespType(1) = KbName('a');
     RespType(2) = KbName('b');
     
@@ -70,20 +70,24 @@ staircaseLatInt
     end
     %% main loop
     HideCursor;
-   
+    
     % Select specific text font, style and size:
- %   Screen('TextFont',w, 'Arial');
- %   Screen('TextSize',w, 42);
+    %   Screen('TextFont',w, 'Arial');
+    %   Screen('TextSize',w, 42);
     %     Screen('TextStyle', w, 1+2);
     Screen('FillRect', w, gray);
-    DrawFormattedText(w, 'Press (a) if target in the first interval, press (b) if in the second \n \n \n \n Press any key to start', 'center', 'center', white);
+    if taskType<3
+            DrawFormattedText(w, 'Press (a) if target in the first interval, press (b) if in the second \n \n \n \n Press any key to start', 'center', 'center', white);
+    elseif taskType>2
+        DrawFormattedText(w, 'Press (a) if target more clockwise than reference,press (b) if target more counter clockwise \n \n \n \n Press any key to start', 'center', 'center', white);
+    end
     Screen('Flip', w);
     WaitSecs(1.5);
     KbQueueWait;
-        
-
     
-     % check EyeTracker status
+    
+    
+    % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
         if status~=0
@@ -106,8 +110,8 @@ staircaseLatInt
         Datapixx('RegWrVideoSync');
     end
     noisestop=0;
-    for trial=1:length(mixtr)
-
+    %for trial=1:length(mixtr)
+    while sum(revcount>0)< reversalsToEnd
         % if   (mod(trial,tr*2)==1)
         %         if trial==1
         %             whichInstruction=(mixtr(trial,2))
@@ -120,35 +124,35 @@ staircaseLatInt
         
         FLAPVariablesReset
         TrialNum = strcat('Trial',num2str(trial));
-                  %  contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-
-                                    theeccentricity_X=eccentricity_X(mixtr(trial,1));
-                  theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
-                  if taskType==1
-                      contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-                      isorto=mixtr(trial,2);
-                      if isorto==1
-                          FlankersOri=0;
-                      elseif isorto==2
-                          FlankersOri=90;
-                      end
-                  elseif taskType==2
-                      noise_level= Noiselist(thresh(mixtr(trial,1),mixtr(trial,2)));                    
-                  elseif taskType==3
-                      ori = Orilist(thresh(mixtr(trial,1),mixtr(trial,2)));
-                  elseif taskType==4
-                      ori = Orilist(thresh(mixtr(trial,1),mixtr(trial,2)));
-                  end
-    
-                  theans(trial)=randi(2); %generates answer for this trial
-                  if taskType<3
-                      interval=theintervals(theans(trial));
-                  elseif taskType>2
-                      plusORminus=plusminus(theans(trial));
-                  end       
-                  if  taskType==4
-                      symmetricDotsCreate
-                  end
+        %  contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        
+        theeccentricity_X=eccentricity_X(mixtr(trial,1));
+        theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
+        if taskType==1
+            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+            isorto=mixtr(trial,2);
+            if isorto==1
+                FlankersOri=0;
+            elseif isorto==2
+                FlankersOri=90;
+            end
+        elseif taskType==2
+            noise_level= Noiselist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        elseif taskType==3
+            ori = Orilist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        elseif taskType==4
+            ori = Orilist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        end
+        
+        theans(trial)=randi(2); %generates answer for this trial
+        if taskType<3
+            interval=theintervals(theans(trial));
+        elseif taskType>2
+            plusORminus=plusminus(theans(trial));
+        end
+        if  taskType==4
+            symmetricDotsCreate
+        end
         if EyetrackerType ==2
             %start logging eye data
             Datapixx('RegWrRd');
@@ -196,15 +200,15 @@ staircaseLatInt
                     playsound=0;
                 end
                 if taskType ==1 % destination rect for flankers only for collinear task
-                imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
-                
-                imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
+                    imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
+                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
+                    
+                    imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
+                        imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
                 end
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-            
+                
                 if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
@@ -224,22 +228,22 @@ staircaseLatInt
                 if taskType ==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
-                
-                if interval==1
-                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
-                else
-                end
+                    
+                    if interval==1
+                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[], contr);
+                    else
+                    end
                 end
                 if taskType ==3
-                %    if interval==1
-                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
-                %    else
-                %    end
+                    %    if interval==1
+                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
+                    %    else
+                    %    end
                     %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
                 end
                 
                 if taskType ==4
-                                            Screen('DrawDots', w, dotcoord', dotSizePix, [1 1 1]);
+                    Screen('DrawDots', w, dotcoord', dotSizePix, [1 1 1]);
                 end
                 
                 %     Screen('DrawTexture', w, texture(trial), [], imageRect_offs{tloc}, ori,[], contr );
@@ -265,7 +269,7 @@ staircaseLatInt
                 if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
-                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                    Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
                     %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
@@ -273,7 +277,7 @@ staircaseLatInt
                     Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
                 end
-            
+                
             elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval && (eyetime2-trial_time)< ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && stopchecking>1
                 if playsound==1
                     PsychPortAudio('FillBuffer', pahandle, bip_sound' )
@@ -281,13 +285,13 @@ staircaseLatInt
                     playsound=0;
                     noisestop=0;
                 end
-                  if taskType ==1
-                imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
-                imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                    imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
-                  end
-                  imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                if taskType ==1
+                    imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
+                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
+                    imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
+                        imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
+                end
+                imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                 if taskType ==2
                     subNoise
@@ -297,13 +301,11 @@ staircaseLatInt
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     end
-                     imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
+                    imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
                     % Screen('FillOval',w, gray,imageRect_offscircle);
                     Screen('FrameOval', w,gray, imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
-                end
-                
-                
+                end                
                 if taskType==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
@@ -318,10 +320,10 @@ staircaseLatInt
                 if taskType==3
                     Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri+(Ori*plusORminus),[], contr);
                 end
-                      if taskType ==4
-                                            Screen('DrawDots', w, dotcoord2', dotSizePix, [1 1 1]);
+                if taskType ==4
+                    Screen('DrawDots', w, dotcoord2', dotSizePix, [1 1 1]);
                 end
-   
+                
             elseif (eyetime2-trial_time)> ifi*3+presentationtime+ISIinterval+presentationtime && fixating>400 && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey) ==0 && stopchecking>1; %present pre-stimulus and stimulus
                 %   Screen('Close');
                 
@@ -394,29 +396,57 @@ staircaseLatInt
             PsychPortAudio('FillBuffer', pahandle, corrS' )
             PsychPortAudio('Start', pahandle);
             
-            if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && trial>sc.down             
+            if corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down && trial>sc.down
                 if isreversals(mixtr(trial,1),mixtr(trial,2))==2
-                   % reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
                     isreversals(mixtr(trial,1),mixtr(trial,2))=1;
                 end
+            end
+            if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down
+                if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                    revcount(kk) = 2;
+                    reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                    isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                end
                 thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+            else
+                if taskType == 1
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                elseif taskType==4
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
+                end
+            end
+            if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down % update stimulus intensity
                 if thestep>5 %Doesn't this negate the step size of 8 in the step size list? --Denton
                     thestep=5;
                 end
                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
-                thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-            end         
-            if corrcounter(mixtr(trial,1),mixtr(trial,2))<sc.down % maintain stimulus intensity
-                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2));
-                thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                if taskType == 1
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                elseif taskType == 4
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
+                end
+                if streakon == 0
+                    corrcounter(mixtr(trial,1),mixtr(trial,2)) = 0;
+                end
+            else
+                if corrcounter(mixtr(trial,1),mixtr(trial,2))<sc.down % maintain stimulus intensity
+                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2));
+                       if taskType == 1
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
+                       elseif taskType ==4
+                                        thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
+                       end
+                end
             end
         elseif (thekeys==escapeKey) % esc pressed
             closescript = 1;
             break;
         else
-            resp = 0;
-            if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                isreversals(mixtr(trial,1),mixtr(trial,2))=1;
+            resp = 0; % if wrong response
+            if   isreversals(mixtr(trial,1),mixtr(trial,2))==0 && trial>1; %corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                isreversals(mixtr(trial,1),mixtr(trial,2))=2;
+                revcount(kk)=1.5;
+                reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
             end
             corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
             PsychPortAudio('FillBuffer', pahandle, errorS');
@@ -437,13 +467,16 @@ staircaseLatInt
         xxeye(trial).ics=[xeye];
         yyeye(trial).ipsi=[yeye];
         vbltimestamp(trial).ix=[VBL_Timestamp];
-        angl(trial).a=FlankersOri;
-        
+       if taskType ==1
+           angl(trial).a=FlankersOri;
+            kontrast(kk)=contr;
+        end
         rispo(kk)=resp;
-        kontrast(kk)=contr;
+       
         cheis(kk)=thekeys;
+         if taskType ~=4
         righinterval(kk)=interval;
-        
+         end
         
         %offsetX(kk)=eccentricity_X;
         %offsetY(kk)=eccentricity_Y;
@@ -487,62 +520,64 @@ staircaseLatInt
             clear ErrorInfo
         end
         
-                    if EyetrackerType==2
-                %read in eye data
-                Datapixx('RegWrRd');
-                status = Datapixx('GetTPxStatus');
-                toRead = status.newBufferFrames;
-                [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
-                
-                %bufferData is formatted as follows:
-                %1      --- Timetag (in seconds)
-                %2      --- Left Eye X (in pixels)
-                %3      --- Left Eye Y (in pixels)
-                %4      --- Left Pupil Diameter (in pixels)
-                %5      --- Right Eye X (in pixels)
-                %6      --- Right Eye Y (in pixels)
-                %7      --- Right Pupil Diameter (in pixels)
-                %8      --- Digital Input Values (24 bits)
-                %9      --- Left Blink Detection (0=no, 1=yes)
-                %10     --- Right Blink Detection (0=no, 1=yes)
-                %11     --- Digital Output Values (24 bits)
-                %12     --- Left Eye Fixation Flag (0=no, 1=yes)
-                %13     --- Right Eye Fixation Flag (0=no, 1=yes)
-                %14     --- Left Eye Saccade Flag (0=no, 1=yes)
-                %15     --- Right Eye Saccade Flag (0=no, 1=yes)
-                %16     --- Message code (integer)
-                %17     --- Left Eye Raw X (in pixels)
-                %18     --- Left Eye Raw Y (in pixels)
-                %19     --- Right Eye Raw X (in pixels)
-                %20     --- Right Eye Raw Y (in pixels)
-                
-                %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
-                %in the console overlay. In tabletop and MEG setups, this view is
-                %inverted. This means "RIGHT" in our labelling convention corresponds
-                %to the participant's left eye. Similarly "LEFT" in our convention
-                %refers to left on the screen, which corresponds to the participant's
-                %right eye.
-                
-                %If you are using an MRI setup with an inverting mirror, "RIGHT" will
-                %correspond to the participant's right eye.
-                
-                %save eye data from trial as a table in the trial structure
-                Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
-                    'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
-                    'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
-                %interim save
-                % save(baseName, 'Pixxstruct');
-                % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-            end
+        if EyetrackerType==2
+            %read in eye data
+            Datapixx('RegWrRd');
+            status = Datapixx('GetTPxStatus');
+            toRead = status.newBufferFrames;
+            [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
+            
+            %bufferData is formatted as follows:
+            %1      --- Timetag (in seconds)
+            %2      --- Left Eye X (in pixels)
+            %3      --- Left Eye Y (in pixels)
+            %4      --- Left Pupil Diameter (in pixels)
+            %5      --- Right Eye X (in pixels)
+            %6      --- Right Eye Y (in pixels)
+            %7      --- Right Pupil Diameter (in pixels)
+            %8      --- Digital Input Values (24 bits)
+            %9      --- Left Blink Detection (0=no, 1=yes)
+            %10     --- Right Blink Detection (0=no, 1=yes)
+            %11     --- Digital Output Values (24 bits)
+            %12     --- Left Eye Fixation Flag (0=no, 1=yes)
+            %13     --- Right Eye Fixation Flag (0=no, 1=yes)
+            %14     --- Left Eye Saccade Flag (0=no, 1=yes)
+            %15     --- Right Eye Saccade Flag (0=no, 1=yes)
+            %16     --- Message code (integer)
+            %17     --- Left Eye Raw X (in pixels)
+            %18     --- Left Eye Raw Y (in pixels)
+            %19     --- Right Eye Raw X (in pixels)
+            %20     --- Right Eye Raw Y (in pixels)
+            
+            %IMPORTANT: "RIGHT" and "LEFT" refer to the right and left eyes shown
+            %in the console overlay. In tabletop and MEG setups, this view is
+            %inverted. This means "RIGHT" in our labelling convention corresponds
+            %to the participant's left eye. Similarly "LEFT" in our convention
+            %refers to left on the screen, which corresponds to the participant's
+            %right eye.
+            
+            %If you are using an MRI setup with an inverting mirror, "RIGHT" will
+            %correspond to the participant's right eye.
+            
+            %save eye data from trial as a table in the trial structure
+            Pixxstruct(trial).EyeData = array2table(bufferData, 'VariableNames', {'TimeTag', 'LeftEyeX', 'LeftEyeY', 'LeftPupilDiameter', 'RightEyeX', 'RightEyeY', 'RightPupilDiameter',...
+                'DigitalIn', 'LeftBlink', 'RightBlink', 'DigitalOut', 'LeftEyeFixationFlag', 'RightEyeFixationFlag', 'LeftEyeSaccadeFlag', 'RightEyeSaccadeFlag',...
+                'MessageCode', 'LeftEyeRawX', 'LeftEyeRawY', 'RightEyeRawX', 'RightEyeRawY'});
+            %interim save
+            % save(baseName, 'Pixxstruct');
+            % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
+        end
         
         if (mod(trial,50))==1 && trial>1
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end
-        
+        rispo(kk) = resp;
+        revve {kk} = isreversals;
         if closescript==1
             break;
         end
         kk=kk+1;
+        trial=kk;
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
@@ -647,7 +682,13 @@ staircaseLatInt
     % %total_thresh= [final_threshold(:,:,1) final_threshold(:,:,2)];
     % %%
     
-    
+    thresho=permute(Threshlist, [3 1 2]);
+    scatter(1:length(thresho), thresho)
+    hold on
+    scatter(1:length(rispo), rispo/2, 'k');
+    hold on
+    scatter(1:length(revcount), revcount-1.3, 'r');
+    ylim([0 2.2])
 catch ME
     psychlasterror()
 end

@@ -12,18 +12,23 @@
     currentsf=1;
     % Threshold -> 66%
     sc.up = 1;                          % # of incorrect answers to go one step up
-    sc.down = 2;                        % # of correct answers to go one step down
+    sc.down = 3;                        % # of correct answers to go one step down
     max_contrast=.7;
-    max_ori=45;
+    max_ori=30;
     max_noise=1;
-    Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
-    Contlist(1)=1;
-    Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
-    Noiselist=fliplr(Noiselist);
-    Orilist=log_unit_down(max_ori+.122, 0.05, 76); %Updated contrast possible values
+    if taskType ==1
+        Contlist = log_unit_down(max_contrast+.122, 0.05, 76); %Updated contrast possible values
+        Contlist(1)=1;
+    elseif taskType == 2
+        Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
+        Noiselist=fliplr(Noiselist);
+    elseif taskType==3 || taskType==4
+        Orilist=log_unit_down(max_ori+.122, 0.05, 76); %Updated contrast possible values
+    end
     stepsizes=[4 4 3 2 1];
-    
-    
+    streakon=0; % if we activate the streak, we don't reset correct responses after sc.down
+    revcount=0;
+    reversalsToEnd=10;
     lok=2; %location: PRL vs no PRL
     fl=2; % flankers: Iso vs orto
     condlist=fullfact([lok fl]);
@@ -42,3 +47,5 @@
     end
     
     b=mixtr(randperm(length(mixtr)),:);
+    
+    trial=1;

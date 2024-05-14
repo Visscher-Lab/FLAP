@@ -4,10 +4,11 @@
 %pix_deg=34;
 %pix_deg=1;
 
+%ori=5;
 
 % orientation of the two cinfigurations per trial
     refOri=deg2rad(45);
-    diffOri=deg2rad(45) + plusORminus* ori;
+    diffOri=deg2rad(45) + (plusORminus* deg2rad(ori));
   %  refOri=deg2rad(0);
   %  refOri=deg2rad(90);
 
@@ -66,7 +67,7 @@ dotY = [dotY; dotY];
 
 % apply orientation offset of 45 degrees
 theta = refOri;
-theta2 = refOri+diffOri;
+theta2 = diffOri;
 
 rotationMatrix = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 rotationMatrix2 = [cos(theta2) -sin(theta2); sin(theta2) cos(theta2)];
@@ -189,3 +190,16 @@ dotcoord(:,2)=predotcoord(:,2)+wRect(4)/2;
 
 dotcoord2(:,1)=predotcoord2(:,1)+wRect(3)/2;
 dotcoord2(:,2)=predotcoord2(:,2)+wRect(4)/2;
+
+
+figure
+scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
+hold on
+scatter(dotcoord(:,1), dotcoord(:,2), 'r')
+
+
+figure
+subplot(1,2,1)
+scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
+subplot(1,2,2)
+scatter(dotcoord(:,1), dotcoord(:,2), 'r')
