@@ -9,7 +9,7 @@
 %         
         
   %                  sigma_pix = sigma_deg*pix_deg; % Gabor sigma
-        max_contrast=1;
+        max_contrast=contr;
      %   sflist=[1 2 3 4:2:18]; %cpd
      sflist=sf;
         G = exp(-((ax/sigma_pix).^2)-((ay/sigma_pix).^2));

@@ -192,14 +192,14 @@ dotcoord2(:,1)=predotcoord2(:,1)+wRect(3)/2;
 dotcoord2(:,2)=predotcoord2(:,2)+wRect(4)/2;
 
 
-figure
-scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
-hold on
-scatter(dotcoord(:,1), dotcoord(:,2), 'r')
-
-
-figure
-subplot(1,2,1)
-scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
-subplot(1,2,2)
-scatter(dotcoord(:,1), dotcoord(:,2), 'r')
+% figure
+% scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
+% hold on
+% scatter(dotcoord(:,1), dotcoord(:,2), 'r')
+% 
+% 
+% figure
+% subplot(1,2,1)
+% scatter(dotcoord2(:,1), dotcoord2(:,2), 'k')
+% subplot(1,2,2)
+% scatter(dotcoord(:,1), dotcoord(:,2), 'r')

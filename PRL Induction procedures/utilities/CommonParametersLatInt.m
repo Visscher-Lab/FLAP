@@ -2,11 +2,11 @@
 
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 
-    scotomadeg=10; % size of the scotoma in degrees of visual angle
-    smallscotomadeg=1;
-    stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
-   scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
-   smallscotomarect = CenterRect([0, 0, smallscotomadeg*pix_deg, smallscotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
+scotomadeg=10; % size of the scotoma in degrees of visual angle
+smallscotomadeg=1;
+stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
+scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
+smallscotomarect = CenterRect([0, 0, smallscotomadeg*pix_deg, smallscotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
 
 oval_thick=3; %thickness of the TRL oval (value of the filloval function)
 
@@ -35,8 +35,8 @@ forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentat
 if exist('test', 'var')
     if test==1
         presentationtime=2.133; % stimulus duration during debugging
-   ISIinterval=0.5;
- else
+        ISIinterval=0.5;
+    else
         if  taskType==1
             presentationtime=0.2; % stimulus duration during actual sessions
             ISIinterval=0.5; % time interval between two stimulus intervals
@@ -48,16 +48,16 @@ if exist('test', 'var')
 end
 trialTimeout = 8; % how long (seconds) should a trial last without a response
 realtrialTimeout = trialTimeout; % used later for accurate calcuations (need to be updated after fixation criteria satisfied)
-    
-    eyetime2=0; % trial-based timer, will later be populated with eyetracker data 
-    closescript=0; % to allow ESC use
-    kk=1; % trial counter
+
+eyetime2=0; % trial-based timer, will later be populated with eyetracker data
+closescript=0; % to allow ESC use
+kk=1; % trial counter
 
 dotsizedeg=0.5; % size of the fixation dot for Training type 1 and 2
 dotsizedeg2=0.75; % size of the fixation dot ithin the Gabor in noise for Training type 2
-    fixwindowPix=fixwindow*pix_deg;
+fixwindowPix=fixwindow*pix_deg;
 
-%% gabor settings 
+%% gabor settings
 if taskType==1 % demo
     sf=6; %spatial frequency of the gabor
     lambdaSeparation=3; %flankers distance in lamba (wavelength)
@@ -75,16 +75,17 @@ elseif  taskType==2 %noise
     contr  = 0.5;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==3 % ori
-    refOri=deg2rad(45);
-      sigma_pix = sigma_deg*pix_deg;
+    sigma_deg=0.67; % from Wang et al. (2016)
+        refOri=45;
+    sigma_pix = sigma_deg*pix_deg;
     contr  = 0.5;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==4 % symmetrical dots
     refOri=deg2rad(135);
 end
-% 
+%
 if test==1
- sf=1; %spatial frequency of the gabor
+    sf=1; %spatial frequency of the gabor
     lambdaSeparation=3; %flankers distance in lamba (wavelength)
     lambda=1/sf; %lamba (wavelength)
     sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
@@ -105,20 +106,20 @@ midgray=0.5;
 
 
 
-    xlocs=[PRL_x_axis NoPRL_x_axis];
-    ylocs=[PRL_y_axis NoPRL_y_axis];
-    
-    
-    if TRLlocation ==1 % left only
-           eccentricity_X=[xlocs(1)*pix_deg xlocs(1)*pix_deg];
-        eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
-    elseif TRLlocation ==2 %right only
-        eccentricity_X=[xlocs(2)*pix_deg xlocs(2)*pix_deg];
-        eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
-        elseif TRLlocation ==3 % both sides
+xlocs=[PRL_x_axis NoPRL_x_axis];
+ylocs=[PRL_y_axis NoPRL_y_axis];
+
+
+if TRLlocation ==1 % left only
+    eccentricity_X=[xlocs(1)*pix_deg xlocs(1)*pix_deg];
+    eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+elseif TRLlocation ==2 %right only
+    eccentricity_X=[xlocs(2)*pix_deg xlocs(2)*pix_deg];
+    eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
+elseif TRLlocation ==3 % both sides
     eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
     eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
-     end
+end
 %     if TargetLoc==2 % two sides
 %         eccentricity_X=[xlocs(1)*pix_deg xlocs(2)*pix_deg];
 %         eccentricity_Y=[ylocs(1)*pix_deg ylocs(2)*pix_deg];
@@ -136,6 +137,5 @@ midgray=0.5;
 
 % response settings
 
-         theintervals=[1 2]; % first or second interval? only for task 1 and 2, cause 3 and 4 we always compare the reference in thje first interval with the tagret in the second
-                  plusminus= [-1 1]; % wheter we want the orientation offset in task 3 and 4 to be clockwise or counterclockwsie with respect to the reference
-    
+theintervals=[1 2]; % first or second interval? only for task 1 and 2, cause 3 and 4 we always compare the reference in thje first interval with the tagret in the second
+plusminus= [-1 1]; % wheter we want the orientation offset in task 3 and 4 to be clockwise or counterclockwsie with respect to the reference
