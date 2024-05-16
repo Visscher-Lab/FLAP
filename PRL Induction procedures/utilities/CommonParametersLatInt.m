@@ -34,14 +34,15 @@ fixationduration=0.5; %duration of forced fixation period
 forcedfixationISI=0; % ISI between end of forced fixation and stimulus presentation (training type 1 and 2) or flickering (training type 3 and 4)
 if exist('test', 'var')
     if test==1
-        presentationtime=2.133; % stimulus duration during debugging
+        presentationtime=1.133; % stimulus duration during debugging
         ISIinterval=0.5;
     else
         if  taskType==1
             presentationtime=0.2; % stimulus duration during actual sessions
             ISIinterval=0.5; % time interval between two stimulus intervals
-        elseif  taskType==2
-            presentationtime=0.05; % stimulus duration during actual sessions
+        elseif  taskType~=1
+            %  presentationtime=0.05; % stimulus duration during actual sessions
+            presentationtime=0.1; % stimulus duration during actual sessions
             ISIinterval=0.3; % time interval between two stimulus intervals
         end
     end
@@ -67,44 +68,53 @@ if taskType==1 % demo
     ori=0; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
     imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
+    if test==1
+        sf=1; %spatial frequency of the gabor
+        lambdaSeparation=3; %flankers distance in lamba (wavelength)
+        lambda=1/sf; %lamba (wavelength)
+        sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
+        lambdadeg=lambdaSeparation*lambda*pix_deg;
+        ori=0; % Gaboer target orientation
+        sigma_pix = sigma_deg*pix_deg;
+        imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
+    end
 elseif  taskType==2 %noise
-    sf=1; %spatial frequency of the gabor
+    sf=6; %spatial frequency of the gabor
+  %  sf=3; %spatial frequency of the gabor
+    sigma_deg=0.67; % from Wang et al. (2016)
+    %  sigma_deg=2.5; % from Shibata et al. (2017)
     sigma_deg=2.5; % from Shibata et al. (2017)
-    ori=30; % Gaboer target orientation
+    ori=35; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
     contr  = 0.5;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==3 % ori
-    sigma_deg=0.67; % from Wang et al. (2016)
-        refOri=45;
+    sf=6; %spatial frequency of the gabor
+  %  sf=3; %spatial frequency of the gabor
+    %  sigma_deg=0.67; % from Wang et al. (2016)
+    sigma_deg=2.5; % from Shibata et al. (2017)
+    refOri=35;
     sigma_pix = sigma_deg*pix_deg;
     contr  = 0.5;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==4 % symmetrical dots
-    refOri=deg2rad(135);
+    refOri=deg2rad(35);
+      sigma_deg=2.5; % from Shibata et al. (2017)    
+    sigma_pix = sigma_deg*pix_deg;
+        imsize=sigma_pix; %Gabor mask (effective stimulus size)
+    %       refOri=35;
 end
 %
-if test==1
-    sf=1; %spatial frequency of the gabor
-    lambdaSeparation=3; %flankers distance in lamba (wavelength)
-    lambda=1/sf; %lamba (wavelength)
-    sigma_deg=lambda; % we set the sigma of the gabor to be equal to the inverse of spatial frequency (the wavelength)
-    lambdadeg=lambdaSeparation*lambda*pix_deg;
-    ori=0; % Gaboer target orientation
-    sigma_pix = sigma_deg*pix_deg;
-    imsize=sigma_pix*2.5; %Gabor mask (effective stimulus size)
-end
 
 [ax,ay]=meshgrid(-imsize:imsize,-imsize:imsize);
-imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
-imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
-imageRectDot2 = CenterRect([0, 0, dotsizedeg2*pix_deg, dotsizedeg2*pix_deg_vert], wRect); % destination rect for fixation dot within the Gabor in noise
-
 [xc, yc] = RectCenter(wRect);
 fixwindowPix=fixwindow*pix_deg;
 midgray=0.5;
-
-
+if taskType~=4
+    imageRect = CenterRect([0, 0, size(ax)], wRect); % initial destination rectangle for the target
+imageRectDot = CenterRect([0, 0, dotsizedeg*pix_deg, dotsizedeg*pix_deg_vert], wRect); % destination rect for fixation dot training type 1 and 2
+imageRectDot2 = CenterRect([0, 0, dotsizedeg2*pix_deg, dotsizedeg2*pix_deg_vert], wRect); % destination rect for fixation dot within the Gabor in noise
+end
 
 xlocs=[PRL_x_axis NoPRL_x_axis];
 ylocs=[PRL_y_axis NoPRL_y_axis];

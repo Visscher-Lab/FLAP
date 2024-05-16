@@ -5,7 +5,8 @@ if taskType ==1
     Contlist(1)=1;
 elseif taskType == 2
     max_noise=1;
-    Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
+    Noiselist=log_unit_down(max_noise+.122, 0.025, 76);
+   Noiselist= Noiselist(Noiselist<1.01);
  %   Noiselist=fliplr(Noiselist);
 elseif taskType==3 || taskType==4
     max_ori=30;
@@ -53,10 +54,15 @@ reversals(1:cndt, 1:ca)=0;
 isreversals(1:cndt, 1:ca)=0;
 staircounter(1:cndt, 1:ca)=0;
 corrcounter(1:cndt, 1:ca)=0;
-StartCont=5;  %15
+if taskType==2
+StartCont=1;  %zero noise, 100% signal
+else
+    StartCont=5;  %15
+end
 thresh(1:cndt, 1:ca)=StartCont;
 step=5;
 currentsf=1;
 % Threshold -> 66%
 sc.up = 1;                          % # of incorrect answers to go one step up
 sc.down = 3;                        % # of correct answers to go one step down
+sc.down = 2;                        % # of correct answers to go one step down

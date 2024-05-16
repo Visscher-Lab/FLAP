@@ -13,7 +13,9 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '2', '1' , '2', '0', '1', '0', '1'};
+    defaultanswer={'test','1', '3', '3', '2' , '2', '1', '1', '1', '1'};
+%        defaultanswer={'test','1', '3', '3', '1' , '2', '0', '1', '0', '1'};
+
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -50,6 +52,7 @@ try
     elseif  taskType==4
         baseName=['.\data\' SUBJECT '_OriSym ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
     end
+    filename=baseName;
     %% eyetracker initialization (eyelink)
     defineSite
     
@@ -67,7 +70,9 @@ try
     %% STAIRCASE
     staircaseLatInt
     %% create stimuli
-    createGabors
+  if taskType~=4
+      createGabors
+  end
     %% response
     RespType(1) = KbName('a');
     RespType(2) = KbName('b');
@@ -87,7 +92,7 @@ try
     if taskType<3
         DrawFormattedText(w, 'Press (a) if target in the first interval, press (b) if in the second \n \n \n \n Press any key to start', 'center', 'center', white);
     elseif taskType>2
-        DrawFormattedText(w, 'Press (a) if target more clockwise than reference,press (b) if target more counter clockwise \n \n \n \n Press any key to start', 'center', 'center', white);
+        DrawFormattedText(w, 'Press (a) if target more counterclockwise than reference,press (b) if target more clockwise \n \n \n \n Press any key to start', 'center', 'center', white);
     end
     Screen('Flip', w);
     WaitSecs(1.5);
@@ -230,7 +235,8 @@ try
                     end
                 end
                 
-                 if contingentfirstframe==0
+               if taskType~=4
+                   if contingentfirstframe==0
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
                  elseif contingentfirstframe==1
@@ -240,6 +246,7 @@ try
   stopupdatingtgt=1;
                      end
                  end
+            end
                 if taskType ==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
@@ -254,7 +261,8 @@ try
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==1
-                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [],[],  contr);
+                 %       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
+                                         Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     end
@@ -304,12 +312,12 @@ try
                 if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
-                    Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+            %%%%%        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
                     %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
                     %      Screen('FillOval',w, gray,imageRect_offscircle);
-                    Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
+          %%%%%         Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
                 end
                 
@@ -336,6 +344,7 @@ try
                         end
                     end
                 end
+                if taskType~=4
                 if contingentfirstframe==0
                 imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
                     imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
@@ -347,7 +356,7 @@ try
              stopupdatingtgt=1;
                     end
                 end
-                
+                end
                 if taskType==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
@@ -362,7 +371,9 @@ try
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==2
-                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [],[],  contr);
+%                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
+                                                Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
+
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     end
@@ -470,7 +481,9 @@ try
             else
                 if taskType == 1
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                elseif taskType==4
+               elseif taskType == 2
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
+                elseif taskType >2 
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
                 end
             end
@@ -481,7 +494,9 @@ try
                 thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
                 if taskType == 1
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                elseif taskType == 4
+                elseif taskType == 2
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
+                elseif taskType >2
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
                 end
                 if streakon == 0
@@ -492,7 +507,9 @@ try
                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2));
                     if taskType == 1
                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                    elseif taskType ==4
+                  elseif taskType == 2
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
+                elseif taskType >2
                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
                     end
                 end
@@ -563,8 +580,10 @@ try
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
+               if taskType ==1
             EyeSummary.(TrialNum).Separation = lambdaSeparation;
-            if exist('EndIndex')==0
+               end
+               if exist('EndIndex')==0
                 EndIndex=0;
             end
             EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
@@ -747,7 +766,11 @@ try
     scatter(1:length(rispo), rispo/2, 'k');
     hold on
     scatter(1:length(revcount), revcount-1.3, 'r');
-    ylim([0 22.2])
+    if taskType==2
+         ylim([0 1])
+    else
+        ylim([0 2.2])
+    end
 catch ME
     psychlasterror()
 end

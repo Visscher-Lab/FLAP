@@ -7,8 +7,10 @@
 %ori=5;
 
 % orientation of the two cinfigurations per trial
-    refOri=deg2rad(45);
-    diffOri=deg2rad(45) + (plusORminus* deg2rad(ori));
+ %   refOri=deg2rad(45);
+  %  diffOri=deg2rad(45) + (plusORminus* deg2rad(ori));
+        diffOri=refOri + (plusORminus* deg2rad(ori));
+
   %  refOri=deg2rad(0);
   %  refOri=deg2rad(90);
 
