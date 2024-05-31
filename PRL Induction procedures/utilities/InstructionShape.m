@@ -1,7 +1,7 @@
 
 Screen('FillRect', w, gray);
 if shapesoftheDay(mixtr(trial,1))==1
-    DrawFormattedText(w, 'Press the green button if you see a d \n \n Press  the red button if you see a p  \n \n Press any key to start', 'center', 'center', white);
+    DrawFormattedText(w, 'Press the green button if you see a p \n \n Press  the red button if you see a d  \n \n Press any key to start', 'center', 'center', white);
 elseif shapesoftheDay(mixtr(trial,1))==2
     DrawFormattedText(w, 'Press the green button if you see a q \n \n Press  the red button if you see a b  \n \n Press any key to start', 'center', 'center', white);
 elseif shapesoftheDay(mixtr(trial,1))==3
@@ -33,6 +33,8 @@ elseif shapesoftheDay(mixtr(trial,1))==15
 elseif shapesoftheDay(mixtr(trial,1))==16
     DrawFormattedText(w, 'Press the green button if you see a line tilted left \n \n Press  the red button if you see a line tilted right  \n \n Press any key to start', 'center', 'center', white);
 end
+
+
 
 theeccentricity_X = 7*pix_deg;
 if TRLlocation == 1

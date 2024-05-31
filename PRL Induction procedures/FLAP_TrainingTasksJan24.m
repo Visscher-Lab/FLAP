@@ -12,7 +12,7 @@
 % trial is considered wrong and the script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
-% time defined by the variable AnnulusTime, then a CI target appears for
+% time defined by the variable A nnulusTime, then a CI target appears for
 % Stimulustime, participant has to report the identity of the stimulus
 %within the CI. Participant has trialTimeout amount of time to respond,
 %otherwise the trial is considered wrong and the script moves to the next trial.
@@ -37,8 +37,8 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+   % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
 
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -46,10 +46,10 @@ try
     %       subjects.
     %       Columns are: participant    TRL     WhichEye    Afirst      TrainingTask    Acuitycondition     ContrastCondition   crowdingCondition   ContourCondition    ScotomaPresent
     %       Comments are: %(participant name),	[TRL ("R" or "L", defined prior to first training, starts as NA) left(1) right(2) for tracking],  [A first = 1 (Assessment A will be run first)],
-    %                         [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
+    %                        [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
 
     % output from the gui is 'SUBJECT' < a string with the participant
-    % name in it in the format fr1001, for the first participant. 
+    % name in it in the format fr1001, for the first participant.
     % f stands for FLAP, r stands for UCR, 1 stands for first cycle of
     % participants, 001 stands for the first participant run at UCR.
     % SUBJECT must match a participant number in the table
@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %1; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -246,6 +246,7 @@ try
         end
         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
         mixtr =mixtr(randperm(length(mixtr)),:);
+
     elseif trainingType==4 % more complex structure, we have type of shapes
         %(for Gabor it's always the same, for shapes it will have 6 types per
         %session; type of stimuli (shapes/Gabors), type of cue (exo vs
@@ -277,6 +278,7 @@ try
         else
             mixtr=[mixtr_gabor(1:2,:);mixtr_shapes(1:2,:); mixtr_gabor(3:4,:); mixtr_shapes(3:4,:);mixtr_gabor(5:6,:);mixtr_shapes(5:6,:)];
         end
+      
         %mixtr(:,1) = shape type (for gabor always 1, for shapes 1-3)
         %mixtr(:,2) = cue type (1: endo, 2: exo)
         %mixtr(:,3) = task type (1: Gabor, 2: CI)
@@ -322,25 +324,25 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 end
                 step=5;
                 if trainingType==4
-                    Contrthresh=StartCont; % training type 4 has both shapes and contrast
+                    Contrthresh=StartCont; % training type 4 has both shapes and contrast %note startCont= 15
                 end
             end
             if trainingType==2 || trainingType==4
                 AllShapes=size((Targy));
-                trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes
+                trackthresh=ones(AllShapes(2),1)*StartJitter; %assign initial jitter to shapes 
             end
         else
-            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
+            DAYN = ['\Training\Day' (answer{2}-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
                 %d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %      NEW DIRECTORY
 
-                
+
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
 
-%                 d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
+%                 d=[folder SUBJECT  filename '_' num2sthr(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
 
 
                 %[dx,dx] = sort([d.datenum]); %EC changed to .bytes instead of datenum for %running fb1005 day 2 training %PD commented out 11/8/2023
@@ -356,18 +358,17 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                     dt=find(zz==1);
                 end %PD addedd  this to pick up the correct file 11/8/2023
                 newest=d(dt).name;%PD addedd  this to pick up the correct file 11/8/2023
+                last_staircounter=load([foldern newest],'staircounter'); 
                 lasttrackthresh=load([foldern newest],'trackthresh');
                 trackthresh=lasttrackthresh.trackthresh;
                 lastContrthresh=load([foldern newest],'Contrthresh'); %em added lines 361 and 362 for testing 3/12/2024
-            if trainingType==4
                 Contrthresh=lastContrthresh.Contrthresh;
                 Contlist2=load([foldern newest],'Contlist');  %% em, please check if we need this
                 Contlist = Contlist2.Contlist;
                 lasttracksf=load([foldern newest],'currentsf');
                 currentsf=lasttracksf.currentsf;
-            end
                 theoris =[-45 45]; % possible orientation of the Gabor
-            elseif trainingType==1
+            elseif trainingType==1 || trainingType==4
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %                 [dx,dx] = sort([d.datenum]);%PD commented out 11/8/2023
                 %                 newest = d(dx(end)).name;%PD commented out 11/8/2023
@@ -412,13 +413,19 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
 
     % training type 3 has its own structure, no behavioral performance
     % recorded except for eye movements, no keys to press
-    if trainingType==3
-        if expDay==1
+    if trainingType==3 || trainingType==4
+        if expDay==1 && trainingType==3 || trainingType==4 && expDay >0
             sizeArray=log_unit_down(1.99, 0.008, nsteps); % array of TRL size: the larger, the easier the task (keeping the target within the PRL)
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps); % array of flickering persistence: the lower, the easier the task (keeping the target within the PRL for tot time)
             %higher pointer=more difficult
             % TRL size parameter
+           if trainingType==3 
             sizepointer=15;
+           else 
+                sizeArray=log_unit_down(3, 0.008, nsteps); 
+               sizepointer = 15;
+               
+           end
             coeffAdj=sizeArray(sizepointer); % possible list of TRL size (proportion of TRL size) that allows frames to be counted as 'within the TRL'
             % flcikering time parameter
             flickerpointerPre=15;
@@ -427,7 +434,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
         end
         
-        if expDay>1 % if we are not on day one, we load thresholds from previous days
+        if expDay>1 && trainingType==3 % if we are not on day one, we load thresholds from previous days
             DAYN = ['\Training\Day' (answer{2,:}-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
@@ -564,7 +571,79 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 shapecounter = 0;
             end
         end
-        % practice
+        
+        
+        if trainingType == 4 && (mixtr(trial,3) == 2)
+            
+            coeffAdj = 1;
+            possibleTRLlocations=[-8.25 8.25]; %
+            PRLecc=[possibleTRLlocations(TRLlocation) 0 ];
+            PRLx= PRLecc(1);
+            PRLy=-PRLecc(2);
+            PRLxpix=PRLx*pix_deg*coeffAdj;
+            PRLypix=PRLy*pix_deg*coeffAdj;
+            PRLsize=6.5; % for contour make this 6.5 in training type 4
+            [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
+            
+            radiusPRL=(PRLsize/2)*pix_deg;
+            circlePixelsPRL=sx.^2 + sy.^2 <= radiusPRL.^2;
+            
+            imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
+            
+            % mask to cover the target when outside the TRL (if needed)
+            [img, sss, alpha] =imread('neutral21.png');
+            img(:, :, 4) = alpha;
+            Neutralface=Screen('MakeTexture', w, img);
+            
+            mask_color= [170 170 170];
+        elseif trainingType == 4 && (mixtr(trial,3) == 1)
+            
+            
+            coeffAdj = 1;
+            possibleTRLlocations=[-7.5 7.5]; %
+            PRLecc=[possibleTRLlocations(TRLlocation) 0 ];
+            PRLx= PRLecc(1);
+            PRLy=-PRLecc(2);
+            PRLxpix=PRLx*pix_deg*coeffAdj;
+            PRLypix=PRLy*pix_deg*coeffAdj;
+            PRLsize=5; % for contour make this 6.5 in training type 4
+            [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
+            
+            radiusPRL=(PRLsize/2)*pix_deg;
+            circlePixelsPRL=sx.^2 + sy.^2 <= radiusPRL.^2;
+            
+            imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg_vert)*2]], wRect);
+            
+            % mask to cover the target when outside the TRL (if needed)
+            [img, sss, alpha] =imread('neutral21.png');
+            img(:, :, 4) = alpha;
+            Neutralface=Screen('MakeTexture', w, img);
+            
+            mask_color= [170 170 170];
+        end  
+        
+        if trainingType==4 && trial==1
+            Welcometype4
+        end
+        
+        
+        if trainingType==1 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)
+            practicePassed=0;
+            %         practicePassed=1;
+        end
+        
+        %         if test==2
+        %             practicePassed=1;
+        %         end
+        
+        
+        if trainingType == 1 || trainingType == 4 && trial==1
+            practicePassed=0; % MGR added 5-13
+            while practicePassed==0
+                FLAP_Training1_Practice
+            end
+        end
+        
         if trainingType==2 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)
             practicePassed=0;
             %         practicePassed=1;
@@ -573,33 +652,65 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         %         if test==2
         %             practicePassed=1;
         %         end
-        if trainingType == 2
+        
+        if trainingType == 2 
             while practicePassed==0
                 FLAP_Training2_Practice
             end
         end
-        %         if practicePassed==2
-        %             closescript=1;
-        %             break
-        %         end
-
-        % general instruction TO BE REWRITTEN
-        if trainingType~=2 && trial==1
-            InstructionFLAP(w,trainingType,gray,white)
+        
+        if trainingType==4 && (mixtr(trial,3)==2 && mixtr(trial-1,3) ==1) || (mixtr(trial,1) ~= mixtr(trial,1))  
+            practicePassed=2;
+            while practicePassed==2
+                FLAP_Training2_Practice_4
+            end
         end
+       
+        if trainingType==3 && trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1)
+            practicePassed=0;
+            %         practicePassed=1;
+        end
+
+        %         if test==2
+        %             practicePassed=1;
+        %         end
+        if trainingType == 3
+            while practicePassed==0
+                Flap_Training3Practice
+            end
+        end
+        
+        
+%         if trainingType==4 && practicePassed==1 
+%               InstructionFLAP(w,trainingType,gray,white)        % general instruction TO BE REWRITTEN
+%         end
 
         %% training type-specific staircases
 
-        if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
+        if trainingType==1 || (trainingType==4 && mixtr(trial,3)==1)  %if it's a Gabor trial (training type 1 or 4)
             ssf=sflist(currentsf);
             fase=randi(4);
             texture(trial)=TheGabors(currentsf, fase);
             contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,3)));
         end
 
-        if trainingType==2 || trainingType==4 && mixtr(trial,3)==2 %if it's a CI trial (training type 2 or 4)
-            Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)))
-            Tscat=0;
+        if trainingType==2 || (trainingType==4 && mixtr(trial,3)==2) %if it's a CI trial (training type 2 or 4)
+                if shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 3) % need a condition where trial=1 
+%                     threshShapes = thresh(1,2);
+%                     trackthresh(shapesoftheDay(mixtr(trial,1)))= threshShapes(mixtr(trial,1));
+%                     threshperday(expDay,:)=trackthresh;
+                    Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
+                    Tscat=0;
+                elseif shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 7)
+%                     threshShapes(2,2) = thresh(1,2);
+%                     trackthresh(shapesoftheDay(mixtr(trial,1)))= threshShapes(mixtr(trial,1));
+%                     threshperday(expDay,:)=trackthresh;
+                    Orijit=JitList(thresh(1,2));
+                    Tscat=0;
+                else 
+                    Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
+                    Tscat=0;
+                end
         end
         if trainingType==4 %if it's a training type 4 trial, which cue type? high or low visibility cue
             ContCirc= CircConts(mixtr(trial,2));
@@ -650,7 +761,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         if trainingType == 4 
-            if trial==1 || sum(mixtr(trial,:)~=mixtr(trial-1,:))>0 || randomlocationflag == 1
+            if trial==1 || sum(mixtr(trial,:)~=mixtr(trial-1,:))>0 %|| randomlocationflag == 1
                 ecc_r=(r_lim*pix_deg).*rand(1,1);
                 ecc_t=2*pi*rand(1,1);
                 cs= [cos(ecc_t), sin(ecc_t)];
@@ -691,10 +802,11 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         
-        if trainingType == 4 && (trial == 1 || randomlocationflag == 1)
+     if trainingType == 4 && trial == 1 || randomlocationflag == 1
             InstructionTrainingTask4
             randomlocationflag = 0;
-        end
+     end
+    
         %  destination rectangle for the target stimulus
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
@@ -1288,13 +1400,14 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         %% response processing
         if trialTimedout(trial)== 0 && trainingType~=3
             foo=(RespType==thekeys(1)); %em added (1) 11/15/2023
+            
 
             % staircase update
             if trainingType~=3
                 staircounter(mixtr(trial,1),mixtr(trial,3))=staircounter(mixtr(trial,1),mixtr(trial,3))+1;
             end
             if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
-                Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=contr;
+                 Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=contr
             end
             if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
                 Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=Orijit;
@@ -1354,7 +1467,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                                 corrcounter(:,:)=0;
                                 thestep=3;
                             else
-                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3));
+                                thresh(mixtr(trial,1),mixtr(trial,3))=thresh(mixtr(trial,1),mixtr(trial,3)); %setting value equal to itself??
                                 thresh(mixtr(trial,1),mixtr(trial,3))=min( thresh(mixtr(trial,1),mixtr(trial,3)),length(Contlist));
                             end
                         end
@@ -1496,6 +1609,12 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
             threshperday(expDay,:)=trackthresh;
         end
+%         if trainingType == 4 && mixtr(trial,3)==2 %EC changed 4/9 for jitter continuity after Day 1
+%              threshShapes = thresh(:,2);
+%             trackthresh(shapesoftheDay(mixtr(trial,1)))= threshShapes(mixtr(trial,1));
+%             threshperday(expDay,:)=trackthresh;
+            
+%         end
         if (mod(trial,150))==1 && trial>1
             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
         end
@@ -1598,7 +1717,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         if trainingType==4
-            if eyetime2-blocktime>blockdurationtolerance 
+            if eyetime2-blocktime>60        %blockdurationtolerance 
                 moveon=mixtr(trial,end);
                 nextrials=find(mixtr(:,end) == moveon+1);
                 if isempty(nextrials)
@@ -1611,7 +1730,8 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
                 end
             end
         end
-    end
+    end 
+
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
 
     ListenChar(0);

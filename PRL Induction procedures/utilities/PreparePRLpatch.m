@@ -7,7 +7,7 @@ PRLx= PRLecc(1);
 PRLy=-PRLecc(2);
 PRLxpix=PRLx*pix_deg*coeffAdj;
 PRLypix=PRLy*pix_deg*coeffAdj;
-PRLsize=5;
+PRLsize=5; % for contour make this 6.5 in training type 4
 [sx,sy]=meshgrid(-wRect(3)/2:wRect(3)/2,-wRect(4)/2:wRect(4)/2);
 
 radiusPRL=(PRLsize/2)*pix_deg;

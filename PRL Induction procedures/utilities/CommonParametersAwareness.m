@@ -63,18 +63,6 @@ elseif whichMD==8
     theeccentricity_Y_scotoma=2.15*pix_deg;
     [img, ~, alpha] = imread('Scotoma_09.png');
     % scotoma 7 because this is a control participant.
-elseif whichMD==10  
-    scotomadegx=0;    % scotoma size in deg
-    scotomadegy=0;    % scotoma size in deg
-    theeccentricity_X_scotoma=0;
-    theeccentricity_Y_scotoma=0;
-    [img, ~, alpha] = imread('Scotoma_03.png');       
-elseif  whichMD==11  
-    scotomadegx=12.73;    % scotoma size in deg
-    scotomadegy=12.48;    % scotoma size in deg
-    theeccentricity_X_scotoma=0.97*pix_deg;
-    theeccentricity_Y_scotoma=-3.22*pix_deg;
-    [img, ~, alpha] = imread('Scotoma_11.png');
 else
     'Participant ID not found'
     scotomadegx=0;

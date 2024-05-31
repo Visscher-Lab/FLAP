@@ -1,0 +1,2 @@
+Screen('FillRect', w, gray);
+
