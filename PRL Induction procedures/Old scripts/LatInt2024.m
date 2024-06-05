@@ -13,9 +13,9 @@ try
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '3', '3', '2' , '2', '1', '1', '1', '1'};
-%        defaultanswer={'test','1', '3', '3', '1' , '2', '0', '1', '0', '1'};
-
+    defaultanswer={'test','1', '3', '3', '2' , '2', '1', '1', '1', '2'};
+    %        defaultanswer={'test','1', '3', '3', '1' , '2', '0', '1', '0', '1'};
+    
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -44,13 +44,13 @@ try
     datapixxtime=0;
     %  taskType=1;
     if taskType==1
-        baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
+        baseName=['.\data\' SUBJECT '_LatIn ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4)) '_' num2str(cc(5))];
     elseif  taskType==2
-        baseName=['.\data\' SUBJECT '_OriInNoise ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
+        baseName=['.\data\' SUBJECT '_OriInNoise ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4)) '_' num2str(cc(5))];
     elseif  taskType==3
-        baseName=['.\data\' SUBJECT '_OriDisc ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
+        baseName=['.\data\' SUBJECT '_OriDisc ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4)) '_' num2str(cc(5))];
     elseif  taskType==4
-        baseName=['.\data\' SUBJECT '_OriSym ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4))];
+        baseName=['.\data\' SUBJECT '_OriSym ' num2str(expDay) '_' num2str(cc(1)) '_' num2str(cc(2)) '_' num2str(cc(3)) '_' num2str(cc(4)) '_' num2str(cc(5))];
     end
     filename=baseName;
     %% eyetracker initialization (eyelink)
@@ -70,9 +70,14 @@ try
     %% STAIRCASE
     staircaseLatInt
     %% create stimuli
-  if taskType~=4
-      createGabors
-  end
+    if taskType~=4
+        if taskType ==1
+            max_contrast=1;
+        elseif taskType== 2 || taskType == 3
+            max_contrast=0.5;
+        end
+        createGaborsLT
+    end
     %% response
     RespType(1) = KbName('a');
     RespType(2) = KbName('b');
@@ -139,8 +144,11 @@ try
         TrialNum = strcat('Trial',num2str(trial));
         %  contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
         
-        theeccentricity_X=eccentricity_X(mixtr(trial,1));
-        theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
+        %theeccentricity_X=eccentricity_X(mixtr(trial,1));
+        %theeccentricity_Y=eccentricity_Y(mixtr(trial,1));
+             theeccentricity_X=eccentricity_X(TRLlocation);
+        theeccentricity_Y=eccentricity_Y(TRLlocation);
+        
         if taskType==1
             contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
             isorto=mixtr(trial,2);
@@ -218,35 +226,35 @@ try
                 end
                 if taskType ==1 % destination rect for flankers only for collinear task
                     if contingentfirstframe==0
-                    imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
-                    
-                    imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                        imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
+                        imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
+                        
+                        imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
+                            imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
                     elseif contingentfirstframe==1
                         if stopupdating==0
-                           imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
-                        imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
-                    
-                    imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
-                        imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
-                       stopupdating=1;
+                            imageRect_offs_flank1 =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg,...
+                                imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y+lambdadeg];
+                            
+                            imageRect_offs_flank2 =[imageRect(1)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg,...
+                                imageRect(3)+theeccentricity_X+(newsamplex-wRect(3)/2), imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y-lambdadeg];
+                            stopupdating=1;
                         end
                     end
                 end
                 
-               if taskType~=4
-                   if contingentfirstframe==0
-                imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                 elseif contingentfirstframe==1
-                     if stopupdatingtgt==0
-                     imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-  stopupdatingtgt=1;
-                     end
-                 end
-            end
+                if taskType~=4
+                    if contingentfirstframe==0
+                        imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                    elseif contingentfirstframe==1
+                        if stopupdatingtgt==0
+                            imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                                imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                            stopupdatingtgt=1;
+                        end
+                    end
+                end
                 if taskType ==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast); % lettera a sx del target
                     Screen('DrawTexture',w, TheGabors(sf,1), [], imageRect_offs_flank2,FlankersOri,[],flankersContrast); % lettera a sx del target
@@ -261,8 +269,7 @@ try
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==1
-                 %       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
-                                         Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
+                               Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     end
@@ -276,7 +283,8 @@ try
                 end
                 if taskType ==3
                     %    if interval==1
-                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
+                                       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
+                    
                     %    else
                     %    end
                     %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
@@ -312,12 +320,12 @@ try
                 if taskType ==2
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
-            %%%%%        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                    %%%%%        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
                     %    Screen('DrawTexture', w, aperture, [], dstRect, [], 0);
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
                     %      Screen('FillOval',w, gray,imageRect_offscircle);
-          %%%%%         Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
+                    %%%%%         Screen('FrameOval', w,[gray], imageRect_offscircle, maskthickness/2, maskthickness/2);
                     noisestop=1;
                 end
                 
@@ -345,17 +353,17 @@ try
                     end
                 end
                 if taskType~=4
-                if contingentfirstframe==0
-                imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-                
-                elseif contingentfirstframe==1
-                    if stopupdatingtgt==0
-                          imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
-                    imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
-             stopupdatingtgt=1;
+                    if contingentfirstframe==0
+                        imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                            imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                        
+                    elseif contingentfirstframe==1
+                        if stopupdatingtgt==0
+                            imageRect_offs =[imageRect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y,...
+                                imageRect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X, imageRect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y];
+                            stopupdatingtgt=1;
+                        end
                     end
-                end
                 end
                 if taskType==1
                     Screen('DrawTexture',w, TheGabors(sf,1), [],imageRect_offs_flank1,FlankersOri,[],flankersContrast ); % lettera a sx del target
@@ -371,9 +379,8 @@ try
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==2
-%                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
-                                                Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
-
+                        %                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
+                          Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);                       
                     else
                         Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
                     end
@@ -481,9 +488,9 @@ try
             else
                 if taskType == 1
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-               elseif taskType == 2
+                elseif taskType == 2
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
-                elseif taskType >2 
+                elseif taskType >2
                     thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
                 end
             end
@@ -507,9 +514,9 @@ try
                     thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2));
                     if taskType == 1
                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Contlist));
-                  elseif taskType == 2
-                    thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
-                elseif taskType >2
+                    elseif taskType == 2
+                        thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Noiselist));
+                    elseif taskType >2
                         thresh(mixtr(trial,1),mixtr(trial,2))=min( thresh(mixtr(trial,1),mixtr(trial,2)),length(Orilist));
                     end
                 end
@@ -580,10 +587,10 @@ try
             clear EvtInfo
             EyeSummary.(TrialNum).ErrorData = ErrorData;
             clear ErrorData
-               if taskType ==1
-            EyeSummary.(TrialNum).Separation = lambdaSeparation;
-               end
-               if exist('EndIndex')==0
+            if taskType ==1
+                EyeSummary.(TrialNum).Separation = lambdaSeparation;
+            end
+            if exist('EndIndex')==0
                 EndIndex=0;
             end
             EyeSummary.(TrialNum).GetFixationInfo.EndIndex = EndIndex;
@@ -767,8 +774,12 @@ try
     hold on
     scatter(1:length(revcount), revcount-1.3, 'r');
     if taskType==2
-         ylim([0 1])
-    else
+        ylim([0 1])
+    elseif taskType==4
+        ylim([0 16])
+    elseif taskType==1
+        ylim([0 2.2])
+        elseif taskType==3
         ylim([0 2.2])
     end
 catch ME

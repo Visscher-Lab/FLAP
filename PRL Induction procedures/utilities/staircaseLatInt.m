@@ -5,19 +5,19 @@ if taskType ==1
     Contlist(1)=1;
 elseif taskType == 2
     max_noise=1;
-    Noiselist=log_unit_down(max_noise+.122, 0.025, 76);
+    Noiselist=log_unit_down(max_noise+.122, 0.05, 76);
    Noiselist= Noiselist(Noiselist<1.01);
  %   Noiselist=fliplr(Noiselist);
 elseif taskType==3 || taskType==4
     max_ori=30;
     Orilist=log_unit_down(max_ori+.122, 0.05, 76); %Updated contrast possible values
 end
-stepsizes=[4 4 3 2 1];
+stepsizes=[4 4 3 3 2 1];
 streakon=0; % if we activate the streak, we don't reset correct responses after sc.down
 revcount=0;
 reversalsToEnd=10; % how many reversals we need to reach to finish the block
 
-trials=80; %100;
+trials=100; %100;
 mixtr=[];
 if taskType==1
     lok; %location: PRL vs no PRL
@@ -40,7 +40,9 @@ if taskType>1
     cndt=1;
 ca=1;
     mixtr=[mixtr;repmat(condlist,trials,1)];
-    mixtr(:,1)= mixtr(:,1)+ (TRLlocation-1);
+   % mixtr(:,1)= mixtr(:,1)+ (TRLlocation-1);
+    %   mixtr(:,1)= mixtr(:,1)+ (TRLlocation-1);
+
 else
     cndt=2;
 ca=2;
@@ -55,9 +57,9 @@ isreversals(1:cndt, 1:ca)=0;
 staircounter(1:cndt, 1:ca)=0;
 corrcounter(1:cndt, 1:ca)=0;
 if taskType==2
-StartCont=1;  %zero noise, 100% signal
+StartCont=12;  %zero noise, 100% signal
 else
-    StartCont=5;  %15
+    StartCont=6;  %15
 end
 thresh(1:cndt, 1:ca)=StartCont;
 step=5;

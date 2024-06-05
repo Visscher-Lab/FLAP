@@ -134,10 +134,10 @@ elseif site==3   %UCR VPixx
     
     %debug window
     %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
-    Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
-    Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
-    
-    
+%     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+%     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+%     
+%     
 elseif site==4   %padova eyelink
     %% psychtoobox settings
     

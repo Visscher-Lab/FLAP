@@ -26,8 +26,8 @@ try
     Isdemo=str2num(answer{4,:}); % full session or demo/practice
     whicheye=str2num(answer{5,:}); % which eye to track (vpixx only)
     calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
-            EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
-            specialcalibration=str2num(answer{8,:}); %0=regular, 1=shorter calibration with visual aids (for MD mostly)
+    EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
+    specialcalibration=str2num(answer{8,:}); %0=regular, 1=shorter calibration with visual aids (for MD mostly)
     scotomavpixx= 0;
     responsebox = 0;
     datapixxtime=1;
@@ -43,7 +43,7 @@ try
         filename='_scotoma_awareness';
     end
     
-        
+    
     folder=cd;
     folder=fullfile(folder, '..\..\datafolder\');
     
@@ -53,14 +53,14 @@ try
         baseName=[folder SUBJECT '_' filename '_DAY_' num2str(expDay) '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     end
     
-%     
-%     if site==1
-%         baseName=['./data/' SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
-%     elseif site==2
-%         baseName=[cd '\data\' SUBJECT filename '_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-%     elseif site>2
-%         baseName=[cd '\data\' SUBJECT filename 'Pixx_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-%     end
+    %
+    %     if site==1
+    %         baseName=['./data/' SUBJECT filename  '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
+    %     elseif site==2
+    %         baseName=[cd '\data\' SUBJECT filename '_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    %     elseif site>2
+    %         baseName=[cd '\data\' SUBJECT filename 'Pixx_'  num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
+    %     end
     
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     
@@ -82,8 +82,8 @@ try
     CommonParametersAwareness % this script identifies the size and shape of scotoma for this participant.  If there is an error it is probably because that participant's data has not been put in here yet.
     createO
     
-
-
+    
+    
     %% trial matrixc
     
     trials=50;
@@ -99,8 +99,8 @@ try
     
     RespType(1) = KbName('h');
     RespType(2) = KbName('s');
-
-     
+    
+    
     escapeKey = KbName('ESCAPE');	% quit key
     
     
@@ -125,7 +125,7 @@ try
     ListenChar(2);
     counter = 0;
     WaitSecs(1);
-   
+    
     Screen('FillRect', w, gray);
     DrawFormattedText(w, 'Report whether the emoji is (h)appy or (s)ad by pressing the corresponding key \n \n \n \n Press any key to start', 'center', 'center', white);
     Screen('Flip', w);
@@ -140,7 +140,19 @@ try
         end
         % mark zero-plot time in data file
         Eyelink('message' , 'SYNCTIME');
-        location =  zeros(length(totalmixtr), 6);
+        location =  zeros(length(mixtr), 6);
+    elseif EyetrackerType == 2
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('SetupTPxSchedule');
+        Datapixx('RegWrRd');
+        % %set up recording to start on the same frame flip that shows the image.
+        % %We also get the time of the flip using a Marker which saves a time of the
+        % %frame flip on the DATAPixx clock
+        Datapixx('StartTPxSchedule');
+        Datapixx('SetMarker');
+        Datapixx('RegWrVideoSync');
     end
     
     
@@ -156,26 +168,24 @@ try
         theeccentricity_Y=randdegarray(randi(length(randdegarray)))*pix_deg;
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-
+        
         
         % compute response for trial
         theans(trial)=randi(2);
-       
         
-                Priority(0);
-        KbQueueFlush()
-FLAPVariablesReset
-
-ff=0;
+        
+        FLAPVariablesReset
+        
+        ff=0;
         while eyechecked<1
             if datapixxtime==1
                 Datapixx('RegWrRd');
                 eyetime2=Datapixx('GetTime');
             end
-%             if ScotomaPresent == 1
-%                 fixationscriptW
-%             end
-
+            %             if ScotomaPresent == 1
+            %                 fixationscriptW
+            %             end
+            
             if EyetrackerType ==2
                 Datapixx('RegWrRd');
             end
@@ -196,11 +206,11 @@ ff=0;
             elseif (eyetime2-pretrial_time)>0 && fixating>=fixTime/ifi && fixating<1000 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 
                 if datapixxtime==1
-                    trial_time=Datapixx('GetTime');                  
+                    trial_time=Datapixx('GetTime');
                 else
                     trial_time=eyetime2;
                 end
-                 trial_timeT(trial)=trial_time;
+                trial_timeT(trial)=trial_time;
                 
                 if EyetrackerType ==2
                     Datapixx('SetMarker');
@@ -215,38 +225,38 @@ ff=0;
                 defed=trial_time;
             end
             
-if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout  && (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)) ==0
-            fhg=45;
-            % show target
+            if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout  && (keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(escapeKey)) ==0
+                fhg=45;
+                % show target
                 if exist('imageRect_offs')==0
                     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
                         imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
                     imageRect_offscircle=[imageRect_offs(1)-(0.635*pix_deg) imageRect_offs(2)-(0.635*pix_deg) imageRect_offs(3)+(0.635*pix_deg) imageRect_offs(4)+(0.635*pix_deg) ];
-                end    
+                end
                 if exist('stimstar')==0
                     if datapixxtime==1
-                                            stim_start3=Datapixx('GetTime'); 
-
+                        stim_start3=Datapixx('GetTime');
+                        
                         Datapixx('RegWrRd');
-                    stim_start=Datapixx('GetTime'); 
-                    ff=ff+1;
-                    stim_start2=eyetime2;
-                    stim_startT2(trial)=stim_start;
-                else
-                    stim_start=eyetime2;
-                end
-                 stim_startT(trial)=stim_start;
+                        stim_start=Datapixx('GetTime');
+                        ff=ff+1;
+                        stim_start2=eyetime2;
+                        stim_startT2(trial)=stim_start;
+                    else
+                        stim_start=eyetime2;
+                    end
+                    stim_startT(trial)=stim_start;
                     
-                                    if EyetrackerType ==2
-                    %set a marker to get the exact time the screen flips
-                    Datapixx('SetMarker');
-                    Datapixx('RegWrVideoSync');
-                    %collect marker data
-                    Datapixx('RegWrRd');
-                    Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
-                    Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
-                                    end
-                stimstar=98;
+                    if EyetrackerType ==2
+                        %set a marker to get the exact time the screen flips
+                        Datapixx('SetMarker');
+                        Datapixx('RegWrVideoSync');
+                        %collect marker data
+                        Datapixx('RegWrRd');
+                        Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
+                        Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
+                    end
+                    stimstar=98;
                 end
                 if theans(trial)==1
                     Screen('DrawTexture', w, Happyface, [], imageRect_offs, [],[], attContr);
@@ -261,19 +271,19 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 end
                 thetimes=keyCode(thekeys);
                 if datapixxtime==0
-                [secs  indfirst]=min(thetimes);
-                respTime=secs;
+                    [secs  indfirst]=min(thetimes);
+                    respTime=secs;
                 else
-                     respTimePixx=Datapixx('GetTime'); 
-                        Datapixx('RegWrRd');
-                  respTime=eyetime2;  
+                    respTimePixx=Datapixx('GetTime');
+                    Datapixx('RegWrRd');
+                    respTime=eyetime2;
                 end
-                                eyechecked=10^4;
-
-
+                eyechecked=10^4;
+                
+                
             elseif (eyetime2-pretrial_time)>=trialTimeout % trial timed out
                 if datapixxtime==0
-                stim_stop=GetSecs;
+                    stim_stop=GetSecs;
                 elseif datapixxtime==1
                     stim_stop=eyetime2;
                 end
@@ -282,20 +292,20 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             end
             eyefixation5
             
-            if ScotomaPresent == 1              
+            if ScotomaPresent == 1
                 
-                  imageRect_ScotomaLive =[scotomarect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
-                        scotomarect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
-
-           %     Screen('FillOval', w, scotoma_color, scotoma);
-                                    Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
-            elseif ScotomaPresent == 2              
-                    imageRect_ScotomaLive =[dotrect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
-                        dotrect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
-
-               Screen('FillOval', w, scotoma_color, imageRect_ScotomaLive);
-              %                      Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
-      end
+                imageRect_ScotomaLive =[scotomarect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
+                    scotomarect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, scotomarect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
+                
+                %     Screen('FillOval', w, scotoma_color, scotoma);
+                Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
+            elseif ScotomaPresent == 2
+                imageRect_ScotomaLive =[dotrect(1)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(2)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma,...
+                    dotrect(3)+(newsamplex-wRect(3)/2)+theeccentricity_X_scotoma, dotrect(4)+(newsampley-wRect(4)/2)+theeccentricity_Y_scotoma];
+                
+                Screen('FillOval', w, scotoma_color, imageRect_ScotomaLive);
+                %                      Screen('DrawTexture', w, texture2, [], imageRect_ScotomaLive, [],[], 1);
+            end
             if EyetrackerType==2
                 
                 if scotomavpixx==1
@@ -315,11 +325,11 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 Screen('FillRect', w, gray);
             end
             
-
-
+            
+            
             if datapixxtime==1
-                               Datapixx('RegWrRd');
- eyetime2=Datapixx('GetTime');
+                Datapixx('RegWrRd');
+                eyetime2=Datapixx('GetTime');
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3];
                 datapixx_Timestamp=[datapixx_Timestamp eyetime2];
@@ -328,44 +338,44 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime2];
             end
-     %% process eyedata in real time (fixation/saccades)
-     if EyeTracker==1
-         GetEyeTrackerDataNew
-         GetFixationDecision
-         
-         if EyeData(end,1)<8000 && stopchecking<0
-             if datapixxtime==1
-                 Datapixx('RegWrRd');
-                 trial_time = Datapixx('GetTime');
-             else
-                 trial_time = GetSecs; %start timer if we have eye info
-             end
-             stopchecking=10;
-         end
-         
-         if CheckCount > 1
-             if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
-                 TimerIndex = FixOnsetIndex;
-                 FixCount = FixCount + 1;
-                 FixIndex(FixCount,1) = FixOnsetIndex;
-                 FixatingNow = 1;
-             end
-             if (EyeCode(CheckCount) ~= 0) && (FixatingNow == 1)
-                 if FixCount == 0
-                     FixCount = 1;
-                     FixIndex(FixCount,1) = EndIndex+1;
-                 end
-                 FixIndex(FixCount,2) = CheckCount-1;
-                 FixatingNow = 0;
-             end
-             
-         end
-     else
-         if stopchecking<0
-             trial_time = eyetime2; %start timer if we have eye info
-             stopchecking=10;
-         end
-     end
+            %% process eyedata in real time (fixation/saccades)
+            if EyeTracker==1
+                GetEyeTrackerDataNew
+                GetFixationDecision
+                
+                if EyeData(end,1)<8000 && stopchecking<0
+                    if datapixxtime==1
+                        Datapixx('RegWrRd');
+                        trial_time = Datapixx('GetTime');
+                    else
+                        trial_time = GetSecs; %start timer if we have eye info
+                    end
+                    stopchecking=10;
+                end
+                
+                if CheckCount > 1
+                    if (EyeCode(CheckCount) == 0) && (EyeCode(CheckCount-1) > 0)
+                        TimerIndex = FixOnsetIndex;
+                        FixCount = FixCount + 1;
+                        FixIndex(FixCount,1) = FixOnsetIndex;
+                        FixatingNow = 1;
+                    end
+                    if (EyeCode(CheckCount) ~= 0) && (FixatingNow == 1)
+                        if FixCount == 0
+                            FixCount = 1;
+                            FixIndex(FixCount,1) = EndIndex+1;
+                        end
+                        FixIndex(FixCount,2) = CheckCount-1;
+                        FixatingNow = 0;
+                    end
+                    
+                end
+            else
+                if stopchecking<0
+                    trial_time = eyetime2; %start timer if we have eye info
+                    stopchecking=10;
+                end
+            end
             [keyIsDown, keyCode] = KbQueueCheck;
         end
         
@@ -376,22 +386,22 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             
             if foo(theans(trial))
                 resp = 1;
-                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
             elseif (thekeys==escapeKey) % esc pressed
                 closescript = 1;
                 break;
             else
                 resp = 0;
-                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+                PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+                PsychPortAudio('Start', pahandle);
             end
         else
             
             resp = 0;
             respTime=0;
-                    PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
-                    PsychPortAudio('Start', pahandle);
+            PsychPortAudio('FillBuffer', pahandle, errorS' ); % loads data into buffer
+            PsychPortAudio('Start', pahandle);
         end
         if trialTimedout(trial)==0
             stim_stop=respTime;
@@ -454,13 +464,13 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
             clear ErrorInfo
             
         end
-             if EyetrackerType==2
-                %read in eye data
-                Datapixx('RegWrRd');
-                status = Datapixx('GetTPxStatus');
-                toRead = status.newBufferFrames;
-                if toRead == 0
-                else 
+        if EyetrackerType==2
+            %read in eye data
+            Datapixx('RegWrRd');
+            status = Datapixx('GetTPxStatus');
+            toRead = status.newBufferFrames;
+            if toRead == 0
+            else
                 [bufferData, ~, ~] = Datapixx('ReadTPxData', toRead);
                 
                 %bufferData is formatted as follows:
@@ -502,8 +512,8 @@ if (eyetime2-trial_time)>=trialonsettime && fixating>400 && stopchecking>1 && (e
                 %interim save
                 % save(baseName, 'Pixxstruct');
                 % Pixxstruct(trial).EyeData.TimeTag-Pixxstruct(trial).TargetOnset2
-                end
             end
+        end
         if (mod(trial,50))==1
             if trial==1
             else

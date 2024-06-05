@@ -2,7 +2,7 @@
 
 PRLsize = 5; % diameter of the assigned PRL in degrees of visual angle
 
-scotomadeg=10; % size of the scotoma in degrees of visual angle
+scotomadeg=8; % size of the scotoma in degrees of visual angle
 smallscotomadeg=1;
 stimulusSize = 2.5;% size of the stimulus in degrees of visual angle
 scotomarect = CenterRect([0, 0, scotomadeg*pix_deg, scotomadeg*pix_deg_vert], wRect); % destination rect for scotoma
@@ -22,11 +22,11 @@ colorfixation = [200 200 200]; % if we don't want the scotoma
 red=[255 0 0];
 
 PRL_x_axis=-7.5;
-PRL_y_axis=0;
+PRL_y_axis=-2;
 NoPRL_x_axis=7.5;
-NoPRL_y_axis=0;
+NoPRL_y_axis=2;
 flankersContrast=.6;
-maxreversals=10;
+%maxreversals=10;
 %% general temporal parameters (trial events)
 
 ITI=0.75; % time interval between trial start and forced fixation period
@@ -43,6 +43,7 @@ if exist('test', 'var')
         elseif  taskType~=1
             %  presentationtime=0.05; % stimulus duration during actual sessions
             presentationtime=0.1; % stimulus duration during actual sessions
+     %                   presentationtime=1; % stimulus duration during actual sessions
             ISIinterval=0.3; % time interval between two stimulus intervals
         end
     end
@@ -82,20 +83,23 @@ elseif  taskType==2 %noise
     sf=6; %spatial frequency of the gabor
   %  sf=3; %spatial frequency of the gabor
     sigma_deg=0.67; % from Wang et al. (2016)
-    %  sigma_deg=2.5; % from Shibata et al. (2017)
     sigma_deg=2.5; % from Shibata et al. (2017)
+            sigma_deg=2.5/2; 
     ori=35; % Gaboer target orientation
     sigma_pix = sigma_deg*pix_deg;
     contr  = 0.5;
+           contr  = 1;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
-elseif  taskType==3 % ori
+elseif  taskType==3 % ori detection
     sf=6; %spatial frequency of the gabor
   %  sf=3; %spatial frequency of the gabor
     %  sigma_deg=0.67; % from Wang et al. (2016)
     sigma_deg=2.5; % from Shibata et al. (2017)
+        sigma_deg=2.5/2; 
     refOri=35;
     sigma_pix = sigma_deg*pix_deg;
     contr  = 0.5;
+   %     contr  = 1;
     imsize=sigma_pix; %Gabor mask (effective stimulus size)
 elseif  taskType==4 % symmetrical dots
     refOri=deg2rad(35);
