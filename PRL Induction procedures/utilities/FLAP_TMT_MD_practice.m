@@ -61,7 +61,7 @@
 
                 for i=1:length(stimx)  %draws text
                     if practiceblock==1
-                        Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                        Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
                     else
 %                         if mod(i,2)
 %                             Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
