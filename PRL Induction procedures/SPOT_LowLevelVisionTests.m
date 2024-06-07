@@ -96,7 +96,7 @@ try
     %% trial matrixc
     if whichTask==1    % Acuity
         ca=1; %conditions; one
-        StartSize= 2; %1; %starting size for VA
+        StartSize= 8; %1; %starting size for VA
         Sizelist=log_unit_down(StartSize, 0.1, 90);
         thresh(1:PRLlocations, 1:ca)=3;
             imsize=StartSize*pix_deg;
