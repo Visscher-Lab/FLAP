@@ -116,7 +116,7 @@ end
     % Threshold -> 79%
     sc.up = 1;                          % # of incorrect answers to go one step up
    % sc.steps= [2 3];                    % # of correct answers to go one step down
-      sc.steps= [3 3];                    % # of correct answers to go one step down
+      sc.steps= [1 3];                    % # of correct answers to go one step down
   stepsizes=[4 3 2 1 1 1];
     tr_per_condition=trials;  %50
     %         thresh(1:PRLlocations, 1:ca)=9; %25;
