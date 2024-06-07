@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %0=mouse, 1=eyetracker
+    EyeTracker = 0; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -640,7 +640,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         if trainingType == 1 || trainingType == 4 && trial==1
             practicePassed=0; % MGR added 5-13
             while practicePassed==0
-                FLAP_Training1_Practice
+                FLAP_Training1_Practice_4
             end
         end
         
@@ -1717,7 +1717,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             end
         end
         if trainingType==4
-            if eyetime2-blocktime>60        %blockdurationtolerance 
+            if eyetime2-blocktime>blockdurationtolerance 
                 moveon=mixtr(trial,end);
                 nextrials=find(mixtr(:,end) == moveon+1);
                 if isempty(nextrials)

@@ -1,11 +1,28 @@
-%% FLAP CI practice version 2
+%% FLAP GABOR practice- Training Task 4
 
 Screen('FillRect', w, gray);
-DrawFormattedText(w, 'Great Job! \n \n Now, we will practice the "shape" task. \n \n Please keep your eyes in the center of the screen. \n \n Press any key to continue.', 'center', 'center' ,white);
+DrawFormattedText(w, 'Now, we will practice the "tilted blob" task. \n \n Please keep your eyes in the center of the screen \n \n Press any key to continue', 'center', 'center' ,white);
 Screen('Flip', w);
 KbQueueWait;
+    
+DrawFormattedText(w, 'Press the left (green) or right (red) button \n \n to indicate the orientation of the tilted blob \n \n Press any key to start', 'center', 'center', white);
+ori1 = -45; ori2 = 45;
+Ypos=PRLx*pix_deg_vert;
+Xpos=PRLx*pix_deg;
+fase=randi(4);
+texture(trial)=TheGabors(currentsf, fase);
+trial4=1
+imageRect_left =[imageRect(1)+Xpos, imageRect(2)+Ypos,imageRect(3)+Xpos, imageRect(4)+Ypos];
+imageRect_right =[imageRect(1)-Xpos, imageRect(2)+Ypos,imageRect(3)-Xpos, imageRect(4)+Ypos];
+Screen('DrawTexture', w, texture(trial4), [], imageRect_right , ori1,[], 1); %changed 5-29 MGR so gabor on correct side, changed 6-6 so contrast of gabor does not change
+Screen('DrawTexture', w, texture(trial4), [], imageRect_left, ori2,[], 1); % changed 5-29 MGR so gabor on correct side
+Screen('Flip', w);
+KbQueueWait;
+WaitSecs(0.5);
 
-Jitpracticearray=[1 1 2 3 4 5 1 1 2 3 4 5]; %  stimulus ori practice
+
+%%
+contrpracticearray=[0.8 0.7 0.6 0.5 0.4 0.8 0.7 0.6 0.5 0.4]; %  stimulus ori practice
 stimulusdurationpracticearray=[0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]; % stimulus duration practice
 targethighercontrast=[0 0 0 0 0 0 0 0 0 0]; % target contrast
 Tscat=0;
@@ -14,16 +31,29 @@ trialTimeout=8;
 performanceThresh=0.7;
 gapfeedback= 0.3;
 feedbackduration=1;
+StartCont=15;  %starting value for Gabor contrast
+
+
+
+
 
 for practicetrial=1:practicetrialnum
     presentfeedback=0;
     af = 0;
-    currentExoEndoCueDuration=ExoEndoCueDuration(1);
-    LocX= [-7.5, 7.5];
+  %  currentExoEndoCueDuration=ExoEndoCueDuration(1);
+    %         respTimeprac=10^6;
+    LocX = [-7.5, 7.5];
+    currentsf=4;
+    logUnitStep=0.05;
+    ssf=sflist(currentsf);
+    fase=randi(4);
+    texture(practicetrial)=TheGabors(currentsf, fase);
     theanspractice(practicetrial)=randi(2);
-    Orijit=Jitpracticearray(practicetrial);
+    ori=theoris(theanspractice(practicetrial));
+    contr=contrpracticearray(practicetrial);
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
-    CIstimuliModIIIPractice_task4
+    %CIstimuliModPracticeAssessment % add the offset/polarity repulsion
+    createGabors
     theeccentricity_Y=0;
     if practicetrial== 1 ||  practicetrial== 2 || practicetrial== 3 || practicetrial== 4 || practicetrial== 5
         theeccentricity_X=LocX(1)*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
@@ -32,9 +62,9 @@ for practicetrial=1:practicetrialnum
     end
     eccentricity_X(practicetrial)= theeccentricity_X;
     eccentricity_Y(practicetrial) =theeccentricity_Y ;
-    if practicetrial==1
-        InstructionTraining2Practice
-    end
+%     if practicetrial==1
+%         InstructionFLAP(w,trainingType,gray,white)
+%     end
     %  destination rectangle for the target stimulus
     imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
         imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
@@ -124,30 +154,26 @@ for practicetrial=1:practicetrialnum
         %% here is where the second time-based trial loop starts
         if (eyetime2-trial_time)>=postfixationblank && (eyetime2-trial_time)< postfixationblank+stimulusdurationpractice && fixating>400 && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus  && keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ==0
             % HERE I PRESENT THE TARGET
-            if exist('imageRect_offsCI')==0    % destination rectangle for CI stimuli
-                imageRect_offsCI =[imageRectSmall(1)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(2)+eccentricity_YCI'+eccentricity_Y(practicetrial),...
-                    imageRectSmall(3)+eccentricity_XCI'+eccentricity_X(practicetrial), imageRectSmall(4)+eccentricity_YCI'+eccentricity_Y(practicetrial)];
-                imageRect_offsCI2=imageRect_offsCI;
-                imageRectMask = CenterRect([0, 0,  CIstimulussize+maskthickness CIstimulussize+maskthickness], wRect);
-                imageRect_offsCImask=[imageRectMask(1)+eccentricity_X(practicetrial), imageRectMask(2)+eccentricity_Y(practicetrial),...
-                    imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
-            end
+                  Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
+                    if skipmasking==0
+                        assignedPRLpatch
+                    end
             %here I draw the target contour
-            if targethighercontrast(practicetrial) == 1
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.9 );
-            else
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-            end
-            imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-            
-            % here I draw the circle within which I show the contour target
-            Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-            Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
-            if skipmasking==0
-                assignedPRLpatch
-            end
-            imagearray{trial}=Screen('GetImage', w);
+%             if targethighercontrast(practicetrial) == 1
+%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.9 );
+%             else
+%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+%             end
+%             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+%             
+%             % here I draw the circle within which I show the contour target
+%             Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+%             Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
+%             if skipmasking==0
+%                 assignedPRLpatch
+%             end
+%             imagearray{trial}=Screen('GetImage', w);
             
             if exist('stimstar')==0
                 %                     stim_start = GetSecs;
@@ -215,7 +241,7 @@ for practicetrial=1:practicetrialnum
                 end
             elseif responsebox==1 && af == 0
                 if (buttonLogStatus.newLogFrames > 0)
-                    respTime(practicetrial)=secs(1);
+                    respTime(practicetrial)=secs;
                     respt = eyetime2;
                     presentfeedback =1;
                     af = 1;
@@ -261,11 +287,16 @@ for practicetrial=1:practicetrialnum
                         imageRectMask(3)+eccentricity_X(practicetrial), imageRectMask(4)+eccentricity_Y(practicetrial)];
                 end
                 %here I draw the target contour
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-                Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
-                % here I draw the circle within which I show the contour target
-                Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+                
+                Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
+                if skipmasking==0
+                    assignedPRLpatch
+                end
+%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+%                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+%                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
+%                 % here I draw the circle within which I show the contour target
+%                 Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
             elseif presentfeedback == 1 && (eyetime2-respt)> feedbackduration
                 stim_stop=GetSecs;
                 eyechecked=10^4; % exit loop for this practicetrial
@@ -274,13 +305,19 @@ for practicetrial=1:practicetrialnum
         end
         % presenting target feedback
         if presentfeedback == 1 && (eyetime2-respt)>=gapfeedback && (eyetime2-respt)< feedbackduration
-            %here I draw the target contour
-            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-            imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
-            Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
-            % here I draw the circle within which I show the contour target
-            Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
-            %                 trialTimedout(practicetrial) = 99;
+            
+%             
+%                             Screen('DrawTexture', w, texture(trial), [], imageRect_offs, ori,[], contr );
+%                 if skipmasking==0
+%                     assignedPRLpatch
+%                 end
+%             %here I draw the target contour
+%             Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
+%             imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
+%             Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], 0.7, [1.5 .5 .5] );
+%             % here I draw the circle within which I show the contour target
+%             Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
+%             %                 trialTimedout(practicetrial) = 99;
         elseif presentfeedback == 1 && (eyetime2-respt)> feedbackduration
             stim_stop=GetSecs;
             eyechecked=10^4; % exit loop for this practicetrial
@@ -439,5 +476,5 @@ for practicetrial=1:practicetrialnum
     end
     practiceresp(practicetrial)=resp;
 end
-practicePassed=3;
+practicePassed=1;
 

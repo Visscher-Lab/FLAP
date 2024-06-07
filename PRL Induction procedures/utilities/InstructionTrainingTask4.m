@@ -1,22 +1,31 @@
+if trial==1 || trial== 71 || trial== 211 || trial== 351
 Screen('FillRect', w, gray);
-DrawFormattedText(w, 'Keep the target near the border of the gray circle \n \n until it starts flickering. \n \n when the target changes into a tilted pattern or a shape \n \n Press the green or red button \n \n to indicate the orientation/shape   \n \n \n Press any key to start', 'center', 'center', white);
+DrawFormattedText(w, 'Now that you have practiced, we will begin the task. \n \n Using your eyes, move the white circle over the dot until the dot starts flickering. \n \n When the dot changes into a tilted blob or a shape, \n \n press the left (green) or right (red) button \n \n to indicate the orientation of the tilted blob or shape   \n \n \n Press any key to start', 'center', 'center', white);
 Screen('Flip', w);
 KbQueueWait;
+end
+
+
+
 
 %% Contrast Task
 if trial == 1
     if mixtr(trial,3) == 1
-        DrawFormattedText(w, 'Press the green (left) or red (right) button \n \n to indicate the orientation of the pattern \n \n Press any key to continue', 'center', 'center', white);
+        DrawFormattedText(w, 'Press the left (green) or right (red) button \n \n to indicate the orientation of the tilted blob \n \n Press any key to start', 'center', 'center', white);
         ori1 = -45; ori2 = 45;
         Ypos=PRLx*pix_deg_vert;
         Xpos=PRLx*pix_deg;
+        fase=randi(4);
+        texture(trial)=TheGabors(currentsf, fase);
         imageRect_left =[imageRect(1)+Xpos, imageRect(2)+Ypos,imageRect(3)+Xpos, imageRect(4)+Ypos];
         imageRect_right =[imageRect(1)-Xpos, imageRect(2)+Ypos,imageRect(3)-Xpos, imageRect(4)+Ypos];
-        Screen('DrawTexture', w, texture(trial), [], imageRect_right , ori1,[], contr ); %changed 5-29 MGR so gabor on correct side 
-        Screen('DrawTexture', w, texture(trial), [], imageRect_left, ori2,[], contr ); % changed 5-29 MGR so gabor on correct side 
+        Screen('DrawTexture', w, texture(trial), [], imageRect_right , ori1,[], 1); %changed 5-29 MGR so gabor on correct side
+        Screen('DrawTexture', w, texture(trial), [], imageRect_left, ori2,[], 1); % changed 5-29 MGR so gabor on correct side
         Screen('Flip', w);
         KbQueueWait;
         WaitSecs(0.5);
+       
+        
     elseif mixtr(trial,3) == 2
         if shapesoftheDay(mixtr(trial,1))==1
             DrawFormattedText(w, 'Press the green button if you see a d \n \n Press  the red button if you see a p  \n \n Press any key to start', 'center', 'center', white);
@@ -57,17 +66,17 @@ if trial == 1
                 imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
             imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
-%             imageRect_offsCI2instr=imageRect_offsCIinstr;
-%             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
-              imageRect_offsCI2instr=imageRect_offsCIinstr2;
+            %             imageRect_offsCI2instr=imageRect_offsCIinstr;
+            %             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
+            imageRect_offsCI2instr=imageRect_offsCIinstr2;
             imageRect_offsCI2instr2=imageRect_offsCIinstr;
         else
             imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
             imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
-%             imageRect_offsCI2instr=imageRect_offsCIinstr;
-%             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
+            %             imageRect_offsCI2instr=imageRect_offsCIinstr;
+            %             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
             imageRect_offsCI2instr=imageRect_offsCIinstr2;
             imageRect_offsCI2instr2=imageRect_offsCIinstr;
         end
@@ -75,7 +84,7 @@ if trial == 1
         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
         %here I draw the target contour (9) and other sub types (left egg, left
         %diag, 2)
-        imageRect_offsCI2instr(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord),:)=0;  
+        imageRect_offsCI2instr(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord),:)=0;
         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[],0.7, [1.5 .5 .5]);
         
         
@@ -84,24 +93,24 @@ if trial == 1
         %egg, 5...)
         imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr),exampletargetcord2),:)=0
         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2;exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.7, [1.5 .5 .5]);
-%        
-
+        %
         
-%         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
-%         %here I draw the target contour (9) and other sub types (left egg, left
-%         %diag, 2)
-%         imageRect_offsCI2instr(setdiff(1:length(imageRect_offsCIinstr),exampletargetcord),:)=0;  
-%         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[],0.7, [1.5 .5 .5]);
-%         
-%         
-%         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [examplexJitLoc2; exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], Dcontr );
-%         %here I draw the target contour (6) and other sub types (rught diag, right
-%         %egg, 5...)
-%         imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord2),:)=0
-%         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2;exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.7, [1.5 .5 .5]);
-%        
-
-          Screen('Flip', w);
+        
+        %         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
+        %         %here I draw the target contour (9) and other sub types (left egg, left
+        %         %diag, 2)
+        %         imageRect_offsCI2instr(setdiff(1:length(imageRect_offsCIinstr),exampletargetcord),:)=0;
+        %         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[],0.7, [1.5 .5 .5]);
+        %
+        %
+        %         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [examplexJitLoc2; exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], Dcontr );
+        %         %here I draw the target contour (6) and other sub types (rught diag, right
+        %         %egg, 5...)
+        %         imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr2),exampletargetcord2),:)=0
+        %         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2;exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.7, [1.5 .5 .5]);
+        %
+        
+        Screen('Flip', w);
         KbQueueWait;
         WaitSecs(0.5);
         
@@ -114,8 +123,8 @@ else
         Xpos=PRLx*pix_deg;
         imageRect_left =[imageRect(1)+Xpos, imageRect(2)+Ypos,imageRect(3)+Xpos, imageRect(4)+Ypos];
         imageRect_right =[imageRect(1)-Xpos, imageRect(2)+Ypos,imageRect(3)-Xpos, imageRect(4)+Ypos];
-        Screen('DrawTexture', w, texture(temptrial), [], imageRect_right , ori1,[], contr );
-        Screen('DrawTexture', w, texture(temptrial), [], imageRect_left, ori2,[], contr );
+        Screen('DrawTexture', w, texture(temptrial), [], imageRect_right , ori1,[], 1 );
+        Screen('DrawTexture', w, texture(temptrial), [], imageRect_left, ori2,[], 1);
         Screen('Flip', w);
         KbQueueWait;
         WaitSecs(0.5);
@@ -160,23 +169,23 @@ else
                 imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
             imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
-%             imageRect_offsCI2instr=imageRect_offsCIinstr;
-%             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
-             imageRect_offsCI2instr=imageRect_offsCIinstr2;
-             imageRect_offsCI2instr2=imageRect_offsCIinstr;
+            %             imageRect_offsCI2instr=imageRect_offsCIinstr;
+            %             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
+            imageRect_offsCI2instr=imageRect_offsCIinstr2;
+            imageRect_offsCI2instr2=imageRect_offsCIinstr;
         else
             imageRect_offsCIinstr =[imageRectSmall(1)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'+theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
             imageRect_offsCIinstr2=[imageRectSmall(1)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(2)+eccentricity_YCI'+theeccentricity_X,...
                 imageRectSmall(3)+eccentricity_XCI'-theeccentricity_X, imageRectSmall(4)+eccentricity_YCI'+theeccentricity_X]; % defining the rect of the shape or image for one of the two sub images
-%             imageRect_offsCI2instr=imageRect_offsCIinstr;
-%             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
+            %             imageRect_offsCI2instr=imageRect_offsCIinstr;
+            %             imageRect_offsCI2instr2=imageRect_offsCIinstr2;
             imageRect_offsCI2instr=imageRect_offsCIinstr2;
             imageRect_offsCI2instr2=imageRect_offsCIinstr;
-
+            
         end
         
-       
+        
         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCIinstr2' + [examplexJitLoc; exampleyJitLoc; examplexJitLoc; exampleyJitLoc], exampletheori,[], Dcontr ); %Dcontr = contrast of the gabors
         %here I draw the target contour (9) and other sub types (left egg, left
         %diag, 2)
@@ -189,7 +198,7 @@ else
         %egg, 5...)
         imageRect_offsCI2instr2(setdiff(1:length(imageRect_offsCIinstr),exampletargetcord2),:)=0;
         Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2instr2'+ [examplexJitLoc2;exampleyJitLoc2; examplexJitLoc2; exampleyJitLoc2], exampletheori2,[], 0.7, [1.5 .5 .5]);
-%         
+        %
         
         Screen('Flip', w);
         KbQueueWait;
