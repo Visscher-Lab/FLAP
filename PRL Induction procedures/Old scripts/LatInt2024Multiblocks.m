@@ -123,13 +123,10 @@ try
     %for trial=1:length(mixtr)
             
                     CommonParametersLatInt % define common parameters
+                       max_contrast=0.8;
+
     %% create stimuli
     if taskType~=4
-        if taskType ==1
-            max_contrast=1;
-        elseif taskType== 2 || taskType == 3
-            max_contrast=0.5;
-        end
         createGaborsLT
     end
                    %% STAIRCASE
@@ -274,9 +271,11 @@ try
                     subNoise
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==1
-                               Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
+                 %              Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);
+                                                Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori);
                     else
-                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                       % Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                     Screen('DrawTexture', w, TheNoise, [], imageRect_offs);
                     end
                     
                     %    Screen('FillOval', aperture, [0.5, 0.5,0.5, contr], maskRect )
@@ -288,8 +287,9 @@ try
                 end
                 if taskType ==3
                     %    if interval==1
-                                       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
-                    
+                %                       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri,[], contr);
+                                                       Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, refOri);
+    
                     %    else
                     %    end
                     %      Screen('DrawTexture', w, TheGabors(3,1), [], imageRect_offs, ori,[], 0);
@@ -385,9 +385,11 @@ try
                     %   Screen('DrawTexture', w, noisetex)
                     if interval==2
                         %                        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, ori,[],  contr);
-                          Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);                       
+                       %   Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori,[],  contr);   
+                                                 Screen('DrawTexture', w, TheGabors(1,1), [], imageRect_offs, ori);                       
                     else
-                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                %        Screen('DrawTexture', w, TheNoise, [], imageRect_offs, [],[], contr);
+                                        Screen('DrawTexture', w, TheNoise, [], imageRect_offs);
                     end
                     imageRect_offscircle=[imageRect_offs(1)-maskthickness/2 imageRect_offs(2)-maskthickness/2 imageRect_offs(3)+maskthickness/2 imageRect_offs(4)+maskthickness/2 ];
                     % Screen('FillOval',w, gray,imageRect_offscircle);
@@ -398,7 +400,8 @@ try
                 
                 if taskType==3
                     targetOri(trial)=[refOri+(ori*plusORminus)];
-                    Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [refOri+(ori*plusORminus)],[], contr);
+            %        Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [refOri+(ori*plusORminus)],[], contr);
+                                Screen('DrawTexture', w, TheGabors(sf,1), [], imageRect_offs, [refOri+(ori*plusORminus)]);
                 end
                 if taskType ==4
                     Screen('DrawDots', w, dotcoord2', dotSizePix, [1 1 1]);
