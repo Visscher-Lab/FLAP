@@ -60,9 +60,9 @@ theori=180*rand(1,length(eccentricity_XCI));
 
 
 if practicePassed==2
-    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theanspractice(practicetrial),:) +Orijit;
+    theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theanspractice(practicetrial),:) +Orijit_practice;
 else 
-theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
+theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit_practice;
 end
 % if demo==0
 %     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:);

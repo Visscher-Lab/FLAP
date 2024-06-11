@@ -21,7 +21,7 @@ for practicetrial=1:practicetrialnum
     currentExoEndoCueDuration=ExoEndoCueDuration(1);
     LocX= [-7.5, 7.5];
     theanspractice(practicetrial)=randi(2);
-    Orijit=Jitpracticearray(practicetrial);
+    Orijit_practice=Jitpracticearray(practicetrial);
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
     CIstimuliModIIIPractice_task4
     theeccentricity_Y=0;

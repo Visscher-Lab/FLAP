@@ -177,12 +177,19 @@ try
         eyelinkCalib
     end
     %% Trial matrix definition
-
+    
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
         shapes=3; % how many shapes per day?
         JitList = 0:1:90;
         StartJitter=1;
+%         if trial== 71
+%             thresh(1,2) = 1;
+%         elseif trial== 211
+%             thresh(2,2) = 1;
+%         elseif trial== 351
+%             thresh(3,2) = 1;
+%         end
     end
     %define number of trials per condition
     if trainingType==1
@@ -334,7 +341,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         else
             DAYN = ['\Training\Day' (answer{2}-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
-            if trainingType==2 || trainingType==4 % load thresholds from previous days
+            if trainingType==2 % || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
                 %d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %      NEW DIRECTORY
