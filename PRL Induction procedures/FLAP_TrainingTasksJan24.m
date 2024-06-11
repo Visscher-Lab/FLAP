@@ -748,10 +748,24 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             eccentricity_Y(trial) =theeccentricity_Y ;
         elseif trainingType==3 % if training type 3 or 4 and not a hold trial, stimulus position spatially randomized
             if trial==1 || sum(mixtr(trial,:)~=mixtr(trial-1,:))>0
-                ecc_r=(r_lim*pix_deg).*rand(1,1);
-                ecc_t=2*pi*rand(1,1);
-                cs= [cos(ecc_t), sin(ecc_t)];
-                xxyy=[ecc_r ecc_r].*cs;
+           
+                % ellipse area within which the stimulus can appear (in
+                % dva)
+                maj_a = 18; % major axis (horizontal)
+                min_b = 10; % minor axis (vrtical)
+                % Generate random angles between 0 and 2*pi
+                ecc_t = 2 * pi * rand;
+                % Generate random radius
+                ecc_r = sqrt(rand);
+                % Convert polar coordinates to Cartesian coordinates
+                xx = ecc_r * maj_a * cos(ecc_t);
+                yy = ecc_r * min_b * sin(ecc_t);
+xxyy=[xx*pix_deg yy*pix_deg_vert ];
+                
+%                 ecc_r=(r_lim*pix_deg).*rand(1,1);
+%                 ecc_t=2*pi*rand(1,1);
+%                 cs= [cos(ecc_t), sin(ecc_t)];
+%                 xxyy=[ecc_r ecc_r].*cs;
                 ecc_x=xxyy(1);
                 ecc_y=xxyy(2);
                 eccentricity_X(trial)=ecc_x;
