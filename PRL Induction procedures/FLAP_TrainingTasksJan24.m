@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 0; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -708,7 +708,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
 %                     threshperday(expDay,:)=trackthresh;
                     Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
                     Tscat=0;
-                elseif shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 7)
+                elseif shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 7) && trial == 211 % jitter only carries over for first trial of shape 2 changed 6-13 EC/MGR
 %                     threshShapes(2,2) = thresh(1,2);
 %                     trackthresh(shapesoftheDay(mixtr(trial,1)))= threshShapes(mixtr(trial,1));
 %                     threshperday(expDay,:)=trackthresh;
