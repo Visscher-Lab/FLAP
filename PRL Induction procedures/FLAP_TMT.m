@@ -20,6 +20,7 @@ try
         return;
     end
     
+    
     temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});

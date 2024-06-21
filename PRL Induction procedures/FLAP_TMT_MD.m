@@ -144,6 +144,7 @@ scotomavpixx=0;
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
+    Screen('TextSize', w, textsize);
     if Isdemo==0
        FLAP_TMT_MD_practice
     else

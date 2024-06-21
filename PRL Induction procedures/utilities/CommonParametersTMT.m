@@ -17,8 +17,8 @@ fix_cord = [center-fix_r*ppd center+fix_r*ppd];
 %if mouse calibration is needed
 MouseCalib=1;
 if sitevpixx==1
-    xoff=2560; %ucr uses 2560, uab uses 0
-    yoff=150; %ucr uses 150, uab uses 0
+    xoff=-1920; %ucr uses 2560, uab uses 0
+    yoff=162; %ucr uses 150, uab uses 0
 elseif sitevpixx==2
     xoff=0; %ucr uses 2560, uab uses 0
     yoff=0; %ucr uses 150, uab uses 0

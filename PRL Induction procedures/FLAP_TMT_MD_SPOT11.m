@@ -61,7 +61,6 @@ scotomavpixx=0;
 
     
 textsize = str2num(answer{10,:});
-Screen('TextSize',w,textsize );
 CC_size = str2num(answer{11,:});
 Csize=round(CC_size*ppd);
     %% eyetracker initialization (eyelink)
@@ -100,6 +99,7 @@ Csize=round(CC_size*ppd);
 
     %%
     %Calls the script that has the stimulus details for the trails task
+
     StimDetailsTrails;
 
     %sets times for each phase [A_demo, A, B_demo, B]
@@ -126,7 +126,6 @@ Csize=round(CC_size*ppd);
     %% main loop
     HideCursor(0);
     counter = 0;
-
     %%
     % check EyeTracker status
     if EyetrackerType == 1
@@ -150,7 +149,7 @@ Csize=round(CC_size*ppd);
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
-    Screen('TextSize',w,textsize );
+   % Screen('TextSize',w,textsize);
     if Isdemo==0
        FLAP_TMT_MD_practice
     else
@@ -222,20 +221,24 @@ Csize=round(CC_size*ppd);
                             if block<=2
                                 if i<10
                                     %      Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor, [], [], [], [], [], [1])
-                                else
+                                 %   Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor, [], [], [], [], [], [1])
+                                                                   Screen('DrawText', w, num2str(i), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor)
+ else
                                     %      Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor);
-                                    Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
-                                end
+                              %      Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                                                                 Screen('DrawText', w, num2str(i), stimx(i)-textsize, stimy(i)-textsize/2, LetterColor);
+   end
                             else
                                 if mod(i,2)
                                     %          Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                                    Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
-                                    
+                               %     Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                                                                        Screen('DrawText', w, num2str(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+
                                 else
                                     %        Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
-                                    Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
-                                    
+                  %                  Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor,[], [], [], [], [], [1]);
+                                                       Screen('DrawText', w , Letters(round(i/2)), stimx(i)-textsize/2, stimy(i)-textsize/2, LetterColor);
+                 
                                 end
                             end
                             %Screen('TextStyle', w, 1);

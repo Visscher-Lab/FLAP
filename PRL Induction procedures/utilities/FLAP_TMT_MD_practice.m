@@ -20,6 +20,7 @@
     contcoord=0;
     numrespCorr=0;
     resp=0;
+        Screen('TextSize', w, textsize);
     while eyechecked<1
         if EyetrackerType ==2
             Datapixx('RegWrRd');
