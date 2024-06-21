@@ -100,6 +100,7 @@ try
         Sizelist=log_unit_down(StartSize, 0.1, 90);
         thresh(1:PRLlocations, 1:ca)=3;
             imsize=StartSize*pix_deg;
+                    imageRect = CenterRect([0, 0, (StartSize*pix_deg) (StartSize*pix_deg)], wRect);
     elseif whichTask==2    % Contrast
         ca=1; %conditions; one
         StartCont=1.122; %starting value for contrast
@@ -216,6 +217,12 @@ RespType(4) = KbName('DownArrow');
         % compute target location
         theeccentricity_X=randdegarray(randi(length(randdegarray)))*pix_deg;
         theeccentricity_Y=randdegarray(randi(length(randdegarray)))*pix_deg;
+        if whichTask ==1
+            VAsize = Sizelist(thresh(mixtr(trial,1),mixtr(trial,2)));
+            imageRect = CenterRect([0, 0, VAsize*pix_deg VAsize*pix_deg], wRect);
+        elseif whichTask ==2
+            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
+        end
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
         
@@ -225,12 +232,7 @@ RespType(4) = KbName('DownArrow');
         theans(trial)=predefinedResp(trial);
         ori=theoris(theans(trial));
         
-        if whichTask ==1
-            VAsize = Sizelist(thresh(mixtr(trial,1),mixtr(trial,2)));
-            imageRect = CenterRect([0, 0, VAsize*pix_deg VAsize*pix_deg], wRect);
-        elseif whichTask ==2
-            contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,2)));
-        end
+      
         if EyetrackerType ==2
             %start logging eye data
             Datapixx('RegWrRd');
