@@ -150,6 +150,7 @@ Csize=round(CC_size*ppd);
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
+    Screen('TextSize',w,textsize );
     if Isdemo==0
        FLAP_TMT_MD_practice
     else
@@ -177,6 +178,7 @@ Csize=round(CC_size*ppd);
             contcoord=0;
             numrespCorr=0; %mm
             resp=0; %mm
+                Screen('TextSize',w,textsize );
             while eyechecked<1
                 
                 if EyetrackerType ==2

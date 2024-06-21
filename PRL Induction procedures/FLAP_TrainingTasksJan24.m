@@ -85,7 +85,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 0; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -177,12 +177,19 @@ try
         eyelinkCalib
     end
     %% Trial matrix definition
-
+    
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
         shapes=3; % how many shapes per day?
         JitList = 0:1:90;
         StartJitter=1;
+%         if trial== 71
+%             thresh(1,2) = 1;
+%         elseif trial== 211
+%             thresh(2,2) = 1;
+%         elseif trial== 351
+%             thresh(3,2) = 1;
+%         end
     end
     %define number of trials per condition
     if trainingType==1
@@ -334,7 +341,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
         else
             DAYN = ['\Training\Day' (answer{2}-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
-            if trainingType==2 || trainingType==4 % load thresholds from previous days
+            if trainingType==2 % || trainingType==4 % load thresholds from previous days
                 %OLD DIRECTORY
                 %d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %      NEW DIRECTORY
@@ -701,7 +708,7 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
 %                     threshperday(expDay,:)=trackthresh;
                     Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
                     Tscat=0;
-                elseif shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 7)
+                elseif shapesoftheDay(1) == shapesoftheDay(2) && (mixtr(trial,5) == 7) && trial == 211 % jitter only carries over for first trial of shape 2 changed 6-13 EC/MGR
 %                     threshShapes(2,2) = thresh(1,2);
 %                     trackthresh(shapesoftheDay(mixtr(trial,1)))= threshShapes(mixtr(trial,1));
 %                     threshperday(expDay,:)=trackthresh;
@@ -741,10 +748,24 @@ trials_per_block_before_hold=trials_per_block/2.5; % because we  have equal numb
             eccentricity_Y(trial) =theeccentricity_Y ;
         elseif trainingType==3 % if training type 3 or 4 and not a hold trial, stimulus position spatially randomized
             if trial==1 || sum(mixtr(trial,:)~=mixtr(trial-1,:))>0
-                ecc_r=(r_lim*pix_deg).*rand(1,1);
-                ecc_t=2*pi*rand(1,1);
-                cs= [cos(ecc_t), sin(ecc_t)];
-                xxyy=[ecc_r ecc_r].*cs;
+           
+                % ellipse area within which the stimulus can appear (in
+                % dva)
+                maj_a = 18; % major axis (horizontal)
+                min_b = 10; % minor axis (vrtical)
+                % Generate random angles between 0 and 2*pi
+                ecc_t = 2 * pi * rand;
+                % Generate random radius
+                ecc_r = sqrt(rand);
+                % Convert polar coordinates to Cartesian coordinates
+                xx = ecc_r * maj_a * cos(ecc_t);
+                yy = ecc_r * min_b * sin(ecc_t);
+xxyy=[xx*pix_deg yy*pix_deg_vert ];
+                
+%                 ecc_r=(r_lim*pix_deg).*rand(1,1);
+%                 ecc_t=2*pi*rand(1,1);
+%                 cs= [cos(ecc_t), sin(ecc_t)];
+%                 xxyy=[ecc_r ecc_r].*cs;
                 ecc_x=xxyy(1);
                 ecc_y=xxyy(2);
                 eccentricity_X(trial)=ecc_x;
