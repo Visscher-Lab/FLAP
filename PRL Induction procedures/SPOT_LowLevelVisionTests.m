@@ -9,11 +9,11 @@ clc;
 commandwindow
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'Calibration type: 0=regular, 1=shorter calibration with visual aids (fMD )', 'which task? VA (1) or Contrast (2)'};
+    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'Calibration type: 0=regular, 1=shorter calibration with visual aids (fMD )', 'which task? VA (1) or Contrast (2)', 'stimulus size (starting value for VA)'};
     
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'spot05','1', '0', '1','2','0', '0', '0', '1' };
+    defaultanswer={'spot05','1', '0', '1','2','0', '0', '0', '1', '2' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -29,6 +29,7 @@ try
     EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
     specialcalibration=str2num(answer{8,:}); %0=regular, 1=shorter calibration with visual aids (for MD mostly)
     whichTask=str2num(answer{9,:}); %1=VA, 2=contrast
+    stimulussizedeg=str2num(answer{10,:});
     fixationType=1; % 1: cross + wedges fixation, 2: small cross with central dot
     scotomavpixx= 0;
     responsebox = 0;
@@ -97,6 +98,7 @@ try
     if whichTask==1    % Acuity
         ca=1; %conditions; one
         StartSize= 8; %1; %starting size for VA
+                StartSize= stimulussizedeg; %1; %starting size for VA
         Sizelist=log_unit_down(StartSize, 0.1, 90);
         thresh(1:PRLlocations, 1:ca)=3;
             imsize=StartSize*pix_deg;
@@ -108,6 +110,7 @@ try
         Contlist(1)=1;
         thresh(1:PRLlocations, 1:ca)=4; %11;
         stimulusSize = 1; % for contrast sensitivity with the C & exo attention
+     stimulusSize=   stimulussizedeg;
         imageRect = CenterRect([0, 0, (stimulusSize*pix_deg) (stimulusSize*pix_deg)], wRect);
         imsize=stimulusSize*pix_deg;
 end
