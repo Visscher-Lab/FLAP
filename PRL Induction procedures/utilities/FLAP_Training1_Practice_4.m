@@ -5,7 +5,7 @@ DrawFormattedText(w, 'Now, we will practice the "tilted blob" task. \n \n Please
 Screen('Flip', w);
 KbQueueWait;
     
-DrawFormattedText(w, 'Press the left (green) or right (red) button \n \n to indicate the orientation of the tilted blob \n \n Press any key to start', 'center', 'center', white);
+DrawFormattedText(w, 'Press the left/green or right/red button \n \n to indicate the orientation of the tilted blob \n \n Press any key to start', 'center', 'center', white);
 ori1 = -45; ori2 = 45;
 Ypos=PRLx*pix_deg_vert;
 Xpos=PRLx*pix_deg;
