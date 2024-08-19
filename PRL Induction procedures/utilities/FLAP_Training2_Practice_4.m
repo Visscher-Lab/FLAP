@@ -25,7 +25,7 @@ for practicetrial=1:practicetrialnum
     stimulusdurationpractice=stimulusdurationpracticearray(practicetrial);
     CIstimuliModIIIPractice_task4
     theeccentricity_Y=0;
-    if practicetrial== 1 ||  practicetrial== 2 || practicetrial== 3 || practicetrial== 4 || practicetrial== 5
+    if TRLlocation==1
         theeccentricity_X=LocX(1)*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
     else
         theeccentricity_X=LocX(2)*pix_deg;

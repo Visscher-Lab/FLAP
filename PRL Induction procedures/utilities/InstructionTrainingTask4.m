@@ -5,8 +5,14 @@ Screen('Flip', w);
 KbQueueWait;
 end
 
-
-
+if trial>1
+    if mixtr(trial,4)==1 && mixtr(trial-1,4)==14
+        DrawFormattedText(w, 'Rest your eyes. \n \n Press any key to continue', 'center', 'center', white);
+        Screen('Flip', w);
+        KbQueueWait;
+        WaitSecs(0.5);
+    end
+end
 
 %% Contrast Task
 if trial == 1
@@ -115,8 +121,6 @@ if trial == 1
         WaitSecs(0.5);
         
     end
-
-% CI Task
 else
     if mixtr(temptrial+1,3) == 1
         DrawFormattedText(w, 'Press the left/green or right/red button \n \n to indicate the orientation of the pattern \n \n Press any key to continue', 'center', 'center', white);
