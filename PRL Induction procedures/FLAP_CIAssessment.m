@@ -1,4 +1,4 @@
-% FLAP Training
+   % FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Updated by Samyukta Jayakumar July 2023
 % This code runs the Contour Integration (CI) task

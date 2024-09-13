@@ -129,7 +129,7 @@ elseif site==3   %UCR VPixx
     end
     PsychImaging('PrepareConfiguration');
     %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
-    PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+   %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
     [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
 
     %debug window

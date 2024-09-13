@@ -20,7 +20,7 @@ reversalsToEnd=10; % how many reversals we need to reach to finish the block
 trials=100; %100;
 mixtr=[];
 if taskType==1
-    lok; %location: PRL vs no PRL
+    lok=2; %location: PRL vs no PRL
     fl=2; % flankers: Iso vs orto
     condlist=fullfact([lok fl]);
     numsc=length(condlist);

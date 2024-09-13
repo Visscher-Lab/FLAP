@@ -38,10 +38,7 @@
                                 % PRL(s)
                                 
                                 Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
-
-                                
                                 circlefix=0;
-                                
                             else
                                 %if we have the EyeCode element, which
                                 %tracks the frames for which we have eye position recorded (even if the eye position is missing)
@@ -88,7 +85,7 @@
                             
                             circlefix=0;
                             % If this texture is active it will make the target visible only if all the PRLs are within the screen. If one of themis outside the target won't be visible
-                            %       Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
+                                   Screen('DrawTexture', w, Neutralface, [], imageRect_offs);
 
                         end
                     end
