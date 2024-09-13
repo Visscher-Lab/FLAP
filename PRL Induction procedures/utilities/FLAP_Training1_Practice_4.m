@@ -22,7 +22,7 @@ WaitSecs(0.5);
 
 
 %%
-contrpracticearray=[0.8 0.7 0.6 0.5 0.4 0.8 0.7 0.6 0.5 0.4]; %  stimulus ori practice
+contrpracticearray=[0.8 0.8 0.7 0.7 0.6 0.6 0.5 0.5 0.4 0.4]; %  stimulus ori practice
 stimulusdurationpracticearray=[0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]; % stimulus duration practice
 targethighercontrast=[0 0 0 0 0 0 0 0 0 0]; % target contrast
 Tscat=0;
@@ -55,7 +55,7 @@ for practicetrial=1:practicetrialnum
     %CIstimuliModPracticeAssessment % add the offset/polarity repulsion
     createGabors
     theeccentricity_Y=0;
-    if practicetrial== 1 ||  practicetrial== 2 || practicetrial== 3 || practicetrial== 4 || practicetrial== 5
+    if TRLlocation==1
         theeccentricity_X=LocX(1)*pix_deg; % identifies if the stimulus needs to be presented in the left or right side
     else
         theeccentricity_X=LocX(2)*pix_deg;

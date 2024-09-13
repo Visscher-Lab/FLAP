@@ -5,8 +5,14 @@ Screen('Flip', w);
 KbQueueWait;
 end
 
-
-
+if trial>1
+    if mixtr(trial,4)==1 && mixtr(trial-1,4)==14
+        DrawFormattedText(w, 'Rest your eyes. \n \n Press any key to continue', 'center', 'center', white);
+        Screen('Flip', w);
+        KbQueueWait;
+        WaitSecs(0.5);
+    end
+end
 
 %% Contrast Task
 if trial == 1
