@@ -1,2 +1,0 @@
-function readimage(filename)
-end

@@ -1,2 +1,0 @@
-function readenvi(filename)
-end
