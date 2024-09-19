@@ -10,11 +10,11 @@
 % time defined by the variable AnnulusTime, then a Gabor appears for
 % Stimulustime, participant has to report the Gabor's orientation. 
 % Participant has trialTimeout amount of time to respond, otherwise the
-% trial is considered wrong and th e script moves to the next trial.
+% trial is considered wrong and the script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable AnnulusTime, then a CI target appears for
-% Stimulustime, participant has to report the identity of the stim ulus
+% Stimulustime, participant has to report the identity of the stimulus
 %within the CI. Participant has trialTimeout amount of time to respond,
 %otherwise the trial is considered wrong and the script moves to the next trial.
 % 3 = Fixation stability: Participant has to find a white O on the screen and
@@ -86,7 +86,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 0; %0=mouse, 1=eyetracker
+    EyeTracker = 1; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
