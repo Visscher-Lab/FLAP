@@ -1,3 +1,4 @@
+   
 % FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
 % Training script for FLAP. This script runs 4 types of visual/oculomotor
@@ -7,7 +8,7 @@
 % 1 = Contrast detection: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable AnnulusTime, then a Gabor appears for
-% Stimulustime, participant has to report the Gabor's orientation.
+% Stimulustime, participant has to report the Gabor's orientation. 
 % Participant has trialTimeout amount of time to respond, otherwise the
 % trial is considered wrong and the script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
@@ -37,8 +38,8 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+   % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
 
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -843,9 +844,9 @@ try
                 if exist('circlestar')==0
                     if datapixxtime==1
                         Datapixx('RegWrRd');
-                        circle_start=Datapixx('GetTime');
+                        circle_start(trial)=Datapixx('GetTime');
                     else
-                        circle_start = GetSecs;
+                        circle_start(trial) = GetSecs;
                     end
                     circlestar=1;
                 end
@@ -916,7 +917,7 @@ try
 
                 if exist('stimstar') == 0
                     stim_startT(trial)=eyetime2;
-                    stim_start=eyetime2;
+                    stim_start(trial)=eyetime2;
                     stim_startPTB = GetSecs;
                     if EyetrackerType ==2
                         %set a marker to get the exact time the screen flips
@@ -1022,7 +1023,7 @@ try
                     end
                 end
             elseif (eyetime2-pretrial_time)>=trialTimeout
-                stim_stop=eyetime2;
+                stim_stop(trial)=eyetime2;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
                 if responsebox==1
@@ -1353,7 +1354,7 @@ try
         end
         if trainingType~=3 % if the trial didn't time out, save some variables
             if trialTimedout(trial)==0
-                stim_stop=secs;
+                stim_stop(trial)=secs;
                 if length(thekeys)>1
                     cheis(kk)=thekeys(1);  % this is giving an error Dec 4- kmv
                 else
