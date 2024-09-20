@@ -1361,11 +1361,11 @@ try
                     cheis(kk)=thekeys;  % this is giving an error Dec 4- kmv
                 end
             end
-            time_stim(kk) = stim_stop - stim_start;
+            time_stim(kk) = stim_stop(trial) - stim_start(trial); %MGR changed 
             rispo(kk)=resp;
             %   respTimes(trial)=respTime;
-            cueendToResp(kk)=stim_stop-cue_last;
-            cuebeginningToResp(kk)=stim_stop-circle_start;
+            cueendToResp(kk)=stim_stop(trial)-cue_last;
+            cuebeginningToResp(kk)=stim_stop(trial)-circle_start(trial);
         end
         if trainingType > 2 % if it's a
             %   training type with flicker
@@ -1415,7 +1415,7 @@ try
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
             if trainingType ~= 3
-                time_stim3(kk) = respTime(trial) - stim_start;
+                time_stim3(kk) = respTime(trial) - stim_start(trial);
             end
         end
         TRLsize(trial)=coeffAdj;
@@ -1464,10 +1464,10 @@ try
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             if exist('stim_start')
-                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
+                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
             end
             if trainingType~=3
-                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
+                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop(trial);
             end
             clear ErrorInfo
         end
