@@ -10,11 +10,11 @@
 % time defined by the variable AnnulusTime, then a Gabor appears for
 % Stimulustime, participant has to report the Gabor's orientation. 
 % Participant has trialTimeout amount of time to respond, otherwise the
-% trial is considered wrong and the script moves to the next trial.
+% trial is considered wrong and th e script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable AnnulusTime, then a CI target appears for
-% Stimulustime, participant has to report the identity of the stimulus
+% Stimulustime, participant has to report the identity of the stim ulus
 %within the CI. Participant has trialTimeout amount of time to respond,
 %otherwise the trial is considered wrong and the script moves to the next trial.
 % 3 = Fixation stability: Participant has to find a white O on the screen and
@@ -86,7 +86,7 @@ try
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-    EyeTracker = 1; %0=mouse, 1=eyetracker
+    EyeTracker = 0; %0=mouse, 1=eyetracker
 
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
@@ -243,7 +243,6 @@ try
         end
         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
         mixtr =mixtr(randperm(length(mixtr)),:);
-        mixtr = mixtr(271:end,:);
     elseif trainingType==4 % more complex structure, we have type of shapes
         %(for Gabor it's always the same, for shapes it will have 6 types per
         %session; type of stimuli (shapes/Gabors), type of cue (exo vs
@@ -918,7 +917,7 @@ try
 
                 if exist('stimstar') == 0
                     stim_startT(trial)=eyetime2;
-                    stim_start(trial)=eyetime2;
+                    stim_start=eyetime2;
                     stim_startPTB = GetSecs;
                     if EyetrackerType ==2
                         %set a marker to get the exact time the screen flips
@@ -1024,7 +1023,8 @@ try
                     end
                 end
             elseif (eyetime2-pretrial_time)>=trialTimeout
-                stim_stop(trial)=eyetime2;
+                stim_stopT(trial) = eyetime2;
+                stim_stop=eyetime2;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
                 if responsebox==1
@@ -1362,11 +1362,11 @@ try
                     cheis(kk)=thekeys;  % this is giving an error Dec 4- kmv
                 end
             end
-            time_stim(kk) = stim_stop(trial) - stim_start(trial); %MGR changed 
+            time_stim(kk) = stim_stop - stim_start;
             rispo(kk)=resp;
             %   respTimes(trial)=respTime;
-            cueendToResp(kk)=stim_stop(trial)-cue_last;
-            cuebeginningToResp(kk)=stim_stop(trial)-circle_start(trial);
+            cueendToResp(kk)=stim_stop-cue_last;
+            cuebeginningToResp(kk)=stim_stop-circle_start;
         end
         if trainingType > 2 % if it's a
             %   training type with flicker
@@ -1416,7 +1416,7 @@ try
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
             if trainingType ~= 3
-                time_stim3(kk) = respTime(trial) - stim_start(trial);
+                time_stim3(kk) = respTime(trial) - stim_start;
             end
         end
         TRLsize(trial)=coeffAdj;
@@ -1465,10 +1465,10 @@ try
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             if exist('stim_start')
-                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
+                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
             end
             if trainingType~=3
-                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop(trial);
+                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             end
             clear ErrorInfo
         end
