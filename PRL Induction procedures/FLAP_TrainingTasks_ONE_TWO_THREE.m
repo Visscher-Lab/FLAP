@@ -10,11 +10,11 @@
 % time defined by the variable AnnulusTime, then a Gabor appears for
 % Stimulustime, participant has to report the Gabor's orientation. 
 % Participant has trialTimeout amount of time to respond, otherwise the
-% trial is considered wrong and the script moves to the next trial.
+% trial is considered wrong and th e script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable AnnulusTime, then a CI target appears for
-% Stimulustime, participant has to report the identity of the stimulus
+% Stimulustime, participant has to report the identity of the stim ulus
 %within the CI. Participant has trialTimeout amount of time to respond,
 %otherwise the trial is considered wrong and the script moves to the next trial.
 % 3 = Fixation stability: Participant has to find a white O on the screen and
@@ -844,9 +844,11 @@ try
                 if exist('circlestar')==0
                     if datapixxtime==1
                         Datapixx('RegWrRd');
-                        circle_start(trial)=Datapixx('GetTime');
+                        circle_startT(trial)=Datapixx('GetTime'); % added by EC 10/2/24. saves instances of variable over time without having to use this variable for response time calculations
+                        circle_start=Datapixx('GetTime');
                     else
-                        circle_start(trial) = GetSecs;
+                        circle_startT(trial) = GetSecs; % also added by EC 10/2/24. see comments line 847
+                        circle_start= GetSecs;
                     end
                     circlestar=1;
                 end
@@ -917,7 +919,7 @@ try
 
                 if exist('stimstar') == 0
                     stim_startT(trial)=eyetime2;
-                    stim_start(trial)=eyetime2;
+                    stim_start=eyetime2;
                     stim_startPTB = GetSecs;
                     if EyetrackerType ==2
                         %set a marker to get the exact time the screen flips
@@ -944,7 +946,7 @@ try
                 % types 3 and 4
                 if trainingType>2
                     if exist('checktrialstart')==0
-                        trialTimeout=actualtrialtimeout+(stim_start(trial)-pretrial_time);
+                        trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                         checktrialstart=1;
                     end
                 end
@@ -1023,7 +1025,8 @@ try
                     end
                 end
             elseif (eyetime2-pretrial_time)>=trialTimeout
-                stim_stop(trial)=eyetime2;
+                stim_stopT(trial) = eyetime2;
+                stim_stop=eyetime2;
                 trialTimedout(trial)=1;
                 %    [secs  indfirst]=min(thetimes);
                 if responsebox==1
@@ -1361,11 +1364,11 @@ try
                     cheis(kk)=thekeys;  % this is giving an error Dec 4- kmv
                 end
             end
-            time_stim(kk) = stim_stop(trial) - stim_start(trial); %MGR changed 
+            time_stim(kk) = stim_stop - stim_start;
             rispo(kk)=resp;
             %   respTimes(trial)=respTime;
-            cueendToResp(kk)=stim_stop(trial)-cue_last;
-            cuebeginningToResp(kk)=stim_stop(trial)-circle_start(trial);
+            cueendToResp(kk)=stim_stop-cue_last;
+            cuebeginningToResp(kk)=stim_stop-circle_start;
         end
         if trainingType > 2 % if it's a
             %   training type with flicker
@@ -1415,7 +1418,7 @@ try
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
         else
             if trainingType ~= 3
-                time_stim3(kk) = respTime(trial) - stim_start(trial);
+                time_stim3(kk) = respTime(trial) - stim_start;
             end
         end
         TRLsize(trial)=coeffAdj;
@@ -1464,10 +1467,10 @@ try
             EyeSummary.(TrialNum).DriftCorrectionX = driftoffsetx;
             EyeSummary.(TrialNum).DriftCorrectionY = driftoffsety;
             if exist('stim_start')
-                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start(trial);
+                EyeSummary.(TrialNum).TimeStamps.Fixation = stim_start;
             end
             if trainingType~=3
-                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop(trial);
+                EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
             end
             clear ErrorInfo
         end
