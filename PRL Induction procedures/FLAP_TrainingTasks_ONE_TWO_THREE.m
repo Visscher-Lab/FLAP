@@ -844,9 +844,11 @@ try
                 if exist('circlestar')==0
                     if datapixxtime==1
                         Datapixx('RegWrRd');
-                        circle_start(trial)=Datapixx('GetTime');
+                        circle_startT(trial)=Datapixx('GetTime'); % added by EC 10/2/24. saves instances of variable over time without having to use this variable for response time calculations
+                        circle_start=Datapixx('GetTime');
                     else
-                        circle_start(trial) = GetSecs;
+                        circle_startT(trial) = GetSecs; % also added by EC 10/2/24. see comments line 847
+                        circle_start= GetSecs;
                     end
                     circlestar=1;
                 end
