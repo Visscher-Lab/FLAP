@@ -944,7 +944,7 @@ try
                 % types 3 and 4
                 if trainingType>2
                     if exist('checktrialstart')==0
-                        trialTimeout=actualtrialtimeout+(stim_start(trial)-pretrial_time);
+                        trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                         checktrialstart=1;
                     end
                 end

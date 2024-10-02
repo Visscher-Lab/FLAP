@@ -23,20 +23,20 @@ if   codey<wRect(4) && codey>0 && codex<wRect(3) && codex>0
         if  blankcounter==blankframeallowed
             stopBlankCounter=GetSecs;
         end
-        
+
         if blankcounter>blankframeallowed
             turnFlickerOn(length(xeye))=0;
         elseif blankcounter<=blankframeallowed % eyes away from target but target still visible
             counterflicker=counterflicker+1;
-      %      framefix(counterflicker)=length(xeye(:,1));
-      %      timefix(counterflicker)=GetSecs;
-        end        
+            %      framefix(counterflicker)=length(xeye(:,1));
+            %      timefix(counterflicker)=GetSecs;
+        end
     else         %is the target inside the PRL?
-        
+
         %if we have the eyerunner element, which
         %tracks the frames for which we have eye position recorded (even if the eye position is missing)
-     eyerunner=zeros(length(xeye),1)';
-   if sum(eyerunner(end-round(framesbeforeflicker):end))~=0
+        eyerunner=zeros(length(xeye),1)';
+        if sum(eyerunner(end-round(framesbeforeflicker):end))~=0
             %if we don't have xx consecutive frames with no eye movement (aka, with
             %fixation)
             blankcounter=blankcounter+1;
@@ -53,8 +53,8 @@ if   codey<wRect(4) && codey>0 && codex<wRect(3) && codex>0
             blankcounter=0;
             counterflicker=counterflicker+1;
             showtarget=100;
-        end 
-    end    
+        end
+    end
 elseif codey>wRect(4) || codey<0 || codex>wRect(3) || codex<0 %...
     % if eyes looking outside of the screen area
     blankcounter=blankcounter+1;
