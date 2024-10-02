@@ -243,6 +243,7 @@ try
         end
         mixtr=[mixtr ones(length(mixtr(:,1)),1) ];
         mixtr =mixtr(randperm(length(mixtr)),:);
+        mixtr = mixtr(271:end,:);
     elseif trainingType==4 % more complex structure, we have type of shapes
         %(for Gabor it's always the same, for shapes it will have 6 types per
         %session; type of stimuli (shapes/Gabors), type of cue (exo vs
@@ -944,7 +945,7 @@ try
                 % types 3 and 4
                 if trainingType>2
                     if exist('checktrialstart')==0
-                        trialTimeout=actualtrialtimeout+(stim_start(trial)-pretrial_time);
+                        trialTimeout=actualtrialtimeout+(stim_start-pretrial_time);
                         checktrialstart=1;
                     end
                 end
