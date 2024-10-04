@@ -1357,7 +1357,8 @@ try
         end
         if trainingType~=3 % if the trial didn't time out, save some variables
             if trialTimedout(trial)==0
-                stim_stop(trial)=secs;
+                stim_stopT(trial)=secs;
+                stim_stop=secs;
                 if length(thekeys)>1
                     cheis(kk)=thekeys(1);  % this is giving an error Dec 4- kmv
                 else
