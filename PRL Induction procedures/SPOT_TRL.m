@@ -41,6 +41,13 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
         mkdir('data')
     end
     
+        if Isdemo==0
+        filename='_scotoma_awareness_TRL_practice';
+    elseif Isdemo==1
+        filename='_scotoma_awareness_TRL';
+        end
+    
+    
     inductionType = 1; % 1 = assigned, 2 = annulus
     if inductionType ==1
         TYPE = 'Assigned';
