@@ -37,8 +37,8 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -195,7 +195,7 @@ try
         shapes=3; % how many shapes per day?
         JitList = 0:1:90;
         StartJitter=1;
-        JitListprog=0:2:28
+        JitListprog=0:2:28;
         
     end
     %define number of trials per condition
@@ -575,7 +575,7 @@ try
         if trainingType == 4
             tracktrialnumber = [tracktrialnumber; trial];
         end
-        checkcounter = checkcounter + 1     
+        checkcounter = checkcounter + 1   ;  
         
         if trainingType == 4 && (mixtr(trial,3) == 2)
             
@@ -946,6 +946,7 @@ try
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
                     if datapixxtime==1
+                         Datapixx('RegWrRd');
                         trialstart(trial)=Datapixx('GetTime');
                         trialstart_frame(trial)=eyetime2;
                     else
@@ -1432,7 +1433,7 @@ try
                 staircounter(mixtr(trial,1),mixtr(trial,3))=staircounter(mixtr(trial,1),mixtr(trial,3))+1;
             end
             if trainingType==1 || (trainingType == 4 && mixtr(trial,3)==1)
-                Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=contr
+                Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=contr;
             end
             if trainingType==2 || (trainingType == 4 && mixtr(trial,3)==2)
                 Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=Orijit;
@@ -1441,39 +1442,39 @@ try
             if mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) < progtrackend
                 if foo(theans(trial)) % if correct response
                     resp = 1;
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,3))) = 1;
-                    thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))+1
+                    thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))+1;
                 elseif (thekeys==escapeKey) % esc pressed
                     %                     closescript = 1;
                     ListenChar(0);
                     break;
                 else
                     resp = 0; % if wrong response
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     nswr(trial) = 0;
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,3))) = 0;
-                    thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))
+                    thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3));
                 end
             elseif mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) == progtrackend
                 if foo(theans(trial)) % if correct response
                     resp = 1;
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,3))) = 1;
-                    thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList==Orijit)
+                    thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList==Orijit);
                 elseif (thekeys==escapeKey) % esc pressed
                     %                     closescript = 1;
                     ListenChar(0);
                     break;
                 else
                     resp = 0; % if wrong response
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     nswr(trial) = 0;
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
@@ -1485,7 +1486,7 @@ try
             elseif mixtr(trial,3)==1 || (mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) > progtrackend)
                 if foo(theans(trial)) % if correct response
                     resp = 1;
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     if trainingType~=3
@@ -1563,7 +1564,7 @@ try
                     break;
                 else
                     resp = 0; % if wrong response
-                    resptotal=horzcat(resptotal, resp)
+                    resptotal=horzcat(resptotal, resp);
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     if trainingType~=3
@@ -1677,6 +1678,8 @@ try
             movieDuration(trial)=flicker_time_stop(trial)-flicker_time_start(trial); % actual duration of flicker
             Timeperformance(trial)=movieDuration(trial)-(flickertimetrial(trial)*3); % estimated difference between actual and expected flicker duration
             unadjustedTimeperformance(trial)=movieDuration(trial)-flickertimetrial(trial);
+                        unadjustedTimeperformancedev(trial)=movieDuration(trial)/flickertimetrial(trial);
+
         end
     end
     if trainingType==2
@@ -1776,6 +1779,7 @@ try
         end
         if trainingType~=3
             EyeSummary.(TrialNum).TimeStamps.Response = stim_stop;
+            stopTrial(trial)=stim_stop;
         end
         clear ErrorInfo
     end
