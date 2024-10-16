@@ -65,8 +65,11 @@ elseif whichMD==8
     % scotoma 7 because this is a control participant.
 else
     'Participant ID not found'
-    scotomadegx=0;
-    scotomadegy=0;
+    scotomadegx=0.1;
+    scotomadegy=0.1;
+      theeccentricity_X_scotoma=0*pix_deg;
+    theeccentricity_Y_scotoma=0*pix_deg;
+    [img, ~, alpha] = imread('Scotoma_09.png');
 end
 scotomax=scotomadegx*pix_deg;
 scotomay=scotomadegy*pix_deg;
