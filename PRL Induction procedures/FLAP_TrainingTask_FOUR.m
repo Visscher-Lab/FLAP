@@ -9,7 +9,7 @@
 % time defined by the variable AnnulusTime, then a Gabor appears for
 % Stimulustime, participant has to report the Gabor's orientation.
 % Participant has trialTimeout amount of time to respond, otherwise the
-% trial is considered wrong and the script moves to the next trial.
+% trial is considered wrong and the script moves to the nextial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable A nnulusTime, then a CI target appears for
@@ -25,7 +25,7 @@
 %the participant keeps the O within their TRL, the shorter the trial duration
 %Few consecutive trials are at the same location, then an endogenous (arrow) or an
 %exogenous (briefly appearing O) indicates the location of the next series
-%of trials.
+%of trials.  
 % 4 = perceptual/oculomotor training: same as 3, but with a target after
 %the forced fixation period, either a Gabor (contrast detection) or a
 %contour (contour integration).
@@ -37,8 +37,8 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -342,7 +342,7 @@ try
                 step=5;
             end
         else
-            DAYN = ['\Training\Day' (answer{2}-1) '\'];
+            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 %trainingType==4 % load thresholds from previous days %uncommented on 7/2
                 %OLD DIRECTORY

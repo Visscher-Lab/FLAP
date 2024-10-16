@@ -4,14 +4,14 @@
 close all; clear; clc;
 commandwindow
 try
-    prompt={'Participant name', 'Assessment day','TRL x coord', 'TRL y coord', 'TRL size (diameter)', 'practice (0) or session (1)',  'eye? left(1) or right(2)','Calibration? yes(1), no(0)',  'Eyetracker(1) or mouse(0)?','response box (1) or keyboard (0)'};
+    prompt={'Participant name', 'Assessment day','TRL x coord', 'TRL y coord', 'TRL size (diameter)', 'practice (0) or session (1)',  'eye? left(1) or right(2)','Calibration? yes(1), no(0)',  'Eyetracker(1) or mouse(0)?','response box (1) or keyboard (0)', 'visual aids for calibration? yes (1), no(0)'};
     addpath([cd '/utilities']);
     addpath([cd '/../utilities']); %add folder with utilities files
         addpath([cd '/Functions']);
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'SPOT11','1',' -6.5','1', '6','1', '1', '0', '0', '0'};
+    defaultanswer={'SPOT11','1',' -6.5','1', '6','1', '1', '0', '0', '0', '1'};
     
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
@@ -24,7 +24,6 @@ try
 PRLx=str2num(answer{3,:}); % x coordinates (in deg) of the TRL
 PRLy=str2num(answer{4,:}); % y coordinates (in deg) of the TRL
 PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visual angle
-    
     Isdemo=str2num(answer{6,:}); % full session or demo/practice
   %  PRLlocations=str2num(answer{6,:});
     TRLnumber=1; %str2num(answer{7,:});  % how many TRLs do we want?
@@ -32,6 +31,7 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
     calibration=str2num(answer{8,:}); % do we want to calibrate or do we skip it? only for Vpixx
     EyeTracker = str2num(answer{9,:}); %0=mouse, 1=eyetracker
     responsebox=str2num(answer{10,:});
+    specialcalibration=str2num(answer{11,:});
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
     site=3;  % VPixx
@@ -40,6 +40,13 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
     if exist('data')==0
         mkdir('data')
     end
+    
+        if Isdemo==0
+        filename='_scotoma_awareness_TRL_practice';
+    elseif Isdemo==1
+        filename='_scotoma_awareness_TRL';
+        end
+    
     
     inductionType = 1; % 1 = assigned, 2 = annulus
     if inductionType ==1
@@ -567,7 +574,7 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
             EyeSummary.(TrialNum).Target.Fixframe=framefix;
             EyeSummary.(TrialNum).PRL.x=PRLx;
             EyeSummary.(TrialNum).PRL.y=PRLy;
-            EyeSummary.(TrialNum).targetlocation =targetlocation;
+       %     EyeSummary.(TrialNum).targetlocation =targetlocation;
             %StimStamp(TrialCounter,1);
             clear ErrorInfo
             %    fliptime(trial)=[VBL_Timestamp];
