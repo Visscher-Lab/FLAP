@@ -9,7 +9,7 @@ clc;
 commandwindow
 addpath([cd '/utilities']);
 try
-    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?', 'Calibration type: 0=regular, 1=shorter calibration with visual aids (fMD )'};
+    prompt={'Participant name', 'day','scotoma active', 'demo (0) or session (1)',  'eye? left(1) or right(2)', 'Calibration? no(0), yes (1), validation only (2), MD calibration (3)', 'Eyetracker(1) or mouse(0)?'};
     
     name= 'Parameters';
     numlines=1;
@@ -25,9 +25,9 @@ try
     ScotomaPresent= str2num(answer{3,:}); % 0 = no scotoma, 1 = scotoma
     Isdemo=str2num(answer{4,:}); % full session or demo/practice
     whicheye=str2num(answer{5,:}); % which eye to track (vpixx only)
-    calibration=str2num(answer{6,:}); % do we want to calibrate or do we skip it? only for Vpixx
+    calibration=str2num(answer{6,:}); %0=no calibration, 1 = regular, 2 = validation only, 3=shorter calibration with visual aids (for MD mostly)
     EyeTracker = str2num(answer{7,:}); %0=mouse, 1=eyetracker
-    specialcalibration=str2num(answer{8,:}); %0=regular, 1=shorter calibration with visual aids (for MD mostly)
+    specialcalibration=str2num(answer{8,:}); 
     scotomavpixx= 0;
     responsebox = 0;
     datapixxtime=1;

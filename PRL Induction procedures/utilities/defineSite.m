@@ -78,19 +78,19 @@ elseif site==3   %UCR VPixx
         initRequired = calibration; %do we want vpixx calibration?
         if initRequired==1
             fprintf('\nInitialization required\n\nCalibrating the device...');
-            %TPxTrackpixx3CalibrationTesting;
-            if sum(filename(2:4)=='sco') > 1
-                if specialcalibration==1
-                    TPxTrackpixx3CalibrationTestingMMAMD(baseName, 0, 33.6)
-                else
-                    TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
-                end
-            else
-                TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
-            end
-        end
-        % validation only
-        if initRequired==2
+                                TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+
+%             %TPxTrackpixx3CalibrationTesting;
+%             if sum(filename(2:4)=='sco') > 1
+%                 if specialcalibration==1
+%                     TPxTrackpixx3CalibrationTestingMMAMD(baseName, 0, 33.6)
+%                 else
+%                 end
+%             else
+%                 TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+%             end
+                % validation only
+    elseif initRequired==2
                 cx = 1920/2; % Point center in x
     cy = 1080/2; % Point center in y
     dx = 600; % How big of a range to cover in X
@@ -118,6 +118,11 @@ elseif site==3   %UCR VPixx
             Datapixx('Close');
 
     Datapixx('CloseTPxMini');
+        elseif initRequired==3 % MD calibration
+            
+                        fprintf('\nInitialization required\n\nCalibrating the device...');
+                    TPxTrackpixx3CalibrationTestingMMAMD(baseName, 0, 33.6)
+
         end    
         %Connect to TRACKPixx3
         Datapixx('Open');
