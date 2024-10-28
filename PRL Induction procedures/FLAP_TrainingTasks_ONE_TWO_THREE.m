@@ -38,9 +38,6 @@ commandwindow
 
 addpath([cd '/utilities']); %add folder with utilities files
 try
-   % participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
-
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
     %       columns mean; Third row is a test participant; subsequent rows are
@@ -64,8 +61,15 @@ try
     if isempty(answer)
         return;
     end
-    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
+    
+    if SUBJECT(2) == 'r'
+        participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    elseif SUBJECT(2) == 'b'
+        participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+    end
+       temp= readtable(participantAssignmentTable);
+    
     if sum(participantAssignmentTable(23:25) == 'UAB')==3
         tt = temp(find(contains(temp.participant,SUBJECT)),:);
     else

@@ -342,7 +342,7 @@ try
                 step=5;
             end
         else
-            DAYN = ['\Training\Day' (answer{2}-1) '\'];
+            DAYN = ['\Training\Day' num2str(str2num(answer{2})-1) '\'];
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             if trainingType==2 %trainingType==4 % load thresholds from previous days %uncommented on 7/2
                 %OLD DIRECTORY
