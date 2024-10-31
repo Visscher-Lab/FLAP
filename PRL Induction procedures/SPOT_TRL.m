@@ -649,19 +649,7 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
         
     end
     
-    % shut down EyeTracker
-    if EyetrackerType==1
-        Eyelink('StopRecording');
-        Eyelink('closefile');
-        status = Eyelink('ReceiveFile',eyeTrackerFileName,save_dir,1); % this is the eyetracker file that needs to be put in the correct folder with the other files!!!
-        if status < 0, fprintf('Error in receiveing file!\n');
-        end
-        Eyelink('Shutdown');
-    elseif EyetrackerType==2
-        Datapixx('SetTPxSleep');
-        Datapixx('RegWrRd');
-        Datapixx('Close');
-    end
+
     if trial>1
         comparerisp=[rispoTotal' rispoInTime']; %Marcello - is this for debugging/needed for anything? % it's just a quick summary of the response (correct/incorrect) and the RT per trial
     end
@@ -690,7 +678,7 @@ PRLsize=str2num(answer{5,:});  % diameter of the assigned PRL in degrees of visu
         Datapixx('RegWrRd');
         Datapixx('Close');
     end
-    
+
     KbQueueWait;
     ListenChar(0);
     %   Screen('Flip', w);
