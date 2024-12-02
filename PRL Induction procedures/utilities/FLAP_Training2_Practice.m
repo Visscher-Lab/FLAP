@@ -179,7 +179,7 @@ for practicetrial=1:practicetrialnum
                     presentfeedback =1;
                     af = 1;
                 end
-                foo=(RespType==thekeys);
+                foo=(RespType==thekeys(1));
                 if af == 1
                     if foo(theanspractice(practicetrial)) % if correct response
                         resp = 1;
@@ -218,7 +218,7 @@ for practicetrial=1:practicetrialnum
                     af = 1;
                 end
                 if af == 1
-                    foo=(RespType==thekeys);
+                    foo=(RespType==thekeys(1));
                     if foo(theanspractice(practicetrial)) % if correct response
                         resp = 1;
                         PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
