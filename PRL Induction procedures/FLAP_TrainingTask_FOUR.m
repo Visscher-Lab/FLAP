@@ -88,7 +88,11 @@ try
     EyeTracker = 1; %0=mouse, 1=eyetracker
     orijitconct=[];
     orijitconctprog=[];
-    progtrackend=15; % new variable for prog track setup 7/17 MGR
+%    progtrackend=15; % new variable for prog track setup 7/17 MGR
+    prog_incorrect_window = 5; % window to determine if progressive track should end // EC 10/23/24
+    progressive_stop = 0; % stop/start monitor to determine if stopping point has been reachid in progressive track // EC 10/23/24
+    % default is 0, when point is reach it becomes 1
+    
 %     threshconc1=[]; %debugging variables 8-2-2024
 %     threshconc2=[];
 %     threshconc3=[];
@@ -313,7 +317,7 @@ try
         sc.down = 3;  % # of correct answers to go one step down
         SFthreshmin=0.01;     % contrast value below which we increase SF
         SFthreshmax=0.2; % contrast value above which we decrease SF
-        SFadjust=10; % steps to go up in the contrast list (easier) once we increase SF
+        SFadjust=0; % steps to go up in the contrast list (easier) once we increase SF // previously 10, set to 0 to set contrast at starting contrast after sf adjustment
         
         if trainingType==2 || trainingType==4
             load NewShapeMat.mat;         % shape parameters for each session of training
@@ -364,16 +368,26 @@ try
                     dt=find(zz==1);
                 end %PD addedd  this to pick up the correct file 11/8/2023
                 newest=d(dt).name;%PD addedd  this to pick up the correct file 11/8/2023
-                last_staircounter=load([foldern newest],'staircounter');
-                lasttrackthresh=load([foldern newest],'trackthresh');
-                trackthresh=lasttrackthresh.trackthresh;
-                Contrthresh=lastContrthresh.Contrthresh;
-                Contlist2=load([foldern newest],'Contlist');  %% em, please check if we need this
-                Contlist = Contlist2.Contlist;
-                lasttracksf=load([foldern newest],'currentsf');
-                currentsf=lasttracksf.currentsf;
+%                 last_staircounter=load([foldern newest],'staircounter');
+%                 lasttrackthresh=load([foldern newest],'trackthresh');
+%                 trackthresh=lasttrackthresh.trackthresh;
+%                 Contrthresh=lastContrthresh.Contrthresh;
+%                 Contlist2=load([foldern newest],'Contlist');  %% em, please check if we need this
+%                 Contlist = Contlist2.Contlist;
+%                 lasttracksf=load([foldern newest],'currentsf');
+%                 currentsf=lasttracksf.currentsf;
                 theoris =[-45 45]; % possible orientation of the Gabor
                 thresh=trackthresh(shapesoftheDay);
+                StartCont=15;  %starting value for Gabor contrast
+                currentsf=4;
+                logUnitStep=0.05;
+                theoris =[-45 45]; % possible orientation of the Gabor
+                Contlist = log_unit_down(max_contrast+.122, logUnitStep, nsteps); % contrast list for training type 1 and 4
+                Contlist(1)=1;
+                Contrthresh=StartCont;
+                AllShapes=size((Targy));
+                trackthresh=ones(AllShapes(2),1)*StartJitter;
+                
             elseif trainingType==1 || trainingType==4
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %                 [dx,dx] = sort([d.datenum]);%PD commented out 11/8/2023
@@ -389,16 +403,26 @@ try
                     dt=find(zz==1);%PD addedd  this to pick up the correct file 11/8/2023
                 end
                 newest=d(dt).name;%PD addedd  this to pick up the correct file 11/8/2023
-                lasttrackthresh=load([foldern newest],'thresh');
-                thresh=lasttrackthresh.thresh;
-                Contlist2=load([foldern newest],'Contlist');
-                Contlist = Contlist2.Contlist;
-                lasttracksf=load([foldern newest],'currentsf');
-                currentsf=lasttracksf.currentsf;
-                theoris =[-45 45]; % possible orientation of the Gabor
-                AllShapes=size((Targy));
-                Contrthresh=thresh(1,1)
-                trackthresh=ones(AllShapes(2),1)*StartJitter
+%                 lasttrackthresh=load([foldern newest],'thresh');
+%                 thresh=lasttrackthresh.thresh;
+%                 Contlist2=load([foldern newest],'Contlist');
+%                 Contlist = Contlist2.Contlist;
+%                 lasttracksf=load([foldern newest],'currentsf');
+%                 currentsf=lasttracksf.currentsf;
+%                 theoris =[-45 45]; % possible orientation of the Gabor
+%                 AllShapes=size((Targy));
+%                 Contrthresh=thresh(1,1)
+%                 trackthresh=ones(AllShapes(2),1)*StartJitter
+                
+                StartCont=15;  %starting value for Gabor contrast
+                    currentsf=4;
+                    logUnitStep=0.05;
+                    theoris =[-45 45]; % possible orientation of the Gabor
+                    Contlist = log_unit_down(max_contrast+.122, logUnitStep, nsteps); % contrast list for trainig type 1 and 4
+                    Contlist(1)=1;
+                    Contrthresh=StartCont;
+                    AllShapes=size((Targy));
+                    trackthresh=ones(AllShapes(2),1)*StartJitter;
             end
         end
         if trainingType<4
@@ -699,7 +723,9 @@ try
         end
         
         if trainingType==2 || (trainingType==4 && mixtr(trial,3)==2) %if it's a CI trial (training type 2 or 4)
-            if staircounter(mixtr(trial,1), mixtr(trial,3))>= progtrackend %defined new variable
+            if (staircounter(mixtr(trial,1), mixtr(trial,3))>= length(JitListprog)) || (progressive_stop == 1) %defined new variable
+                
+                
                 Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
 %                 if mixtr(trial,1)==1 && mixtr(trial,3)==2 %debugging MGR
 %                 8-2
@@ -1438,7 +1464,19 @@ try
                 Threshlist(mixtr(trial,1),mixtr(trial,3),staircounter(mixtr(trial,1),mixtr(trial,3)))=Orijit;
             end
             %Progressive Track
-            if mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) < progtrackend
+            % EC 10/23/24 - adding a stopping rule for the progressive
+            % track. if one gets 3 of 5 wrong during progessive track,
+            % start adaptive with first value in 5 trial window.
+            
+            
+            %change nothing for correct answers
+            %for each shape, the progressive track should reset
+             
+            if mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) < 2 
+                progressive_stop = 0;
+            end
+            
+            if mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) < length(JitListprog) && progressive_stop == 0
                 if foo(theans(trial)) % if correct response
                     resp = 1;
                     resptotal=horzcat(resptotal, resp)
@@ -1452,14 +1490,33 @@ try
                     break;
                 else
                     resp = 0; % if wrong response
+                   
                     resptotal=horzcat(resptotal, resp)
                     nswr(trial) = 0;
                     PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,3))) = 0;
-                    thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))
+                  %  thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))
+                    
+                     
+                    % EC -  10/23/24 - add a conditional that makes sure
+                    % the previous 4 trials didn't also have 2 wrong
+                    % answers. if yes, end progressive track and start
+                    % adaptive track
+                    if length(iscorr{mixtr(trial,1),mixtr(trial,2)}) >= prog_incorrect_window
+                        
+                        if sum(iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial-(prog_incorrect_window-1):trial,1),mixtr(trial,3)))) <3
+                            thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList==Orijit)-8;
+                            
+                            progressive_stop = 1;
+                        else
+                            thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3))
+                            progressive_stop = 0;
+                        end
+                    else
+                    end
                 end
-            elseif mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) == progtrackend
+            elseif mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) == length(JitListprog) && progressive_stop == 0
                 if foo(theans(trial)) % if correct response
                     resp = 1;
                     resptotal=horzcat(resptotal, resp)
@@ -1479,10 +1536,26 @@ try
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,3))) = 0;
                     %thresh(mixtr(trial,1),mixtr(trial,3))==staircounter(mixtr(trial,1),mixtr(trial,3));
-                    thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList == Orijit)-2;
+                    %thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList == Orijit)-2;
+                    
+                                   
+                    % EC -  10/23/24 - add a conditional that makes sure
+                    % the previous 4 trials didn't also have 2 wrong
+                    % answers. if yes, end progressive track and start
+                    % adaptive track
+       
+                    if sum(iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial-(prog_incorrect_window-1):trial,1),mixtr(trial,3)))) <3
+                         thresh(mixtr(trial,1),mixtr(trial,3))= find(JitList==Orijit)-8;
+
+                         progressive_stop = 1;
+                    else
+                        thresh(mixtr(trial,1),mixtr(trial,3))= staircounter(mixtr(trial,1),mixtr(trial,3));
+                        progressive_stop = 0;
+                    end
+               
                   
                 end
-            elseif mixtr(trial,3)==1 || (mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) > progtrackend)
+            elseif mixtr(trial,3)==1 || (mixtr(trial,3)==2 && staircounter(mixtr(trial,1),mixtr(trial,3)) > length(JitListprog)) || (progressive_stop == 1) % EC added condition that even if you're in the 1st 15 trials that it is overrode with the stopping point 10/23/24
                 if foo(theans(trial)) % if correct response
                     resp = 1;
                     resptotal=horzcat(resptotal, resp)
@@ -1522,7 +1595,7 @@ try
                             if contr<SFthreshmin && currentsf<length(sflist)
                                 currentsf=min(currentsf+1,length(sflist));
                                 foo=find(Contlist>=SFthreshmin);
-                                thresh(:,:)=foo(end)-SFadjust;
+                                thresh(:,:)=StartCont-SFadjust; % added by EC 11/12/24 - mimicks behavior of setting contrast to 20% when participant reaches new SF, but this is for improving participants
                                 corrcounter(:,:)=0;
                                 thestep=3;
                             else
@@ -1535,7 +1608,7 @@ try
                                 if contr<SFthreshmin && currentsf<length(sflist)
                                     currentsf=min(currentsf+1,length(sflist));
                                     foo=find(Contlist>=SFthreshmin);
-                                    thresh(:,:)=foo(end)-SFadjust;
+                                    thresh(:,:)=StartCont-SFadjust; % added by EC 11/12/24 - mimicks behavior of setting contrast to 20% when participant reaches new SF, but this is for improving participants
                                     corrcounter(:,:)=0;
                                     thestep=3;
                                 else
@@ -1656,7 +1729,7 @@ try
             if length(thekeys)>1
                 cheis(kk)=thekeys(1);  % this is giving an error Dec 4- kmv
             else
-                cheis(kk)=thekeys;  % this is giving an error Dec 4- kmv
+                cheis(kk)=thekeys(1);  % this is giving an error Dec 4- kmv
             end
         end
         if  exist('stim_start')
