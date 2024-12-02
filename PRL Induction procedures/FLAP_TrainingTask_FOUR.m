@@ -38,7 +38,7 @@ commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
 try
 %     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsNEU_corr.csv']); % uncomment this if running task at UAB
+    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     % format of participantAssignment table is:
     %       first row has column labels; second row is comments about what the
@@ -64,18 +64,18 @@ try
         return;
     end
     temp= readtable(participantAssignmentTable);
-    temp.Properties.VariableNames{1} = strrep(temp.Properties.VariableNames{1}, 'x___', '');
     SUBJECT = answer{1,:}; %Gets Subject Name
-  
-    tt = temp(find(contains(temp.participant,SUBJECT)),:);
-
- 
+    if sum(participantAssignmentTable(23:25) == 'UAB')==3
+        tt = temp(find(contains(temp.participant,SUBJECT)),:);
+    else
+        tt = temp(find(contains(temp.participant,SUBJECT)),:);
+    end
     if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;
     else
         TRLlocation = 1;
     end
-    trainingType= tt.TrainingTask(1,1); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
+    trainingType= str2num(tt.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training session
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
@@ -84,7 +84,7 @@ try
         whicheye = 1;
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = tt.ScotomaPresent(1,1);
+    ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
     EyeTracker = 1; %0=mouse, 1=eyetracker
     orijitconct=[];
     orijitconctprog=[];
