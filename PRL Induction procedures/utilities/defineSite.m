@@ -217,6 +217,96 @@ elseif site == 7 % scanner task demo
     % to keep these commented during actual scan 8/17/23
     %rand('twister', sum(100*clock));%PD will test if its ok
     % to keep these commented during actual scan 8/17/23
+elseif site==8   %NEU VPixx
+    %% psychtoobox settings
+    screencm=[69.8, 40];
+    v_d=70; % viewing distance
+    screenNumber=max(Screen('Screens'));
+    if EyeTracker==1
+        initRequired = calibration; %do we want vpixx calibration?
+        if initRequired==1
+            fprintf('\nInitialization required\n\nCalibrating the device...');
+            %TPxTrackpixx3CalibrationTesting;
+            if sum(filename(2:4)=='sco') > 1
+                if specialcalibration==1
+                    TPxTrackpixx3CalibrationTestingMMAMD(baseName, 0, 33.6)
+                else
+                    TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+                end
+            else
+                TPxTrackpixx3CalibrationTestingMM(baseName, screenNumber)
+            end
+        end
+        % validation only
+        if initRequired==2
+                cx = 1920/2; % Point center in x
+    cy = 1080/2; % Point center in y
+    dx = 600; % How big of a range to cover in X
+    dy = 350; % How big of a range to cover in Y
+    
+    xy = [  cx cy;...
+        cx cy+dy;...
+        cx+dx cy;...
+        cx cy-dy;...
+        cx-dx cy;...
+        cx+dx cy+dy;...
+        cx-dx cy+dy;...
+        cx+dx cy-dy;...
+        cx-dx cy-dy;...
+        cx+dx/2 cy+dy/2;...
+        cx-dx/2 cy+dy/2;...
+        cx-dx/2 cy-dy/2;...
+        cx+dx/2 cy-dy/2;];
+     xy = xy';
+    [windowPtr, windowRect]=PsychImaging('OpenWindow', screenNumber, 1);
+    TPxValidateCalibrationMM(xy, 1, windowPtr, baseName, 0);
+    
+    
+        Screen('CloseAll');
+            Datapixx('Close');
+
+    Datapixx('CloseTPxMini');
+        end    
+        %Connect to TRACKPixx3
+        Datapixx('Open');
+        Datapixx('SetTPxAwake');
+        Datapixx('RegWrRd');
+    end
+    if EyeTracker==0 && datapixxtime==1
+          Datapixx('Open');
+    end
+    PsychImaging('PrepareConfiguration');
+    %         PsychImaging('AddTask', 'General', 'FloatingPoint32Bit');
+    PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output');
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+
+    %debug window
+    %    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[0 0 640 480],32,2);
+
+%     Nlinear_lut = repmat((linspace(0,1,256).^(1/2.2))',1,3);
+%     Screen('LoadNormalizedGammaTable',w,Nlinear_lut);  % linearise the graphics card's LUT
+%     
+%
+
+elseif site == 9 % NU scanner
+    screencm=[70.8, 39.8];%[40.6 30];%[70.8, 39.8];
+    if SUBJECT == 'fn1001' | SUBJECT == 'fn1002' | SUBJECT == 'fn1003' | SUBJECT == 'fn1004' | SUBJECT == 'fn1005' | SUBJECT == 'fn1006' | SUBJECT == 'fn1007' | SUBJECT == 'fn1008'
+        v_d = 123;
+    else
+        v_d = 160;
+    end
+    disp(['viewing distance is set to ', num2str(v_d)]);
+    datapixxtime=0;
+    % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
+    screenNumber=max(Screen('Screens'));
+    PsychImaging('PrepareConfiguration');
+    %PsychImaging('AddTask', 'General', 'EnableBits++Mono++Output'); %PD will remember to take this out before the actual scan 8/17/23
+    [w, wRect] = PsychImaging('OpenWindow', screenNumber, 0.5,[],32,2);
+    %Screen('Preference','SyncTestSettings',0.003,50,0.1,5);
+    % resolution=Screen('Resolution',screenNumber); %PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
+    %rand('twister', sum(100*clock));%PD will test if its ok
+    % to keep these commented during actual scan 8/17/23
 
 end
 Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -258,7 +348,7 @@ Screen('TextSize',w, 42);
 %     pahandle = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % %    pahandle2 = PsychPortAudio('Open', 1, 1, 1, 44100, 2);
 % end
-if site == 6 || site==7
+if site == 6 || site==7 ||site==9
     InitializePsychSound(1); %'optionally providing
     pahandle = PsychPortAudio('Open', [], 1, 0, 44100, 2);
 elseif site ~=5
@@ -309,7 +399,7 @@ RespType(6) = KbName('m'); %recalibrate
 RespType(7) = KbName('r'); % redo practice for CI assessment
 escapeKey = KbName('ESCAPE');	% quit key
 
-if site==6 || site==7
+if site==6 || site==7 || site == 9
     RespType(1) = KbName('r');
     RespType(2) = KbName('y');
 end
