@@ -10,7 +10,7 @@ elseif jitterCI==0
 end
 
 % here I define the shapes
-if site == 5 || site==6  || site==7 %PD added site 3 and 6 here 8/17/23
+if site == 5 || site==6  || site==7 || site==9%PD added site 3 and 6 here 8/17/23
     newTargy=Targy{shapesoftheDay(mixtr(trial,3))}+jitteryci(trial);
     newTargx=Targx{shapesoftheDay(mixtr(trial,3))}+jitterxci(trial);
 else
@@ -38,7 +38,7 @@ yJitLoc(yJitLoc< - pix_deg/ecccoeffCI/3)=- pix_deg/ecccoeffCI/3;
 
 %xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
 %yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,1))}(theans(trial),:))/coeffCI;%+xJitLoc(targetcord);
-if site == 5 || site==6 || site==7%PD added site ==6 here 8/18/23
+if site == 5 || site==6 || site==7 || site==9%PD added site ==6 here 8/18/23
     xJitLoc(targetcord)=pix_deg*(offsetx{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
     yJitLoc(targetcord)=pix_deg*(offsety{shapesoftheDay(mixtr(trial,3))}(theans(trial),:))/ecccoeffCI;%+xJitLoc(targetcord);
 else
@@ -47,13 +47,13 @@ else
 end
 theori=180*rand(1,length(eccentricity_XCI));
 theori2=180*rand(1,length(eccentricity_XCI));
-if site == 5 || site==6 || site==7%PD added site 6 here 8/17/23
+if site == 5 || site==6 || site==7 || site==9%PD added site 6 here 8/17/23
     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,3))}(theans(trial),:) +Orijit;
 else
     theori(targetcord)=Targori{shapesoftheDay(mixtr(trial,1))}(theans(trial),:) +Orijit;
 end
 if exist('theothershape')==1
-    if site == 5 || site==6 || site==7%PD added site 6 here 8/17/23
+    if site == 5 || site==6 || site==7|| site==9%PD added site 6 here 8/17/23
         theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,3))}(theothershape(trial),:) +Orijit;
     else
         theori2(targetcord2)=Targori{shapesoftheDay(mixtr(trial,1))}(theothershape(trial),:) +Orijit;
