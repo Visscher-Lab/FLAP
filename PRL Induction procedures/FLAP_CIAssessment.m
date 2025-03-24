@@ -18,70 +18,73 @@ commandwindow
 addpath([cd '/utilities']); %add folder with utilities files
 
 try
-%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
-
     prompt={'Participant Name', 'day', 'Calibration(1), Validation (2), or nothing(0)'};
-    
+
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test','1', '1'};
+    defaultanswer={'test2','1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
     end
-    temp= readtable(participantAssignmentTable);
     SUBJECT = answer{1,:}; %Gets Subject Name
-    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    [tt,site] = getParticipantAssignmentTable(SUBJECT); % get all the info about this subject.  
+    % this is based on the SECOND letter in the subject name. b=uab, r=ucr,
+    % m=macular degeneration, n= northeastern.
     expDay=str2num(answer{2,:}); % training day (if >1
-    site = 3; % training site (UAB vs UCR vs Vpixx)
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
     else
         whicheye = 1;
     end
+
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
+    if site == 8
+        ScotomaPresent = tt.ScotomaPresent(1,1);
+        randpick = tt.ContourCondition(1,1);
+    else
+        ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
+        randpick = str2num(tt.ContourCondition{1,1});
+    end
     EyeTracker = 1; %0=mouse, 1=eyetracker
     responsebox= 1;
     TRLlocation = 2;
     datapixxtime = 1;
     scotomavpixx= 0;
     whichTask = 1;
-    randpick = str2num(tt.ContourCondition{1,1});
 
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     filename2='';
     filename = 'Contour';
     folderchk=cd;
-%    folder=fullfile(folder, '..\..\datafolder\');
-     DAY=['\Assessment\Day' answer{2,:} '\'];
-     folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
-     if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
-         mkdir(folder);
-     end
-   if site==1
+    %folder=fullfile(folder, '..\..\datafolder\');
+    DAY=['\Assessment\Day' answer{2,:} '\'];
+    folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
+    if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
+        mkdir(folder);
+    end
+
+    if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-    elseif site==3
+    elseif site==3 || site == 8
         baseName=[folder SUBJECT filename filename2 'Pixx_' num2str(TRLlocation) '_' num2str(expDay) '_' num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-   end
-   
-   TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+    end
 
-    
+    TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+
     defineSite % initialize Screen function and features depending on OS/Monitor
-    
+
     CommonParametersFLAPAssessment % define common parameters
-    
+
     PRLecc = [-7.5,0; 7.5,0];
     LocX = [-7.5, 7.5];
     LocY = [0, 0];
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
-        if site==3
+        if site==3 || site==8
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
@@ -90,23 +93,23 @@ try
     else
         EyetrackerType=0;
     end
-%     CIShapesIII
+    %     CIShapesIII
     CIShapesIV
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
     %% Trial matrix definition
-    
+
     % initialize jitter matrix
     shapes=2; % how many shapes per day?
     JitListprog = [0,0,0,1,1,1,2,2,2,4,4,4,6,6,6,8,8,8,10,10,10,12,12,12];
     JitListsc = 1:1:90;
     StartJitter=12;
-   
+
     %define number of trials per condition
-    
+
     conditionOne=shapes; % shapes (training type 2)
     conditionTwo=2; %location of the target
     trials= 60; %total number of trials per staircase (per shape) % trials = 10; debugging
@@ -122,11 +125,11 @@ try
         end
         mixtr{cond,1} = dummy;
     end
-    
-    
+
+
     preresp=[ones(trials/2,1) ; ones(trials/2,1)*2];
     predefinedResp=[preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:) ; preresp(randperm(length(preresp)),:)];
-    
+
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     stepsizes=2; % step sizes for 3d/1u staircase
@@ -160,9 +163,9 @@ try
     isreversals = zeros(2,2);
     staircounter = zeros(2,2);
     corrcounter = zeros(2,2);
-    
+
     %% Trial structure
-    
+
     if annulusOrPRL==1 % annulus for pre-target fixation (default is NOT this)
         % here I define the annulus around the scotoma which allows for a
         % fixation to count as 'valid', i.e., the flickering is on when a
@@ -177,15 +180,15 @@ try
         newfig(d==1)=0;
         circlePixelsPRL=newfig;
     end
-    
+
     %% Initialize trial loop
     HideCursor;
     ListenChar(0);
-    
+
     % general instruction TO BE REWRITTEN
     InstructionFLAPAssessment(w,gray,white)
     theoris =[-45 45];
-    
+
     % check EyeTracker status
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -208,12 +211,12 @@ try
         Datapixx('SetMarker');
         Datapixx('RegWrVideoSync');
     end
-    
-    
+
+
     %% HERE starts trial loop
-   % mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
+    % mixtr = mixtr{randi(randpick,1),1};% this is just for debugging, for the actual study, this needs to be the mod of
     % mixtr %(participant's ID,2) for contrast and mod (participant'ss ID,4) for contour assessment
-        mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
+    mixtr = mixtr{randpick,1};% this is just for debugging, for the actual study, this needs to be the mod of
 
     trialcounter = 0;
     checkcounter = 0;
@@ -234,7 +237,7 @@ try
             interblock_instruction
         end
         % -------------------------------------------------------------------------
-        
+
         if trial==1 || trial>2 && mixtr(trial,1)~= mixtr(trial-1,1) || mixtr(trial,2) ~= mixtr(trial-1,2)
             practicePassed=0;
             numpractice = 0;
@@ -279,7 +282,7 @@ try
         practicePassed=1;
 
         %% training type-specific staircases
-        if staircounter(mixtr(trial,1),mixtr(trial,2)) >= 24 
+        if staircounter(mixtr(trial,1),mixtr(trial,2)) >= 24
             Orijit=JitListsc(thresh(mixtr(trial,1),mixtr(trial,2)));
         else
             Orijit = JitListprog(staircounter(mixtr(trial,1),mixtr(trial,2))+1);
@@ -297,11 +300,11 @@ try
         theeccentricity_X=LocX(mixtr(trial,2))*pix_deg;
         eccentricity_X(trial)= theeccentricity_X;
         eccentricity_Y(trial) =theeccentricity_Y ;
-        
+
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
-        
+
         if trial==1
             InstructionCIAssessment
         elseif trial>1
@@ -309,22 +312,22 @@ try
                 InstructionCIAssessment
             end
         end
-        
+
         %  destination rectangle for the target stimulus
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-        
+
         %  destination rectangle for the fixation dot
         imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
             imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
-        
+
         %% Initialization/reset of several trial-based variables
-        
+
         if trial==1
             startExp=GetSecs; %time at the beginning of the session
         end
         %   stimulusduration=2;
-        
+
         if EyetrackerType ==2
             %start logging eye data
             Datapixx('RegWrRd');
@@ -342,7 +345,7 @@ try
             binaryvals=[];
             bin_buttonpress{1}=[]; % Jerry:use array instead of cell
             inter_timestamp{1}=[]; % JERRY: NEVER USED, DO NOT UNDERSTAND WHAT IT STANDS FOR
-            
+
             % Configure digital input system for monitoring button box
             Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
             Datapixx('EnableDinDebounce');                          % Debounce button presses
@@ -368,7 +371,7 @@ try
             end
             fixationscriptW % visual aids on screen
 
-            
+
             %% here is where the first time-based trial loop starts (until first forced fixation is satisfied)
             if (eyetime2-pretrial_time)>=ITI  && fixating<fixationduration/ifi && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
@@ -420,7 +423,7 @@ try
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
                 imageRect_offsCI2(setdiff(1:length(imageRect_offsCI),targetcord),:)=0;
                 Screen('DrawTextures', w, TheGaborsSmall, [], imageRect_offsCI2' + [xJitLoc+xModLoc; yJitLoc+yModLoc; xJitLoc+xModLoc; yJitLoc+yModLoc], theori,[], Dcontr );
-                
+
                 % here I draw the circle within which I show the contour target
                 Screen('FrameOval', w,[gray], imageRect_offsCImask, maskthickness/2, maskthickness/2);
                 Screen('FrameOval', w,gray, imageRect_offsCImask, 22, 22);
@@ -428,7 +431,7 @@ try
                     assignedPRLpatch
                 end
                 imagearray{trial}=Screen('GetImage', w);
-                
+
                 if exist('stimstar')==0
                     stim_start_frame=eyetime2;
                     if responsebox==1
@@ -551,7 +554,7 @@ try
                                 Screen('Flip', w);
                                 WaitSecs(1);
                                 %  KbQueueWait;
-%                                 closescript = 1;
+                                %                                 closescript = 1;
                                 eyechecked=10^4;
                             elseif thekeys==RespType(5)
                                 DrawFormattedText(w, 'continue', 'center', 'center', white);
@@ -574,7 +577,7 @@ try
                             DrawFormattedText(w, 'Bye', 'center', 'center', white);
                             Screen('Flip', w);
                             WaitSecs(1);
-%                             closescript = 1;
+                            %                             closescript = 1;
                             eyechecked=10^4;
                         elseif thekeys==RespType(5)
                             DrawFormattedText(w, 'continue', 'center', 'center', white);
@@ -612,7 +615,7 @@ try
                     stopchecking=10;
                 end
             end
-            
+
             if responsebox==1 % DATApixx AYS 5/4/23 I added some documentation for WaitForEvent_Jerry - let me know if you have questions.
                 Datapixx('RegWrRd');
                 buttonLogStatus = Datapixx('GetDinStatus');
@@ -629,14 +632,14 @@ try
             staircounter(mixtr(trial,1),mixtr(trial,2)) = staircounter(mixtr(trial,1),mixtr(trial,2))+1;
             Threshlist{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = Orijit;
             % Progressive Track
-            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24  
+            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24
                 if foo(theans(trial)) % if correct response
                     resp = 1;
                     PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
                     PsychPortAudio('Start', pahandle);
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 1;
                 elseif (thekeys==escapeKey) % esc pressed
-%                     closescript = 1;
+                    %                     closescript = 1;
                     ListenChar(0);
                     break;
                 else
@@ -647,64 +650,64 @@ try
                     iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 0;
                 end
             else
-            % staircase update
-            if foo(theans(trial)) % if correct response
-                resp = 1;
-                PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
-                PsychPortAudio('Start', pahandle);
-                iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 1;
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
-                sc.down=sc.steps(1);
-                if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
-                    isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
-                end
-                if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down
-                    % non streaking after 3 reversals
-                    if isreversals(mixtr(trial,1),mixtr(trial,2))==1 
-                        if resetcounter(mixtr(trial))==0
-                            reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
-                            resetcounter(mixtr(trial))=1;
-                            rever(trial)=1;
-                        end
-                        isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                % staircase update
+                if foo(theans(trial)) % if correct response
+                    resp = 1;
+                    PsychPortAudio('FillBuffer', pahandle, corrS' ); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                    iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 1;
+                    corrcounter(mixtr(trial,1),mixtr(trial,2))=corrcounter(mixtr(trial,1),mixtr(trial,2))+1;
+                    sc.down=sc.steps(1);
+                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down && staircounter(mixtr(trial,1),mixtr(trial,2))>sc.down
+                        isreversals(mixtr(trial,1),mixtr(trial,2)) = isreversals(mixtr(trial,1),mixtr(trial,2)) + 1;
                     end
-                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                    if thestep>length(stepsizes)
-                        thestep=length(stepsizes);
+                    if corrcounter(mixtr(trial,1),mixtr(trial,2))==sc.down
+                        % non streaking after 3 reversals
+                        if isreversals(mixtr(trial,1),mixtr(trial,2))==1
+                            if resetcounter(mixtr(trial))==0
+                                reversals(mixtr(trial,1),mixtr(trial,2))=reversals(mixtr(trial,1),mixtr(trial,2))+1;
+                                resetcounter(mixtr(trial))=1;
+                                rever(trial)=1;
+                            end
+                            isreversals(mixtr(trial,1),mixtr(trial,2))=0;
+                        end
+                        thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                        if thestep>length(stepsizes)
+                            thestep=length(stepsizes);
+                        end
+                        corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
+                        thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                    end
+                    thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitListsc));
+
+                elseif (thekeys==escapeKey) % esc pressed
+                    %                 closescript = 1;
+                    ListenChar(0);
+                    break;
+                else
+                    resp = 0; % if wrong response
+                    nswr(trial) = 0;
+                    PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
+                    PsychPortAudio('Start', pahandle);
+                    iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 0;
+                    resetcounter(mixtr(trial)) = 0;
+                    sc.down = sc.steps(1);
+                    %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
+                    if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
+                        isreversals(mixtr(trial,1),mixtr(trial,2))=1;
                     end
                     corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) +stepsizes(thestep);
+                    % we don't want the step size to change on a wrong response
+                    thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
+                    thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
+                    thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
+                    if thresh(mixtr(trial,1),mixtr(trial,2))<1
+                        thresh(mixtr(trial,1),mixtr(trial,2))=1;
+                    end
                 end
-                thresh(mixtr(trial,1),mixtr(trial,2))=min(thresh(mixtr(trial,1),mixtr(trial,2)),length(JitListsc));
-                
-            elseif (thekeys==escapeKey) % esc pressed
-%                 closescript = 1;
-                ListenChar(0);
-                break;
-            else
-                resp = 0; % if wrong response
-                nswr(trial) = 0;
-                PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
-                PsychPortAudio('Start', pahandle);
-                iscorr{mixtr(trial,1),mixtr(trial,2)}(staircounter(mixtr(trial,1),mixtr(trial,2))) = 0;
-                resetcounter(mixtr(trial)) = 0;
-                sc.down = sc.steps(1);
-                %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
-                if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
-                    isreversals(mixtr(trial,1),mixtr(trial,2))=1;
-                end
-                corrcounter(mixtr(trial,1),mixtr(trial,2))=0;
-                % we don't want the step size to change on a wrong response
-                thestep=min(reversals(mixtr(trial,1),mixtr(trial,2))+1,length(stepsizes));
-                thresh(mixtr(trial,1),mixtr(trial,2))=thresh(mixtr(trial,1),mixtr(trial,2)) -stepsizes(thestep);
-                thresh(mixtr(trial,1),mixtr(trial,2))=max(thresh(mixtr(trial,1),mixtr(trial,2)));
-                if thresh(mixtr(trial,1),mixtr(trial,2))<1
-                    thresh(mixtr(trial,1),mixtr(trial,2))=1;
-                end
-            end
             end
         else
-            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24 
+            if staircounter(mixtr(trial,1),mixtr(trial,2)) < 24
                 resp = 0;
                 respTime(trial)=0;
                 PsychPortAudio('FillBuffer', pahandle, errorS'); % loads data into buffer
@@ -724,8 +727,8 @@ try
                 if reversals(mixtr(trial,1),mixtr(trial,2))<2
                     sc.down=sc.steps(1);
                 elseif reversals(mixtr(trial,1),mixtr(trial,2))>= 2
-                  %  sc.down=sc.steps(2);
-                     sc.down=sc.steps(1);
+                    %  sc.down=sc.steps(2);
+                    sc.down=sc.steps(1);
                 end
                 %  WE DON'T CARE ABOUT UPWARD REVERSALS, but we update 'isreversals' to update staircase
                 if  corrcounter(mixtr(trial,1),mixtr(trial,2))>=sc.down
@@ -752,13 +755,13 @@ try
         rispo(kk)=resp;
         respTimes(trial)=respTime(trial);
         trackthresh(shapesoftheDay(mixtr,1))=thresh(mixtr,1);
-%         if (mod(trial,150))==1 && trial>1
-%             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-%         end
+        %         if (mod(trial,150))==1 && trial>1
+        %             save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
+        %         end
         TRLsize(trial)=coeffAdj;
         flickOne(trial)=timeflickerallowed;
         flickTwo(trial)=flickerpersistallowed;
-        
+
         if responsebox==1 && trialTimedout(trial)==0
             time_stim{mixtr(trial,1),mixtr(trial,2)}(kk) = respTime(trial) - stim_startBox2(trial);
             time_stim2{mixtr(trial,1),mixtr(trial,2)}(kk) = respTime(trial) - stim_startBox(trial);
@@ -780,7 +783,7 @@ try
             totalduration=(endExp-startExp)/60;
         end
         OriCI(kk)=Orijit;
-        
+
         %% record eyelink-related variables
         if EyeTracker==1
             EyeSummary.(TrialNum).EyeData = EyeData;
@@ -829,11 +832,11 @@ try
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
-    
+
     ListenChar(0);
     Screen('Flip', w);
     KbQueueWait;
-    
+
     %% shut down EyeTracker and screen functions
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -843,14 +846,14 @@ try
         end
         Eyelink('Shutdown');
     end
-    
+
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
-    
+
     ShowCursor;
     Screen('CloseAll');
     PsychPortAudio('Close', pahandle);
-    
+
 catch ME
     psychlasterror()
 end
