@@ -2,29 +2,33 @@
 % written by Marcello A. Maniglia August 2022 %2017/2022
 close all; clear; clc;
 commandwindow
-
-
 addpath([cd '/utilities']);
+
 try
-%     participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-        participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
-    
     prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration(1), Validation (2), or nothing(0)'};
-    
     name= 'Parameters';
     numlines=1;
     defaultanswer={'test','1', '1','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
-    end
-    
-    temp= readtable(participantAssignmentTable);
+    end   
+
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
-    site= 3;  %0; 1=bits++; 2=display++
-    ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
+   
+   [tt,site] = getParticipantAssignmentTable(SUBJECT); % get all the info about this subject.  
+    % this is based on the SECOND letter in the subject name. b=uab, r=ucr,
+    % m=macular degeneration, n= northeastern.
+    
+    if site == 8
+        ScotomaPresent = tt.ScotomaPresent(1,1);
+        randpick = tt.ContourCondition(1,1);
+    else
+        ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
+        randpick = str2num(tt.ContourCondition{1,1});
+    end
+
     Isdemo=str2num(answer{3,:}); % full session or demo/practice
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
         whicheye = 2;
@@ -43,6 +47,7 @@ try
     elseif Isdemo==1
         filename='_FLAPfixationflicker';
     end
+    
     folderchk=cd;
     DAY=['\Assessment\Day' answer{2,:} '\'];
     folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);
@@ -54,7 +59,7 @@ try
         baseName=[folder SUBJECT filename '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
         baseName=[folder SUBJECT filename '_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
-    elseif site==3
+    elseif site==3 || site==8
         baseName=[folder SUBJECT filename 'Pixx_' num2str(expDay) num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5)) '.mat'];
     end
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
@@ -65,7 +70,7 @@ try
     
     %% eyetracker initialization (eyelink)
     if EyeTracker==1
-        if site==3
+        if site==3 || site==8
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
