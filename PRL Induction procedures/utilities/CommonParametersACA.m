@@ -1,8 +1,8 @@
 %% general visual parameters
-scotomadeg=6; % scotoma size in deg
+scotomadeg=6; % scotoma size in deg // changed from 6 to 0.5 EC 12-10-24
 scotoma_color=[200 200 200];
 red=[255 0 0];
-attContr= 0.35; % contrast of the target
+attContr= 1; % contrast of the target
 StartSize= 2; %1; %starting size for VA
 StartCont=1.122; %starting value for contrast
 StimSize_crowding=0.8; %1 %stimulus size for crowding task
@@ -59,7 +59,11 @@ kk=1; % trial counter
     exocuearray=[1, 5];
 calibrationtolerance=2;
 %% visual stimuli common parameters
+
 bg_index =round(gray*255); %background color
+
+%bg_index =round(gray*255); %background color
+
 imsize=StartSize*pix_deg; %starting size for acuity
 stimulussize=StimSize*pix_deg; %stimulus size for non-acuity tasks (contrast and exo attention)
 stimulussize_crowding = StimSize_crowding * pix_deg; % stimulus size for crowding task

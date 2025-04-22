@@ -1,14 +1,14 @@
-
+    
 % FLAP Training
 % written by Marcello A. Maniglia july 2021 %2017/2021
-% Training script for FLAP. This script runs 4 types of visual/oculomotor
+% Training script for FLAP. This script runs 4 types of visual/oculomotor  
 % training in conditions of gaze-contingent, simulated central vision loss.
 % participants are assigned a TRL (trained retinal location) to either left
 % or right of the simulated scotoma.
 % 1 = Contrast detection: Participant has to keep the simulated scotoma
 % within the boundaries of the central visual aid (square) for some
 % time defined by the variable AnnulusTime, then a Gabor appears for
-% Stimulustime, participant has to report the Gabor's orientation.
+% Stimulustime, participant has to report the Gabor's orientation. 
 % Participant has trialTimeout amount of time to respond, otherwise the
 % trial is considered wrong and th e script moves to the next trial.
 % 2 = Contour Integration: Participant has to keep the simulated scotoma
@@ -45,14 +45,14 @@ try
     %       Columns are: participant    TRL     WhichEye    Afirst      TrainingTask    Acuitycondition     ContrastCondition   crowdingCondition   ContourCondition    ScotomaPresent
     %       Comments are: %(participant name),	[TRL ("R" or "L", defined prior to first training, starts as NA) left(1) right(2) for tracking],  [A first = 1 (Assessment A will be run first)],
     %                        [Training Task: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel], acuity (1:2),	contrast (1:2),     Crowding condition (1:4), 	contour (1:4),	Is there a scotoma present for this participant (1), or no (0, MD participant)
-    
+
     % output from the gui is 'SUBJECT' < a string with the participant
     % name in it in the format fr1001, for the first participant.
     % f stands for FLAP, r stands for UCR, 1 stands for first cycle of
     % participants, 001 stands for the first participant run at UCR.
     % SUBJECT must match a participant number in the table
     % ParticipantAssignmentsUCR.csv, which lives in the current directory.
-    
+
     prompt={'Participant Name', 'Session', 'Calibration? yes (1), no(0)'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
     name= 'Parameters';
     numlines=1;
@@ -62,25 +62,22 @@ try
         return;
     end
     SUBJECT = answer{1,:}; %Gets Subject Name
-    %
-    %     if SUBJECT(2) == 'r'
-    %         participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    %     elseif SUBJECT(2) == 'b'
-    %         participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
-    %     end
-    %        temp= readtable(participantAssignmentTable);
-    %
-    
+%     
+%     if SUBJECT(2) == 'r'
+%         participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+%     elseif SUBJECT(2) == 'b'
+%         participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+%     end
+%        temp= readtable(participantAssignmentTable);
+%     
+
     [tt,site] = getParticipantAssignmentTable(SUBJECT);
-    
-    
-    
     if strcmp(tt.TRL{1,1},'R') == 1
         TRLlocation = 2;
     else
         TRLlocation = 1;
     end
-    
+    trainingType= str2num(tt.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
     penalizeLookaway=0;   %mostly for debugging, we can remove the masking on the target when assigned PRL ring is out of range
     expDay=str2num(answer{2,:}); % training session
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
@@ -89,17 +86,9 @@ try
         whicheye = 1;
     end
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
-    if site == 8
-        ScotomaPresent = tt.ScotomaPresent(1,1);
-        randpick = tt.ContourCondition(1,1);
-        trainingType= tt.TrainingTask(1,1); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
-    else
-        ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-        randpick = str2num(tt.ContourCondition{1,1});
-        trainingType= str2num(tt.TrainingTask{1,1}); % training type: 1=contrast, 2=contour integration, 3= oculomotor, 4=everything bagel
-    end   
+    ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
     EyeTracker = 1; %0=mouse, 1=eyetracker
-    
+
     % If not using CSV table, uncomment following
     % --------------------------------------------------------------------------------------------------------------------------------
     %     prompt={'Participant Name', 'Session','Training Type? Contrast(1),CI (2), Oculomotor(3), Everything bagel(4)','TRL Location? left(1), right(2)', 'Calibration? yes (1), no(0)', 'Eyetracker(1) or mouse(0)?'}; %suggest changing to 'session' in case there are 2 sessions in one day  %PA table!
@@ -129,7 +118,7 @@ try
     if EyeTracker==0
         calibration=0;
     end
-    
+
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     filename='_FLAPtraining_type';
     DAY = ['\Training\Day' answer{2,:} '\'];
@@ -138,26 +127,26 @@ try
     if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
         mkdir(folder);
     end
-    
+
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     baseName=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' answer{2,:} '_' TimeStart]; %makes unique filename
-    
+
     %
     %
     %     ..\datafolder\FLAP_XXX\training
     % ..\datafolder\FLAP_XXX\training\sess1
     % ..\datafolder\FLAP_XXX\training\sess2
     % ..\datafolder\FLAP_XXX\training\sess3
-    
-    
+
+
     defineSite % initialize Screen function and features depending on OS/Monitor
-    
+
     CommonParametersFLAP % define common parameters
-    
+
     %% eyetracker initialization (eyelink)
-    
+
     if EyeTracker==1
-        if site==3 || site == 8
+        if site==3
             EyetrackerType=2; %1 = Eyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eyelink, 2 = Vpixx
@@ -167,30 +156,30 @@ try
         EyetrackerType=0;
     end
     %% Stimuli creation
-    
+
     PreparePRLpatch % here I characterize PRL features
     %       stimulusduration=2.2; % stimulus duration during actual sessions
-    
+
     % Gabor stimuli
     if trainingType==1 || trainingType==4
         createGabors
     end
-    
+
     if trainingType==2 || trainingType==4
         CIShapesIV
     end
-    
+
     % create flickering Os
     if trainingType>1
         createO
     end
-    
+
     %% calibrate eyetracker, if Eyelink
     if EyetrackerType==1
         eyelinkCalib
     end
     %% Trial matrix definition
-    
+
     % initialize jitter matrix
     if trainingType==2 || trainingType==4
         shapes=3; % how many shapes per day?
@@ -235,7 +224,7 @@ try
             trialsShape=21;
         end
     end
-    
+
     %create trial matrix
     if trainingType<3 % trial matrix for training type 1 and 2 are structurally similar,
         %with Training type 2 having multiple stimulus types (shapes) per
@@ -259,7 +248,7 @@ try
         %(for Gabor it's always the same, for shapes it will have 6 types per
         %session; type of stimuli (shapes/Gabors), type of cue (exo vs
         %endo)
-        
+
         % type of stimulus, shapes, type of cue
         mixcond=fullfact([shapes conditionTwo 1]);
         mixcond=[mixcond(:,1:2) mixcond(:,3)+1 ];
@@ -283,6 +272,7 @@ try
         end
     end
     
+
     %% STAIRCASE
     nsteps=70; % elements in the stimulus intensity list (contrast or jitter or TRL size in training type 3)
     if trainingType~=3
@@ -311,7 +301,7 @@ try
                 theoris =[-45 45]; % possible orientation of the Gabor
                 Contlist = log_unit_down(max_contrast+.122, logUnitStep, nsteps); % contrast list for trainig type 1 and 4
                 Contlist(1)=1;
-                
+
                 if trainingType==1
                     thresh(1:conditionOne, 1:conditionTwo)=StartCont; %Changed from 10 to have same starting contrast as the smaller Contlist
                 end
@@ -331,13 +321,13 @@ try
                 %OLD DIRECTORY
                 %d = dir(['../../datafolder/' SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
                 %      NEW DIRECTORY
-                
-                
+
+
                 d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-                
-                %                 d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
-                
-                
+
+%                 d=[folder SUBJECT  filename '_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']; %makes unique filename
+
+
                 %[dx,dx] = sort([d.datenum]); %EC changed to .bytes instead of datenum for %running fb1005 day 2 training %PD commented out 11/8/2023
                 %newest = d(dx(end)).name;%PD commented out 11/8/2023
                 for z=1:length(d)%PD added this for loop to pick up the correct file 11/8/2023
@@ -395,7 +385,7 @@ try
             corrcounter=zeros(shapes,2);
         end
     end
-    
+
     % training type 3 has its own structure, no behavioral performance
     % recorded except for eye movements, no keys to press
     if trainingType==3
@@ -418,9 +408,9 @@ try
             foldern=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAYN]);
             sizeArray=log_unit_down(1.99, 0.008, nsteps);
             persistentflickerArray=log_unit_up(0.08, 0.026, nsteps);
-            
+
             d = dir([foldern SUBJECT '_FLAPtraining_type_' num2str(trainingType) '_Day_' num2str(expDay-1) '*.mat']);
-            
+
             [dx,dx] = sort([d.datenum]);
             newest = d(dx(end)).name;
             %  oldthresh=load(['./data/' newest],'thresh');
@@ -444,14 +434,14 @@ try
             %             end
         end
     end
-    
+
     %% Trial structure
-    
+
     if trainingType==3 || trainingType==4
-        
+
         % 1: shape type (1-6 for shapes, 1 for Gabors), 2: cue type (exo or endo), 3: stimulus type (gabor of shapes)
         if holdtrial==1 % if we want to hold target position for few consecutive trials
-            
+
             newmat = [];
             theoriginalmat=mixtr;
             mixtr=[mixtr (1:length(theoriginalmat))'];
@@ -479,14 +469,14 @@ try
         newfig(d==1)=0;
         circlePixelsPRL=newfig;
     end
-    
+
     %% Initialize trial loop
     HideCursor;
     if demo==2
         ListenChar(2);
     end
     ListenChar(0);
-    
+
     % check EyeTracker status, if Eyelink
     if EyetrackerType == 1
         status = Eyelink('startrecording');
@@ -496,7 +486,7 @@ try
         Eyelink('message' , 'SYNCTIME');
         location =  zeros(length(mixtr), 6);
     end
-    
+
     checkcounter = 0;
     shapecounter = 0;
     % currentsf = currentsf.currentsf;
@@ -515,7 +505,7 @@ try
             practicePassed=0;
             %         practicePassed=1;
         end
-        
+
         %         if test==2
         %             practicePassed=1;
         %         end
@@ -528,21 +518,21 @@ try
         %             closescript=1;
         %             break
         %         end
-        
+
         % general instruction TO BE REWRITTEN
         if trainingType~=2 && trial==1
             InstructionFLAP(w,trainingType,gray,white)
         end
-        
+
         %% training type-specific staircases
-        
+
         if trainingType==1 || trainingType==4 && mixtr(trial,3)==1  %if it's a Gabor trial (training type 1 or 4)
             ssf=sflist(currentsf);
             fase=randi(4);
             texture(trial)=TheGabors(currentsf, fase);
             contr = Contlist(thresh(mixtr(trial,1),mixtr(trial,3)));
         end
-        
+
         if trainingType==2 || trainingType==4 && mixtr(trial,3)==2 %if it's a CI trial (training type 2 or 4)
             Orijit=JitList(thresh(mixtr(trial,1),mixtr(trial,3)));
             Tscat=0;
@@ -555,12 +545,12 @@ try
             actualtrialtimeout=realtrialTimeout;
             %   trialTimeout=400000;
             trialTimeout=realtrialTimeout+5;
-            
+
         elseif trainingType==1 || trainingType==2 || demo==1 %if it's a training type 1 or 2 trial, no flicker
             FlickerTime=0;
         end
         %% generate answer for this trial (training type 3 has no button response)
-        
+
         if trainingType==1 ||  (trainingType==4 && mixtr(trial,3)==1)
             theans(trial)=randi(2);
             ori=theoris(theans(trial));
@@ -595,16 +585,16 @@ try
                 eccentricity_Y(trial) = eccentricity_Y(trial-1);
             end
         end
-        
+
         if trial==length(mixtr)
             endExp=GetSecs; %time at the end of the session
         end
-        
+
         if demo==2
             if mod(trial,round(length(mixtr)/8))==0 %|| trial== length(mixtr)/4 || trial== length(mixtr)/4
                 interblock_instruction
             end
-            
+
         end
         if trainingType==2
             if trial==1
@@ -621,14 +611,14 @@ try
         %  destination rectangle for the target stimulus
         imageRect_offs =[imageRect(1)+theeccentricity_X, imageRect(2)+theeccentricity_Y,...
             imageRect(3)+theeccentricity_X, imageRect(4)+theeccentricity_Y];
-        
+
         %  destination rectangle for the fixation dot
         imageRect_offs_dot=[imageRectDot(1)+theeccentricity_X, imageRectDot(2)+theeccentricity_Y,...
             imageRectDot(3)+theeccentricity_X, imageRectDot(4)+theeccentricity_Y];
-        
-        
+
+
         %% initializing response box (if needed)
-        
+
         if responsebox==1
             Bpress=0;
             timestamp=-1;
@@ -643,7 +633,7 @@ try
             %
             % Datapixx('RegWrRd');
             % buttonLogStatus = Datapixx('GetDinStatus');
-            
+
             % if buttonLogStatus.logRunning~=1 % initialize digital input log if not up already.
             %     Datapixx('SetDinLog'); %added by Jerry
             %     Datapixx('StartDinLog');
@@ -658,7 +648,7 @@ try
             %     Datapixx('RegWrRd');
             %     starttime=Datapixx('GetTime');
             % end
-            
+
             % Configure digital input system for monitoring button box
             Datapixx('SetDinDataDirection', hex2dec('1F0000'));     % Drive 5 button lights
             Datapixx('EnableDinDebounce');                          % Debounce button presses
@@ -690,10 +680,10 @@ try
                 fixationscriptW % visual aids on screen
             end
             fixating=1500;
-            
+
             if trainingType>2 && trial>1 %if it's training 3 or 4 trial, we evaluate whether it's a cue trial
                 %    if mixtr(trial,2)~=mixtr(trial-1,2) || mixtr(trial,2)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
-                
+
                 if mixtr(trial,4)~=mixtr(trial-1,4)
                     if mixtr(trial,2)==1 %if it's endogenous cue
                         %calculations for arrow pointing to the next location (endo cue)
@@ -717,7 +707,7 @@ try
                 if trainingType==1 || trainingType==2 % no flicker type of training trial
                     counterflicker=-10000;
                 end
-                
+
             elseif (eyetime2-trial_time)>=ifi*2+preCueISI && (eyetime2-trial_time)<+ifi*2+preCueISI+currentExoEndoCueDuration && fixating>400 && stopchecking>1 && (eyetime2-pretrial_time)<=trialTimeout
                 if exist('startrial') == 0
                     if datapixxtime==1
@@ -732,7 +722,7 @@ try
                 end
                 % HERE I present the cue for training types 3 and 4 or skip
                 % this interval for training types 1 and 2
-                
+
                 if trainingType>2 && trial>1
                     %   if mixtr(trial,2)~=mixtr(trial-1,2) || mixtr(trial,3)==2 && mixtr(trial,1)~=mixtr(trial-1,1) % ||  trial==1
                     if mixtr(trial,4)~=mixtr(trial-1,4)
@@ -757,7 +747,7 @@ try
                 % timing for the next events (first fixed fixation event)
                 % HERE interval between cue disappearance and beginning of
                 % next stream of flickering stimuli
-                
+
                 %keyCode(escapeKey) ==0
                 if trainingType~=3 % no more dots!
                     Screen('FillOval', w, fixdotcolor, imageRect_offs_dot);
@@ -810,7 +800,7 @@ try
             if (eyetime2-newtrialtime)>=forcedfixationISI && fixating>400 && stopchecking>1 && skipcounterannulus>10 && counterflicker<=FlickerTime/ifi && flickerdone<1 && (eyetime2-pretrial_time)<=trialTimeout
                 % HERE starts the flicker for training types 3 and 4, if
                 % training type is 1 or 2, this is skipped
-                
+
                 if exist('flickerstar') == 0 % start flicker timer
                     flicker_time_start(trial)=eyetime2; % beginning of the overall flickering period
                     flickerstar=1;
@@ -836,7 +826,7 @@ try
                         ForcedFixationFlicker3mouse
                     end
                 end
-                
+
                 % from ForcedFixationFlicker3, should I show the flicker or not?
                 if turnFlickerOn(end)==1 %flickering cue
                     if flick==2
@@ -864,14 +854,14 @@ try
                     end
                     circlestar=1;
                 end
-                
+
                 if datapixxtime==1
                     Datapixx('RegWrRd');
                     cue_last=Datapixx('GetTime');
                 else
                     cue_last=GetSecs;
                 end
-                
+
                 if trainingType>2 && counterflicker>=round(FlickerTime/ifi) || trainingType<3 || demo==1
                     if datapixxtime==0
                         newtrialtime=GetSecs; % when fixation constrains are satisfied, I reset the timer to move to the next series of events
@@ -884,7 +874,7 @@ try
                 end
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout && stopchecking>1 %present pre-stimulus and stimulus
                 % HERE I PRESENT THE TARGET
-                
+
                 if trainingType==3
                     eyechecked=10^4; % if it's training type 3, we exit the trial, good job
                     if skipmasking==0
@@ -926,9 +916,9 @@ try
                         assignedPRLpatch
                     end
                     imagearray{trial}=Screen('GetImage', w);
-                    
+
                 end
-                
+
                 if exist('stimstar') == 0
                     stim_startT(trial)=eyetime2;
                     stim_start=eyetime2;
@@ -942,7 +932,7 @@ try
                         Pixxstruct(trial).TargetOnset = Datapixx('GetMarker');
                         Pixxstruct(trial).TargetOnset2 = Datapixx('GetTime');
                     end
-                    
+
                     if responsebox==1
                         Datapixx('SetMarker');
                         Datapixx('RegWrVideoSync');
@@ -953,7 +943,7 @@ try
                     end
                     stimstar=1;
                 end
-                
+
                 % start counting timeout for the non-fixed time training
                 % types 3 and 4
                 if trainingType>2
@@ -962,9 +952,9 @@ try
                         checktrialstart=1;
                     end
                 end
-                
+
             elseif (eyetime2-newtrialtime)>=forcedfixationISI && (eyetime2-newtrialtime)<=forcedfixationISI+stimulusduration && fixating>400 && skipcounterannulus>10  && flickerdone>1  && (eyetime2-pretrial_time)<=trialTimeout  && stopchecking>1 %present pre-stimulus and stimulus
-                
+
                 if responsebox==0
                     if keyCode(RespType(1)) + keyCode(RespType(2)) + keyCode(RespType(3)) + keyCode(RespType(4)) + keyCode(escapeKey) ~=0
                         thekeys = find(keyCode);
@@ -973,7 +963,7 @@ try
                         end
                         thetimes=keyCode(thekeys);
                         [secs  indfirst]=min(thetimes);
-                        
+
                         if datapixxtime==0
                             [secs  indfirst]=min(thetimes);
                             respTimeT(trial)=secs;
@@ -1009,7 +999,7 @@ try
                         end
                         thetimes=keyCode(thekeys);
                         [secs  indfirst]=min(thetimes);
-                        
+
                         if datapixxtime==0
                             [secs  indfirst]=min(thetimes);
                             respTimeT(trial)=secs;
@@ -1046,7 +1036,7 @@ try
                 end
                 eyechecked=10^4; % exit loop for this trial
             end
-            
+
             %% here I draw the scotoma, elements below are called every frame
             eyefixation5
             if ScotomaPresent == 1 % do we want the scotoma? (default is yes)
@@ -1068,8 +1058,8 @@ try
                     end
                 end
             end
-            
-            
+
+
             if datapixxtime==1
                 [eyetime3, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime3];
@@ -1077,7 +1067,7 @@ try
                 [eyetime2, StimulusOnsetTime, FlipTimestamp, Missed]=Screen('Flip',w);
                 VBL_Timestamp=[VBL_Timestamp eyetime2];
             end
-            
+
             %% process eyedata in real time (fixation/saccades)
             dd=49;
             if EyeTracker==1
@@ -1192,7 +1182,7 @@ try
         %% response processing
         if trialTimedout(trial)== 0 && trainingType~=3
             foo=(RespType==thekeys(1)); %em added (1) 11/15/2023
-            
+
             % staircase update
             if trainingType~=3
                 staircounter(mixtr(trial,1),mixtr(trial,3))=staircounter(mixtr(trial,1),mixtr(trial,3))+1;
@@ -1424,8 +1414,8 @@ try
             flickerpersistallowed=persistentflickerArray(flickerpointerPost); % time away from flicker in which flicker persists
             coeffAdj=sizeArray(sizepointer);
         end
-        
-        
+
+
         if responsebox==1 && trialTimedout(trial)==0 && trainingType ~= 3
             time_stim3(kk) = respTime(trial) - stim_startBox2(trial);
             time_stim2(kk) = respTime(trial) - stim_startBox(trial);
@@ -1488,7 +1478,7 @@ try
             clear ErrorInfo
         end
         
-        if EyetrackerType==2
+         if EyetrackerType==2
             %read in eye data
             Datapixx('RegWrRd');
             status = Datapixx('GetTPxStatus');
@@ -1550,10 +1540,10 @@ try
         end
     end
     DrawFormattedText(w, 'Task completed - Press a key to close', 'center', 'center', white);
-    
+
     ListenChar(0);
     Screen('Flip', w);
-    
+
     %% shut down EyeTracker and screen functions
     if EyetrackerType==1
         Eyelink('StopRecording');
@@ -1563,16 +1553,16 @@ try
         end
         Eyelink('Shutdown');
     end
-    
+
     c=clock;
     TimeStop=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
     save(baseName,'-regexp', '^(?!(wavedata|sig|tone|G|m|x|y|xxx|yyyy)$).');
     KbQueueWait;
-    
+
     ShowCursor;
     Screen('CloseAll');
     PsychPortAudio('Close', pahandle);
-    
+
 catch ME
     psychlasterror()
 end

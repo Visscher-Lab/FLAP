@@ -3,16 +3,21 @@
 close all; clear; clc;
 commandwindow
 addpath([cd '/utilities']);
-
 try
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsNEU_corr.csv']); % uncomment this if running task at NEU
+    %site= 8;  %0; 1=bits++; 2=display++
     prompt={'Participant name', 'day', 'demo (0) or session (1)', 'Calibration(1), Validation (2), or nothing(0)'};
+    
     name= 'Parameters';
     numlines=1;
     defaultanswer={'test','1', '1','1' };
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
-    end   
+    end
+    
 
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
@@ -23,10 +28,8 @@ try
     
     if site == 8
         ScotomaPresent = tt.ScotomaPresent(1,1);
-        randpick = tt.ContourCondition(1,1);
     else
         ScotomaPresent = str2num(tt.ScotomaPresent{1,1});
-        randpick = str2num(tt.ContourCondition{1,1});
     end
 
     Isdemo=str2num(answer{3,:}); % full session or demo/practice
@@ -47,7 +50,6 @@ try
     elseif Isdemo==1
         filename='_FLAPfixationflicker';
     end
-    
     folderchk=cd;
     DAY=['\Assessment\Day' answer{2,:} '\'];
     folder=fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY]);

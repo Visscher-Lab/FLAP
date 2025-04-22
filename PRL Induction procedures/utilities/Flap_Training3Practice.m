@@ -4,7 +4,7 @@ Screen('Preference', 'SkipSyncTests', 1);
     scotomavpixx= 0;
     
 Isdemo = 0;
-%site = 3;
+site = 3;
     %EyeTracker = 1; %0=mouse, 1=eyetracker
     defineSite % initialize Screen function and features depending on OS/Monitor
     CommonParametersFixation % load parameters for time and space
@@ -12,7 +12,7 @@ Isdemo = 0;
     %% eyetracker initialization (eyelink)
     
     if EyeTracker==1
-        if site==3 || site == 8
+        if site==3
             EyetrackerType=2; %1 = Eeyelink, 2 = Vpixx
         else
             EyetrackerType=1; %1 = Eeyelink, 2 = Vpixx

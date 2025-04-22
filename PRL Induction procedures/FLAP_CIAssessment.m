@@ -11,18 +11,19 @@
 % Here we use a combination of progressive staircase and adaptive 3 down 1
 % up staircase to present jitter levels of the stimulus
 
-
 close all; clear; clc;
 commandwindow
-
 addpath([cd '/utilities']); %add folder with utilities files
 
 try
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+    %participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsNEU_corr.csv']); % uncomment this if running task at NEU
     prompt={'Participant Name', 'day', 'Calibration(1), Validation (2), or nothing(0)'};
 
     name= 'Parameters';
     numlines=1;
-    defaultanswer={'test2','1', '1'};
+    defaultanswer={'test','1', '1'};
     answer=inputdlg(prompt,name,numlines,defaultanswer);
     if isempty(answer)
         return;
@@ -37,7 +38,6 @@ try
     else
         whicheye = 1;
     end
-
     calibration=str2num(answer{3,:}); % do we want to calibrate or do we skip it? only for Vpixx
     if site == 8
         ScotomaPresent = tt.ScotomaPresent(1,1);
@@ -63,7 +63,6 @@ try
     if exist(fullfile(folderchk, ['..\..\datafolder\' SUBJECT DAY])) == 0
         mkdir(folder);
     end
-
     if site==1
         baseName=[folder SUBJECT filename filename2 '_' num2str(PRLlocations) '_' expDay num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))]; %makes unique filename
     elseif site==2
@@ -73,6 +72,7 @@ try
     end
 
     TimeStart=[num2str(c(1)-2000) '_' num2str(c(2)) '_' num2str(c(3)) '_' num2str(c(4)) '_' num2str(c(5))];
+
 
     defineSite % initialize Screen function and features depending on OS/Monitor
 
