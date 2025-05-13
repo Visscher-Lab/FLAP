@@ -127,7 +127,12 @@ end
 
 
 imageRectcue = CenterRect([0, 0, [radiusPRL*2 ((radiusPRL/pix_deg)*pix_deg)*2]], wRect);
-midgray=0.5;
+
+if SUBJECT(2) == 'm' 
+    midgray = 0.05;
+else
+    midgray=0.5;
+end
 
 
 % Select specific text font, style and size:

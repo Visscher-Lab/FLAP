@@ -10,7 +10,7 @@ commandwindow
 addpath([cd '/utilities']); 
 try
  %   participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUCR_corr.csv']); % this is set for UCR or UAB separately (This is set here so that definesite.m does not have to change)
-    participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
+  %  participantAssignmentTable = fullfile(cd, ['..\..\datafolder\ParticipantAssignmentsUAB_corr.csv']); % uncomment this if running task at UAB
     
     prompt={'Participant name', 'Assessment day', 'practice (0) or session (1)','Calibration(1), Validation (2), or nothing(0)', 'Task: acuity (1), crowding (2), exo attention (3), contrast (4)'};
        
@@ -22,10 +22,10 @@ try
         return;
     end
     
-    temp= readtable(participantAssignmentTable);
+
     SUBJECT = answer{1,:}; %Gets Subject Name
     expDay=str2num(answer{2,:});
-    tt = temp(find(contains(temp.participant,SUBJECT)),:); % if computer doesn't have excel it reads as a struct, else it reads as a table
+    [tt,site] = getParticipantAssignmentTable(SUBJECT);
     ScotomaPresent= str2num(tt.ScotomaPresent{1,1}); % 0 = no scotoma, 1 = scotoma
     IsPractice=str2num(answer{3,:}); % full session or demo/practice
     if strcmp(tt.WhichEye{1,1},'R') == 1 % are we tracking left (1) or right (2) eye? Only for Vpixx
@@ -42,7 +42,7 @@ try
     PRLlocations= 2;
     c = clock; %Current date and time as date vector. [year month day hour minute seconds]
     %create a folder if it doesn't exist already
-    site=3;  % VPixx
+    %site=3;  % VPixx
     scotomavpixx= 0;
     datapixxtime=1;
     
